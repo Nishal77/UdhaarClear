@@ -6,13 +6,13 @@ import type { TrackerBlockProps } from "@/components/Tracker"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ChartAnalysisIcon } from "@hugeicons/core-free-icons"
 
-type Period = "weekly" | "daily"
+type Period = "weekly" | "monthly"
 
 interface TrackerRowProps {
   outstandingWeekly: TrackerBlockProps[]
   collectedWeekly: TrackerBlockProps[]
-  outstandingDaily: TrackerBlockProps[]
-  collectedDaily: TrackerBlockProps[]
+  outstandingMonthly: TrackerBlockProps[]
+  collectedMonthly: TrackerBlockProps[]
   outstandingCount: number
   totalOutstanding: string
   collectedThisMonth: string
@@ -27,16 +27,16 @@ function PeriodToggle({
 }) {
   return (
     <div className="flex items-center rounded-full bg-gray-100/80 p-0.5 gap-0.5">
-      {(["weekly", "daily"] as Period[]).map((opt) => {
+      {(["weekly", "monthly"] as Period[]).map((opt) => {
         const active = value === opt
         return (
           <button
             key={opt}
             onClick={() => onChange(opt)}
             className={[
-              "relative px-3 py-1 text-[11px] font-semibold rounded-full transition-all duration-200 capitalize select-none",
+              "relative px-3 py-1 text-[11px] font-medium rounded-full transition-all duration-200 capitalize select-none",
               active
-                ? "bg-white text-gray-900 shadow-sm"
+                ? "bg-white text-gray-900"
                 : "text-gray-400 hover:text-gray-600",
             ].join(" ")}
           >
@@ -51,17 +51,18 @@ function PeriodToggle({
 export function TrackerRow({
   outstandingWeekly,
   collectedWeekly,
-  outstandingDaily,
-  collectedDaily,
+  outstandingMonthly,
+  collectedMonthly,
   outstandingCount,
   totalOutstanding,
   collectedThisMonth,
 }: TrackerRowProps) {
   const [period, setPeriod] = useState<Period>("weekly")
 
-  const outstanding = period === "weekly" ? outstandingWeekly : outstandingDaily
-  const collected = period === "weekly" ? collectedWeekly : collectedDaily
-  const periodLabel = period === "weekly" ? "Weekly" : "Daily"
+  const outstanding = period === "weekly" ? outstandingWeekly : outstandingMonthly
+  const collected = period === "weekly" ? collectedWeekly : collectedMonthly
+  const periodLabel = period === "weekly" ? "Weekly" : "Monthly"
+
 
   return (
     <div className="border-t border-gray-200/85 grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-gray-200/85">
@@ -114,7 +115,7 @@ export function TrackerRow({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             {/* Checkbox icon */}
-            <div className="flex h-4.5 w-4.5 items-center justify-center rounded bg-emerald-600 text-white shrink-0 shadow-3xs">
+            <div className="flex h-4.5 w-4.5 items-center justify-center rounded bg-emerald-600 text-white shrink-0">
               <svg
                 className="w-3.5 h-3.5"
                 viewBox="0 0 24 24"

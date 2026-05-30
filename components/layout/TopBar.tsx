@@ -2,7 +2,7 @@
 
 import { format } from 'date-fns'
 import { HugeiconsIcon } from '@hugeicons/react'
-import { Search01Icon, Calendar01Icon, Notification01Icon } from '@hugeicons/core-free-icons'
+import { Search01Icon, Calendar01Icon, Notification01Icon, ArrowDown01Icon } from '@hugeicons/core-free-icons'
 
 interface TopBarProps {
   userName: string
@@ -69,9 +69,7 @@ export function TopBar({ userName, businessName }: TopBarProps) {
           <span className="text-[11px] font-medium text-gray-400 mt-0.5">Manage Account</span>
         </div>
         {/* Chevron Down */}
-        <svg className="w-3 h-3 text-gray-400 shrink-0 ml-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M19 9l-7 7-7-7" />
-        </svg>
+       <HugeiconsIcon icon={ArrowDown01Icon} className='size-3.5' />
       </div>
     </div>
   )

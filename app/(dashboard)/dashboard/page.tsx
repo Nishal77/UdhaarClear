@@ -6,6 +6,9 @@ import Link from 'next/link'
 import { format, subMonths, startOfMonth, endOfMonth } from 'date-fns'
 import { formatINRCompact } from '@/lib/utils/currency'
 import { TrackerRow } from '@/components/dashboard/TrackerRow'
+import { RecoveryTrend } from '@/components/dashboard/RecoveryTrend'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { SentIcon, Share03Icon } from '@hugeicons/core-free-icons'
 
 async function getDashboardData(businessId: string) {
   const now = new Date()
@@ -154,7 +157,6 @@ export default async function DashboardPage() {
     dbUser.ownedBusiness.id
   )
 
-  const avgDays = 14
   const recoveryRate =
     stats.totalOutstanding > 0
       ? Math.round((stats.collectedThisMonth / (stats.collectedThisMonth + stats.totalOutstanding)) * 100)
@@ -325,41 +327,34 @@ export default async function DashboardPage() {
     { color: 'bg-emerald-600', tooltip: 'Recovered' },
   ]
 
-  // Daily tracker data (7 blocks = Mon–Sun)
-  const outstandingDailyData = [
-    { color: 'bg-red-500', tooltip: 'Mon — Overdue' },
-    { color: 'bg-orange-500', tooltip: 'Tue — Pending' },
-    { color: 'bg-orange-500', tooltip: 'Wed — Pending' },
-    { color: 'bg-amber-300', tooltip: 'Thu — Future' },
-    { color: 'bg-amber-300', tooltip: 'Fri — Future' },
-    { color: 'bg-amber-300', tooltip: 'Sat — Future' },
-    { color: 'bg-amber-300', tooltip: 'Sun — Future' },
-  ]
-
-  const collectedDailyData = [
-    { color: 'bg-emerald-600', tooltip: 'Mon — Recovered' },
-    { color: 'bg-emerald-600', tooltip: 'Tue — Recovered' },
-    { color: 'bg-red-600', tooltip: 'Wed — Error' },
-    { color: 'bg-yellow-600', tooltip: 'Thu — Partial' },
-    { color: 'bg-emerald-600', tooltip: 'Fri — Recovered' },
-    { tooltip: 'Sat — Pending' },
-    { tooltip: 'Sun — Pending' },
-  ]
-
-  // 12 columns dynamic collection heights mapped from chartData collected amounts
-  const maxCollected = Math.max(...chartData.map((d) => d.collected), 1)
-  const collectionHeights = chartData.flatMap((d) => {
-    const ratio = d.collected / maxCollected
-    const height = Math.max(1, Math.round(ratio * 6)) // 6 dots max height
-    return [Math.max(1, height - 1), height]
+  // Monthly tracker data (30 blocks representing the last 30 days)
+  const outstandingMonthlyData = Array.from({ length: 30 }, (_, i) => {
+    let color = 'bg-amber-300'
+    let status = 'Future'
+    if (i < 4) {
+      color = 'bg-red-500'
+      status = 'Overdue'
+    } else if (i < 15) {
+      color = 'bg-orange-500'
+      status = 'Pending'
+    }
+    return { color, tooltip: `Day ${i + 1} — ${status}` }
   })
 
-  // 12 columns dynamic overdue heights mapped from chartData invoiced amounts
-  const maxInvoiced = Math.max(...chartData.map((d) => d.invoiced), 1)
-  const overdueHeights = chartData.flatMap((d) => {
-    const ratio = d.invoiced / maxInvoiced
-    const height = Math.max(1, Math.round(ratio * 6))
-    return [height, Math.max(1, height - 1)]
+  const collectedMonthlyData = Array.from({ length: 30 }, (_, i) => {
+    let color: string | undefined = 'bg-emerald-600'
+    let status = 'Recovered'
+    if (i === 12 || i === 24) {
+      color = 'bg-red-600'
+      status = 'Error'
+    } else if (i === 8 || i === 18) {
+      color = 'bg-yellow-500'
+      status = 'Partial'
+    } else if (i > 25) {
+      color = undefined
+      status = 'Pending'
+    }
+    return { color, tooltip: `Day ${i + 1} — ${status}` }
   })
 
   const hour = new Date().getHours()
@@ -402,25 +397,19 @@ export default async function DashboardPage() {
             href="/reminders"
             className="flex items-center gap-2 rounded-full bg-[#FF6A39] hover:bg-[#E05B2E] px-5 py-2.5 text-[14px] font-medium text-white active:scale-95 transition-all cursor-pointer shadow-3xs"
           >
-            <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
-            </svg>
+            <HugeiconsIcon icon={SentIcon} className="w-3.5 h-3.5 text-white"  />
             Send Reminders
           </Link>
 
           {/* Share Button Mockup */}
-          <button className="flex h-10 w-10 items-center justify-center rounded-full bg-white border border-[#EBEAE6]/60 shadow-3xs hover:bg-gray-50 active:scale-95 transition-all cursor-pointer">
-            <svg className="w-3.5 h-3.5 text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
-              <polyline points="16 6 12 2 8 6" />
-              <line x1="12" y1="2" x2="12" y2="15" />
-            </svg>
+          <button className="flex h-10 w-10 items-center justify-center rounded-full bg-white border border-[#EBEAE6]/60  hover:bg-gray-50 active:scale-95 transition-all cursor-pointer">
+           <HugeiconsIcon icon={Share03Icon} />
           </button>
         </div>
       </div>
 
       {/* ── Unified Dashboard Stats & Trackers Panel ── */}
-      <div className="bg-white border border-[#EBEAE6]/60 rounded-[32px] shadow-2xs overflow-hidden flex flex-col">
+      <div className="bg-white border border-[#EBEAE6]/60 rounded-[32px] overflow-hidden flex flex-col">
         {/* Row A: Quick Stats */}
         <div className="p-6 flex flex-col md:flex-row items-stretch justify-between gap-5 md:gap-0 md:divide-x divide-y md:divide-y-0 divide-gray-200/85">
           {/* Col 1: Total Outstanding */}
@@ -476,8 +465,8 @@ export default async function DashboardPage() {
         <TrackerRow
           outstandingWeekly={outstandingTrackerData}
           collectedWeekly={collectedTrackerData}
-          outstandingDaily={outstandingDailyData}
-          collectedDaily={collectedDailyData}
+          outstandingMonthly={outstandingMonthlyData}
+          collectedMonthly={collectedMonthlyData}
           outstandingCount={stats.outstandingCount}
           totalOutstanding={formatINRCompact(stats.totalOutstanding)}
           collectedThisMonth={formatINRCompact(stats.collectedThisMonth)}
@@ -490,107 +479,8 @@ export default async function DashboardPage() {
         {/* Row C: Secondary Dashboard Row */}
         <div className="grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-gray-200/85">
           {/* ROW 2 LEFT COLUMN: (spans 6 of 12 columns) */}
-          <div className="lg:col-span-6 flex flex-col divide-y divide-gray-200/85">
-            <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-200/85">
-              {/* Card 5: 13 Days */}
-              <div className="p-6 flex flex-col justify-between">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-50 border border-gray-100 shadow-3xs">
-                  <svg className="w-4 h-4 text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="12" r="10" />
-                    <polyline points="12 6 12 12 16 14" />
-                  </svg>
-                </div>
-
-                <div className="mt-5">
-                  <span className="text-[20px] font-black text-gray-950 leading-none block">{avgDays} Days</span>
-                  <span className="text-[10px] text-gray-400 font-semibold block mt-0.5">Average collection time</span>
-                </div>
-
-                {/* Horizontal dot tracker */}
-                <div className="flex gap-1 mt-4">
-                  {Array.from({ length: 12 }).map((_, i) => (
-                    <span
-                      key={i}
-                      className={`w-1.5 h-1.5 rounded-full ${i < 7 ? 'bg-[#FF6A39]' : 'bg-gray-100'}`}
-                    />
-                  ))}
-                </div>
-              </div>
-
-              {/* Card 6: Year comparison */}
-              <div className="p-6 flex items-center justify-between">
-                <div className="flex flex-col">
-                  <div className="flex items-center gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#FF6A39]" />
-                    <span className="text-[11px] font-bold text-gray-800">2023</span>
-                  </div>
-                  <div className="flex items-center gap-1.5 mt-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-gray-100" />
-                    <span className="text-[11px] font-bold text-gray-400">2022</span>
-                  </div>
-                </div>
-
-                {/* Graphical block comparing years */}
-                <div className="flex items-end justify-center gap-4 h-16">
-                  <div className="flex flex-col items-center gap-1">
-                    <span className="text-[8px] text-gray-400 font-bold">2022</span>
-                    <div className="w-4.5 h-8 bg-gray-100 rounded-md" />
-                  </div>
-                  <div className="flex flex-col items-center gap-1">
-                    <span className="text-[8px] text-[#FF6A39] font-bold">2023</span>
-                    <div className="w-4.5 h-12 bg-[#FF6A39] rounded-md relative" />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Card 7: Main Stocks sparkline (Collection Velocity) */}
-            <div className="p-6 flex flex-col justify-between">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-50 border border-gray-100 shadow-3xs">
-                    <svg className="w-4 h-4 text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
-                      <polyline points="17 6 23 6 23 12" />
-                    </svg>
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-[13px] font-black text-gray-950 leading-tight">Collection Velocity</span>
-                    <span className="text-[10px] text-gray-400 font-semibold mt-0.5">Real-time reminders</span>
-                  </div>
-                </div>
-                <span className="text-[20px] font-black text-gray-900">{formatINRCompact(stats.collectedThisMonth)}</span>
-              </div>
-
-              {/* Sparkline wave line chart */}
-              <div className="h-20 w-full mt-4 flex items-end">
-                <svg className="w-full h-16 text-[#FF6A39]" viewBox="0 0 100 30" fill="none" preserveAspectRatio="none">
-                  <path
-                    d="M0 22 Q 15 5, 30 25 T 60 12 T 85 20 T 100 8"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    d="M0 22 Q 15 5, 30 25 T 60 12 T 85 20 T 100 8 L 100 30 L 0 30 Z"
-                    fill="url(#sparkline-grad)"
-                    opacity="0.08"
-                  />
-                  <defs>
-                    <linearGradient id="sparkline-grad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#FF6A39" />
-                      <stop offset="100%" stopColor="#FF6A39" stopOpacity="0" />
-                    </linearGradient>
-                  </defs>
-                </svg>
-              </div>
-
-              <div className="flex items-center justify-between border-t border-[#EBEAE6]/40 pt-4 mt-2">
-                <span className="text-[10px] text-gray-400 font-semibold">Active Escalation Engine</span>
-                <span className="text-[10px] text-emerald-600 font-black tracking-wide">+ 9.3% recovery increase</span>
-              </div>
-            </div>
+          <div className="lg:col-span-6 p-6 flex flex-col justify-between">
+            <RecoveryTrend />
           </div>
 
           {/* ROW 2 RIGHT COLUMN: Activity Manager card (spans 6 of 12 columns) */}
