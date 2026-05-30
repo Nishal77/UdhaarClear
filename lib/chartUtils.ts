@@ -61,6 +61,12 @@ export const chartColors = {
     fill: "fill-orange-500",
     text: "text-orange-500",
   },
+  red: {
+    bg: "bg-red-500",
+    stroke: "stroke-red-500",
+    fill: "fill-red-500",
+    text: "text-red-500",
+  },
 } as const
 
 export type AvailableChartColorsKeys = keyof typeof chartColors

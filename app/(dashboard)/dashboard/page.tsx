@@ -1,8 +1,9 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma/client'
-import { TopDefaulters } from '@/components/dashboard/TopDefaulters'
 import Link from 'next/link'
+import { TopDefaulters } from '@/components/dashboard/TopDefaulters'
+import { RecoveryWidget } from '@/components/dashboard/RecoveryWidget'
 import { format, subMonths, startOfMonth, endOfMonth } from 'date-fns'
 import { formatINRCompact } from '@/lib/utils/currency'
 import { TrackerRow } from '@/components/dashboard/TrackerRow'
@@ -692,8 +693,33 @@ export default async function DashboardPage() {
       {/* End of secondary insights card */}
 
       {/* ── Needs Your Attention Today ── */}
-      <div className="mt-6 mb-8 bg-white border border-[#EBEAE6]/60 rounded-[28px] overflow-hidden">
+      <div className="mt-6 bg-white border border-[#EBEAE6]/60 rounded-[28px] overflow-hidden">
         <TopDefaulters invoices={overdueInvoices} noBorder={true} />
+      </div>
+
+      {/* ── Smart Cashflow Analytics / Two-Column Card ── */}
+      <div className="mt-6 mb-4 bg-white border border-[#EBEAE6]/60 rounded-[28px] overflow-hidden select-none relative group">
+        {/* Soft Radial Gradient Background for premium glow */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_120%,rgba(255,106,57,0.025),transparent_60%)] pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_-20%,rgba(59,130,246,0.015),transparent_50%)] pointer-events-none" />
+
+        {/* Master Premium Header for the entire module */}
+        <div className="px-8 py-5 border-b border-gray-100/80 bg-gradient-to-r from-white to-gray-50/10 flex flex-col gap-1 relative z-20">
+          <div className="flex items-center gap-2.5">
+            <h2 className="text-[17px] font-black text-gray-950 tracking-tight">Recovery & Collection Telemetry</h2>
+            <span className="inline-flex items-center rounded-md bg-emerald-50 px-2 py-0.5 text-[10.5px] font-bold text-emerald-700 ring-1 ring-inset ring-emerald-600/10">
+              Live Cashflow Diagnostics
+            </span>
+          </div>
+          <p className="text-[13px] text-gray-500 font-medium">
+            Analyze outstanding invoice distribution by communication tone severity and monitor recovery performance across automated payment corridors.
+          </p>
+        </div>
+
+        {/* Content Area with RecoveryWidget */}
+        <div className="p-8 relative z-10">
+          <RecoveryWidget />
+        </div>
       </div>
     </div>
   )
