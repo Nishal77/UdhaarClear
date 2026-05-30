@@ -157,45 +157,93 @@ export default async function DashboardPage() {
     dbUser.ownedBusiness.id
   )
 
+  const getCustomerInitials = (name: string) => {
+    const parts = name.trim().split(/\s+/)
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase()
+    }
+    return name.slice(0, 2).toUpperCase()
+  }
+
+  const formatRelativeTime = (date: Date) => {
+    const diffMs = Date.now() - date.getTime()
+    const diffMins = Math.floor(diffMs / 60000)
+    if (diffMins < 1) return "Just now"
+    if (diffMins < 60) return `${diffMins} min ago`
+    const diffHrs = Math.floor(diffMins / 60)
+    if (diffHrs < 24) return `${diffHrs} hr ago`
+    const diffDays = Math.floor(diffHrs / 24)
+    if (diffDays === 1) return "Yesterday"
+    return format(date, "d MMM")
+  }
+
+  const formattedDbActivities = activities.map((act) => {
+    const isReminder = act.type === 'reminder_sent'
+    const status = isReminder ? 'Sent' : 'Paid'
+    const actionText = isReminder ? 'reminder sent' : `paid ${formatINRCompact(act.amount)}`
+    const detailsText = isReminder ? 'WhatsApp Automated' : 'via Gateway'
+    const timeText = formatRelativeTime(act.createdAt)
+
+    return {
+      id: act.id,
+      type: isReminder ? ('reminder_sent' as const) : ('payment_received' as const),
+      customerName: act.customerName,
+      actionText,
+      timeText,
+      detailsText,
+      status: status as 'Sent' | 'Paid',
+    }
+  })
+
   const sampleActivities = [
     {
       id: 'sample-1',
       type: 'payment_received' as const,
-      customerName: 'Aarav Sharma',
-      amount: 14500,
-      createdAt: new Date(Date.now() - 30 * 60 * 1000),
+      customerName: 'Mehta Textiles',
+      actionText: 'paid ₹45,000',
+      timeText: '10 min ago',
+      detailsText: 'via UPI',
+      status: 'Paid' as const,
     },
     {
       id: 'sample-2',
       type: 'reminder_sent' as const,
-      customerName: 'Rohan Gupta',
-      amount: 8200,
-      createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
+      customerName: 'Sharma Electronics',
+      actionText: 'reminder sent',
+      timeText: '32 min ago',
+      detailsText: 'Day 8 Assertive',
+      status: 'Sent' as const,
     },
     {
       id: 'sample-3',
-      type: 'payment_received' as const,
-      customerName: 'Priya Patel',
-      amount: 21000,
-      createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000),
+      type: 'escalation' as const,
+      customerName: 'Gupta Traders',
+      actionText: 'escalated to Final Notice',
+      timeText: '1 hr ago',
+      detailsText: 'Day 22 — Legal tone',
+      status: 'Legal' as const,
     },
     {
       id: 'sample-4',
       type: 'reminder_sent' as const,
-      customerName: 'Aditya Verma',
-      amount: 5400,
-      createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000),
+      customerName: 'Patel Pharma',
+      actionText: 'reminder sent',
+      timeText: '2 hr ago',
+      detailsText: 'Day 3 Courteous',
+      status: 'Sent' as const,
     },
     {
       id: 'sample-5',
-      type: 'reminder_sent' as const,
-      customerName: 'Sneha Reddy',
-      amount: 12000,
-      createdAt: new Date(Date.now() - 36 * 60 * 60 * 1000),
+      type: 'partial_payment' as const,
+      customerName: 'Kapoor Metals',
+      actionText: 'partial ₹20,000',
+      timeText: 'Yesterday',
+      detailsText: 'Balance ₹30,000',
+      status: 'Partial' as const,
     },
   ]
 
-  const displayActivities = activities.length > 0 ? activities : sampleActivities
+  const displayActivities = formattedDbActivities.length > 0 ? formattedDbActivities : sampleActivities
 
   const recoveryRate =
     stats.totalOutstanding > 0
@@ -432,18 +480,18 @@ export default async function DashboardPage() {
             </svg>
             Add Invoice
           </Link>
-          
+
           <Link
             href="/reminders"
             className="flex items-center gap-2 rounded-full bg-[#FF6A39] hover:bg-[#E05B2E] px-5 py-2.5 text-[14px] font-medium text-white active:scale-95 transition-all cursor-pointer shadow-3xs"
           >
-            <HugeiconsIcon icon={SentIcon} className="w-3.5 h-3.5 text-white"  />
+            <HugeiconsIcon icon={SentIcon} className="w-3.5 h-3.5 text-white" />
             Send Reminders
           </Link>
 
           {/* Share Button Mockup */}
           <button className="flex h-10 w-10 items-center justify-center rounded-full bg-white border border-[#EBEAE6]/60  hover:bg-gray-50 active:scale-95 transition-all cursor-pointer">
-           <HugeiconsIcon icon={Share03Icon} />
+            <HugeiconsIcon icon={Share03Icon} />
           </button>
         </div>
       </div>
@@ -526,74 +574,85 @@ export default async function DashboardPage() {
           {/* ROW 2 RIGHT COLUMN: Activity Manager card (spans 6 of 12 columns) */}
           <div className="lg:col-span-6 p-6 flex flex-col justify-between">
             <div className="flex items-center justify-between">
-              <span className="text-[15px] font-black text-gray-950">Activity manager</span>
-              <div className="flex items-center gap-3">
-                {/* Option toggle buttons */}
-                <button className="p-1 hover:bg-gray-50 rounded-full transition-colors cursor-pointer text-gray-400">
-                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="12" r="1" />
-                    <circle cx="12" cy="5" r="1" />
-                    <circle cx="12" cy="19" r="1" />
-                  </svg>
-                </button>
-                <button className="p-1 hover:bg-gray-50 rounded-full transition-colors cursor-pointer text-gray-400">
-                  <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6" />
-                  </svg>
-                </button>
-                <button className="flex items-center gap-1.5 bg-white border border-[#EBEAE6]/60 rounded-full py-1 px-3 text-[10px] font-bold text-gray-500 hover:bg-gray-50 shadow-3xs cursor-pointer">
-                  <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
-                  </svg>
-                  <span>Filters</span>
-                </button>
+              <div className=''>
+                <span className="text-[15px] font-black text-gray-950">Live Activity Manager</span>
+                <p className="text-[13px] font-medium text-gray-500">Track recent activity in real-time</p>
               </div>
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 bg-white border border-[#EBEAE6]/60 rounded-full py-1 px-3 text-[12px] font-semibold text-black cursor-default">
+
+                  {/* Realistic Live Dot Container */}
+                  <span className="relative flex h-2 w-2">
+                    {/* Expanding outer ring */}
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                    {/* Solid inner dot */}
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                  </span>
+
+                  <span>Live</span>
+                </div>
+              </div>
+
             </div>
 
             {/* Activity Table */}
-            <div className="mt-6 overflow-x-auto w-full flex-1 min-h-[220px]">
-              <table className="w-full text-left border-collapse min-w-[500px]">
+            <div className="mt-4 overflow-x-auto w-full flex-1 min-h-[180px] max-h-[220px]">
+              <table className="w-full text-left border-collapse min-w-[400px]">
                 <thead>
-                  <tr className="border-b border-gray-200/80 text-[11px] font-black text-gray-400 uppercase tracking-wider">
-                    <th className="pb-3 font-bold">Customer</th>
-                    <th className="pb-3 font-bold">Activity</th>
-                    <th className="pb-3 font-bold text-right">Amount</th>
-                    <th className="pb-3 font-bold text-right">Date & Time</th>
-                    <th className="pb-3 font-bold text-center">Status</th>
+                  <tr className="border-b border-gray-100 text-[14px] font-medium text-gray-900 tracking-tight">
+                    <th className="pb-2.5 font-semibold">Customer</th>
+                    <th className="pb-2.5 font-semibold">Activity</th>
+                    <th className="pb-2.5 font-semibold text-right pr-6">Time</th>
+                    <th className="pb-2.5 font-semibold text-right pr-2">Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100">
+                <tbody className="divide-y divide-gray-100/70">
                   {!displayActivities.length ? (
                     <tr>
-                      <td colSpan={5} className="py-12 text-center text-xs text-gray-400 font-medium">
+                      <td colSpan={4} className="py-8 text-center text-xs text-gray-400 font-medium">
                         No recent activities
                       </td>
                     </tr>
                   ) : (
                     displayActivities.map((act) => {
-                      const isReminder = act.type === 'reminder_sent'
+                      let badgeColor = ''
+
+                      if (act.type === 'payment_received') {
+                        badgeColor = 'text-[#12B76A]'
+                      } else if (act.type === 'partial_payment') {
+                        badgeColor = 'text-[#854D0E]'
+                      } else if (act.type === 'escalation') {
+                        badgeColor = 'text-[#B91C1C]'
+                      } else {
+                        // reminder_sent
+                        const isYellow = act.customerName === 'Patel Pharma'
+                        if (isYellow) {
+                          badgeColor = 'text-[#B45309]'
+                        } else {
+                          badgeColor = 'text-[#1D4ED8]'
+                        }
+                      }
+
                       return (
                         <tr key={act.id} className="text-xs hover:bg-gray-50/50 transition-colors">
-                          <td className="py-3.5 font-bold text-gray-900">{act.customerName}</td>
-                          <td className="py-3.5 text-gray-600">
-                            {isReminder ? 'Reminder Sent' : 'Payment Received'}
+                          <td className="py-3 pr-2">
+                            <span className="font-semibold text-gray-900 truncate block max-w-[130px]">{act.customerName}</span>
                           </td>
-                          <td className="py-3.5 text-right font-bold text-gray-900">
-                            {formatINRCompact(act.amount)}
-                          </td>
-                          <td className="py-3.5 text-right text-gray-500 font-medium">
-                            {format(act.createdAt, 'd MMM, h:mm a')}
-                          </td>
-                          <td className="py-3.5 text-center">
-                            {isReminder ? (
-                              <span className="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-bold text-blue-700 ring-1 ring-inset ring-blue-700/10">
-                                Sent
-                              </span>
-                            ) : (
-                              <span className="inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700 ring-1 ring-inset ring-emerald-600/10">
-                                Paid
+                          <td className="py-3 text-gray-700 text-[13px] pr-2">
+                            <span>{act.actionText}</span>
+                            {act.detailsText && (
+                              <span className="text-[11.5px] text-gray-400 font-medium ml-1">
+                                ({act.detailsText})
                               </span>
                             )}
+                          </td>
+                          <td className="py-3 text-right text-gray-500 font-medium text-[12.5px] pr-6 whitespace-nowrap">
+                            {act.timeText}
+                          </td>
+                          <td className="py-3 text-right pr-2">
+                            <span className={`text-[12.5px] font-medium ${badgeColor}`}>
+                              {act.status}
+                            </span>
                           </td>
                         </tr>
                       )
