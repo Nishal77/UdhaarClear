@@ -64,7 +64,7 @@ export default function Navbar() {
       {/* Get Template Button */}
       <div>
         <Link
-          href="#"
+          href="/login"
           className="inline-flex items-center justify-center gap-1 px-7 py-3 text-base font-medium text-white bg-[#0140C1] rounded-full hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-500/20 active:scale-95 transition-all duration-200"
         >
           Login

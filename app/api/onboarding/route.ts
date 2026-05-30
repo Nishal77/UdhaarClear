@@ -3,12 +3,14 @@ import { normalizeIndianPhone } from '@/lib/utils/phone'
 import { apiError, apiSuccess } from '@/lib/utils/api-error'
 import { z } from 'zod'
 
+// Minimal schema — business name & phone collected in post-signup onboarding flow
 const onboardingSchema = z.object({
   supabaseId: z.string(),
   name: z.string().min(1),
-  businessName: z.string().min(1),
-  phone: z.string(),
   email: z.string().email().optional(),
+  // Optional fields for users coming from the old full-form signup
+  businessName: z.string().optional(),
+  phone: z.string().optional(),
 })
 
 export async function POST(request: Request) {
@@ -19,10 +21,12 @@ export async function POST(request: Request) {
   }
 
   const { supabaseId, name, businessName, phone, email } = parsed.data
-  const normalizedPhone = normalizeIndianPhone(phone)
 
+  // Idempotent — safe to call multiple times
   const existing = await prisma.user.findUnique({ where: { supabaseId } })
   if (existing) return apiSuccess({ user: existing })
+
+  const normalizedPhone = phone ? normalizeIndianPhone(phone) : null
 
   const user = await prisma.user.create({
     data: {
@@ -32,8 +36,9 @@ export async function POST(request: Request) {
       phone: normalizedPhone,
       ownedBusiness: {
         create: {
-          name: businessName,
-          phone: normalizedPhone,
+          name: businessName ?? name,
+          // Business phone defaults to empty — user updates it in onboarding settings
+          phone: normalizedPhone ?? '',
           email,
         },
       },
