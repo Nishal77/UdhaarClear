@@ -1,0 +1,255 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─────────────────────────────────────────────
+// USERS & ORGANIZATIONS
+// ─────────────────────────────────────────────
+
+model User {
+  id         String   @id @default(cuid())
+  supabaseId String   @unique
+  email      String   @unique
+  name       String
+  phone      String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  ownedBusiness Business?      @relation("BusinessOwner")
+  caProfile     CAProfile?
+  subscriptions Subscription[]
+
+  @@map("users")
+}
+
+model Business {
+  id      String @id @default(cuid())
+  ownerId String @unique
+  owner   User   @relation("BusinessOwner", fields: [ownerId], references: [id])
+
+  name      String
+  legalName String?
+  gstin     String?
+  phone     String
+  email     String?
+  address   String?
+  city      String?
+  state     String?
+  logoUrl   String?
+
+  wabaId      String?
+  waPhoneId   String?
+  waConnected Boolean @default(false)
+
+  planTier PlanTier @default(FREE)
+
+  caId String?
+  ca   CAProfile? @relation(fields: [caId], references: [id])
+
+  customers Customer[]
+  invoices  Invoice[]
+  reminders Reminder[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("businesses")
+}
+
+model CAProfile {
+  id        String     @id @default(cuid())
+  userId    String     @unique
+  user      User       @relation(fields: [userId], references: [id])
+  firmName  String
+  clients   Business[]
+  createdAt DateTime   @default(now())
+
+  @@map("ca_profiles")
+}
+
+enum PlanTier {
+  FREE
+  STARTER
+  GROWTH
+  CA_PRO
+}
+
+// ─────────────────────────────────────────────
+// CUSTOMERS (DEBTORS)
+// ─────────────────────────────────────────────
+
+model Customer {
+  id         String   @id @default(cuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  name        String
+  contactName String?
+  phone       String
+  email       String?
+  gstin       String?
+  address     String?
+  city        String?
+
+  defaultTone ReminderTone @default(GENTLE)
+
+  notes     String?
+  isBlocked Boolean @default(false)
+
+  invoices Invoice[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([businessId, phone])
+  @@map("customers")
+}
+
+// ─────────────────────────────────────────────
+// INVOICES
+// ─────────────────────────────────────────────
+
+model Invoice {
+  id         String   @id @default(cuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id])
+
+  invoiceNumber String
+  amount        Decimal  @db.Decimal(12, 2)
+  description   String?
+  invoiceDate   DateTime
+  dueDate       DateTime
+  creditDays    Int      @default(30)
+  documentUrl   String?
+
+  status        InvoiceStatus @default(PENDING)
+  paidAmount    Decimal?      @db.Decimal(12, 2)
+  paidAt        DateTime?
+  paymentMethod String?
+  paymentRef    String?
+
+  reminderTone    ReminderTone @default(GENTLE)
+  autoReminder    Boolean      @default(true)
+  remindersPaused Boolean      @default(false)
+
+  razorpayLinkId  String?
+  razorpayLinkUrl String?
+
+  legalNoticeGeneratedAt DateTime?
+  legalNoticeSentAt      DateTime?
+
+  reminders Reminder[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("invoices")
+}
+
+enum InvoiceStatus {
+  PENDING
+  DUE
+  OVERDUE
+  PARTIALLY_PAID
+  PAID
+  DISPUTED
+  WRITTEN_OFF
+}
+
+enum ReminderTone {
+  GENTLE
+  FIRM
+  LEGAL
+}
+
+// ─────────────────────────────────────────────
+// REMINDERS
+// ─────────────────────────────────────────────
+
+model Reminder {
+  id         String   @id @default(cuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id])
+  invoiceId  String
+  invoice    Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  channel      ReminderChannel @default(WHATSAPP)
+  tone         ReminderTone
+  templateName String
+  messageBody  String
+  dayOverdue   Int
+
+  status      ReminderStatus @default(SENT)
+  waMessageId String?
+  deliveredAt DateTime?
+  readAt      DateTime?
+  failReason  String?
+
+  paymentLinkUrl String?
+  triggeredBy    TriggerSource @default(AUTO)
+
+  createdAt DateTime @default(now())
+
+  @@map("reminders")
+}
+
+enum ReminderChannel {
+  WHATSAPP
+  EMAIL
+  SMS
+}
+
+enum ReminderStatus {
+  QUEUED
+  SENT
+  DELIVERED
+  READ
+  FAILED
+  REPLIED
+}
+
+enum TriggerSource {
+  AUTO
+  MANUAL
+}
+
+// ─────────────────────────────────────────────
+// SUBSCRIPTIONS
+// ─────────────────────────────────────────────
+
+model Subscription {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  planTier           PlanTier
+  billingCycle       BillingCycle       @default(MONTHLY)
+  status             SubscriptionStatus @default(ACTIVE)
+  razorpaySubId      String?            @unique
+  currentPeriodStart DateTime
+  currentPeriodEnd   DateTime
+  cancelledAt        DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("subscriptions")
+}
+
+enum BillingCycle {
+  MONTHLY
+  ANNUAL
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PAST_DUE
+  CANCELLED
+  TRIALING
+}
