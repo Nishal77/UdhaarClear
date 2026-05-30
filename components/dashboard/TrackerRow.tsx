@@ -3,6 +3,8 @@
 import React, { useState } from "react"
 import { Tracker } from "@/components/Tracker"
 import type { TrackerBlockProps } from "@/components/Tracker"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { ChartAnalysisIcon } from "@hugeicons/core-free-icons"
 
 type Period = "weekly" | "daily"
 
@@ -69,19 +71,7 @@ export function TrackerRow({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             {/* Clock icon */}
-            <svg
-              className="w-4 h-4 text-gray-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <circle cx="12" cy="12" r="10" />
-              <polyline points="12 6 12 12 16 14" />
-            </svg>
-            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+            <span className="text-[14px] font-medium text-black tracking-tight">
               Outstanding &mdash; {periodLabel}
             </span>
           </div>
@@ -94,16 +84,16 @@ export function TrackerRow({
             <Tracker className="hidden w-full sm:flex lg:hidden" data={outstanding.slice(0, 60)} hoverEffect />
             <Tracker className="flex w-full sm:hidden" data={outstanding.slice(0, 30)} hoverEffect />
           </div>
-          <span className="text-[11px] text-gray-400 font-bold uppercase tracking-wider block">
+          <span className="text-[14px] font-medium text-black tracking-tight block">
             Total outstanding ({outstandingCount} invoices)
           </span>
-          <span className="text-[28px] font-black text-[#E27C3E] leading-none tracking-tight block mt-1.5">
+          <span className="text-[28px] font-semibold text-[#000] leading-none tracking-tight block mt-1.5">
             {totalOutstanding}
           </span>
         </div>
 
         {/* Legend */}
-        <div className="flex items-center gap-4 pt-4 border-t border-gray-100/70 text-[11px] text-gray-400 font-semibold mt-auto">
+        <div className="flex items-center gap-4 pt-4 border-t border-gray-200 text-[11px] text-gray-600 font-medium mt-auto">
           <div className="flex items-center gap-1.5">
             <span className="w-2.5 h-2.5 rounded-sm bg-red-500" />
             <span>Overdue</span>
@@ -137,7 +127,7 @@ export function TrackerRow({
                 <polyline points="20 6 9 17 4 12" />
               </svg>
             </div>
-            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+            <span className="text-[14px] font-medium text-black tracking-tight">
               Collected &mdash; {periodLabel}
             </span>
           </div>
@@ -150,16 +140,16 @@ export function TrackerRow({
             <Tracker className="hidden w-full sm:flex lg:hidden" data={collected.slice(0, 60)} hoverEffect />
             <Tracker className="flex w-full sm:hidden" data={collected.slice(0, 30)} hoverEffect />
           </div>
-          <span className="text-[11px] text-gray-400 font-bold uppercase tracking-wider block">
+          <span className="text-[14px] font-medium text-black tracking-tight block">
             Total paid this month
           </span>
-          <span className="text-[28px] font-black text-emerald-600 leading-none tracking-tight block mt-1.5">
+          <span className="text-[28px] font-semibold text-emerald-600 leading-none tracking-tight block mt-1.5">
             {collectedThisMonth}
           </span>
         </div>
 
         {/* Legend */}
-        <div className="flex items-center gap-4 pt-4 border-t border-gray-100/70 text-[11px] text-gray-400 font-semibold mt-auto">
+        <div className="flex items-center gap-4 pt-4 border-t border-gray-200 text-[11px] text-gray-600 font-medium mt-auto">
           <div className="flex items-center gap-1.5">
             <span className="w-2.5 h-2.5 rounded-sm bg-emerald-600" />
             <span>Recovered</span>
@@ -178,28 +168,16 @@ export function TrackerRow({
       {/* CARD 3: Growth Rate (unchanged) */}
       <div className="lg:col-span-2 p-6 flex flex-col justify-between">
         <div className="flex items-center gap-2">
-          <svg
-            className="w-4 h-4 text-gray-400"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <line x1="18" y1="20" x2="18" y2="10" />
-            <line x1="12" y1="20" x2="12" y2="4" />
-            <line x1="6" y1="20" x2="6" y2="14" />
-          </svg>
-          <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Growth Rate</span>
+          <HugeiconsIcon icon={ChartAnalysisIcon} className="size-4 text-black-400" />
+          <span className="text-[14px] font-medium text-black tracking-tight">Growth Rate</span>
         </div>
 
         <div className="my-3">
           <span className="text-[32px] font-black text-[#E15A42] leading-none tracking-tight block">31%</span>
-          <span className="text-[11px] text-gray-400 font-bold uppercase tracking-wider block mt-2">
+          <span className="text-[14px] font-medium text-black tracking-tight block mt-2">
             Recovery MoM growth
           </span>
-          <span className="text-[9.5px] text-gray-400 font-semibold block mt-0.5">Last 7 months</span>
+          <span className="text-[11px] font-medium text-gray-600 tracking-tight block mt-0.5">Last 7 months</span>
         </div>
 
         {/* Bar Chart Graphic */}
