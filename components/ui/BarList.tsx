@@ -78,10 +78,10 @@ function BarListInner<T>(
             <div className="w-full bg-gray-50/50 border border-gray-100/30 rounded-xl overflow-hidden relative">
               <div
                 className={cx(
-                  "flex items-center rounded-xl transition-all duration-1000 ease-out border-r-2",
+                  "flex items-center rounded-xl transition-all duration-1000 ease-out",
                   rowHeight,
                   // Default elegant gradient color
-                  item.colorClass ?? "bg-gradient-to-r from-blue-500/5 to-blue-500/15 border-blue-500/40",
+                  item.colorClass ?? "bg-gradient-to-r from-blue-500/5 to-blue-500/15",
                   onValueChange ? "group-hover:opacity-90" : "",
                   {
                     "mb-0": index === sortedData.length - 1,
