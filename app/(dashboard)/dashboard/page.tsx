@@ -9,6 +9,7 @@ import { TrackerRow } from '@/components/dashboard/TrackerRow'
 import { RecoveryTrend } from '@/components/dashboard/RecoveryTrend'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { SentIcon, Share03Icon } from '@hugeicons/core-free-icons'
+import { Dot } from 'lucide-react'
 
 async function getDashboardData(businessId: string) {
   const now = new Date()
@@ -16,7 +17,7 @@ async function getDashboardData(businessId: string) {
   const today = new Date(now)
   today.setHours(0, 0, 0, 0)
 
-  const [outstandingAgg, overdueAgg, collectedAgg, reminderCount, topDefaultersRaw, recentReminders, recentPaid] =
+  const [outstandingAgg, overdueAgg, collectedAgg, reminderCount, topDefaultersRaw, recentReminders, recentPaid, overdueInvoicesRaw] =
     await Promise.all([
       prisma.invoice.aggregate({
         where: { businessId, status: { in: ['PENDING', 'DUE', 'OVERDUE', 'PARTIALLY_PAID'] } },
@@ -54,6 +55,12 @@ async function getDashboardData(businessId: string) {
         orderBy: { paidAt: 'desc' },
         take: 5,
       }),
+      prisma.invoice.findMany({
+        where: { businessId, status: 'OVERDUE' },
+        include: { customer: true },
+        orderBy: { dueDate: 'asc' },
+        take: 5,
+      }),
     ])
 
   const customerIds = topDefaultersRaw.map((d) => d.customerId)
@@ -78,6 +85,23 @@ async function getDashboardData(businessId: string) {
         ? Math.max(0, Math.floor((now.getTime() - d._max.dueDate.getTime()) / 86400000))
         : 0,
       lastReminderAt: lastReminder?.createdAt ?? null,
+    }
+  })
+
+  const overdueInvoices = overdueInvoicesRaw.map((inv) => {
+    let tone: 'GENTLE' | 'FIRM' | 'LEGAL' = 'GENTLE'
+    if (inv.reminderTone === 'LEGAL') tone = 'LEGAL'
+    else if (inv.reminderTone === 'FIRM') tone = 'FIRM'
+
+    return {
+      id: inv.id,
+      customerId: inv.customerId,
+      customerName: inv.customer?.name ?? 'Unknown',
+      invoiceNumber: inv.invoiceNumber,
+      amount: Number(inv.amount),
+      dueDate: inv.dueDate,
+      overdueDays: Math.max(0, Math.floor((now.getTime() - inv.dueDate.getTime()) / 86400000)),
+      tone,
     }
   })
 
@@ -134,6 +158,7 @@ async function getDashboardData(businessId: string) {
       remindersSentToday: reminderCount,
     },
     topDefaulters,
+    overdueInvoices,
     activities,
     chartData,
   }
@@ -153,7 +178,7 @@ export default async function DashboardPage() {
 
   if (!dbUser?.ownedBusiness) redirect('/onboarding')
 
-  const { stats, topDefaulters, activities, chartData } = await getDashboardData(
+  const { stats, overdueInvoices, activities, chartData } = await getDashboardData(
     dbUser.ownedBusiness.id
   )
 
@@ -504,7 +529,7 @@ export default async function DashboardPage() {
           <div className="flex flex-col text-left md:pr-6 pb-4 md:pb-0 flex-1 justify-center">
             <span className="text-[14px] font-medium text-black tracking-tight">Total Outstanding</span>
             <div className="flex items-baseline gap-2 mt-1.5 flex-wrap">
-              <span className="text-[24px] font-black text-gray-900 leading-none">{formatINRCompact(stats.totalOutstanding)}</span>
+              <span className="text-[24px] font-semibold text-gray-900 leading-none">{formatINRCompact(stats.totalOutstanding)}100</span>
               <span className="text-[11.5px] font-bold text-rose-600 flex items-center gap-0.5">
                 <span>↑ 8%</span>
                 <span className="text-gray-400 font-medium">vs last month</span>
@@ -516,7 +541,7 @@ export default async function DashboardPage() {
           <div className="flex flex-col text-left pt-4 md:pt-0 md:px-6 pb-4 md:pb-0 flex-1 justify-center">
             <span className="text-[14px] font-medium text-black tracking-tight">Recovered This Month</span>
             <div className="flex items-baseline gap-2 mt-1.5 flex-wrap">
-              <span className="text-[24px] font-black text-gray-900 leading-none">{formatINRCompact(stats.collectedThisMonth)}</span>
+              <span className="text-[24px] font-semibold text-gray-900 leading-none">{formatINRCompact(stats.collectedThisMonth)}</span>
               <span className="text-[11.5px] font-bold text-emerald-600 flex items-center gap-0.5">
                 <span>↑ 23%</span>
                 <span className="text-gray-400 font-medium">vs last month</span>
@@ -528,7 +553,7 @@ export default async function DashboardPage() {
           <div className="flex flex-col text-left pt-4 md:pt-0 md:px-6 pb-4 md:pb-0 flex-1 justify-center">
             <span className="text-[14px] font-medium text-black tracking-tight">Reminders Sent Today</span>
             <div className="flex items-baseline gap-2 mt-1.5 flex-wrap">
-              <span className="text-[24px] font-bold text-gray-900 leading-none">{stats.remindersSentToday}</span>
+              <span className="text-[24px] font-semibold text-gray-900 leading-none">{stats.remindersSentToday}</span>
               <span className="text-[11.5px] font-medium text-gray-500 flex items-center gap-1">
                 <span>via WhatsApp</span>
                 <span className="text-emerald-600 font-medium">· 9 delivered</span>
@@ -540,7 +565,7 @@ export default async function DashboardPage() {
           <div className="flex flex-col text-left pt-4 md:pt-0 md:pl-6 flex-1 justify-center">
             <span className="text-[14px] font-medium text-black tracking-tight">Overdue Customers</span>
             <div className="flex items-baseline gap-2 mt-1.5 flex-wrap">
-              <span className="text-[24px] font-black text-gray-900 leading-none">{stats.overdueCount}</span>
+              <span className="text-[24px] font-semibold text-gray-900 leading-none">{stats.overdueCount}</span>
               <span className="text-[11.5px] font-medium text-gray-500 flex items-center gap-1 flex-wrap">
                 <span>3 need</span>
                 <span className="text-rose-600 font-medium">Final Notice</span>
@@ -563,7 +588,7 @@ export default async function DashboardPage() {
       {/* End of unified stats + trackers card */}
 
       {/* ── Secondary Insights Row ── */}
-      <div className="mt-6 bg-white border border-[#EBEAE6]/60 rounded-[28px] shadow-2xs overflow-hidden">
+      <div className="mt-6 bg-white border border-[#EBEAE6]/60 rounded-[28px] overflow-hidden">
         {/* Row C: Secondary Dashboard Row */}
         <div className="grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-gray-200/85">
           {/* ROW 2 LEFT COLUMN: (spans 6 of 12 columns) */}
@@ -666,9 +691,9 @@ export default async function DashboardPage() {
       </div>
       {/* End of secondary insights card */}
 
-      {/* ── Overdue Debtor Table ── */}
+      {/* ── Needs Your Attention Today ── */}
       <div className="mt-6 mb-8 bg-white border border-[#EBEAE6]/60 rounded-[28px] shadow-2xs overflow-hidden">
-        <TopDefaulters defaulters={topDefaulters} noBorder={true} />
+        <TopDefaulters invoices={overdueInvoices} noBorder={true} />
       </div>
     </div>
   )
