@@ -49,11 +49,13 @@ export default async function RemindersPage() {
       />
 
       {reminders.length === 0 ? (
-        <EmptyState
-          icon={<IconMessage size={40} />}
-          title="No reminders sent yet"
-          description="Reminders are sent automatically or when you trigger them manually from an invoice"
-        />
+        <div className="rounded-2xl bg-white border border-[#EBEAE6]/60 shadow-sm">
+          <EmptyState
+            icon={<IconMessage size={40} />}
+            title="No reminders sent yet"
+            description="Reminders are sent automatically or when you trigger them manually from an invoice"
+          />
+        </div>
       ) : (
         <div className="rounded-xl border border-gray-200 bg-white overflow-hidden">
           <table className="min-w-full divide-y divide-gray-200">

@@ -88,6 +88,7 @@ export function RecoveryTrend() {
         <span className="text-emerald-600 font-bold">· ▲ +31%</span>
       </p>
 
+      <div className="mt-8 -mb-2" style={{ height: 192, minHeight: 192, width: '100%' }}>
       <AreaChart
         data={data}
         index="date"
@@ -96,7 +97,7 @@ export function RecoveryTrend() {
         showYAxis={false}
         startEndOnly={false}
         valueFormatter={currencyFormatter}
-        className="-mb-2 mt-8 h-48"
+        className="h-full w-full"
         tooltipCallback={(props) => {
           if (props.active) {
             setDatas((prev) => {
@@ -109,6 +110,7 @@ export function RecoveryTrend() {
           return null
         }}
       />
+      </div>
     </div>
   )
 }

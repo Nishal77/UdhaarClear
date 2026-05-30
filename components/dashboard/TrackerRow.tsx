@@ -1,8 +1,8 @@
 "use client"
 
 import React, { useState } from "react"
-import { Tracker } from "@/components/Tracker"
-import type { TrackerBlockProps } from "@/components/Tracker"
+import { Tracker } from "@/components/ui/Tracker"
+import type { TrackerBlockProps } from "@/components/ui/Tracker"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ChartAnalysisIcon } from "@hugeicons/core-free-icons"
 

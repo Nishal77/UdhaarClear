@@ -27,8 +27,8 @@ import {
   getYAxisDomain,
   hasOnlyOneValueForKey,
   type AvailableChartColorsKeys,
-} from "@/lib/chartUtils"
-import { useOnWindowResize } from "@/lib/useOnWindowResize"
+} from "@/lib/utils/chartUtils"
+import { useOnWindowResize } from "@/hooks/useOnWindowResize"
 import { cx } from "@/lib/utils/cn"
 
 //#region Legend
@@ -645,7 +645,8 @@ const AreaChart = React.forwardRef<HTMLDivElement, AreaChartProps>(
     return (
       <div
         ref={ref}
-        className={cx("h-80 w-full min-h-0 min-w-0", className)}
+        className={cx("h-80 w-full min-w-0", className)}
+        style={{ minHeight: 60 }}
         tremor-id="tremor-raw"
         {...other}
       >

@@ -14,7 +14,7 @@ import {
   constructCategoryColors,
   getColorClassName,
   type AvailableChartColorsKeys,
-} from "@/lib/chartUtils"
+} from "@/lib/utils/chartUtils"
 import { cx } from "@/lib/utils/cn"
 
 const sumNumericArray = (arr: number[]): number =>
@@ -227,7 +227,7 @@ const DonutChart = React.forwardRef<HTMLDivElement, DonutChartProps>(
         tremor-id="tremor-raw"
         {...other}
       >
-        <ResponsiveContainer className="size-full">
+        <ResponsiveContainer width="100%" height="100%">
           <ReChartsDonutChart
             onClick={
               onValueChange && activeIndex !== undefined
