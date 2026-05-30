@@ -692,7 +692,7 @@ export default async function DashboardPage() {
       {/* End of secondary insights card */}
 
       {/* ── Needs Your Attention Today ── */}
-      <div className="mt-6 mb-8 bg-white border border-[#EBEAE6]/60 rounded-[28px] shadow-2xs overflow-hidden">
+      <div className="mt-6 mb-8 bg-white border border-[#EBEAE6]/60 rounded-[28px] overflow-hidden">
         <TopDefaulters invoices={overdueInvoices} noBorder={true} />
       </div>
     </div>

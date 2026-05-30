@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { ArrowRight02Icon } from '@hugeicons/core-free-icons'
 
+
 export interface OverdueInvoice {
   id: string
   customerId: string
@@ -53,14 +54,10 @@ export function TopDefaulters({
         {/* Row 1: Reddy Enterprises (High Risk Notice) */}
         <div className="px-8 py-5.5 flex items-center justify-between hover:bg-gray-50/30 transition-all duration-200">
           <div className="flex items-center gap-4">
-            {/* Soft Red Circle Badge */}
-            <div className="w-11 h-11 rounded-full bg-rose-50 border border-rose-100 flex items-center justify-center shrink-0">
-              <span className="relative flex h-4.5 w-4.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-30"></span>
-                {/* Glossy 3D Red sphere */}
-                <span className="relative inline-flex rounded-full h-4.5 w-4.5 bg-gradient-to-tr from-red-600 via-red-500 to-rose-400 shadow-sm border border-red-700/10"></span>
-              </span>
-            </div>
+            {/* Soft Red Pill Status Badge */}
+            <span className="px-2.5 py-1 rounded-full bg-red-50 border border-red-100 text-red-600 text-[12px] font-bold tracking-tight shrink-0 text-center min-w-[70px]">
+              Default
+            </span>
             {/* Title & Meta info */}
             <div className="text-left">
               <h3 className="text-[14.5px] font-bold text-gray-900 leading-snug tracking-tight">
@@ -87,13 +84,10 @@ export function TopDefaulters({
         {/* Row 2: Mehta & Sons (High Intent But Unpaid) */}
         <div className="px-8 py-5.5 flex items-center justify-between hover:bg-gray-50/30 transition-all duration-200">
           <div className="flex items-center gap-4">
-            {/* Soft Orange Circle Badge */}
-            <div className="w-11 h-11 rounded-full bg-amber-50 border border-amber-100 flex items-center justify-center shrink-0">
-              {/* Clock/Alarm Alarm Vector Icon */}
-              <svg className="w-5 h-5 text-amber-600 animate-swing" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
+            {/* Soft Amber Pill Status Badge */}
+            <span className="px-2.5 py-1 rounded-full bg-amber-50 border border-amber-100 text-amber-600 text-[12px] font-bold tracking-tight shrink-0 text-center min-w-[70px]">
+              Pending
+            </span>
             {/* Title & Meta info */}
             <div className="text-left">
               <h3 className="text-[14.5px] font-bold text-gray-900 leading-snug tracking-tight">
@@ -120,13 +114,10 @@ export function TopDefaulters({
         {/* Row 3: Patel Wholesale (Recent Payment Success) */}
         <div className="px-8 py-5.5 flex items-center justify-between hover:bg-gray-50/30 transition-all duration-200">
           <div className="flex items-center gap-4">
-            {/* Soft Green Circle Badge */}
-            <div className="w-11 h-11 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center shrink-0">
-              {/* Checkmark Check Icon */}
-              <svg className="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
+            {/* Soft Emerald Pill Status Badge */}
+            <span className="px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-600 text-[12px] font-bold tracking-tight shrink-0 text-center min-w-[70px]">
+              Paid
+            </span>
             {/* Title & Meta info */}
             <div className="text-left">
               <h3 className="text-[14.5px] font-bold text-gray-900 leading-snug tracking-tight">
