@@ -22,9 +22,9 @@ export default async function EditCustomerPage({ params }: { params: Promise<{ i
   if (!customer) notFound()
 
   return (
-    <div className="max-w-2xl space-y-6">
+    <div className="space-y-6 w-full">
       <PageHeader title={`Edit: ${customer.name}`} />
-      <div className="rounded-xl bg-white p-6 shadow-sm border border-gray-200">
+      <div className="rounded-[22px] bg-white p-8 border border-[#EBEAE6]/60">
         <CustomerForm
           customerId={id}
           defaultValues={{

@@ -240,11 +240,6 @@ export function CustomerTable({
 }) {
   const [filter, setFilter] = useState<FilterKey>('all')
   const [searchQuery, setSearchQuery] = useState('')
-  const [placeholder, setPlaceholder] = useState('')
-  const [placeholderIndex, setPlaceholderIndex] = useState(0)
-  const [charIndex, setCharIndex] = useState(0)
-  const [isDeleting, setIsDeleting] = useState(false)
-
   const placeholders = [
     "Search by name, phone, city...",
     "Try searching 'Mumbai'...",
@@ -252,31 +247,30 @@ export function CustomerTable({
     "Search 'Rahul Sharma'..."
   ]
 
+  const [placeholder, setPlaceholder] = useState(placeholders[0])
+  const [slideState, setSlideState] = useState<'idle' | 'slide-out' | 'reset'>('idle')
+
   useEffect(() => {
-    let timer: NodeJS.Timeout
-    const currentFullText = placeholders[placeholderIndex]
+    let index = 0
+    const interval = setInterval(() => {
+      // 1. Start slide up out
+      setSlideState('slide-out')
 
-    if (isDeleting) {
-      timer = setTimeout(() => {
-        setPlaceholder(currentFullText.substring(0, charIndex - 1))
-        setCharIndex(prev => prev - 1)
-      }, 30)
-    } else {
-      timer = setTimeout(() => {
-        setPlaceholder(currentFullText.substring(0, charIndex + 1))
-        setCharIndex(prev => prev + 1)
-      }, 60)
-    }
+      // 2. Snap to bottom instantly after slide-out (300ms)
+      setTimeout(() => {
+        index = (index + 1) % placeholders.length
+        setPlaceholder(placeholders[index])
+        setSlideState('reset')
 
-    if (!isDeleting && charIndex === currentFullText.length) {
-      timer = setTimeout(() => setIsDeleting(true), 2500)
-    } else if (isDeleting && charIndex === 0) {
-      setIsDeleting(false)
-      setPlaceholderIndex((prev) => (prev + 1) % placeholders.length)
-    }
+        // 3. Slide up in on the next browser frame
+        setTimeout(() => {
+          setSlideState('idle')
+        }, 30)
+      }, 300)
+    }, 3800)
 
-    return () => clearTimeout(timer)
-  }, [charIndex, isDeleting, placeholderIndex])
+    return () => clearInterval(interval)
+  }, [])
 
   const totalToCollect = customers.reduce((s, c) => s + c.totalOutstanding, 0)
   
@@ -290,6 +284,15 @@ export function CustomerTable({
       (c.contactName && c.contactName.toLowerCase().includes(query))
     )
   })
+
+  let transitionClass = 'transition-all duration-300 ease-out'
+  if (slideState === 'idle') {
+    transitionClass += ' opacity-100 translate-y-0'
+  } else if (slideState === 'slide-out') {
+    transitionClass += ' opacity-0 -translate-y-3'
+  } else if (slideState === 'reset') {
+    transitionClass += ' opacity-0 translate-y-3 transition-none'
+  }
 
   return (
     <div className="rounded-2xl bg-white border border-[#EBEAE6]/60 overflow-hidden">
@@ -309,20 +312,26 @@ export function CustomerTable({
 
         {/* Center: Search input box */}
         <div className="relative flex-1 max-w-[340px] w-full mx-auto md:mx-0">
-          <span className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+          <span className="absolute inset-y-0 left-4 flex items-center pointer-events-none z-10">
             <HugeiconsIcon icon={Search01Icon} size={16} className="text-gray-400" />
           </span>
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={placeholder}
-            className="w-full h-10 bg-[#F1F1F1] rounded-full pl-11 pr-10 text-[13px] text-gray-800 placeholder-gray-400 focus:outline-none focus:bg-[#EBEBEB] focus:ring-2 focus:ring-[#FF6A39]/20 transition-all duration-200 border-0"
+            className="w-full h-10 bg-[#F1F1F1] rounded-full pl-11 pr-10 text-[13px] text-gray-800 focus:outline-none focus:bg-[#EBEBEB] focus:ring-2 focus:ring-[#FF6A39]/20 transition-all duration-200 border-0"
           />
+          {searchQuery === '' && (
+            <div className="absolute left-11 right-10 top-1/2 -translate-y-1/2 pointer-events-none select-none text-[13px] text-gray-400 overflow-hidden h-5 flex items-center">
+              <span className={transitionClass}>
+                {placeholder}
+              </span>
+            </div>
+          )}
           {searchQuery && (
             <button
               onClick={() => setSearchQuery('')}
-              className="absolute inset-y-0 right-4 flex items-center text-gray-400 hover:text-gray-600 text-xs font-semibold transition-colors"
+              className="absolute inset-y-0 right-4 flex items-center text-gray-400 hover:text-gray-600 text-xs font-semibold transition-colors z-10"
             >
               Clear
             </button>
@@ -354,15 +363,15 @@ export function CustomerTable({
                 key={f.key}
                 onClick={() => setFilter(f.key)}
                 className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[12px] font-medium transition-all whitespace-nowrap ${isActive
-                    ? 'bg-white text-gray-900 shadow-sm'
-                    : 'text-gray-500 hover:text-gray-700'
+                    ? 'bg-white text-gray-900'
+                    : 'text-gray-700 hover:text-gray-900'
                   }`}
               >
                 {indicator}
                 <span>{f.label}</span>
-                <span className={`text-[11px] font-bold tabular-nums ${isActive ? 'text-[#FF6A39]' : 'text-gray-400'
+                <span className={`text-[11px] font-semibold tabular-nums ${isActive ? 'text-[#FF6A39]' : 'text-gray-600'
                   }`}>
-                  {count}
+                  ({count})
                 </span>
               </button>
             )

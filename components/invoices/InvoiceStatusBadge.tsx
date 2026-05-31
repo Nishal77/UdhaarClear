@@ -4,13 +4,13 @@ import { InvoiceStatus } from '@prisma/client'
 import { cn } from '@/lib/utils/cn'
 
 const STATUS_CONFIG: Record<InvoiceStatus, { label: string; className: string }> = {
-  PENDING: { label: 'Pending', className: 'bg-yellow-50 text-yellow-700 ring-yellow-600/20' },
-  DUE: { label: 'Due Today', className: 'bg-orange-50 text-orange-700 ring-orange-600/20' },
-  OVERDUE: { label: 'Overdue', className: 'bg-red-50 text-red-700 ring-red-600/20 font-bold' },
-  PARTIALLY_PAID: { label: 'Partial', className: 'bg-blue-50 text-blue-700 ring-blue-600/20' },
-  PAID: { label: 'Paid', className: 'bg-green-50 text-green-700 ring-green-600/20' },
-  DISPUTED: { label: 'Disputed', className: 'bg-purple-50 text-purple-700 ring-purple-600/20' },
-  WRITTEN_OFF: { label: 'Written Off', className: 'bg-gray-100 text-gray-600 ring-gray-500/20' },
+  PENDING: { label: 'Pending', className: 'bg-amber-50/50 text-amber-700 border-amber-200/60' },
+  DUE: { label: 'Due Today', className: 'bg-orange-50/50 text-orange-700 border-orange-200/60' },
+  OVERDUE: { label: 'Overdue', className: 'bg-red-50/50 text-red-700 border-red-200/60 font-semibold' },
+  PARTIALLY_PAID: { label: 'Partial', className: 'bg-blue-50/50 text-blue-700 border-blue-200/60' },
+  PAID: { label: 'Paid', className: 'bg-emerald-50/50 text-emerald-700 border-emerald-200/60' },
+  DISPUTED: { label: 'Disputed', className: 'bg-purple-50/50 text-purple-700 border-purple-200/60' },
+  WRITTEN_OFF: { label: 'Written Off', className: 'bg-gray-50 text-gray-500 border-gray-200' },
 }
 
 export function InvoiceStatusBadge({ status }: { status: InvoiceStatus }) {
@@ -18,7 +18,7 @@ export function InvoiceStatusBadge({ status }: { status: InvoiceStatus }) {
   return (
     <span
       className={cn(
-        'inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset',
+        'inline-flex items-center rounded-full border px-2.5 py-0.5 text-[11px] font-semibold tracking-tight whitespace-nowrap select-none',
         config.className
       )}
     >

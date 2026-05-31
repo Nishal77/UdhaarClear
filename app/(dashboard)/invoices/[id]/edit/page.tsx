@@ -29,7 +29,7 @@ export default async function EditInvoicePage({ params }: { params: Promise<{ id
   return (
     <div className="max-w-2xl space-y-6">
       <PageHeader title={`Edit Invoice ${invoice.invoiceNumber}`} />
-      <div className="rounded-xl bg-white p-6 shadow-sm border border-gray-200">
+      <div className="rounded-xl bg-white p-6  border border-gray-200">
         <InvoiceForm
           customers={customers}
           invoiceId={id}

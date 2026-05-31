@@ -146,25 +146,25 @@ export default async function CustomersPage() {
   return (
     <div className="space-y-6">
       {/* ── Page Header ── */}
-      <div className="flex items-start justify-between">
-        <div>
-          <nav className="flex items-center gap-1.5 text-[12px] text-gray-400 mb-2">
-            <Link href="/dashboard" className="hover:text-gray-600 transition-colors">Home</Link>
-            <span>›</span>
-            <span className="text-gray-600 font-medium">Customers</span>
-          </nav>
+      <div className="flex flex-col select-none">
+        <nav className="flex items-center gap-1.5 text-[12px] text-gray-400">
+          <Link href="/dashboard" className="hover:text-gray-600 transition-colors">Home</Link>
+          <span>›</span>
+          <span className="text-gray-600 font-medium">Customers</span>
+        </nav>
+        <div className="flex items-center justify-between mt-1">
           <h1 className="text-[24px] font-bold text-gray-900 leading-tight">Customers</h1>
-          <p className="mt-1 text-[13px] text-gray-400">
-            Manage your debtors and outstanding invoices
-          </p>
+          <Link
+            href="/customers/new"
+            className="flex items-center gap-2 rounded-xl bg-[#FF6A39] px-4 py-2.5 text-[13px] font-semibold text-white shadow-sm hover:bg-[#E05B2E] transition-all"
+          >
+            <HugeiconsIcon icon={Add01Icon} size={15} />
+            Add Customer
+          </Link>
         </div>
-        <Link
-          href="/customers/new"
-          className="flex items-center gap-2 rounded-xl bg-[#FF6A39] px-4 py-2.5 text-[13px] font-semibold text-white shadow-sm hover:bg-[#E05B2E] transition-all"
-        >
-          <HugeiconsIcon icon={Add01Icon} size={15} />
-          Add Customer
-        </Link>
+        <p className="mt-1 text-[13px] text-gray-400">
+          Manage your debtors and outstanding invoices
+        </p>
       </div>
 
       {/* ── Stat Cards (Unified Premium Row) ── */}

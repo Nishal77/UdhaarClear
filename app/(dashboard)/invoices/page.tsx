@@ -9,10 +9,6 @@ import { startOfMonth } from 'date-fns'
 import { HugeiconsIcon } from '@hugeicons/react'
 import {
   InvoiceIcon,
-  AlertCircleIcon,
-  CheckmarkCircle01Icon,
-  RupeeCircleIcon,
-  Clock01Icon,
   Add01Icon,
 } from '@hugeicons/core-free-icons'
 
@@ -23,6 +19,106 @@ const STATUS_TABS = [
   { label: 'Pending',  value: 'PENDING' },
   { label: 'Paid',     value: 'PAID' },
 ] as const
+
+// ─── Sample data shown when no real invoices exist ────────────────────────────
+const SAMPLE_INVOICES = [
+  {
+    id: 'sample-inv-1',
+    businessId: 'demo',
+    customerId: 'sample-cust-1',
+    invoiceNumber: 'INV-2026-001',
+    amount: 185000.00,
+    paidAmount: 0.00,
+    description: 'Bulk cotton shipment delivery',
+    invoiceDate: new Date('2026-04-10'),
+    dueDate: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000), // 15 days overdue
+    creditDays: 30,
+    status: 'OVERDUE',
+    customer: {
+      id: 'sample-cust-1',
+      name: 'Ramesh Traders Pvt. Ltd.',
+      phone: '+91 98200 11223',
+      city: 'Mumbai',
+    },
+  },
+  {
+    id: 'sample-inv-2',
+    businessId: 'demo',
+    customerId: 'sample-cust-3',
+    invoiceNumber: 'INV-2026-002',
+    amount: 640000.00,
+    paidAmount: 200000.00,
+    description: 'Steel structural framing parts',
+    invoiceDate: new Date('2026-03-15'),
+    dueDate: new Date(Date.now() - 42 * 24 * 60 * 60 * 1000), // 42 days overdue
+    creditDays: 30,
+    status: 'OVERDUE',
+    customer: {
+      id: 'sample-cust-3',
+      name: 'Bharat Steel Works',
+      phone: '+91 99000 77811',
+      city: 'Pune',
+    },
+  },
+  {
+    id: 'sample-inv-3',
+    businessId: 'demo',
+    customerId: 'sample-cust-2',
+    invoiceNumber: 'INV-2026-003',
+    amount: 88500.00,
+    paidAmount: 0.00,
+    description: 'Custom silk weaves batch 4',
+    invoiceDate: new Date('2026-05-01'),
+    dueDate: new Date(Date.now() + 8 * 24 * 60 * 60 * 1000), // Due in 8 days
+    creditDays: 30,
+    status: 'PENDING',
+    customer: {
+      id: 'sample-cust-2',
+      name: 'Sunita Fabrics',
+      phone: '+91 87321 54210',
+      city: 'Surat',
+    },
+  },
+  {
+    id: 'sample-inv-4',
+    businessId: 'demo',
+    customerId: 'sample-cust-4',
+    invoiceNumber: 'INV-2026-004',
+    amount: 215000.00,
+    paidAmount: 0.00,
+    description: 'OEM brake discs & caliper sets',
+    invoiceDate: new Date('2026-05-10'),
+    dueDate: new Date(Date.now()), // Due today
+    creditDays: 15,
+    status: 'DUE',
+    customer: {
+      id: 'sample-cust-4',
+      name: 'Kaveri Auto Parts',
+      phone: '+91 93456 22890',
+      city: 'Bengaluru',
+    },
+  },
+  {
+    id: 'sample-inv-5',
+    businessId: 'demo',
+    customerId: 'sample-cust-5',
+    invoiceNumber: 'INV-2026-005',
+    amount: 47000.00,
+    paidAmount: 47000.00,
+    description: 'High-grade handicraft exports',
+    invoiceDate: new Date('2026-05-15'),
+    dueDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+    paidAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000),
+    creditDays: 10,
+    status: 'PAID',
+    customer: {
+      id: 'sample-cust-5',
+      name: 'Priya Exports & Co.',
+      phone: '+91 82200 65432',
+      city: 'Delhi',
+    },
+  },
+]
 
 export default async function InvoicesPage({
   searchParams,
@@ -42,168 +138,205 @@ export default async function InvoicesPage({
   const { status } = await searchParams
   const businessId = dbUser.ownedBusiness.id
 
-  // Fetch filtered invoices
-  const invoices = await prisma.invoice.findMany({
+  // Fetch real invoices
+  const realInvoices = await prisma.invoice.findMany({
     where: {
       businessId,
-      ...(status ? { status: status as never } : {}),
     },
     include: { customer: true },
     orderBy: { dueDate: 'asc' },
   })
 
-  // Aggregate stats (always across ALL invoices)
-  const [overdueAgg, paidAgg, pendingAgg, totalAgg] = await Promise.all([
-    prisma.invoice.aggregate({
-      where: { businessId, status: 'OVERDUE' },
-      _sum: { amount: true },
-      _count: true,
-    }),
-    prisma.invoice.aggregate({
-      where: { businessId, status: 'PAID', paidAt: { gte: startOfMonth(new Date()) } },
-      _sum: { paidAmount: true },
-      _count: true,
-    }),
-    prisma.invoice.aggregate({
-      where: { businessId, status: { in: ['PENDING', 'DUE'] } },
-      _sum: { amount: true },
-      _count: true,
-    }),
-    prisma.invoice.aggregate({
-      where: { businessId, status: { in: ['PENDING', 'DUE', 'OVERDUE', 'PARTIALLY_PAID'] } },
-      _sum: { amount: true },
-    }),
-  ])
+  const isSampleData = realInvoices.length === 0
 
-  const stats = [
-    {
-      label: 'Total Outstanding',
-      value: formatINRCompact(Number(totalAgg._sum.amount ?? 0)),
-      sub: 'Pending + Overdue',
-      accentBar: 'bg-brand-500',
-      iconBg: 'bg-brand-500',
-      icon: RupeeCircleIcon,
-    },
-    {
-      label: 'Overdue Invoices',
-      value: overdueAgg._count.toString(),
-      sub: formatINRCompact(Number(overdueAgg._sum.amount ?? 0)) + ' at risk',
-      accentBar: 'bg-red-500',
-      iconBg: 'bg-red-500',
-      icon: AlertCircleIcon,
-    },
-    {
-      label: 'Pending / Due',
-      value: pendingAgg._count.toString(),
-      sub: formatINRCompact(Number(pendingAgg._sum.amount ?? 0)),
-      accentBar: 'bg-amber-500',
-      iconBg: 'bg-amber-500',
-      icon: Clock01Icon,
-    },
-    {
-      label: 'Recovered This Month',
-      value: formatINRCompact(Number(paidAgg._sum.paidAmount ?? 0)),
-      sub: `${paidAgg._count} paid this month`,
-      accentBar: 'bg-emerald-500',
-      iconBg: 'bg-emerald-500',
-      icon: CheckmarkCircle01Icon,
-    },
-  ]
+  // Filter sample invoices client-side if status filter is active
+  const filteredSampleInvoices = status
+    ? SAMPLE_INVOICES.filter(i => i.status === status)
+    : SAMPLE_INVOICES
+
+  const displayInvoices = isSampleData
+    ? (filteredSampleInvoices as unknown as typeof realInvoices)
+    : realInvoices.filter(i => !status || i.status === status)
+
+  // Aggregate stats (always across ALL invoices)
+  let overdueSum = 0
+  let paidSum = 0
+  let pendingSum = 0
+  let totalOutstanding = 0
+
+  let allCount = 0
+  let overdueCount = 0
+  let dueCount = 0
+  let pendingCount = 0
+  let paidCount = 0
+
+  if (isSampleData) {
+    allCount = SAMPLE_INVOICES.length
+    overdueCount = SAMPLE_INVOICES.filter(i => i.status === 'OVERDUE').length
+    dueCount = SAMPLE_INVOICES.filter(i => i.status === 'DUE').length
+    pendingCount = SAMPLE_INVOICES.filter(i => i.status === 'PENDING').length
+    paidCount = SAMPLE_INVOICES.filter(i => i.status === 'PAID').length
+
+    totalOutstanding = SAMPLE_INVOICES
+      .filter((i) => ['PENDING', 'DUE', 'OVERDUE', 'PARTIALLY_PAID'].includes(i.status))
+      .reduce((sum, i) => sum + i.amount, 0)
+
+    overdueSum = SAMPLE_INVOICES
+      .filter((i) => i.status === 'OVERDUE')
+      .reduce((sum, i) => sum + i.amount, 0)
+
+    pendingSum = SAMPLE_INVOICES
+      .filter((i) => ['PENDING', 'DUE'].includes(i.status))
+      .reduce((sum, i) => sum + i.amount, 0)
+
+    paidSum = SAMPLE_INVOICES
+      .filter((i) => i.status === 'PAID')
+      .reduce((sum, i) => sum + i.paidAmount, 0)
+  } else {
+    const [
+      overdueAgg,
+      paidAgg,
+      pendingAgg,
+      totalAgg,
+      dbAllCount,
+      dbOverdueCount,
+      dbDueCount,
+      dbPendingCount,
+      dbPaidCount
+    ] = await Promise.all([
+      prisma.invoice.aggregate({
+        where: { businessId, status: 'OVERDUE' },
+        _sum: { amount: true },
+        _count: true,
+      }),
+      prisma.invoice.aggregate({
+        where: { businessId, status: 'PAID', paidAt: { gte: startOfMonth(new Date()) } },
+        _sum: { paidAmount: true },
+        _count: true,
+      }),
+      prisma.invoice.aggregate({
+        where: { businessId, status: { in: ['PENDING', 'DUE'] } },
+        _sum: { amount: true },
+        _count: true,
+      }),
+      prisma.invoice.aggregate({
+        where: { businessId, status: { in: ['PENDING', 'DUE', 'OVERDUE', 'PARTIALLY_PAID'] } },
+        _sum: { amount: true },
+      }),
+      prisma.invoice.count({ where: { businessId } }),
+      prisma.invoice.count({ where: { businessId, status: 'OVERDUE' } }),
+      prisma.invoice.count({ where: { businessId, status: 'DUE' } }),
+      prisma.invoice.count({ where: { businessId, status: 'PENDING' } }),
+      prisma.invoice.count({ where: { businessId, status: 'PAID' } }),
+    ])
+
+    allCount = dbAllCount
+    overdueCount = dbOverdueCount
+    dueCount = dbDueCount
+    pendingCount = dbPendingCount
+    paidCount = dbPaidCount
+
+    totalOutstanding = Number(totalAgg._sum.amount ?? 0)
+    overdueSum = Number(overdueAgg._sum.amount ?? 0)
+    pendingSum = Number(pendingAgg._sum.amount ?? 0)
+    paidSum = Number(paidAgg._sum.paidAmount ?? 0)
+  }
 
   return (
     <div className="space-y-6">
       {/* ── Page Header ── */}
-      <div className="flex items-start justify-between">
-        <div>
-          <nav className="flex items-center gap-1.5 text-[12px] text-gray-400 mb-2">
-            <Link href="/dashboard" className="hover:text-gray-600 transition-colors">Home</Link>
-            <span>›</span>
-            <span className="text-gray-600 font-medium">Invoices</span>
-          </nav>
+      <div className="flex flex-col select-none">
+        <nav className="flex items-center gap-1.5 text-[12px] text-gray-400">
+          <Link href="/dashboard" className="hover:text-gray-600 transition-colors">Home</Link>
+          <span>›</span>
+          <span className="text-gray-600 font-medium">Invoices</span>
+        </nav>
+        <div className="flex items-center justify-between mt-1">
           <h1 className="text-[24px] font-bold text-gray-900 leading-tight">Invoices</h1>
-          <p className="mt-1 text-[13px] text-gray-400">
-            Track, manage, and collect on all your outstanding invoices
-          </p>
+          <Link
+            href="/invoices/new"
+            className="flex items-center gap-2 rounded-xl bg-[#FF6A39] px-4 py-2.5 text-[13px] font-semibold text-white shadow-sm hover:bg-[#E05B2E] transition-all"
+          >
+            <HugeiconsIcon icon={Add01Icon} size={15} />
+            Add Invoice
+          </Link>
         </div>
-        <Link
-          href="/invoices/new"
-          className="flex items-center gap-2 rounded-xl bg-[#FF6A39] px-4 py-2.5 text-[13px] font-semibold text-white shadow-sm hover:bg-[#E05B2E] transition-all"
-        >
-          <HugeiconsIcon icon={Add01Icon} size={15} />
-          Add Invoice
-        </Link>
+        <p className="mt-1 text-[13px] text-gray-400">
+          Track, manage, and collect on all your outstanding invoices
+        </p>
       </div>
 
-      {/* ── Stat Cards ── */}
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        {stats.map((s) => (
-          <div
-            key={s.label}
-            className="relative overflow-hidden rounded-2xl bg-white border border-[#EBEAE6]/60 shadow-sm"
-          >
-            <div className={`absolute top-0 left-0 right-0 h-[3px] ${s.accentBar}`} />
-            <div className="p-5 pt-6">
-              <div className="flex items-start justify-between mb-3">
-                <p className="text-[12px] font-semibold text-gray-500">{s.label}</p>
-                <div className={`flex h-8 w-8 items-center justify-center rounded-xl ${s.iconBg}`}>
-                  <HugeiconsIcon icon={s.icon} size={15} className="text-white" />
-                </div>
-              </div>
-              <p className="text-[26px] font-bold text-gray-900 leading-none tracking-tight">
-                {s.value}
-              </p>
-              <p className="mt-2 text-[11px] text-gray-400">{s.sub}</p>
+      {/* ── Stat Cards (Unified Premium Row) ── */}
+      <div className="bg-white border border-[#EBEAE6]/60 rounded-[22px] overflow-hidden select-none">
+        <div className="grid grid-cols-1 divide-y divide-[#EBEAE6]/60 md:grid-cols-4 md:divide-y-0 md:divide-x">
+
+          {/* Column 1: Total Outstanding */}
+          <div className="px-6 py-5 flex flex-col justify-center">
+            <span className="text-[14px] font-medium text-black tracking-tight">Total Outstanding</span>
+            <div className="mt-2.5 flex items-baseline gap-1.5">
+              <span className="text-[26px] font-bold text-gray-900 tracking-tight leading-none">
+                {formatINRCompact(totalOutstanding)}
+              </span>
+              <span className="text-[11px] text-gray-400 font-medium whitespace-nowrap">
+                Pending + Overdue
+              </span>
             </div>
           </div>
-        ))}
-      </div>
 
-      {/* ── Filter Tabs ── */}
-      <div className="flex items-center gap-1 rounded-xl bg-white border border-[#EBEAE6]/60 p-1.5 w-fit shadow-sm">
-        {STATUS_TABS.map((tab) => {
-          const isActive = tab.value === status || (!tab.value && !status)
-          return (
-            <Link
-              key={tab.label}
-              href={tab.value ? `/invoices?status=${tab.value}` : '/invoices'}
-              className={`rounded-lg px-4 py-2 text-[13px] font-semibold transition-all ${
-                isActive
-                  ? 'bg-gray-900 text-white shadow-sm'
-                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
-              }`}
-            >
-              {tab.label}
-            </Link>
-          )
-        })}
-      </div>
+          {/* Column 2: Overdue Invoices */}
+          <div className="px-6 py-5 flex flex-col justify-center">
+            <span className="text-[14px] font-medium text-black tracking-tight">Overdue Invoices</span>
+            <div className="mt-2.5 flex items-baseline gap-1.5">
+              <span className={`text-[26px] font-bold tracking-tight leading-none ${overdueCount > 0 ? 'text-[#FF0000]' : 'text-gray-900'}`}>
+                {overdueCount}
+              </span>
+              <span className={`text-[11px] font-medium whitespace-nowrap ${overdueCount > 0 ? 'text-[#FF0000]' : 'text-gray-400'}`}>
+                {formatINRCompact(overdueSum)} at risk
+              </span>
+            </div>
+          </div>
 
-      {/* ── Invoice Table or Empty State ── */}
-      {invoices.length === 0 ? (
-        <div className="rounded-2xl bg-white border border-[#EBEAE6]/60 shadow-sm">
-          <EmptyState
-            icon={<HugeiconsIcon icon={InvoiceIcon} size={40} className="text-gray-300" />}
-            title={status ? `No ${status.toLowerCase()} invoices` : 'No invoices yet'}
-            description={
-              status
-                ? `No invoices with status "${status.toLowerCase()}" found`
-                : 'Add your first invoice and start recovering payments'
-            }
-            action={
-              !status ? (
-                <Link
-                  href="/invoices/new"
-                  className="rounded-xl bg-[#FF6A39] px-4 py-2.5 text-[13px] font-semibold text-white hover:bg-[#E05B2E] transition-all"
-                >
-                  Add First Invoice
-                </Link>
-              ) : undefined
-            }
-          />
+          {/* Column 3: Pending / Due */}
+          <div className="px-6 py-5 flex flex-col justify-center">
+            <span className="text-[14px] font-medium text-black tracking-tight">Pending / Due</span>
+            <div className="mt-2.5 flex items-baseline gap-1.5">
+              <span className="text-[26px] font-bold text-gray-900 tracking-tight leading-none">
+                {pendingCount + dueCount}
+              </span>
+              <span className="text-[11px] text-[#FF8C42] font-medium whitespace-nowrap">
+                {formatINRCompact(pendingSum)} pending
+              </span>
+            </div>
+          </div>
+
+          {/* Column 4: Recovered This Month */}
+          <div className="px-6 py-5 flex flex-col justify-center">
+            <span className="text-[14px] font-medium text-black tracking-tight">Recovered This Month</span>
+            <div className="mt-2.5 flex items-baseline gap-1.5">
+              <span className="text-[26px] font-bold text-gray-900 tracking-tight leading-none">
+                {formatINRCompact(paidSum)}
+              </span>
+              <span className="text-[11px] text-[#34C759] font-medium whitespace-nowrap">
+                {paidCount} paid this month
+              </span>
+            </div>
+          </div>
+
         </div>
-      ) : (
-        <InvoiceTable invoices={invoices} />
-      )}
+      </div>
+
+      {/* ── Invoice Table Panel ── */}
+      <InvoiceTable
+        invoices={displayInvoices}
+        counts={{
+          ALL: allCount,
+          OVERDUE: overdueCount,
+          DUE: dueCount,
+          PENDING: pendingCount,
+          PAID: paidCount,
+        }}
+        activeStatus={status}
+      />
     </div>
   )
 }

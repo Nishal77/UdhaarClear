@@ -49,82 +49,82 @@ export function CustomerForm({ defaultValues, customerId }: CustomerFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <div>
-          <label className="block text-sm font-medium text-gray-700">Business Name *</label>
+          <label className="block text-[13px] font-semibold text-gray-800 tracking-tight">Business Name *</label>
           <input
             {...register('name')}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+            className="mt-1.5 block w-full bg-[#F8F8F7] hover:bg-[#F3F3F2] border border-[#EBEAE6] focus:border-[#FF6A39] rounded-xl px-4 py-2.5 text-[13px] text-gray-800 placeholder-gray-400 focus:outline-none focus:bg-white focus:ring-4 focus:ring-[#FF6A39]/10 transition-all duration-200"
             placeholder="Ramesh Traders"
           />
-          {errors.name && <p className="mt-1 text-xs text-red-600">{errors.name.message}</p>}
+          {errors.name && <p className="mt-1.5 text-xs text-red-600 font-medium">{errors.name.message}</p>}
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Contact Person</label>
+          <label className="block text-[13px] font-semibold text-gray-800 tracking-tight">Contact Person</label>
           <input
             {...register('contactName')}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none"
+            className="mt-1.5 block w-full bg-[#F8F8F7] hover:bg-[#F3F3F2] border border-[#EBEAE6] focus:border-[#FF6A39] rounded-xl px-4 py-2.5 text-[13px] text-gray-800 placeholder-gray-400 focus:outline-none focus:bg-white focus:ring-4 focus:ring-[#FF6A39]/10 transition-all duration-200"
             placeholder="Ramesh Gupta"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">WhatsApp Number *</label>
+          <label className="block text-[13px] font-semibold text-gray-800 tracking-tight">WhatsApp Number *</label>
           <input
             {...register('phone')}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+            className="mt-1.5 block w-full bg-[#F8F8F7] hover:bg-[#F3F3F2] border border-[#EBEAE6] focus:border-[#FF6A39] rounded-xl px-4 py-2.5 text-[13px] text-gray-800 placeholder-gray-400 focus:outline-none focus:bg-white focus:ring-4 focus:ring-[#FF6A39]/10 transition-all duration-200"
             placeholder="+91 98765 43210"
           />
-          {errors.phone && <p className="mt-1 text-xs text-red-600">{errors.phone.message}</p>}
+          {errors.phone && <p className="mt-1.5 text-xs text-red-600 font-medium">{errors.phone.message}</p>}
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Email</label>
+          <label className="block text-[13px] font-semibold text-gray-800 tracking-tight">Email</label>
           <input
             {...register('email')}
             type="email"
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none"
+            className="mt-1.5 block w-full bg-[#F8F8F7] hover:bg-[#F3F3F2] border border-[#EBEAE6] focus:border-[#FF6A39] rounded-xl px-4 py-2.5 text-[13px] text-gray-800 placeholder-gray-400 focus:outline-none focus:bg-white focus:ring-4 focus:ring-[#FF6A39]/10 transition-all duration-200"
             placeholder="ramesh@example.com"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">GSTIN</label>
+          <label className="block text-[13px] font-semibold text-gray-800 tracking-tight">GSTIN</label>
           <input
             {...register('gstin')}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm font-mono focus:border-brand-500 focus:outline-none"
+            className="mt-1.5 block w-full bg-[#F8F8F7] hover:bg-[#F3F3F2] border border-[#EBEAE6] focus:border-[#FF6A39] rounded-xl px-4 py-2.5 text-[13px] text-gray-800 font-mono placeholder-gray-400 focus:outline-none focus:bg-white focus:ring-4 focus:ring-[#FF6A39]/10 transition-all duration-200"
             placeholder="29AABCU9603R1ZX"
           />
-          {errors.gstin && <p className="mt-1 text-xs text-red-600">{errors.gstin.message}</p>}
+          {errors.gstin && <p className="mt-1.5 text-xs text-red-600 font-medium">{errors.gstin.message}</p>}
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">City</label>
+          <label className="block text-[13px] font-semibold text-gray-800 tracking-tight">City</label>
           <input
             {...register('city')}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none"
+            className="mt-1.5 block w-full bg-[#F8F8F7] hover:bg-[#F3F3F2] border border-[#EBEAE6] focus:border-[#FF6A39] rounded-xl px-4 py-2.5 text-[13px] text-gray-800 placeholder-gray-400 focus:outline-none focus:bg-white focus:ring-4 focus:ring-[#FF6A39]/10 transition-all duration-200"
             placeholder="Mumbai"
           />
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700">Address</label>
+        <label className="block text-[13px] font-semibold text-gray-800 tracking-tight">Address</label>
         <textarea
           {...register('address')}
           rows={2}
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none"
+          className="mt-1.5 block w-full bg-[#F8F8F7] hover:bg-[#F3F3F2] border border-[#EBEAE6] focus:border-[#FF6A39] rounded-xl px-4 py-2.5 text-[13px] text-gray-800 placeholder-gray-400 focus:outline-none focus:bg-white focus:ring-4 focus:ring-[#FF6A39]/10 transition-all duration-200 resize-none"
           placeholder="Shop 12, MG Road..."
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700">Default Reminder Tone</label>
+        <label className="block text-[13px] font-semibold text-gray-800 tracking-tight">Default Reminder Tone</label>
         <select
           {...register('defaultTone')}
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none"
+          className="mt-1.5 block w-full bg-[#F8F8F7] hover:bg-[#F3F3F2] border border-[#EBEAE6] focus:border-[#FF6A39] rounded-xl px-4 py-2.5 text-[13px] text-gray-800 focus:outline-none focus:bg-white focus:ring-4 focus:ring-[#FF6A39]/10 transition-all duration-200"
         >
           <option value="GENTLE">Gentle — Friendly reminders</option>
           <option value="FIRM">Firm — Direct payment request</option>
@@ -133,11 +133,11 @@ export function CustomerForm({ defaultValues, customerId }: CustomerFormProps) {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700">Private Notes</label>
+        <label className="block text-[13px] font-semibold text-gray-800 tracking-tight">Private Notes</label>
         <textarea
           {...register('notes')}
           rows={2}
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none"
+          className="mt-1.5 block w-full bg-[#F8F8F7] hover:bg-[#F3F3F2] border border-[#EBEAE6] focus:border-[#FF6A39] rounded-xl px-4 py-2.5 text-[13px] text-gray-800 placeholder-gray-400 focus:outline-none focus:bg-white focus:ring-4 focus:ring-[#FF6A39]/10 transition-all duration-200 resize-none"
           placeholder="Notes about this customer (not shared)"
         />
       </div>
@@ -146,14 +146,14 @@ export function CustomerForm({ defaultValues, customerId }: CustomerFormProps) {
         <button
           type="button"
           onClick={() => router.back()}
-          className="rounded-lg border border-gray-300 px-5 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          className="rounded-xl border border-gray-200 bg-white hover:bg-gray-50 px-6 py-2.5 text-[13px] font-semibold text-gray-700 transition-all duration-200 select-none cursor-pointer"
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={isSubmitting}
-          className="rounded-lg bg-brand-500 px-5 py-2 text-sm font-medium text-white hover:bg-brand-600 disabled:opacity-50"
+          className="rounded-xl bg-[#FF6A39] hover:bg-[#E05B2E] disabled:opacity-50 px-6 py-2.5 text-[13px] font-semibold text-white transition-all duration-200 select-none  cursor-pointer"
         >
           {isSubmitting ? 'Saving...' : customerId ? 'Save Changes' : 'Add Customer'}
         </button>
