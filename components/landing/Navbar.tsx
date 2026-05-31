@@ -21,16 +21,16 @@ export default function Navbar() {
       </Link>
 
       {/* Center Navigation Pill */}
-      <div className="hidden md:flex items-center gap-1 bg-[#F8F8F8] rounded-full p-1.5">
+      <div className="hidden md:flex items-center gap-1 bg-gray-200 rounded-full p-1.5">
         <Link
           href="#"
           className="flex items-center px-5 py-2 text-base font-medium text-[#0047FF] bg-[#EEF2FF] rounded-full transition-all duration-200"
         >
           <span className="w-1.5 h-1.5 rounded-full bg-[#0047FF] mr-2 shrink-0" />
-          Features
+          Product
         </Link>
         <Link
-          href="#"
+          href="#"  
           className="px-5 py-2 text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-200/30 rounded-full transition-all duration-200"
         >
         How it works
@@ -39,13 +39,25 @@ export default function Navbar() {
           href="#"
           className="px-5 py-2 text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-200/30 rounded-full transition-all duration-200"
         >
-          Pricing 
+          Features 
         </Link>
         <Link
           href="#"
           className="px-5 py-2 text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-200/30 rounded-full transition-all duration-200"
         >
-          FAQ
+          Pricing
+        </Link>
+        <Link
+          href="#"
+          className="px-5 py-2 text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-200/30 rounded-full transition-all duration-200"
+        >
+          For CAs
+        </Link>
+        <Link
+          href="#"
+          className="px-5 py-2 text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-200/30 rounded-full transition-all duration-200"
+        >
+          Resources
         </Link>
         {/* <Link
           href="#"
