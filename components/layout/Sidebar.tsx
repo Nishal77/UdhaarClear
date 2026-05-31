@@ -38,10 +38,10 @@ const MAIN_NAV_ITEMS = [
 
 
 const RECOVERY_NAV_ITEMS = [
-  { href: '/reminders', label: 'Tone Engine', icon: Megaphone02Icon },
-  { href: '/settings/payments', label: 'Payments', icon: CreditCardIcon },
-  { href: '/settings/legal-notices', label: 'Legal Notices', icon: NotificationSquareIcon },
-  { href: '/settings/reminder-customisation', label: 'Customise Reminders', icon: Settings02Icon },
+  { href: '/tone-engine', label: 'Tone Engine', icon: Megaphone02Icon },
+  { href: '/payments', label: 'Payments', icon: CreditCardIcon },
+  { href: '/legal-notices', label: 'Legal Notices', icon: NotificationSquareIcon },
+  { href: '/reminder-customisation', label: 'Customise Reminders', icon: Settings02Icon },
 ]
 
 const INSIGHTS_NAV_ITEMS = [
@@ -64,13 +64,12 @@ export function Sidebar({ userName = 'User', userEmail = 'user@example.com', bus
       <div className="flex flex-col">
         {/* Logo Section */}
         <div className="mb-6 px-3">
-          <Link href="/dashboard" className="flex items-center gap-3.5">
-            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#033E35] shadow-sm shrink-0">
-              <svg className="w-5.5 h-5.5 text-[#C2F970]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 3v18M3 12h18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
-                <circle cx="12" cy="12" r="5" fill="currentColor" />
-              </svg>
-            </div>
+          <Link href="/dashboard" className="flex items-center gap-2">
+            <img
+              src="/logo-main.png"
+              alt="UdhaarClear Logo"
+              className="h-11 w-auto shrink-0 select-none"
+            />
             <div className="flex flex-col">
               <span className="text-[15px] font-bold text-gray-900 leading-tight">UdhaarClear</span>
               <span className="text-[11px] text-gray-400 font-medium mt-0.5">Dashboard</span>
