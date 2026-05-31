@@ -42,7 +42,7 @@ export default function Navbar() {
           Features 
         </Link>
         <Link
-          href="#"
+          href="#pricing"
           className="px-5 py-2 text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-200/30 rounded-full transition-all duration-200"
         >
           Pricing
