@@ -1,6 +1,7 @@
 import { Sidebar } from '@/components/layout/Sidebar'
 import { MobileNav } from '@/components/layout/MobileNav'
 import { TopBar } from '@/components/layout/TopBar'
+import { DashboardClientShell } from '@/components/layout/DashboardClientShell'
 import { createClient } from '@/lib/supabase/server'
 import { prisma } from '@/lib/prisma/client'
 
@@ -29,17 +30,19 @@ export default async function DashboardLayout({ children }: { children: React.Re
   }
 
   return (
-    <div className="flex h-full bg-white">
-      <div className="hidden md:flex md:flex-shrink-0 bg-white">
-        <Sidebar userName={userName} userEmail={userEmail} businessName={businessName} />
+    <DashboardClientShell>
+      <div className="flex h-full bg-white">
+        <div className="hidden md:flex md:flex-shrink-0 bg-white">
+          <Sidebar userName={userName} userEmail={userEmail} businessName={businessName} />
+        </div>
+        <div className="flex flex-1 flex-col overflow-hidden bg-white">
+          <TopBar userName={userName} businessName={businessName} userEmail={userEmail} />
+          <main className="flex-1 overflow-y-auto bg-[#F5F3EF] rounded-tl-[36px] pt-8 px-6 pb-20 md:px-8 md:pb-8">
+            {children}
+          </main>
+        </div>
+        <MobileNav />
       </div>
-      <div className="flex flex-1 flex-col overflow-hidden bg-white">
-        <TopBar userName={userName} businessName={businessName} userEmail={userEmail} />
-        <main className="flex-1 overflow-y-auto bg-[#F5F3EF] rounded-tl-[36px] pt-8 px-6 pb-20 md:px-8 md:pb-8">
-          {children}
-        </main>
-      </div>
-      <MobileNav />
-    </div>
+    </DashboardClientShell>
   )
 }
