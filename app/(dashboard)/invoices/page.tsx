@@ -11,6 +11,7 @@ import {
   InvoiceIcon,
   Add01Icon,
 } from '@hugeicons/core-free-icons'
+import { CategoryBar } from '@/components/ui/CategoryBar'
 
 const STATUS_TABS = [
   { label: 'All',      value: undefined },
@@ -30,10 +31,10 @@ const SAMPLE_INVOICES = [
     amount: 185000.00,
     paidAmount: 0.00,
     description: 'Bulk cotton shipment delivery',
-    invoiceDate: new Date('2026-04-10'),
-    dueDate: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000), // 15 days overdue
+    invoiceDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days outstanding (0-7 days, green)
+    dueDate: new Date(Date.now() + 27 * 24 * 60 * 60 * 1000), 
     creditDays: 30,
-    status: 'OVERDUE',
+    status: 'PENDING',
     customer: {
       id: 'sample-cust-1',
       name: 'Ramesh Traders Pvt. Ltd.',
@@ -49,8 +50,8 @@ const SAMPLE_INVOICES = [
     amount: 640000.00,
     paidAmount: 200000.00,
     description: 'Steel structural framing parts',
-    invoiceDate: new Date('2026-03-15'),
-    dueDate: new Date(Date.now() - 42 * 24 * 60 * 60 * 1000), // 42 days overdue
+    invoiceDate: new Date(Date.now() - 35 * 24 * 60 * 60 * 1000), // 35 days outstanding (22+ days, red)
+    dueDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 days overdue
     creditDays: 30,
     status: 'OVERDUE',
     customer: {
@@ -68,8 +69,8 @@ const SAMPLE_INVOICES = [
     amount: 88500.00,
     paidAmount: 0.00,
     description: 'Custom silk weaves batch 4',
-    invoiceDate: new Date('2026-05-01'),
-    dueDate: new Date(Date.now() + 8 * 24 * 60 * 60 * 1000), // Due in 8 days
+    invoiceDate: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000), // 12 days outstanding (8-21 days, orange)
+    dueDate: new Date(Date.now() + 18 * 24 * 60 * 60 * 1000), 
     creditDays: 30,
     status: 'PENDING',
     customer: {
@@ -87,10 +88,10 @@ const SAMPLE_INVOICES = [
     amount: 215000.00,
     paidAmount: 0.00,
     description: 'OEM brake discs & caliper sets',
-    invoiceDate: new Date('2026-05-10'),
-    dueDate: new Date(Date.now()), // Due today
+    invoiceDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 days outstanding (0-7 days, green)
+    dueDate: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000), 
     creditDays: 15,
-    status: 'DUE',
+    status: 'PENDING',
     customer: {
       id: 'sample-cust-4',
       name: 'Kaveri Auto Parts',
@@ -106,7 +107,7 @@ const SAMPLE_INVOICES = [
     amount: 47000.00,
     paidAmount: 47000.00,
     description: 'High-grade handicraft exports',
-    invoiceDate: new Date('2026-05-15'),
+    invoiceDate: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
     dueDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
     paidAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000),
     creditDays: 10,
@@ -242,8 +243,40 @@ export default async function InvoicesPage({
     paidSum = Number(paidAgg._sum.paidAmount ?? 0)
   }
 
+  // Aging calculations (for unpaid/outstanding invoices: PENDING, DUE, OVERDUE)
+  const unpaidInvoicesForAging = isSampleData
+    ? SAMPLE_INVOICES.filter(i => ['PENDING', 'DUE', 'OVERDUE'].includes(i.status))
+    : realInvoices.filter(i => ['PENDING', 'DUE', 'OVERDUE', 'PARTIALLY_PAID'].includes(i.status))
+
+  let onTrackCount = 0     // 0-7 days
+  let watchingCount = 0    // 8-21 days
+  let criticalCount = 0    // 22+ days
+
+  const nowMs = Date.now()
+
+  unpaidInvoicesForAging.forEach(inv => {
+    const invDate = new Date(inv.invoiceDate)
+    const diffMs = nowMs - invDate.getTime()
+    const diffDays = Math.max(0, Math.floor(diffMs / (1000 * 60 * 60 * 24)))
+
+    if (diffDays <= 7) {
+      onTrackCount++
+    } else if (diffDays <= 21) {
+      watchingCount++
+    } else {
+      criticalCount++
+    }
+  })
+
+  const totalUnpaidForAging = onTrackCount + watchingCount + criticalCount
+  
+  // Percentages (fallback to 0 if total is 0)
+  const onTrackPercent = totalUnpaidForAging > 0 ? Math.round((onTrackCount / totalUnpaidForAging) * 100) : 0
+  const watchingPercent = totalUnpaidForAging > 0 ? Math.round((watchingCount / totalUnpaidForAging) * 100) : 0
+  const criticalPercent = totalUnpaidForAging > 0 ? Math.max(0, 100 - onTrackPercent - watchingPercent) : 0
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* ── Page Header ── */}
       <div className="flex flex-col select-none">
         <nav className="flex items-center gap-1.5 text-[12px] text-gray-400">
@@ -324,6 +357,61 @@ export default async function InvoicesPage({
 
         </div>
       </div>
+
+      {/* ── Invoice Aging Distribution Card ── */}
+      {totalUnpaidForAging > 0 && (
+        <div className="bg-white border border-[#EBEAE6]/60 rounded-[22px] p-6 select-none">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+            <h3 className="text-[15px] font-bold text-gray-900 font-outfit">
+              Invoice Aging Distribution
+            </h3>
+            <div className="flex items-center gap-4 flex-wrap text-[11px] md:text-[12px] text-gray-400 font-medium">
+              <span className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-[#52BA84] shrink-0" />
+                0-7 days ({onTrackCount} {onTrackCount === 1 ? "invoice" : "invoices"})
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-[#D9791D] shrink-0" />
+                8-21 days ({watchingCount} {watchingCount === 1 ? "invoice" : "invoices"})
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-[#E14F4B] shrink-0" />
+                22+ days ({criticalCount} {criticalCount === 1 ? "invoice" : "invoices"})
+              </span>
+            </div>
+          </div>
+
+          <CategoryBar 
+            values={[onTrackPercent, watchingPercent, criticalPercent]} 
+            colors={["emerald", "amber", "red"]} 
+            showLabels={false} 
+          />
+
+          <div className="mt-3 flex justify-between items-center w-full text-[11px] md:text-[12px] font-bold font-outfit leading-none">
+            {onTrackPercent > 0 ? (
+              <span className="text-[#3B8F64]">
+                {onTrackCount} on track ({onTrackPercent}%)
+              </span>
+            ) : (
+              <span />
+            )}
+            {watchingPercent > 0 ? (
+              <span className="text-[#C06514]">
+                {watchingCount} watching ({watchingPercent}%)
+              </span>
+            ) : (
+              <span />
+            )}
+            {criticalPercent > 0 ? (
+              <span className="text-[#C93B37]">
+                {criticalCount} critical ({criticalPercent}%)
+              </span>
+            ) : (
+              <span />
+            )}
+          </div>
+        </div>
+      )}
 
       {/* ── Invoice Table Panel ── */}
       <InvoiceTable
