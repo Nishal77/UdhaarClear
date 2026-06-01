@@ -5,6 +5,14 @@ import { Check } from "lucide-react";
 
 export default function Pricing() {
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "yearly">("monthly");
+  const [collapsedCategories, setCollapsedCategories] = useState<Record<number, boolean>>({});
+
+  const toggleCategory = (idx: number) => {
+    setCollapsedCategories((prev) => ({
+      ...prev,
+      [idx]: !prev[idx],
+    }));
+  };
 
   const plans = [
     {
@@ -195,15 +203,40 @@ export default function Pricing() {
   const renderValue = (val: string, colName: string, isHighlighted: boolean) => {
     if (val === "Yes") {
       if (colName === "growth") {
-        return <Check className="w-5 h-5 mx-auto text-[#4F46E5]" strokeWidth={3.5} />;
+        return (
+          <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#4F46E5] text-white shadow-sm">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+          </span>
+        );
       }
       if (colName === "ca") {
-        return <Check className="w-5 h-5 mx-auto text-[#8B5CF6]" strokeWidth={3.5} />;
+        return (
+          <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#8B5CF6] text-white shadow-sm">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+          </span>
+        );
       }
-      return <Check className="w-5 h-5 mx-auto text-gray-400" strokeWidth={2.5} />;
+      return (
+        <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-gray-800 text-white shadow-sm">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+        </span>
+      );
     }
     if (val === "No") {
-      return <span className="text-gray-300 font-light text-base">—</span>;
+      return (
+        <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-gray-100 text-gray-400">
+          <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </span>
+      );
     }
 
     // Purple highlights for CA Plan
@@ -241,7 +274,7 @@ export default function Pricing() {
   };
 
   return (
-    <section id="pricing" className="relative w-full bg-[#FFFFFF] py-20 md:py-28 lg:py-32 overflow-hidden border-b border-gray-100">
+    <section id="pricing" className="relative w-full bg-[#FFFFFF] py-20 md:py-28 lg:py-32 border-b border-gray-100">
       {/* Decorative background grid and lights */}
       <div 
         className="absolute inset-0 opacity-10 pointer-events-none"
@@ -363,75 +396,138 @@ export default function Pricing() {
             );
           })}
         </div>
-
-        {/* 5.2 Full Feature Matrix Comparison Table */}
         <div className="mt-24 md:mt-32 max-w-[1280px] mx-auto text-left">
-          <h3 className="text-2xl md:text-3xl font-medium text-gray-900 tracking-tight font-outfit mb-12 text-center">
-            Compare Features
-          </h3>
-          <div className="w-full overflow-x-auto">
-            <table className="w-full border-collapse text-left min-w-[800px]">
+          <div className="w-full overflow-x-auto lg:overflow-visible bg-transparent">
+            <table className="w-full border-separate border-spacing-0 text-left min-w-[900px]">
               <thead>
                 <tr>
-                  <th className="py-5 pr-4 text-xs md:text-sm font-semibold text-gray-400 uppercase tracking-wider font-outfit w-[40%] border-b border-gray-200/50">
-                    Features
-                  </th>
-                  <th className="py-5 px-4 text-xl md:text-2xl font-semibold text-gray-900 font-outfit text-center w-[15%] border-b border-gray-200/50">
-                    Starter
-                  </th>
-                  <th className="py-5 px-4 text-xl md:text-2xl font-semibold text-[#4F46E5] font-outfit text-center w-[15%] border-b border-gray-200/50">
-                    <div className="inline-flex items-center gap-1.5 justify-center">
-                      <span>Growth</span>
-                      <span className="bg-[#FF6B00] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full tracking-wider">
-                        POPULAR
-                      </span>
+                  {/* Left-hand column header showing table title/description */}
+                  <th className="py-8 pr-6 bg-white border-b border-gray-200 w-[30%] sticky top-[70px] md:top-[96px] z-30 text-left">
+                    <div className="flex flex-col gap-2 h-full justify-end pb-3">
+                      <h4 className="text-xl md:text-2xl lg:text-3xl font-semibold text-gray-900 font-outfit tracking-tight leading-tight">
+                        Compare plans
+                      </h4>
+                      <p className="text-xs md:text-sm text-gray-500 font-medium leading-relaxed">
+                        Compare detailed features across all plans.
+                      </p>
                     </div>
                   </th>
-                  <th className="py-5 px-4 text-xl md:text-2xl font-semibold text-gray-900 font-outfit text-center w-[15%] border-b border-gray-200/50">
-                    Scale
-                  </th>
-                  <th className="py-5 px-4 text-xl md:text-2xl font-semibold text-gray-900 font-outfit text-center w-[15%] border-b border-gray-200/50">
-                    CA Plan
-                  </th>
+                  {/* Cards for each plan */}
+                  {plans.map((plan, idx) => {
+                    const price = billingPeriod === "monthly" ? plan.monthlyPrice : plan.yearlyPrice;
+                    const isGrowth = plan.name === "Growth";
+                    return (
+                      <th
+                        key={idx}
+                        className="py-8 px-4 bg-white border-b border-gray-200 w-[17.5%] align-top text-center sticky top-[70px] md:top-[96px] z-30 border-l border-gray-200/50"
+                      >
+                        <div className="flex flex-col items-center w-full">
+                          <span className="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-widest font-outfit">
+                            {plan.name === "CA / Agency" ? "CA & AGENCY PLAN" : `${plan.name.toUpperCase()} PLAN`}
+                          </span>
+                          
+                          <div className="mt-2 flex items-baseline justify-center gap-0.5">
+                            <span className="text-2xl md:text-3xl lg:text-4xl font-semibold text-gray-900 tracking-tight font-outfit">
+                              ₹{price.toLocaleString("en-IN")}
+                            </span>
+                            <span className="text-xs md:text-sm font-semibold text-gray-500">
+                              {plan.periodLabel[billingPeriod]}
+                            </span>
+                          </div>
+
+                          <span className="mt-1 text-[10px] md:text-xs text-gray-500 font-medium">
+                            {billingPeriod === "monthly" 
+                              ? "Billed monthly" 
+                              : `₹${(price * 12).toLocaleString("en-IN")} billed annually`
+                            }
+                          </span>
+
+                          <button
+                            className={`mt-4 px-6 py-2 rounded-full text-xs font-semibold transition-all duration-150 cursor-pointer ${
+                              isGrowth
+                                ? "bg-[#4F46E5] text-white hover:bg-[#4338CA] active:scale-95 shadow-sm"
+                                : "bg-gray-100 text-gray-750 hover:bg-gray-200 active:scale-95"
+                            }`}
+                          >
+                            {plan.name === "CA / Agency" ? "Get Started" : "Start Trial"}
+                          </button>
+
+                          <p className="mt-3 text-[10px] md:text-xs text-gray-500 font-medium max-w-[150px] leading-normal">
+                            {plan.description}
+                          </p>
+                        </div>
+                      </th>
+                    );
+                  })}
                 </tr>
               </thead>
               <tbody>
-                {categories.map((category, catIdx) => (
-                  <React.Fragment key={catIdx}>
-                    {/* Category Header Row */}
-                    <tr>
-                      <td
-                        colSpan={5}
-                        className="pt-12 pb-4 text-base md:text-lg font-bold text-gray-900 uppercase tracking-wider border-b border-gray-200/50 font-outfit"
-                      >
-                        {category.name}
-                      </td>
-                    </tr>
-                    {/* Feature Rows */}
-                    {category.features.map((feature, featIdx) => (
+                {categories.map((category, catIdx) => {
+                  const isCollapsed = !!collapsedCategories[catIdx];
+                  return (
+                    <React.Fragment key={catIdx}>
+                      {/* Category Header Row (Collapsible) */}
                       <tr
-                        key={featIdx}
-                        className="hover:bg-gray-50/40 transition-colors duration-150"
+                        className="cursor-pointer select-none"
+                        onClick={() => toggleCategory(catIdx)}
                       >
-                        <td className="py-5 pr-4 text-sm md:text-base font-medium text-gray-800 w-[40%] border-b border-gray-100">
-                          {feature.name}
-                        </td>
-                        <td className="py-5 px-4 text-center w-[15%] border-b border-gray-100">
-                          {renderValue(feature.starter, "starter", false)}
-                        </td>
-                        <td className="py-5 px-4 text-center w-[15%] bg-[#4F46E5]/[0.015] border-b border-gray-100">
-                          {renderValue(feature.growth, "growth", true)}
-                        </td>
-                        <td className="py-5 px-4 text-center w-[15%] border-b border-gray-100">
-                          {renderValue(feature.scale, "scale", false)}
-                        </td>
-                        <td className="py-5 px-4 text-center w-[15%] border-b border-gray-100">
-                          {renderValue(feature.ca, "ca", false)}
+                        <td colSpan={5} className="pt-8 pb-3 bg-white border-b border-gray-100">
+                          <div className="flex items-center justify-between px-5 py-3 rounded-xl bg-gray-50 text-gray-800 hover:bg-gray-100/70 transition-all duration-200 font-bold text-xs md:text-sm font-outfit uppercase tracking-wider">
+                            <span>{category.name}</span>
+                            <span className={`transform transition-transform duration-200 ${isCollapsed ? "" : "rotate-180"}`}>
+                              <svg
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="3"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                <path d="m6 9 6 6 6-6" />
+                              </svg>
+                            </span>
+                          </div>
                         </td>
                       </tr>
-                    ))}
-                  </React.Fragment>
-                ))}
+
+                      {/* Feature Rows (Rendered only if not collapsed) */}
+                      {!isCollapsed &&
+                        category.features.map((feature, featIdx) => (
+                          <tr
+                            key={featIdx}
+                            className="hover:bg-gray-50/40 transition-colors duration-150"
+                          >
+                            <td className="py-4 pl-6 pr-6 text-xs md:text-sm font-medium text-gray-700 w-[30%] border-b border-gray-100 bg-white">
+                              <div className="flex items-center gap-1.5">
+                                <span>{feature.name}</span>
+                                <span className="text-gray-300 hover:text-gray-500 cursor-pointer transition-colors duration-150">
+                                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <circle cx="12" cy="12" r="10" />
+                                    <path d="M12 16v-4" />
+                                    <path d="M12 8h.01" />
+                                  </svg>
+                                </span>
+                              </div>
+                            </td>
+                            <td className="py-4 px-2 text-center w-[17.5%] border-b border-gray-100 border-l border-gray-200/30 bg-white">
+                              {renderValue(feature.starter, "starter", false)}
+                            </td>
+                            <td className="py-4 px-2 text-center w-[17.5%] bg-[#4F46E5]/[0.015] border-b border-gray-100 border-l border-gray-200/30">
+                              {renderValue(feature.growth, "growth", true)}
+                            </td>
+                            <td className="py-4 px-2 text-center w-[17.5%] border-b border-gray-100 border-l border-gray-200/30 bg-white">
+                              {renderValue(feature.scale, "scale", false)}
+                            </td>
+                            <td className="py-4 pl-2 pr-6 text-center w-[17.5%] border-b border-gray-100 border-l border-gray-200/30 bg-white">
+                              {renderValue(feature.ca, "ca", false)}
+                            </td>
+                          </tr>
+                        ))}
+                    </React.Fragment>
+                  );
+                })}
               </tbody>
             </table>
           </div>
