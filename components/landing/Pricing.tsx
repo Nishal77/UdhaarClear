@@ -2,6 +2,8 @@
 
 import React, { useState } from "react";
 import { Check } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ShoppingCart02Icon } from "@hugeicons/core-free-icons";
 
 
 
@@ -243,9 +245,9 @@ export default function Pricing() {
 
     // Purple highlights for CA Plan
     const isPurpleHighlight = colName === "ca" && (
-      val === "Unlimited" || 
-      val === "Up to 25 clients" || 
-      val === "Yes — Included" || 
+      val === "Unlimited" ||
+      val === "Up to 25 clients" ||
+      val === "Yes — Included" ||
       val === "30 days free"
     );
 
@@ -255,9 +257,9 @@ export default function Pricing() {
 
     // Bold highlights for Growth
     const isBoldHighlight = colName === "growth" && (
-      val === "Up to 300" || 
-      val === "Full" || 
-      val === "Yes — Auto" || 
+      val === "Up to 300" ||
+      val === "Full" ||
+      val === "Yes — Auto" ||
       val === "Priority WhatsApp" ||
       val === "Custom"
     );
@@ -267,9 +269,8 @@ export default function Pricing() {
     }
 
     return (
-      <span className={`text-sm md:text-base font-medium ${
-        isHighlighted ? "text-gray-900" : "text-gray-600"
-      }`}>
+      <span className={`text-sm md:text-base font-medium ${isHighlighted ? "text-gray-900" : "text-gray-600"
+        }`}>
         {val}
       </span>
     );
@@ -278,7 +279,7 @@ export default function Pricing() {
   return (
     <section id="pricing" className="relative w-full bg-[#FFFFFF] py-20 md:py-28 lg:py-32 border-b border-gray-100">
       {/* Decorative background grid and lights */}
-      <div 
+      <div
         className="absolute inset-0 opacity-10 pointer-events-none"
         style={{
           backgroundImage: `
@@ -289,47 +290,48 @@ export default function Pricing() {
       />
 
       <div className="relative max-w-[1340px] mx-auto px-6 md:px-8 z-10 text-center">
-        
+
         {/* Pricing tag badge */}
-        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-blue-200/60 bg-blue-50/40 text-[#0047FF] text-xs font-semibold tracking-wide font-outfit uppercase mb-6 shadow-sm">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="mr-0.5">
-            <circle cx="9" cy="21" r="1" />
-            <circle cx="20" cy="21" r="1" />
-            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-          </svg>
+        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-2xl border border-blue-200/60 bg-blue-50/40 text-[#0047FF] text-sm font-medium tracking-tight font-outfit  mb-6">
+          <HugeiconsIcon icon={ShoppingCart02Icon} size={14} color="#0047FF" />
           Pricing
         </div>
 
+        {/* Recover dues faster, from day one */}
+        {/* Simple, transparent pricing for every stage of your business. Start free — no credit card required. */}
+
         {/* Heading */}
         <h2 className="text-[2.75rem] md:text-[3.25rem] font-medium text-gray-900 tracking-tight leading-[1.15] font-outfit max-w-5xl mx-auto">
-          Try For Free And Start Controlling Your Finances
+          {/* Recover dues faster, from day one -  Start Small, Recover More, and Pay Only for the Follow-Up System Your Business Actually Needs. */}
+          One Recovered Invoice Can Pay for Your Plan Many Times Over.
         </h2>
+
+        <h3 className="text-[18px] md:text-lg font-medium mt-3 text-gray-600 tracking-tight leading-[1.15] font-outfit max-w-3xl mx-auto">
+          Choose the plan that fits your business and let UdhaarClear follow up, collect, and keep your cash flow moving.
+        </h3>
 
         {/* Pricing Toggle */}
         <div className="flex items-center justify-center gap-4 mt-10 mb-16">
-          <div className="relative flex bg-gray-100/80 p-1 rounded-full border border-gray-200/50 shadow-inner">
+          <div className="relative flex bg-gray-100/80 p-1 rounded-full border border-gray-200/50">
             <button
               onClick={() => setBillingPeriod("monthly")}
               className={`relative px-6 py-2 text-xs md:text-sm font-semibold rounded-full transition-all duration-300 ${billingPeriod === "monthly"
-                ? "bg-white text-gray-900 shadow"
+                ? "bg-white text-gray-900"
                 : "text-gray-500 hover:text-gray-800"
                 }`}
             >
-              Monthly
+              Pay Monthly
             </button>
             <button
               onClick={() => setBillingPeriod("yearly")}
               className={`relative px-6 py-2 text-xs md:text-sm font-semibold rounded-full transition-all duration-300 ${billingPeriod === "yearly"
-                ? "bg-white text-gray-900 shadow"
+                ? "bg-white text-gray-900"
                 : "text-gray-500 hover:text-gray-800"
                 }`}
             >
-              Yearly
+              Pay Yearly & Save 20%
             </button>
           </div>
-          <span className="flex items-center gap-1 bg-rose-50 text-rose-500 border border-rose-100 text-[10px] md:text-xs font-bold px-2.5 py-1 rounded-full shadow-sm">
-            -20% Save
-          </span>
         </div>
 
         {/* Pricing Grid */}
@@ -338,7 +340,7 @@ export default function Pricing() {
             const price = billingPeriod === "monthly" ? plan.monthlyPrice : plan.yearlyPrice;
             const periodLabel = plan.periodLabel[billingPeriod];
             const billingLabel = plan.billingLabel[billingPeriod];
-            
+
             return (
               <div
                 key={index}
@@ -408,11 +410,11 @@ export default function Pricing() {
             <p className="mt-2 text-sm md:text-base text-gray-500 font-medium leading-relaxed">
               Automate payment recovery for your outstanding bills without changing your existing accounting software.
             </p>
-            <a 
+            <a
               href="#explore"
               className="mt-6 text-[#4F46E5] hover:text-[#4338CA] font-semibold flex items-center gap-1 text-sm group"
             >
-              Explore integrations 
+              Explore integrations
               <span className="transform group-hover:translate-x-1 transition-transform duration-200">→</span>
             </a>
           </div>
@@ -504,7 +506,7 @@ export default function Pricing() {
                           <span className="text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-widest font-outfit">
                             {plan.name === "CA / Agency" ? "CA & AGENCY PLAN" : `${plan.name.toUpperCase()} PLAN`}
                           </span>
-                          
+
                           <div className="mt-2 flex items-baseline justify-center gap-0.5">
                             <span className="text-2xl md:text-3xl lg:text-4xl font-semibold text-gray-900 tracking-tight font-outfit">
                               ₹{price.toLocaleString("en-IN")}
@@ -515,18 +517,17 @@ export default function Pricing() {
                           </div>
 
                           <span className="mt-1 text-[10px] md:text-xs text-gray-500 font-medium">
-                            {billingPeriod === "monthly" 
-                              ? "Billed monthly" 
+                            {billingPeriod === "monthly"
+                              ? "Billed monthly"
                               : `₹${(price * 12).toLocaleString("en-IN")} billed annually`
                             }
                           </span>
 
                           <button
-                            className={`mt-4 px-6 py-2 rounded-full text-xs font-semibold transition-all duration-150 cursor-pointer ${
-                              isGrowth
+                            className={`mt-4 px-6 py-2 rounded-full text-xs font-semibold transition-all duration-150 cursor-pointer ${isGrowth
                                 ? "bg-[#4F46E5] text-white hover:bg-[#4338CA] active:scale-95 shadow-sm"
                                 : "bg-gray-100 text-gray-750 hover:bg-gray-200 active:scale-95"
-                            }`}
+                              }`}
                           >
                             {plan.name === "CA / Agency" ? "Get Started" : "Start Trial"}
                           </button>
