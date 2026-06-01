@@ -34,7 +34,7 @@ export function SettingsLayout({ children, title, description }: SettingsLayoutP
       </div>
 
       {/* Tabs Switcher */}
-      <div className="flex flex-row items-center overflow-x-auto bg-[#EDEDED] border border-gray-200/50 rounded-full p-1.5 w-fit max-w-full shadow-inner gap-0.5">
+      <div className="flex flex-row items-center overflow-x-auto bg-[#EDEDED] border border-gray-200/50 rounded-full p-1.5 w-fit max-w-full  gap-0.5">
         {SETTINGS_TABS.map((tab) => {
           const isActive = pathname === tab.href
           const Icon = tab.icon
@@ -44,7 +44,7 @@ export function SettingsLayout({ children, title, description }: SettingsLayoutP
               href={tab.href}
               className={`flex items-center gap-1.5 px-4 md:px-5 py-2 text-xs md:text-sm font-semibold rounded-full transition-all duration-200 shrink-0 ${
                 isActive
-                  ? "bg-white text-gray-900 shadow-sm"
+                  ? "bg-white text-gray-900"
                   : "text-gray-500 hover:text-gray-800"
               }`}
             >
