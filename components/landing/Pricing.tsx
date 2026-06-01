@@ -396,6 +396,83 @@ export default function Pricing() {
             );
           })}
         </div>
+
+        {/* Sync Integrations Banner */}
+        <div className="mt-20 max-w-[1280px] mx-auto bg-gray-50/60 border border-gray-200/40 rounded-[2.2rem] p-8 md:p-12 flex flex-col md:flex-row justify-between items-center gap-8 text-left">
+          <div className="flex flex-col max-w-xl">
+            <h3 className="text-2xl md:text-3xl font-medium text-gray-900 font-outfit tracking-tight">
+              Sync Tally, Zoho, or Excel in 1-Click
+            </h3>
+            <p className="mt-2 text-sm md:text-base text-gray-500 font-medium leading-relaxed">
+              Automate payment recovery for your outstanding bills without changing your existing accounting software.
+            </p>
+            <a 
+              href="#explore"
+              className="mt-6 text-[#4F46E5] hover:text-[#4338CA] font-semibold flex items-center gap-1 text-sm group"
+            >
+              Explore integrations 
+              <span className="transform group-hover:translate-x-1 transition-transform duration-200">→</span>
+            </a>
+          </div>
+
+          <div className="flex gap-4 md:gap-5 items-center">
+            {/* Logo 1: Tally */}
+            <div className="relative flex flex-col items-center py-10">
+              <svg className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-8 h-full z-0 text-gray-200/70" viewBox="0 0 32 140" fill="none">
+                <path d="M16 0 C8 35, 24 70, 16 105 C8 120, 24 130, 16 140" stroke="currentColor" strokeWidth="1.5" strokeDasharray="3 3" />
+              </svg>
+              <div className="relative z-10 w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-[#0B4C28] flex items-center justify-center shadow-md border border-[#093d20] hover:scale-105 transition-transform duration-200">
+                <span className="text-white font-bold font-outfit text-xl tracking-tight">T</span>
+              </div>
+            </div>
+
+            {/* Logo 2: Zoho */}
+            <div className="relative flex flex-col items-center py-10">
+              <svg className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-8 h-full z-0 text-gray-200/70" viewBox="0 0 32 140" fill="none">
+                <path d="M16 0 C24 35, 8 70, 16 105 C24 120, 8 130, 16 140" stroke="currentColor" strokeWidth="1.5" strokeDasharray="3 3" />
+              </svg>
+              <div className="relative z-10 w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-[#FFFFFF] flex items-center justify-center shadow-md border border-gray-200/60 hover:scale-105 transition-transform duration-200">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                  <rect x="2" y="2" width="8" height="8" rx="1.5" fill="#EA4335" />
+                  <rect x="14" y="2" width="8" height="8" rx="1.5" fill="#4285F4" />
+                  <rect x="2" y="14" width="8" height="8" rx="1.5" fill="#FBBC05" />
+                  <rect x="14" y="14" width="8" height="8" rx="1.5" fill="#34A853" />
+                </svg>
+              </div>
+            </div>
+
+            {/* Logo 3: Excel */}
+            <div className="relative flex flex-col items-center py-10">
+              <svg className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-8 h-full z-0 text-gray-200/70" viewBox="0 0 32 140" fill="none">
+                <path d="M16 0 C8 35, 24 70, 16 105 C8 120, 24 130, 16 140" stroke="currentColor" strokeWidth="1.5" strokeDasharray="3 3" />
+              </svg>
+              <div className="relative z-10 w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-[#107C41] flex items-center justify-center shadow-md border border-[#0d6233] hover:scale-105 transition-transform duration-200">
+                <span className="text-white font-bold font-outfit text-xl tracking-tight">X</span>
+              </div>
+            </div>
+
+            {/* Logo 4: Busy */}
+            <div className="relative flex flex-col items-center py-10">
+              <svg className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-8 h-full z-0 text-gray-200/70" viewBox="0 0 32 140" fill="none">
+                <path d="M16 0 C24 35, 8 70, 16 105 C24 120, 8 130, 16 140" stroke="currentColor" strokeWidth="1.5" strokeDasharray="3 3" />
+              </svg>
+              <div className="relative z-10 w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-[#FF6B00] flex items-center justify-center shadow-md border border-[#e05e00] hover:scale-105 transition-transform duration-200">
+                <span className="text-white font-bold font-outfit text-xl tracking-tight">B</span>
+              </div>
+            </div>
+
+            {/* Logo 5: Vyapaar */}
+            <div className="relative flex flex-col items-center py-10">
+              <svg className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-8 h-full z-0 text-gray-200/70" viewBox="0 0 32 140" fill="none">
+                <path d="M16 0 C8 35, 24 70, 16 105 C8 120, 24 130, 16 140" stroke="currentColor" strokeWidth="1.5" strokeDasharray="3 3" />
+              </svg>
+              <div className="relative z-10 w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-[#EA4335] flex items-center justify-center shadow-md border border-[#d63224] hover:scale-105 transition-transform duration-200">
+                <span className="text-white font-bold font-outfit text-xl tracking-tight">V</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div className="mt-24 md:mt-32 max-w-[1280px] mx-auto text-left">
           <div className="w-full overflow-x-auto lg:overflow-visible bg-transparent">
             <table className="w-full border-separate border-spacing-0 text-left min-w-[900px]">
@@ -422,7 +499,7 @@ export default function Pricing() {
                         className="py-8 px-4 bg-white border-b border-gray-200 w-[17.5%] align-top text-center sticky top-[70px] md:top-[96px] z-30 border-l border-gray-200/50"
                       >
                         <div className="flex flex-col items-center w-full">
-                          <span className="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-widest font-outfit">
+                          <span className="text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-widest font-outfit">
                             {plan.name === "CA / Agency" ? "CA & AGENCY PLAN" : `${plan.name.toUpperCase()} PLAN`}
                           </span>
                           
