@@ -17,6 +17,7 @@ import {
   Logout01Icon
 } from '@hugeicons/core-free-icons'
 import { NotificationDropdown } from './NotificationDropdown'
+import { createClient } from '@/lib/supabase/client'
 
 interface TopBarProps {
   userName: string
@@ -59,7 +60,7 @@ export function TopBar({ userName = 'User', businessName = 'UdhaarClear', userEm
         {
           label: 'Billing & Plans',
           sub: 'Manage invoices & subscription',
-          href: '/payments',
+          href: '/settings/billing',
           icon: CreditCardIcon
         }
       ]
@@ -76,7 +77,7 @@ export function TopBar({ userName = 'User', businessName = 'UdhaarClear', userEm
         {
           label: 'Team Members',
           sub: 'Collaborators & permission roles',
-          href: '/team/members',
+          href: '/settings/team',
           icon: UserMultipleIcon
         }
       ]
@@ -231,9 +232,15 @@ export function TopBar({ userName = 'User', businessName = 'UdhaarClear', userEm
 
             {/* Premium Logout Button */}
             <button
-              onClick={() => {
-                // Performs logout navigation redirect
-                window.location.href = '/login'
+              onClick={async () => {
+                try {
+                  const supabase = createClient()
+                  await supabase.auth.signOut()
+                } catch (err) {
+                  console.error('Error during sign out:', err)
+                } finally {
+                  window.location.href = '/login'
+                }
               }}
               className="group flex w-[95%] mx-auto items-center gap-3 rounded-2xl p-2 hover:bg-rose-50/50 transition-all duration-200 border-0 cursor-pointer"
             >
