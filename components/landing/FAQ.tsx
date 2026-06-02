@@ -67,7 +67,7 @@ export default function FAQ() {
             return (
               <div
                 key={idx}
-                className="border border-blue-50/60 bg-white rounded-2xl shadow-sm transition-all duration-300 overflow-hidden"
+                className="border border-gray-50 bg-white rounded-2xl overflow-hidden"
               >
                 <button
                   onClick={() => toggleFAQ(idx)}

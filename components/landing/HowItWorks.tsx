@@ -19,14 +19,14 @@ export default function HowItWorks() {
       <div className="relative max-w-[1340px] mx-auto px-6 md:px-8 z-10 text-center">
         {/* Heading */}
         <h2 className="text-[2.75rem] md:text-[3.25rem] font-medium text-gray-900 tracking-tight leading-[1.15] font-outfit max-w-4xl mx-auto">
-          Know How UdhaarClear Works
+          Add the Invoice. We Follow Up. You Track the Payment.
         </h2>
         <p className="text-gray-500 font-medium text-sm md:text-base mt-4 mb-16 max-w-2xl mx-auto">
-          Add your invoice once, and UdhaarClear handles the follow up journey from sending reminders to sharing payment links and tracking every payment status clearly.
+          UdhaarClear turns every pending invoice into a simple recovery flow — reminders go out, payment links are shared, and every status stays clear in one dashboard.
         </p>
 
         {/* Dashboard Grid Frame */}
-        <div className="relative border border-gray-200/70 bg-white max-w-[1280px] mx-auto overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.015)]">
+        <div className="relative border border-gray-200/70 bg-white max-w-[1280px] mx-auto overflow-hidden">
 
           {/* Blueprint Divider Ticks - Desktop Only */}
           <div className="absolute top-0 left-1/4 -translate-x-1/2 -translate-y-[1.2px] w-3.5 h-[2.5px] bg-blue-600 z-20 hidden lg:block" />
@@ -76,7 +76,7 @@ export default function HowItWorks() {
                 <div className="inline-flex items-center  text-blue-600 text-[14px] font-bold tracking-tight font-outfit mb-1 select-none">
                   Step 1
                 </div>
-                <h4 className="text-lg font-bold text-gray-900 font-outfit mb-2">You Add the Invoice</h4>
+                <h4 className="text-xl font-semibold text-gray-900 font-outfit mb-2">You Add the Invoice</h4>
                 <p className="text-gray-500 text-xs md:text-sm leading-relaxed font-medium">
                   Add customer details, invoice amount, and due date in one simple flow.
                 </p>
@@ -144,7 +144,7 @@ export default function HowItWorks() {
                 <div className="inline-flex items-center text-blue-600 text-[14px] font-bold tracking-tight font-outfit mb-1 select-none">
                   Step 2
                 </div>
-                <h4 className="text-lg font-bold text-gray-900 font-outfit mb-2">We Send the Reminder</h4>
+                <h4 className="text-xl font-semibold text-gray-900 font-outfit mb-2">We Send the Reminder</h4>
                 <p className="text-gray-500 text-xs md:text-sm leading-relaxed font-medium">
                   Send a professional WhatsApp reminder with a clear payment link.
                 </p>
@@ -185,7 +185,7 @@ export default function HowItWorks() {
                 <div className="inline-flex items-center  text-blue-600 text-[14px] font-bold tracking-tight font-outfit mb-1 select-none">
                   Step 3
                 </div>
-                <h4 className="text-lg font-bold text-gray-900 font-outfit mb-2">Customer Pays Easily</h4>
+                <h4 className="text-xl font-semibold text-gray-900 font-outfit mb-2">Customer Pays Easily</h4>
                 <p className="text-gray-500 text-xs md:text-sm leading-relaxed font-medium">
                   Payment is completed through a clear and secure link.
                 </p>
@@ -227,7 +227,7 @@ export default function HowItWorks() {
                 <div className="inline-flex items-center  text-blue-600 text-[14px] font-bold tracking-tight font-outfit mb-1 select-none">
                   Step 4
                 </div>
-                <h4 className="text-lg font-bold text-gray-900 font-outfit mb-2">You Track Everything</h4>
+                <h4 className="text-xl font-semibold text-gray-900 font-outfit mb-2">You Track Everything</h4>
                 <p className="text-gray-500 text-xs md:text-sm leading-relaxed font-medium">
                   See pending, paid, delayed, and followed-up invoices clearly.
                 </p>
