@@ -1,6 +1,8 @@
 import Navbar from "@/components/landing/Navbar";
 import Hero from "@/components/landing/Hero";
 import Problem from "@/components/landing/Problem";
+import HowItWorks from "@/components/landing/HowItWorks";
+import Features from "@/components/landing/Features";
 import Solution from "@/components/landing/Solution";
 import ToneEngine from "@/components/landing/ToneEngine";
 import Pricing from "@/components/landing/Pricing";
@@ -24,6 +26,8 @@ export default function LandingPage() {
       <main>
         <Hero />
         <Problem />
+        <HowItWorks />
+        <Features />
         <Solution />
         <ToneEngine />
         <Pricing />

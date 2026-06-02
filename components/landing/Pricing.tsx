@@ -422,7 +422,7 @@ export default function Pricing() {
           <div className="flex gap-4 md:gap-5 items-center">
             {/* Logo 1: Tally */}
             <div className="relative flex flex-col items-center py-10">
-              <svg className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-8 h-full z-0 text-gray-200/70" viewBox="0 0 32 140" fill="none">
+              <svg className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-8 h-full z-0 text-gray-300" viewBox="0 0 32 140" fill="none">
                 <path d="M16 0 C8 35, 24 70, 16 105 C8 120, 24 130, 16 140" stroke="currentColor" strokeWidth="1.5" strokeDasharray="3 3" />
               </svg>
               <div className="relative z-10 w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-[#0B4C28] flex items-center justify-center shadow-md border border-[#093d20] hover:scale-105 transition-transform duration-200">
@@ -432,7 +432,7 @@ export default function Pricing() {
 
             {/* Logo 2: Zoho */}
             <div className="relative flex flex-col items-center py-10">
-              <svg className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-8 h-full z-0 text-gray-200/70" viewBox="0 0 32 140" fill="none">
+              <svg className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-8 h-full z-0 text-gray-300" viewBox="0 0 32 140" fill="none">
                 <path d="M16 0 C24 35, 8 70, 16 105 C24 120, 8 130, 16 140" stroke="currentColor" strokeWidth="1.5" strokeDasharray="3 3" />
               </svg>
               <div className="relative z-10 w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-[#FFFFFF] flex items-center justify-center shadow-md border border-gray-200/60 hover:scale-105 transition-transform duration-200">
@@ -447,17 +447,23 @@ export default function Pricing() {
 
             {/* Logo 3: Excel */}
             <div className="relative flex flex-col items-center py-10">
-              <svg className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-8 h-full z-0 text-gray-200/70" viewBox="0 0 32 140" fill="none">
+              <svg className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-8 h-full z-0 text-gray-300" viewBox="0 0 32 140" fill="none">
                 <path d="M16 0 C8 35, 24 70, 16 105 C8 120, 24 130, 16 140" stroke="currentColor" strokeWidth="1.5" strokeDasharray="3 3" />
               </svg>
-              <div className="relative z-10 w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-[#107C41] flex items-center justify-center shadow-md border border-[#0d6233] hover:scale-105 transition-transform duration-200">
-                <span className="text-white font-bold font-outfit text-xl tracking-tight">X</span>
+              <div className="relative z-10 w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-white flex items-center justify-center  border border-gray-200/60 hover:scale-105 transition-transform duration-200">
+                <img
+                  width="28"
+                  height="28"
+                  src="https://img.icons8.com/color/48/microsoft-excel-2019--v1.png"
+                  alt="microsoft-excel-2019--v1"
+                  className="w-7 h-7 md:w-8 md:h-8 object-contain"
+                />
               </div>
             </div>
 
             {/* Logo 4: Busy */}
             <div className="relative flex flex-col items-center py-10">
-              <svg className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-8 h-full z-0 text-gray-200/70" viewBox="0 0 32 140" fill="none">
+              <svg className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-8 h-full z-0 text-gray-300" viewBox="0 0 32 140" fill="none">
                 <path d="M16 0 C24 35, 8 70, 16 105 C24 120, 8 130, 16 140" stroke="currentColor" strokeWidth="1.5" strokeDasharray="3 3" />
               </svg>
               <div className="relative z-10 w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-[#FF6B00] flex items-center justify-center shadow-md border border-[#e05e00] hover:scale-105 transition-transform duration-200">
@@ -467,7 +473,7 @@ export default function Pricing() {
 
             {/* Logo 5: Vyapaar */}
             <div className="relative flex flex-col items-center py-10">
-              <svg className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-8 h-full z-0 text-gray-200/70" viewBox="0 0 32 140" fill="none">
+              <svg className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-8 h-full z-0 text-gray-300" viewBox="0 0 32 140" fill="none">
                 <path d="M16 0 C8 35, 24 70, 16 105 C8 120, 24 130, 16 140" stroke="currentColor" strokeWidth="1.5" strokeDasharray="3 3" />
               </svg>
               <div className="relative z-10 w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-[#EA4335] flex items-center justify-center shadow-md border border-[#d63224] hover:scale-105 transition-transform duration-200">

@@ -37,7 +37,7 @@ const phases = [
     step: "02",
     label: "Serious",
     tag: "Day 7–14",
-    tagColor: "bg-amber-50 text-amber-600 border-amber-100",
+    tagColor: "bg-amber-50 text-amber-600 border-amber-100 ",
     dotColor: "bg-amber-400",
     activeBorder: "border-amber-200",
     activeBg: "bg-amber-50/40",
@@ -256,7 +256,7 @@ export default function ToneEngine() {
         {/* ── Header ── */}
         <div className="max-w-3xl mb-16 md:mb-20">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-white border border-gray-200 shadow-sm text-black text-sm font-medium tracking-tight font-outfit mb-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-white border border-gray-200 text-black text-sm font-medium tracking-tight font-outfit mb-6">
             <span className="flex h-2 w-2 rounded-full bg-emerald-500 shrink-0">
               <span className="animate-ping inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
             </span>
@@ -305,16 +305,16 @@ export default function ToneEngine() {
                     <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
                       <div className="flex items-center gap-2">
                         <span className={`w-2.5 h-2.5 rounded-full ${dotColorClass} shrink-0`} />
-                        <h3 className="text-lg font-bold tracking-tight text-zinc-900 font-outfit">
+                        <h3 className="text-lg font-medium tracking-tight text-zinc-900 font-outfit">
                           {idx === 0 ? "Friendly Reminder" : idx === 1 ? "Urgent Escalation" : "Formal Legal Notice"}
                         </h3>
                       </div>
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 font-sans">
+                      <span className="text-[12px] font-semibold tracking-tight text-gray-900 font-sans">
                         {p.tag}
                       </span>
                     </div>
 
-                    <p className="text-sm leading-relaxed text-zinc-500 font-normal font-sans">
+                    <p className="text-sm leading-relaxed text-gray-600 font-medium font-sans">
                       {p.body}
                     </p>
                   </div>
