@@ -546,6 +546,10 @@ const AreaChart = React.forwardRef<HTMLDivElement, AreaChartProps>(
     const [activeLegend, setActiveLegend] = React.useState<string | undefined>(
       undefined,
     )
+    const [mounted, setMounted] = React.useState(false)
+    React.useEffect(() => {
+      setMounted(true)
+    }, [])
     const categoryColors = constructCategoryColors(categories, colors)
 
     const yAxisDomain = getYAxisDomain(autoMinValue, minValue, maxValue)
@@ -640,6 +644,18 @@ const AreaChart = React.forwardRef<HTMLDivElement, AreaChartProps>(
         })
       }
       setActiveDot(undefined)
+    }
+
+    if (!mounted) {
+      return (
+        <div
+          ref={ref}
+          className={cx("h-80 w-full min-w-0", className)}
+          style={{ minHeight: 60 }}
+          tremor-id="tremor-raw"
+          {...other}
+        />
+      )
     }
 
     return (

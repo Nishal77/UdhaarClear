@@ -4,6 +4,14 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { formatINRCompact } from '@/lib/utils/currency'
 import { toast } from 'sonner'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { 
+  Search01Icon,
+  GavelIcon,
+  Coins01Icon,
+  Chart01Icon,
+  HourglassIcon
+} from '@hugeicons/core-free-icons'
 
 export interface EligibleInvoice {
   id: string
@@ -206,46 +214,82 @@ export function MsmeSamadhaanDashboard() {
         <div className="grid grid-cols-1 divide-y divide-[#EBEAE6]/60 md:grid-cols-4 md:divide-y-0 md:divide-x text-left">
             
             {/* Stat 1: Active Cases */}
-            <div className="px-5 py-3 flex flex-col justify-center">
-              <span className="text-[14px] font-medium text-black tracking-tight">Active Samadhaan Cases</span>
-              <div className="mt-0.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-                <span className="text-[22px] font-semibold text-gray-900 leading-none whitespace-nowrap">
+            <div className="px-6 py-5 flex flex-col justify-between min-h-[140px]">
+              <div className="flex items-start justify-between">
+                <span className="text-[11.5px] font-bold text-gray-400 uppercase tracking-wider">Active Samadhaan Cases</span>
+                <span className="p-1.5 rounded-lg bg-orange-50 text-orange-600 shrink-0">
+                  <HugeiconsIcon icon={GavelIcon} size={15} />
+                </span>
+              </div>
+              <div className="mt-2 flex flex-col gap-1.5">
+                <span className="text-[26px] font-bold text-gray-900 leading-none whitespace-nowrap block">
                   {filedCases.length} Claims
                 </span>
-                <span className="text-[11.5px] text-orange-600 font-semibold whitespace-nowrap">Under council review</span>
+                <div className="pt-0.5">
+                  <span className="inline-flex items-center gap-1 bg-orange-50 text-orange-700 px-2.5 py-0.5 rounded-full text-[10px] font-bold">
+                    Under council review
+                  </span>
+                </div>
               </div>
             </div>
 
             {/* Stat 2: Active Claims Amount */}
-            <div className="px-5 py-3 flex flex-col justify-center">
-              <span className="text-[14px] font-medium text-black tracking-tight">Total Claims Value</span>
-              <div className="mt-0.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-                <span className="text-[22px] font-semibold text-gray-900 leading-none whitespace-nowrap">
+            <div className="px-6 py-5 flex flex-col justify-between min-h-[140px]">
+              <div className="flex items-start justify-between">
+                <span className="text-[11.5px] font-bold text-gray-400 uppercase tracking-wider">Total Claims Value</span>
+                <span className="p-1.5 rounded-lg bg-emerald-50 text-emerald-600 shrink-0">
+                  <HugeiconsIcon icon={Coins01Icon} size={15} />
+                </span>
+              </div>
+              <div className="mt-2 flex flex-col gap-1.5">
+                <span className="text-[26px] font-bold text-gray-900 leading-none whitespace-nowrap block">
                   {formatINRCompact(totalActiveClaimsAmount)}
                 </span>
-                <span className="text-[11.5px] text-gray-400 font-medium whitespace-nowrap">
-                  (Interest: {formatINRCompact(totalInterestClaimed)})
-                </span>
+                <div className="pt-0.5">
+                  <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 px-2.5 py-0.5 rounded-full text-[10px] font-bold">
+                    Interest: {formatINRCompact(totalInterestClaimed)}
+                  </span>
+                </div>
               </div>
             </div>
 
             {/* Stat 3: RBI Compound Interest Rate */}
-            <div className="px-5 py-3 flex flex-col justify-center">
-              <span className="text-[14px] font-medium text-black tracking-tight">Legal Interest Rate</span>
-              <div className="mt-0.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-                <span className="text-[22px] font-semibold text-emerald-600 leading-none whitespace-nowrap">3x RBI Rate</span>
-                <span className="text-[11.5px] text-emerald-600 font-semibold whitespace-nowrap">20.25% Comp. Monthly</span>
+            <div className="px-6 py-5 flex flex-col justify-between min-h-[140px]">
+              <div className="flex items-start justify-between">
+                <span className="text-[11.5px] font-bold text-gray-400 uppercase tracking-wider">Legal Interest Rate</span>
+                <span className="p-1.5 rounded-lg bg-blue-50 text-blue-600 shrink-0">
+                  <HugeiconsIcon icon={Chart01Icon} size={15} />
+                </span>
+              </div>
+              <div className="mt-2 flex flex-col gap-1.5">
+                <span className="text-[26px] font-bold text-gray-900 leading-none whitespace-nowrap block">
+                  3x RBI Rate
+                </span>
+                <div className="pt-0.5">
+                  <span className="inline-flex items-center gap-1 bg-blue-50 text-blue-700 px-2.5 py-0.5 rounded-full text-[10px] font-bold">
+                    20.25% Comp. Monthly
+                  </span>
+                </div>
               </div>
             </div>
 
             {/* Stat 4: Eligible for Filing */}
-            <div className="px-5 py-3 flex flex-col justify-center">
-              <span className="text-[14px] font-medium text-black tracking-tight">Filing Eligibility</span>
-              <div className="mt-0.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-                <span className="text-[22px] font-semibold text-[#FF6A39] leading-none whitespace-nowrap">
+            <div className="px-6 py-5 flex flex-col justify-between min-h-[140px]">
+              <div className="flex items-start justify-between">
+                <span className="text-[11.5px] font-bold text-gray-400 uppercase tracking-wider">Filing Eligibility</span>
+                <span className="p-1.5 rounded-lg bg-red-50 text-[#FF6A39] shrink-0">
+                  <HugeiconsIcon icon={HourglassIcon} size={15} />
+                </span>
+              </div>
+              <div className="mt-2 flex flex-col gap-1.5">
+                <span className="text-[26px] font-bold text-gray-900 leading-none whitespace-nowrap block">
                   {totalEligibleCount} Invoices
                 </span>
-                <span className="text-[11.5px] text-[#FF6A39] font-semibold whitespace-nowrap">Unpaid &gt;45 days</span>
+                <div className="pt-0.5">
+                  <span className="inline-flex items-center gap-1 bg-red-50 text-red-700 px-2.5 py-0.5 rounded-full text-[10px] font-bold">
+                    Unpaid &gt;45 days
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -261,7 +305,7 @@ export function MsmeSamadhaanDashboard() {
             {/* Search Input */}
             <div className="relative flex-1 max-w-[340px] w-full">
               <span className="absolute inset-y-0 left-4 flex items-center pointer-events-none z-10 text-gray-400">
-                🔍
+                <HugeiconsIcon icon={Search01Icon} />
               </span>
               <input
                 type="text"
@@ -692,7 +736,7 @@ export function MsmeSamadhaanDashboard() {
       {selectedEligible && (
         <div className="fixed inset-0 z-50 flex justify-end select-none">
           {/* Backdrop */}
-          <div className="fixed inset-0 bg-black/40 backdrop-blur-xs" onClick={() => { if (!isFiling) setSelectedEligible(null) }} />
+          <div className="fixed inset-0 bg-black/35 backdrop-blur-[2px]" onClick={() => { if (!isFiling) setSelectedEligible(null) }} />
 
           <div className="relative z-10 w-full max-w-lg bg-[#FAF9F6] shadow-2xl flex flex-col h-full border-l border-[#EBEAE6]">
             
@@ -709,94 +753,124 @@ export function MsmeSamadhaanDashboard() {
               <button
                 disabled={isFiling}
                 onClick={() => setSelectedEligible(null)}
-                className="h-8 w-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors text-gray-500 disabled:opacity-50"
+                className="h-8 w-8 rounded-full bg-gray-50 hover:bg-gray-100 hover:rotate-90 hover:scale-105 flex items-center justify-center transition-all duration-300 text-gray-400 hover:text-gray-700 disabled:opacity-50 active:scale-95 border border-gray-100"
               >
-                ✕
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
+                </svg>
               </button>
             </div>
 
             {/* Steps Progress Indicator */}
-            <div className="bg-white border-b border-gray-100 px-6 py-2.5 flex items-center justify-between text-xs select-none">
+            <div className="bg-white border-b border-gray-100 px-6 py-3.5 flex items-center justify-between text-xs select-none">
               {[
-                { s: 1, label: 'Interest Audit' },
+                { s: 1, label: 'Interest' },
                 { s: 2, label: 'Documents' },
-                { s: 3, label: 'Petition Pack' },
-                { s: 4, label: 'Submit File' },
-              ].map(st => (
-                <div key={st.s} className="flex items-center gap-1">
-                  <span className={`h-4.5 w-4.5 rounded-full flex items-center justify-center font-bold text-[9px] ${
-                    wizardStep === st.s
-                      ? 'bg-[#FF6A39] text-white'
-                      : wizardStep > st.s
-                        ? 'bg-emerald-500 text-white'
-                        : 'bg-gray-100 text-gray-400'
-                  }`}>
-                    {wizardStep > st.s ? '✓' : st.s}
-                  </span>
-                  <span className={`font-bold ${
-                    wizardStep === st.s ? 'text-gray-900' : 'text-gray-400'
-                  }`}>
-                    {st.label}
-                  </span>
-                </div>
-              ))}
+                { s: 3, label: 'Petition' },
+                { s: 4, label: 'Submit' },
+              ].map((st, idx) => {
+                const isActive = wizardStep === st.s
+                const isCompleted = wizardStep > st.s
+                return (
+                  <div key={st.s} className="flex items-center flex-1 last:flex-initial">
+                    <div className="flex items-center gap-2">
+                      <span className={`h-6 w-6 rounded-full flex items-center justify-center font-bold text-[10px] transition-all duration-300 ${
+                        isActive
+                          ? 'bg-[#FF6A39] text-white ring-4 ring-[#FF6A39]/10 font-bold scale-105'
+                          : isCompleted
+                            ? 'bg-emerald-500 text-white'
+                            : 'bg-gray-100 text-gray-400'
+                      }`}>
+                        {isCompleted ? '✓' : st.s}
+                      </span>
+                      <span className={`font-bold text-[11.5px] transition-colors duration-300 ${
+                        isActive ? 'text-gray-900 font-extrabold' : 'text-gray-400 font-semibold'
+                      }`}>
+                        {st.label}
+                      </span>
+                    </div>
+                    {idx < 3 && (
+                      <div className={`flex-1 mx-3 h-[2px] min-w-[8px] transition-colors duration-300 ${
+                        wizardStep > st.s ? 'bg-emerald-500' : 'bg-gray-100'
+                      }`} />
+                    )}
+                  </div>
+                )
+              })}
             </div>
 
             {/* Step Body */}
-            <div className="p-5 overflow-y-auto flex-1 space-y-4 text-left">
+            <div className="p-5 overflow-y-auto flex-1 space-y-5 text-left">
               
               {/* STEP 1: INTEREST AUDIT */}
               {wizardStep === 1 && (
                 <div className="space-y-4">
                   <div className="space-y-1">
-                    <h4 className="text-[13.5px] font-extrabold text-gray-900">compounded monthly Interest Audit</h4>
+                    <h4 className="text-[14.5px] font-extrabold text-gray-900 tracking-tight">Interest Compounding Audit</h4>
                     <p className="text-[11.5px] text-gray-500 leading-relaxed font-medium">
-                      Under MSMED Act Section 16, interest is computed at **3x RBI Repo Rate (compounded monthly)** starting from 45 days after the invoice delivery date.
+                      Under MSMED Act Section 16, interest is computed at <strong className="text-gray-800">3x RBI Repo Rate (compounded monthly)</strong> starting from 45 days after the invoice delivery date.
                     </p>
                   </div>
 
                   {/* Calculations Sheet */}
-                  <div className="bg-white border border-[#EBEAE6] rounded-xl overflow-hidden shadow-3xs">
-                    <div className="bg-gray-50/70 p-3 border-b border-gray-100 flex items-center justify-between text-[11px] font-bold text-gray-400">
-                      <span>AUDIT SPREADSHEET</span>
-                      <span>MONTHLY COMPOUNDING</span>
+                  <div className="bg-white border border-[#EBEAE6] rounded-2xl overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
+                    <div className="bg-[#FAF9F6] px-5 py-3 border-b border-gray-100 flex items-center justify-between text-[10px] font-bold text-gray-400 tracking-wider">
+                      <span>AUDIT STATEMENT</span>
+                      <span>INTEREST COMPILED</span>
                     </div>
 
-                    <div className="p-4 space-y-3 text-xs">
-                      <div className="flex justify-between">
-                        <span className="text-gray-400">Buyer Defendant:</span>
-                        <span className="font-bold text-gray-800">{selectedEligible.customerName}</span>
+                    <div className="p-5 space-y-4 text-[13px]">
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-500 font-medium">Buyer Defendant</span>
+                        <span className="font-bold text-gray-900">{selectedEligible.customerName}</span>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-400">Principal Due:</span>
-                        <span className="font-bold text-gray-800">{formatINRCompact(selectedEligible.amount)}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-400">Days Late (overdue):</span>
-                        <span className="font-bold text-red-600">{selectedEligible.daysOverdue} Days</span>
-                      </div>
-                      <div className="flex justify-between border-b border-gray-100 pb-2.5">
-                        <span className="text-gray-400">3x Compounding Rate:</span>
-                        <span className="font-bold text-emerald-600">20.25% (6.75% × 3)</span>
-                      </div>
-                      
-                      <div className="flex justify-between pt-1">
-                        <span className="text-gray-400">Principal Amount:</span>
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-500 font-medium">Principal Due</span>
                         <span className="font-bold text-gray-900">{formatINRCompact(selectedEligible.amount)}</span>
                       </div>
-                      <div className="flex justify-between text-emerald-600 font-bold">
-                        <span>Compounded Interest:</span>
-                        <span>+{formatINRCompact(calculateInterest(selectedEligible.amount, selectedEligible.daysOverdue))}</span>
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-500 font-medium">Days Late (overdue)</span>
+                        <span className="inline-flex items-center rounded-full bg-rose-50 px-2.5 py-0.5 text-[11px] font-bold text-rose-700 border border-rose-100/50">
+                          {selectedEligible.daysOverdue} Days
+                        </span>
                       </div>
-                      <div className="flex justify-between border-t border-gray-150 pt-2.5 text-sm font-extrabold text-[#FF6A39]">
-                        <span>Total Claimable Dues:</span>
-                        <span>{formatINRCompact(selectedEligible.amount + calculateInterest(selectedEligible.amount, selectedEligible.daysOverdue))}</span>
+                      <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+                        <span className="text-gray-500 font-medium">3x Compounding Rate</span>
+                        <span className="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-bold text-emerald-700 border border-emerald-100/50">
+                          20.25% (6.75% × 3)
+                        </span>
+                      </div>
+                      
+                      <div className="flex items-center justify-between pt-1">
+                        <span className="text-gray-500 font-medium">Principal Amount</span>
+                        <span className="font-bold text-gray-900">{formatINRCompact(selectedEligible.amount)}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-500 font-medium">Accrued Compounded Interest</span>
+                        <span className="inline-flex items-center gap-1 text-[13px] font-bold text-emerald-600 bg-emerald-50/50 px-2.5 py-0.5 rounded-lg border border-emerald-100/30">
+                          +{formatINRCompact(calculateInterest(selectedEligible.amount, selectedEligible.daysOverdue))}
+                        </span>
+                      </div>
+                      
+                      <div className="flex items-center justify-between border-t border-[#EBEAE6] pt-4 text-[14px] font-bold text-gray-900">
+                        <span className="font-extrabold text-gray-900">Total Claimable Dues</span>
+                        <span className="text-[17px] font-black text-[#FF6A39]">
+                          {formatINRCompact(selectedEligible.amount + calculateInterest(selectedEligible.amount, selectedEligible.daysOverdue))}
+                        </span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-3 text-[11px] text-emerald-700 leading-relaxed font-semibold">
-                    💡 <strong>Interest Recovery Tip:</strong> Compound interest continues accruing monthly during the Council dispute resolution proceedings. The defendant buyer is legally bound to clear it.
+                  <div className="bg-[#E8F8F0]/30 border border-emerald-500/10 rounded-2xl p-4 text-[11.5px] text-emerald-850 leading-relaxed font-medium flex gap-3 items-start">
+                    <div className="h-6 w-6 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 border border-emerald-100/30 shrink-0">
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364.364l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <strong className="font-extrabold text-emerald-950 block mb-0.5">Interest Recovery Rule</strong>
+                      Compound interest continues accruing monthly during the Council dispute resolution proceedings. The defendant buyer is legally bound to clear it.
+                    </div>
                   </div>
                 </div>
               )}
@@ -805,57 +879,77 @@ export function MsmeSamadhaanDashboard() {
               {wizardStep === 2 && (
                 <div className="space-y-4">
                   <div className="space-y-1">
-                    <h4 className="text-[13.5px] font-extrabold text-gray-900">Required court Attachments</h4>
+                    <h4 className="text-[14.5px] font-extrabold text-gray-900 tracking-tight">Required Court Attachments</h4>
                     <p className="text-[11.5px] text-gray-500 leading-relaxed font-medium">
                       The Facilitation Council requires evidence of both your MSME registration status and proof of the buyer transaction.
                     </p>
                   </div>
 
-                  <div className="space-y-2.5">
+                  <div className="space-y-3">
                     
                     {/* Doc 1: Udyam Certificate */}
-                    <div className="bg-white border border-[#EBEAE6] p-3.5 rounded-xl flex items-center justify-between shadow-3xs">
-                      <div className="flex items-center gap-2.5">
-                        <span className="text-lg">🛡️</span>
+                    <div className="bg-white border border-[#EBEAE6] p-4 rounded-2xl flex items-center justify-between hover:border-[#FF6A39]/30 transition-all duration-200 shadow-[0_2px_8px_rgba(0,0,0,0.01)]">
+                      <div className="flex items-center gap-3">
+                        <div className="h-9 w-9 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 shrink-0">
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                          </svg>
+                        </div>
                         <div className="text-left">
-                          <span className="text-xs font-bold text-gray-800 block leading-none">Udyam MSME Registration</span>
-                          <span className="text-[10px] text-emerald-600 font-semibold block mt-1">Verified: UDYAM-MH-12-0089452</span>
+                          <span className="text-xs font-bold text-gray-800 block leading-tight">Udyam MSME Certificate</span>
+                          <span className="text-[10px] text-emerald-605 font-bold block mt-1">Verified: UDYAM-MH-12-0089452</span>
                         </div>
                       </div>
-                      <span className="text-xs bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full font-bold">Attached</span>
+                      <span className="text-[11px] bg-emerald-50 border border-emerald-100 text-emerald-700 px-3 py-0.5 rounded-full font-bold select-none">
+                        Attached
+                      </span>
                     </div>
 
                     {/* Doc 2: Signed Invoice */}
-                    <div className="bg-white border border-[#EBEAE6] p-3.5 rounded-xl flex items-center justify-between shadow-3xs">
-                      <div className="flex items-center gap-2.5">
-                        <span className="text-lg">📄</span>
+                    <div className="bg-white border border-[#EBEAE6] p-4 rounded-2xl flex items-center justify-between hover:border-[#FF6A39]/30 transition-all duration-200 shadow-[0_2px_8px_rgba(0,0,0,0.01)]">
+                      <div className="flex items-center gap-3">
+                        <div className="h-9 w-9 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 shrink-0">
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                          </svg>
+                        </div>
                         <div className="text-left">
-                          <span className="text-xs font-bold text-gray-800 block leading-none">Signed Invoice Copy</span>
-                          <span className="text-[10px] text-emerald-600 font-semibold block mt-1">Uploaded: {selectedEligible.invoiceNumber}.pdf</span>
+                          <span className="text-xs font-bold text-gray-800 block leading-tight">Signed Invoice Copy</span>
+                          <span className="text-[10px] text-emerald-605 font-bold block mt-1">Uploaded: {selectedEligible.invoiceNumber}.pdf</span>
                         </div>
                       </div>
-                      <span className="text-xs bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full font-bold">Attached</span>
+                      <span className="text-[11px] bg-emerald-50 border border-emerald-100 text-emerald-700 px-3 py-0.5 rounded-full font-bold select-none">
+                        Attached
+                      </span>
                     </div>
 
-                    {/* Doc 3: PO challan */}
-                    <div className="bg-white border border-[#EBEAE6] p-3.5 rounded-xl flex items-center justify-between shadow-3xs">
-                      <div className="flex items-center gap-2.5 font-semibold">
-                        <span className="text-lg">📁</span>
+                    {/* Doc 3: PO/Challan */}
+                    <div className="bg-white border border-[#EBEAE6] p-4 rounded-2xl flex items-center justify-between hover:border-[#FF6A39]/30 transition-all duration-200 shadow-[0_2px_8px_rgba(0,0,0,0.01)]">
+                      <div className="flex items-center gap-3">
+                        <div className="h-9 w-9 rounded-xl bg-gray-50 border border-gray-200/60 flex items-center justify-center text-gray-500 shrink-0">
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
+                          </svg>
+                        </div>
                         <div className="text-left">
-                          <span className="text-xs font-bold text-gray-800 block leading-none">Purchase Order / Delivery Receipt</span>
-                          <span className={selectedEligible.hasPO ? "text-[10px] text-emerald-600 block mt-1" : "text-[10px] text-gray-400 block mt-1 font-medium"}>
-                            {selectedEligible.hasPO ? "Attached: PO-2026-904.pdf" : "Optional but recommended"}
+                          <span className="text-xs font-bold text-gray-800 block leading-tight">Purchase Order / Delivery Receipt</span>
+                          <span className={`text-[10px] block mt-1 font-bold ${
+                            selectedEligible.hasPO ? 'text-emerald-605' : 'text-gray-400 font-semibold'
+                          }`}>
+                            {selectedEligible.hasPO ? 'Attached: PO-2026-904.pdf' : 'Optional but highly recommended'}
                           </span>
                         </div>
                       </div>
                       {selectedEligible.hasPO ? (
-                        <span className="text-xs bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full font-bold">Attached</span>
+                        <span className="text-[11px] bg-emerald-50 border border-emerald-100 text-emerald-700 px-3 py-0.5 rounded-full font-bold select-none">
+                          Attached
+                        </span>
                       ) : (
                         <button
                           onClick={() => {
                             toast.success('Simulated PO upload successful')
                           }}
-                          className="bg-gray-900 hover:bg-gray-800 text-white font-bold text-[10px] px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
+                          className="bg-gray-900 hover:bg-gray-800 text-white font-bold text-[11px] px-3 py-1.5 rounded-xl transition-all cursor-pointer select-none active:scale-95 shadow-3xs"
                         >
                           Upload File
                         </button>
@@ -870,41 +964,57 @@ export function MsmeSamadhaanDashboard() {
               {wizardStep === 3 && (
                 <div className="space-y-4">
                   <div className="space-y-1">
-                    <h4 className="text-[13.5px] font-extrabold text-gray-900">Download compiled Case Files</h4>
+                    <h4 className="text-[14.5px] font-extrabold text-gray-900 tracking-tight">Download Compiled Case Files</h4>
                     <p className="text-[11.5px] text-gray-500 leading-relaxed font-medium">
                       Download the complete pre-filled legal petition drafted by UdhaarClear. The PDF structure matches the formatting rules of the council portal.
                     </p>
                   </div>
 
                   {/* PDF Download Visual Card */}
-                  <div className="bg-white border border-[#EBEAE6] rounded-xl p-5 shadow-3xs flex flex-col items-center justify-center text-center space-y-3.5">
-                    <div className="h-12 w-12 rounded-full bg-[#FF6A39]/10 flex items-center justify-center text-xl">
-                      📥
+                  <div className="bg-white border border-[#EBEAE6] rounded-2xl p-6 flex flex-col items-center justify-center text-center space-y-4 shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
+                    <div className="h-12 w-12 rounded-full bg-[#FF6A39]/10 border border-[#FF6A39]/20 flex items-center justify-center text-[#FF6A39] shrink-0">
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
                     </div>
                     <div className="space-y-1">
-                      <span className="text-xs font-bold text-gray-800 block leading-tight">
+                      <span className="text-[13px] font-bold text-gray-800 block leading-tight">
                         petition_draft_{selectedEligible.invoiceNumber}.zip
                       </span>
-                      <span className="text-[10px] text-gray-400 font-semibold block">
-                        Size: 1.4 MB · Compiled including signed proofs & interest sheets
+                      <span className="text-[10px] text-gray-400 font-bold block">
+                        Size: 1.4 MB · Precompiled legal dossier & interest audits
                       </span>
                     </div>
                     <button
                       onClick={() => {
                         toast.success('Case petition pack downloaded successfully')
                       }}
-                      className="bg-[#FF6A39] hover:bg-[#E05B2E] text-white text-xs font-bold py-2 px-5 rounded-xl transition-colors cursor-pointer shadow-3xs flex items-center gap-1.5"
+                      className="bg-[#FF6A39] hover:bg-[#E05B2E] text-white text-xs font-bold py-2.5 px-5 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 active:scale-95 shadow-3xs"
                     >
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                      </svg>
                       <span>Download Zip Pack</span>
                     </button>
                   </div>
 
-                  <div className="text-[11px] text-gray-500 leading-relaxed bg-gray-50 p-3 rounded-lg font-medium border border-gray-100">
-                    📜 <strong>Included documents:</strong>
-                    <ul className="list-disc pl-4 mt-1 space-y-0.5">
-                      <li>Compounding Interest Computation Statement</li>
-                      <li>Official Petition Draft Form 1</li>
-                      <li>Defendant Buyer Legal Notice Notice Letter Copy</li>
+                  <div className="text-[11.5px] text-gray-655 leading-relaxed bg-white border border-[#EBEAE6] p-4 rounded-2xl space-y-2">
+                    <span className="font-extrabold text-gray-900 block border-b border-gray-100 pb-1.5">
+                      Included Case Package Documents
+                    </span>
+                    <ul className="space-y-2 pt-1 font-medium">
+                      {[
+                        'Compounding Interest Computation Statement (Schedule 1)',
+                        'Official Petition Form 1 (Pre-filled from Invoice records)',
+                        'Defendant Buyer Legal Notice Notice Letter Copy (Section 16 proof)',
+                      ].map((doc, dIdx) => (
+                        <li key={dIdx} className="flex items-start gap-2 text-[12px]">
+                          <svg className="w-3.5 h-3.5 text-emerald-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+                          </svg>
+                          <span>{doc}</span>
+                        </li>
+                      ))}
                     </ul>
                   </div>
                 </div>
@@ -914,7 +1024,7 @@ export function MsmeSamadhaanDashboard() {
               {wizardStep === 4 && (
                 <div className="space-y-4">
                   <div className="space-y-1">
-                    <h4 className="text-[13.5px] font-extrabold text-gray-900">File Dispute on Samadhaan Portal</h4>
+                    <h4 className="text-[14.5px] font-extrabold text-gray-900 tracking-tight">File Dispute on Samadhaan Portal</h4>
                     <p className="text-[11.5px] text-gray-500 leading-relaxed font-medium">
                       Submit the completed legal petition directly to the MSME Facilitation Council portal via UdhaarClear API handshake.
                     </p>
@@ -922,7 +1032,7 @@ export function MsmeSamadhaanDashboard() {
 
                   {/* Submission loader state */}
                   {isFiling ? (
-                    <div className="bg-white border border-[#EBEAE6] rounded-xl p-8 shadow-3xs flex flex-col items-center justify-center text-center space-y-4">
+                    <div className="bg-white border border-[#EBEAE6] rounded-2xl p-8 flex flex-col items-center justify-center text-center space-y-5 shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
                       {/* Spinner loading animation */}
                       <div className="relative flex h-10 w-10">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FF6A39] opacity-75"></span>
@@ -938,9 +1048,11 @@ export function MsmeSamadhaanDashboard() {
                       </div>
                     </div>
                   ) : filingFinished ? (
-                    <div className="bg-white border border-emerald-100 rounded-xl p-6 shadow-3xs flex flex-col items-center justify-center text-center space-y-3.5">
-                      <div className="h-10 w-10 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 text-lg">
-                        ✓
+                    <div className="bg-white border border-emerald-105 rounded-2xl p-6 flex flex-col items-center justify-center text-center space-y-4 shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
+                      <div className="h-10 w-10 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+                        </svg>
                       </div>
                       <div className="space-y-1">
                         <span className="text-xs font-bold text-gray-900 block">Filing Confirmed!</span>
@@ -948,17 +1060,17 @@ export function MsmeSamadhaanDashboard() {
                           Case reference: MSME/MUM/2026/0948
                         </span>
                       </div>
-                      <div className="text-[11px] text-emerald-700 bg-emerald-50 px-3 py-2 rounded-lg leading-relaxed font-semibold">
+                      <div className="text-[11.5px] text-emerald-700 bg-emerald-50 px-3 py-2.5 rounded-xl leading-relaxed font-semibold border border-emerald-100">
                         A notice has been issued to the buyer. Conciliation proceedings will begin within 15 days.
                       </div>
                     </div>
                   ) : (
-                    <div className="bg-white border border-[#EBEAE6] rounded-xl p-6 shadow-3xs flex flex-col items-center justify-center text-center space-y-4">
-                      <div className="h-12 w-12 rounded-full bg-[#FF6A39]/10 flex items-center justify-center text-xl">
+                    <div className="bg-white border border-[#EBEAE6] rounded-2xl p-6 flex flex-col items-center justify-center text-center space-y-4 shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
+                      <div className="h-12 w-12 rounded-full bg-[#FF6A39]/10 border border-[#FF6A39]/20 flex items-center justify-center text-xl shrink-0">
                         ⚖️
                       </div>
                       <div className="space-y-1.5">
-                        <span className="text-xs font-bold text-gray-800 block leading-tight">
+                        <span className="text-[13px] font-bold text-gray-800 block leading-tight">
                           Ready to transmit to Samadhaan Portal
                         </span>
                         <p className="text-[10.5px] text-gray-400 leading-relaxed font-medium">
@@ -967,7 +1079,7 @@ export function MsmeSamadhaanDashboard() {
                       </div>
                       <button
                         onClick={handleFileCaseSubmit}
-                        className="bg-[#FF6A39] hover:bg-[#E05B2E] text-white text-xs font-bold py-2.5 px-6 rounded-xl transition-colors cursor-pointer shadow-3xs active:scale-95 w-full max-w-[200px]"
+                        className="bg-[#FF6A39] hover:bg-[#E05B2E] text-white text-xs font-bold py-2.5 px-6 rounded-xl transition-all cursor-pointer active:scale-95 w-full max-w-[200px] shadow-3xs"
                       >
                         Transmit & File Case
                       </button>
@@ -983,7 +1095,7 @@ export function MsmeSamadhaanDashboard() {
               {wizardStep > 1 && !isFiling && !filingFinished && (
                 <button
                   onClick={() => setWizardStep(wizardStep - 1)}
-                  className="flex-1 border border-gray-200 hover:bg-gray-50 text-gray-700 font-semibold py-2.5 px-4 rounded-xl text-xs transition-colors"
+                  className="flex-1 border border-gray-200 hover:bg-gray-50 text-gray-700 font-semibold py-3 px-4 rounded-xl text-xs transition-all active:scale-98"
                 >
                   Back
                 </button>
@@ -991,7 +1103,7 @@ export function MsmeSamadhaanDashboard() {
               {wizardStep < 4 && (
                 <button
                   onClick={() => setWizardStep(wizardStep + 1)}
-                  className="flex-1 bg-gray-900 hover:bg-gray-800 text-white font-bold py-2.5 px-4 rounded-xl text-xs transition-colors shadow-3xs"
+                  className="flex-1 bg-gray-955 hover:bg-gray-900 text-white font-bold py-3 px-4 rounded-xl text-xs transition-all active:scale-98 shadow-sm"
                 >
                   Continue
                 </button>
@@ -1003,7 +1115,7 @@ export function MsmeSamadhaanDashboard() {
                     setSelectedEligible(null)
                     setWizardStep(1)
                   }}
-                  className="flex-1 border border-gray-200 hover:bg-gray-50 text-gray-700 font-semibold py-2.5 px-4 rounded-xl text-xs transition-colors disabled:opacity-50"
+                  className="flex-1 border border-gray-200 hover:bg-gray-50 text-gray-700 font-semibold py-3 px-4 rounded-xl text-xs transition-all active:scale-98 disabled:opacity-50"
                 >
                   {filingFinished ? 'Finish Wizard' : 'Cancel'}
                 </button>
@@ -1017,3 +1129,4 @@ export function MsmeSamadhaanDashboard() {
     </div>
   )
 }
+

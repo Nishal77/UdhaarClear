@@ -9,11 +9,11 @@ import { BarList } from '@/components/ui/BarList'
 import { CategoryBar } from '@/components/ui/CategoryBar'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { 
-  Chart01Icon, 
-  Coins01Icon, 
+  AiBrain01Icon,
+  Coins01Icon,
+  Chart01Icon,
   HourglassIcon,
-  InvoiceIcon,
-  AiBrain01Icon
+  InvoiceIcon
 } from '@hugeicons/core-free-icons'
 
 // Mock data structures for the different Time Ranges
@@ -173,21 +173,28 @@ export function RecoveryAnalytics() {
   const totalChannelsValue = currentData.channels.reduce((sum, item) => sum + item.value, 0)
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
 
-      {/* ── Time Period Filter & Meta Controls ── */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 select-none">
-        <div className="text-left">
-          <span className="text-[11.5px] text-gray-400 font-bold uppercase tracking-wider">
-            Realtime Analytics Suite
-          </span>
-          <h2 className="text-[20px] font-extrabold text-gray-900 leading-tight">
-            Recovery Performance Metrics
-          </h2>
+      {/* ── Page Header & Controls ── */}
+      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 select-none pb-2">
+        <div className="text-left flex-1">
+          <nav className="flex items-center gap-1.5 text-[12px] text-gray-400">
+            <Link href="/dashboard" className="hover:text-gray-600 transition-colors">Home</Link>
+            <span>›</span>
+            <span className="text-gray-400">Analytics</span>
+            <span>›</span>
+            <span className="text-gray-600 font-medium">Recovery Analytics</span>
+          </nav>
+          <h1 className="text-[24px] font-bold text-gray-900 leading-tight mt-1">
+            Recovery Analytics
+          </h1>
+          <p className="mt-1 text-[13px] text-gray-400 font-medium">
+            Monitor collections speed, recovery success rates, DPD performance, and channels efficiency in real time.
+          </p>
         </div>
 
         {/* Dropdown controls */}
-        <div className="flex items-center gap-2.5 bg-white border border-[#EBEAE6] p-1.5 rounded-xl shadow-3xs">
+        <div className="flex items-center gap-2 bg-white border border-[#EBEAE6] p-1.5 rounded-xl shadow-3xs shrink-0 self-start md:self-end">
           <span className="text-[12px] font-bold text-gray-500 pl-2">Timeframe:</span>
           <select
             value={timeRange}
@@ -202,98 +209,100 @@ export function RecoveryAnalytics() {
         </div>
       </div>
 
-      {/* ── Key Metrics Grid (Premium Individual Cards) ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 select-none">
-        
-        {/* Metric 1: Total Debt Recovered */}
-        <div className="bg-white border border-[#EBEAE6] rounded-2xl p-5 hover:border-gray-300 hover:shadow-xs transition-all duration-300 flex flex-col justify-between min-h-[140px] text-left">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Total Recovered</span>
-            <span className="p-1.5 rounded-lg bg-emerald-50 text-emerald-600">
-              <HugeiconsIcon icon={Coins01Icon} size={15} />
-            </span>
-          </div>
-          <div className="mt-3 space-y-1.5">
-            <span className="text-[25px] font-black text-gray-900 leading-none block">
-              {currencyFormatter(currentData.metrics.totalRecovered)}
-            </span>
-            <div className="pt-0.5">
-              <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full text-[10px] font-bold">
-                ▲ {currentData.metrics.recoveredDiff}
+      {/* ── Key Metrics Grid (Unified Premium Panel) ── */}
+      <div className="bg-white border border-[#EBEAE6] rounded-[22px] overflow-hidden select-none">
+        <div className="grid grid-cols-1 divide-y divide-[#EBEAE6]/60 md:grid-cols-4 md:divide-y-0 md:divide-x text-left">
+          
+          {/* Stat 1: Total Debt Recovered */}
+          <div className="px-6 py-5 flex flex-col justify-between min-h-[140px]">
+            <div className="flex items-start justify-between">
+              <span className="text-[11.5px] font-bold text-gray-400 uppercase tracking-wider">Total Recovered</span>
+              <span className="p-1.5 rounded-lg bg-emerald-50 text-emerald-600 shrink-0">
+                <HugeiconsIcon icon={Coins01Icon} size={15} />
               </span>
             </div>
+            <div className="mt-2 flex flex-col gap-1.5">
+              <span className="text-[26px] font-black text-gray-900 leading-none whitespace-nowrap block">
+                {currencyFormatter(currentData.metrics.totalRecovered)}
+              </span>
+              <div className="pt-0.5">
+                <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 px-2.5 py-0.5 rounded-full text-[10.5px] font-bold">
+                  ▲ {currentData.metrics.recoveredDiff}
+                </span>
+              </div>
+            </div>
           </div>
-        </div>
 
-        {/* Metric 2: Recovery Rate */}
-        <div className="bg-white border border-[#EBEAE6] rounded-2xl p-5 hover:border-gray-300 hover:shadow-xs transition-all duration-300 flex flex-col justify-between min-h-[140px] text-left">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Recovery Success</span>
-            <span className="p-1.5 rounded-lg bg-blue-50 text-blue-600">
-              <HugeiconsIcon icon={Chart01Icon} size={15} />
-            </span>
-          </div>
-          <div className="mt-3 space-y-2">
-            <div className="flex items-baseline justify-between">
-              <span className="text-[25px] font-black text-gray-900 leading-none">
-                {currentData.metrics.rate}%
-              </span>
-              <span className="text-[10px] text-gray-400 font-bold">
-                Target: 80%
+          {/* Stat 2: Recovery Success */}
+          <div className="px-6 py-5 flex flex-col justify-between min-h-[140px]">
+            <div className="flex items-start justify-between">
+              <span className="text-[11.5px] font-bold text-gray-400 uppercase tracking-wider">Recovery Success</span>
+              <span className="p-1.5 rounded-lg bg-blue-50 text-blue-600 shrink-0">
+                <HugeiconsIcon icon={Chart01Icon} size={15} />
               </span>
             </div>
-            <div className="w-full">
-              <CategoryBar
-                values={[60, 20, 20]}
-                colors={["red", "amber", "emerald"]}
-                marker={{ value: currentData.metrics.rate }}
-                showLabels={false}
-                className="h-1.5"
-              />
+            <div className="mt-2 space-y-2">
+              <div className="flex items-baseline justify-between">
+                <span className="text-[26px] font-black text-gray-900 leading-none whitespace-nowrap">
+                  {currentData.metrics.rate}%
+                </span>
+                <span className="text-[10px] text-gray-400 font-bold">
+                  Target: 80%
+                </span>
+              </div>
+              <div className="w-full">
+                <CategoryBar
+                  values={[60, 20, 20]}
+                  colors={["red", "amber", "emerald"]}
+                  marker={{ value: currentData.metrics.rate }}
+                  showLabels={false}
+                  className="h-1.5"
+                />
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Metric 3: Average Days to Collect */}
-        <div className="bg-white border border-[#EBEAE6] rounded-2xl p-5 hover:border-gray-300 hover:shadow-xs transition-all duration-300 flex flex-col justify-between min-h-[140px] text-left">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Avg Days to Collect</span>
-            <span className="p-1.5 rounded-lg bg-orange-50 text-[#FF6A39]">
-              <HugeiconsIcon icon={HourglassIcon} size={15} />
-            </span>
-          </div>
-          <div className="mt-3 space-y-1.5">
-            <span className="text-[25px] font-black text-gray-900 leading-none block">
-              {currentData.metrics.daysToCollect} Days
-            </span>
-            <div className="pt-0.5">
-              <span className="inline-flex items-center gap-1 bg-orange-50 text-orange-700 px-2 py-0.5 rounded-full text-[10px] font-bold">
-                ▼ {currentData.metrics.daysDiff}
+          {/* Stat 3: Average Days to Collect */}
+          <div className="px-6 py-5 flex flex-col justify-between min-h-[140px]">
+            <div className="flex items-start justify-between">
+              <span className="text-[11.5px] font-bold text-gray-400 uppercase tracking-wider">Avg Days to Collect</span>
+              <span className="p-1.5 rounded-lg bg-orange-50 text-[#FF6A39] shrink-0">
+                <HugeiconsIcon icon={HourglassIcon} size={15} />
               </span>
             </div>
-          </div>
-        </div>
-
-        {/* Metric 4: Outstanding Receivables */}
-        <div className="bg-white border border-[#EBEAE6] rounded-2xl p-5 hover:border-gray-300 hover:shadow-xs transition-all duration-300 flex flex-col justify-between min-h-[140px] text-left">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Outstanding Queue</span>
-            <span className="p-1.5 rounded-lg bg-violet-50 text-violet-600">
-              <HugeiconsIcon icon={InvoiceIcon} size={15} />
-            </span>
-          </div>
-          <div className="mt-3 space-y-1.5">
-            <span className="text-[25px] font-black text-gray-900 leading-none block font-mono">
-              {currencyFormatter(currentData.metrics.outstanding)}
-            </span>
-            <div className="pt-0.5">
-              <span className="inline-flex items-center gap-1 bg-violet-50 text-violet-700 px-2 py-0.5 rounded-full text-[10px] font-bold">
-                ⏱️ Awaiting Reminders
+            <div className="mt-2 flex flex-col gap-1.5">
+              <span className="text-[26px] font-black text-gray-900 leading-none whitespace-nowrap block">
+                {currentData.metrics.daysToCollect} Days
               </span>
+              <div className="pt-0.5">
+                <span className="inline-flex items-center gap-1 bg-orange-50 text-orange-700 px-2.5 py-0.5 rounded-full text-[10px] font-bold">
+                  ▼ {currentData.metrics.daysDiff}
+                </span>
+              </div>
             </div>
           </div>
-        </div>
 
+          {/* Stat 4: Outstanding Receivables */}
+          <div className="px-6 py-5 flex flex-col justify-between min-h-[140px]">
+            <div className="flex items-start justify-between">
+              <span className="text-[11.5px] font-bold text-gray-400 uppercase tracking-wider">Outstanding Queue</span>
+              <span className="p-1.5 rounded-lg bg-violet-50 text-violet-600 shrink-0">
+                <HugeiconsIcon icon={InvoiceIcon} size={15} />
+              </span>
+            </div>
+            <div className="mt-2 flex flex-col gap-1.5">
+              <span className="text-[26px] font-black text-gray-900 leading-none whitespace-nowrap block font-mono">
+                {currencyFormatter(currentData.metrics.outstanding)}
+              </span>
+              <div className="pt-0.5">
+                <span className="inline-flex items-center gap-1 bg-violet-50 text-violet-750 px-2.5 py-0.5 rounded-full text-[10px] font-bold">
+                  ⏱️ Awaiting Reminders
+                </span>
+              </div>
+            </div>
+          </div>
+
+        </div>
       </div>
 
       {/* ── Trend Analysis Charts (Double Graph Layout) ── */}
@@ -325,30 +334,82 @@ export function RecoveryAnalytics() {
           </div>
         </div>
 
-        {/* Chart 2: Recovery Success Rate Trend (Takes 1 Column - Essential addition) */}
-        <div className="rounded-xl bg-white border border-[#EBEAE6] shadow-xs p-5 select-none text-left space-y-4 flex flex-col justify-between">
+        {/* Chart 2: Recovery Success Scorecard (Takes 1 Column) */}
+        <div className="rounded-xl bg-white border border-[#EBEAE6] shadow-xs p-5 select-none text-left space-y-4 flex flex-col justify-between min-h-[380px]">
           <div>
             <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest block">
-              Efficiency Trend
+              Efficiency Score
             </span>
             <h3 className="text-[15px] font-extrabold text-gray-900 leading-tight mt-0.5">
-              Collection Success Rate %
+              Collection Success Rate
             </h3>
             <p className="text-xs text-gray-400 font-semibold mt-1">
-              Monthly collection success rate performance against target.
+              Real-time recovery success rate performance against target.
             </p>
           </div>
 
-          <div className="pt-2 h-72 flex-1">
-            <AreaChart
-              data={currentData.rateTrend}
-              index="date"
-              categories={['Recovery Rate']}
-              colors={['emerald']}
-              valueFormatter={(val) => `${val.toFixed(1)}%`}
-              yAxisWidth={48}
-              showLegend={false}
-            />
+          {/* SVG Progress Ring */}
+          <div className="relative flex items-center justify-center flex-1 my-2">
+            <svg
+              height={160}
+              width={160}
+              className="transform -rotate-90"
+            >
+              {/* Background circle */}
+              <circle
+                stroke="#F1F1F0"
+                fill="transparent"
+                strokeWidth={14}
+                r={62}
+                cx={80}
+                cy={80}
+              />
+              {/* Animated foreground circle */}
+              <circle
+                stroke="url(#progressGradient)"
+                fill="transparent"
+                strokeWidth={14}
+                strokeDasharray={389.56} // 2 * PI * 62 = ~389.56
+                strokeDashoffset={389.56 - (currentData.metrics.rate / 100) * 389.56}
+                strokeLinecap="round"
+                r={62}
+                cx={80}
+                cy={80}
+                className="transition-all duration-500 ease-out"
+              />
+              <defs>
+                <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#10B981" />
+                  <stop offset="100%" stopColor="#059669" />
+                </linearGradient>
+              </defs>
+            </svg>
+            
+            {/* Center Content */}
+            <div className="absolute flex flex-col items-center justify-center text-center">
+              <span className="text-[34px] font-black text-gray-900 tracking-tight leading-none">
+                {currentData.metrics.rate.toFixed(1)}%
+              </span>
+              <span className="text-[11.5px] font-extrabold text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full mt-2 border border-emerald-100/50">
+                {Math.round(currentData.metrics.rate)} / 100
+              </span>
+            </div>
+          </div>
+
+          {/* Summary stats row */}
+          <div className="border-t border-gray-100 pt-3 flex items-center justify-between text-xs font-semibold">
+            <div className="text-left">
+              <span className="text-gray-400 block font-medium">Efficiency Rating</span>
+              <span className="text-gray-900 block font-bold mt-0.5">
+                {currentData.metrics.rate >= 85 ? 'Excellent compliance' : 'Standard compliance'}
+              </span>
+            </div>
+            <div className="text-right">
+              <span className="text-gray-400 block font-medium">Target Variance</span>
+              <span className="text-emerald-600 block font-bold mt-0.5">
+                +{(currentData.metrics.rate - 80).toFixed(1)}%
+              </span>
+            </div>
           </div>
         </div>
 

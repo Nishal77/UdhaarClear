@@ -190,6 +190,10 @@ const DonutChart = React.forwardRef<HTMLDivElement, DonutChartProps>(
     const [activeIndex, setActiveIndex] = React.useState<number | undefined>(
       undefined,
     )
+    const [mounted, setMounted] = React.useState(false)
+    React.useEffect(() => {
+      setMounted(true)
+    }, [])
     const isDonut = variant === "donut"
     const parsedLabelInput = parseLabelInput(label, valueFormatter, data, value)
 
@@ -218,6 +222,17 @@ const DonutChart = React.forwardRef<HTMLDivElement, DonutChartProps>(
           ...data.payload,
         })
       }
+    }
+
+    if (!mounted) {
+      return (
+        <div
+          ref={forwardedRef}
+          className={cx("h-40 w-40", className)}
+          tremor-id="tremor-raw"
+          {...other}
+        />
+      )
     }
 
     return (
