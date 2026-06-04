@@ -38,6 +38,7 @@ export async function updateSession(request: NextRequest) {
     path.startsWith('/settings') ||
     path.startsWith('/msme-samadhaan') ||
     path.startsWith('/analytics') ||
+    path.startsWith('/team') ||
     path.startsWith('/ca')
 
   if (isProtected && !user) {
