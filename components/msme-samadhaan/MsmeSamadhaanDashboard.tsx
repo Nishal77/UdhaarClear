@@ -202,28 +202,28 @@ export function MsmeSamadhaanDashboard() {
     <div className="space-y-4">
       
       {/* ── Stats Bar ── */}
-      <div className="bg-white border border-[#EBEAE6] rounded-[22px] overflow-hidden select-none shadow-xs">
+      <div className="bg-white border border-[#EBEAE6] rounded-[22px] overflow-hidden select-none">
         <div className="grid grid-cols-1 divide-y divide-[#EBEAE6]/60 md:grid-cols-4 md:divide-y-0 md:divide-x text-left">
             
             {/* Stat 1: Active Cases */}
             <div className="px-5 py-3 flex flex-col justify-center">
-              <span className="text-[12px] font-semibold text-gray-400 uppercase tracking-wider">Active Samadhaan Cases</span>
-              <div className="mt-0.5 flex items-baseline gap-1.5">
-                <span className="text-[22px] font-bold text-gray-900 leading-none">
+              <span className="text-[14px] font-medium text-black tracking-tight">Active Samadhaan Cases</span>
+              <div className="mt-0.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                <span className="text-[22px] font-semibold text-gray-900 leading-none whitespace-nowrap">
                   {filedCases.length} Claims
                 </span>
-                <span className="text-[10.5px] text-orange-600 font-semibold">Under council review</span>
+                <span className="text-[11.5px] text-orange-600 font-semibold whitespace-nowrap">Under council review</span>
               </div>
             </div>
 
             {/* Stat 2: Active Claims Amount */}
             <div className="px-5 py-3 flex flex-col justify-center">
-              <span className="text-[12px] font-semibold text-gray-400 uppercase tracking-wider">Total Claims Value</span>
-              <div className="mt-0.5 flex items-baseline gap-1.5 flex-wrap">
-                <span className="text-[22px] font-bold text-gray-900 leading-none">
+              <span className="text-[14px] font-medium text-black tracking-tight">Total Claims Value</span>
+              <div className="mt-0.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                <span className="text-[22px] font-semibold text-gray-900 leading-none whitespace-nowrap">
                   {formatINRCompact(totalActiveClaimsAmount)}
                 </span>
-                <span className="text-[10.5px] text-gray-400 font-medium">
+                <span className="text-[11.5px] text-gray-400 font-medium whitespace-nowrap">
                   (Interest: {formatINRCompact(totalInterestClaimed)})
                 </span>
               </div>
@@ -231,21 +231,21 @@ export function MsmeSamadhaanDashboard() {
 
             {/* Stat 3: RBI Compound Interest Rate */}
             <div className="px-5 py-3 flex flex-col justify-center">
-              <span className="text-[12px] font-semibold text-gray-400 uppercase tracking-wider">Legal Interest Rate</span>
-              <div className="mt-0.5 flex items-baseline gap-1.5">
-                <span className="text-[22px] font-bold text-emerald-600 leading-none">3x RBI Rate</span>
-                <span className="text-[10.5px] text-emerald-600 font-semibold">20.25% Compounded Monthly</span>
+              <span className="text-[14px] font-medium text-black tracking-tight">Legal Interest Rate</span>
+              <div className="mt-0.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                <span className="text-[22px] font-semibold text-emerald-600 leading-none whitespace-nowrap">3x RBI Rate</span>
+                <span className="text-[11.5px] text-emerald-600 font-semibold whitespace-nowrap">20.25% Comp. Monthly</span>
               </div>
             </div>
 
             {/* Stat 4: Eligible for Filing */}
             <div className="px-5 py-3 flex flex-col justify-center">
-              <span className="text-[12px] font-semibold text-gray-400 uppercase tracking-wider">Filing Eligibility</span>
-              <div className="mt-0.5 flex items-baseline gap-1.5">
-                <span className="text-[22px] font-bold text-[#FF6A39] leading-none">
+              <span className="text-[14px] font-medium text-black tracking-tight">Filing Eligibility</span>
+              <div className="mt-0.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                <span className="text-[22px] font-semibold text-[#FF6A39] leading-none whitespace-nowrap">
                   {totalEligibleCount} Invoices
                 </span>
-                <span className="text-[10.5px] text-[#FF6A39] font-semibold">Unpaid &gt;45 days</span>
+                <span className="text-[11.5px] text-[#FF6A39] font-semibold whitespace-nowrap">Unpaid &gt;45 days</span>
               </div>
             </div>
 
@@ -253,7 +253,7 @@ export function MsmeSamadhaanDashboard() {
       </div>
 
       {/* ── Main Dashboard Panel ── */}
-      <div className="rounded-xl bg-white border border-[#EBEAE6] shadow-xs overflow-hidden">
+      <div className="rounded-[22px] bg-white border border-[#EBEAE6] overflow-hidden">
           
           {/* Table Toolbar controls */}
           <div className="border-b border-gray-100 px-6 py-3.5 flex flex-col md:flex-row items-center justify-between gap-4 select-none bg-white">
