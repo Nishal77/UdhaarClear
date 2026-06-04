@@ -61,7 +61,7 @@ const EXTRA_SECTIONS: NavSection[] = [
     items: [
       { href: '/tone-engine',            label: 'AI Tone Engine',       icon: Megaphone02Icon },
       { href: '/legal-notices',          label: 'Legal Notices',        icon: NotificationSquareIcon },
-      { href: '/autopilots',             label: 'MSME Samadhaan',       icon: Chart01Icon },
+      { href: '/msme-samadhaan',         label: 'MSME Samadhaan',       icon: Chart01Icon },
       { href: '/payments',               label: 'Payments',             icon: CreditCardIcon },
       { href: '/reminder-customisation', label: 'Customise Reminders',  icon: Settings02Icon },
     ],

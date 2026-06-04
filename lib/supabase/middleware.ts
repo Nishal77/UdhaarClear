@@ -36,6 +36,8 @@ export async function updateSession(request: NextRequest) {
     path.startsWith('/whatsapp-email-log') ||
     path.startsWith('/reports') ||
     path.startsWith('/settings') ||
+    path.startsWith('/msme-samadhaan') ||
+    path.startsWith('/analytics') ||
     path.startsWith('/ca')
 
   if (isProtected && !user) {
