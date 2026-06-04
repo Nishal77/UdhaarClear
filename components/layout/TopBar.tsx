@@ -147,7 +147,7 @@ export function TopBar({ userName = 'User', businessName = 'UdhaarClear', userEm
           {/* Profile Name & Subtext */}
           <div className="flex flex-col text-left justify-center leading-[1.1] shrink-0">
             <span className="text-[13px] font-bold text-gray-900">{userName}</span>
-            <span className="text-[11px] font-medium text-gray-400 mt-0.5">Manage Account</span>
+            <span className="text-[11px] font-medium text-gray-400 mt-0.5">Settings & Profile</span>
           </div>
           {/* Chevron Down */}
           <HugeiconsIcon 

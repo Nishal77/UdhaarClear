@@ -148,6 +148,33 @@ const SAMPLE_ITEMS = (): WhatsappEmailLogItem[] => [
     createdAt: new Date(Date.now() - 10 * 60 * 1000), // 10m ago
     templateName: 'payment_reminder_gentle',
     messageBody: 'Dear *Rajlaxmi Pharmaceuticals*,\n\nA quick friendly follow-up: invoice *INV-2026-008* of *₹3,35,000* is 4 days overdue. You can pay here: https://udhaarclear.com/pay/inv-008'
+  },
+  {
+    id: 'sample-rem-9',
+    invoiceNumber: 'INV-2026-009',
+    amount: 150000,
+    customerName: 'Karan Synthetics',
+    customerPhone: '+91 91100 88220',
+    customerCity: 'Surat',
+    customerEmail: 'karan.syn@example.com',
+    channel: 'WHATSAPP',
+    tone: 'GENTLE',
+    status: 'REPLIED',
+    dayOverdue: 12,
+    outcome: 'Negotiated: Split Payment (50% now / 50% later)',
+    createdAt: new Date(Date.now() - 5 * 3600 * 1000),
+    readAt: new Date(Date.now() - 4.8 * 3600 * 1000),
+    templateName: 'payment_reminder_gentle',
+    messageBody: 'Hello *Karan Synthetics*,\n\nWe have received your request for a split payment plan for invoice *INV-2026-009*.\n\nYour 1st installment of *₹75,000* has been successfully paid.\n\nYour 2nd installment of *₹75,000* is scheduled for payment on *15-Jun-2026*.\n\nRegards,\nUdhaarClear Payments',
+    splitPayment: {
+      totalAmount: 150000,
+      paidAmount: 75000,
+      paidAt: new Date(Date.now() - 5 * 3600 * 1000),
+      nextDueAmount: 75000,
+      nextDueDate: new Date(Date.now() + 11 * 24 * 3600 * 1000),
+      nextRemindDate: new Date(Date.now() + 10 * 24 * 3600 * 1000),
+      status: 'ACTIVE'
+    }
   }
 ]
 
@@ -202,10 +229,10 @@ export default async function WhatsappEmailLogPage() {
   const displayLogs = isSampleData ? SAMPLE_ITEMS() : databaseItems
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative overflow-hidden">
       
       {/* ── Page Header ── */}
-      <div className="flex flex-col select-none">
+      <div className="flex flex-col select-none relative z-10">
         <nav className="flex items-center gap-1.5 text-[12px] text-gray-400">
           <Link href="/dashboard" className="hover:text-gray-600 transition-colors">Home</Link>
           <span>›</span>

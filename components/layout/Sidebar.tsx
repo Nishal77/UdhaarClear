@@ -52,7 +52,7 @@ const MAIN_NAV: NavItem[] = [
   { href: '/dashboard',  label: 'Overview',         icon: DashboardSquare01Icon },
   { href: '/invoices',   label: 'Invoices',          icon: InvoiceIcon },
   { href: '/customers',  label: 'Customers',         icon: UserGroupIcon },
-  { href: '/whatsapp-email-log',  label: 'Whatsapp & Email Logs',  icon: CheckListIcon },
+  { href: '/whatsapp-email-log',  label: 'WhatsApp & Email Logs',  icon: CheckListIcon },
 ]
 
 const EXTRA_SECTIONS: NavSection[] = [

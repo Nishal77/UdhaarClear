@@ -530,7 +530,7 @@ export default async function DashboardPage() {
           <div className="flex flex-col text-left md:pr-6 pb-4 md:pb-0 flex-1 justify-center">
             <span className="text-[14px] font-medium text-black tracking-tight">Total Outstanding</span>
             <div className="flex items-baseline gap-2 mt-1.5 flex-wrap">
-              <span className="text-[24px] font-semibold text-gray-900 leading-none">{formatINRCompact(stats.totalOutstanding)}100</span>
+              <span className="text-[24px] font-semibold text-gray-900 leading-none">{formatINRCompact(stats.totalOutstanding)}</span>
               <span className="text-[11.5px] font-bold text-rose-600 flex items-center gap-0.5">
                 <span>↑ 8%</span>
                 <span className="text-gray-400 font-medium">vs last month</span>

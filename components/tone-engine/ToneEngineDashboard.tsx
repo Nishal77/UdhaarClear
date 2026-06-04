@@ -195,50 +195,48 @@ export function ToneEngineDashboard({
   return (
     <div className="space-y-4">
       
-      {/* ── Stats Bar inside Bg Gray Panel ── */}
-      <div className="bg-[#F8F9FA] border border-[#EBEAE6] p-1.5 rounded-[22px] overflow-hidden select-none shadow-3xs">
-        <div className="bg-white rounded-[16px] border border-gray-100">
-          <div className="grid grid-cols-1 divide-y divide-[#EBEAE6]/60 md:grid-cols-4 md:divide-y-0 md:divide-x text-left">
-            
-            {/* Stat 1 */}
-            <div className="px-5 py-3 flex flex-col justify-center">
-              <span className="text-[12px] font-semibold text-gray-400 uppercase tracking-wider">Total Pipeline Phases</span>
-              <div className="mt-0.5 flex items-baseline gap-1.5">
-                <span className="text-[22px] font-bold text-gray-900 leading-none">
-                  {phases.filter(p => p.enabled).length} / {phases.length}
-                </span>
-                <span className="text-[10.5px] text-emerald-600 font-semibold">All active</span>
-              </div>
+      {/* ── Stats Bar ── */}
+      <div className="bg-white border border-[#EBEAE6]/60 rounded-[22px] overflow-hidden select-none">
+        <div className="grid grid-cols-1 divide-y divide-[#EBEAE6]/60 md:grid-cols-4 md:divide-y-0 md:divide-x text-left">
+          
+          {/* Stat 1 */}
+          <div className="px-5 py-3 flex flex-col justify-center">
+            <span className="text-[14px] font-medium text-black tracking-tight">Total Pipeline Phases</span>
+            <div className="mt-0.5 flex items-baseline gap-1.5">
+              <span className="text-[22px] font-semibold text-gray-900 leading-none">
+                {phases.filter(p => p.enabled).length} / {phases.length}
+              </span>
+              <span className="text-[11.5px] text-emerald-600 font-semibold">All active</span>
             </div>
-
-            {/* Stat 2 */}
-            <div className="px-5 py-3 flex flex-col justify-center">
-              <span className="text-[12px] font-semibold text-gray-400 uppercase tracking-wider">Auto-Escalation</span>
-              <div className="mt-0.5 flex items-baseline gap-1.5">
-                <span className="text-[22px] font-bold text-gray-900 leading-none">Enabled</span>
-                <span className="text-[10.5px] text-gray-400 font-medium">Based on DPD trigger</span>
-              </div>
-            </div>
-
-            {/* Stat 3 */}
-            <div className="px-5 py-3 flex flex-col justify-center">
-              <span className="text-[12px] font-semibold text-gray-400 uppercase tracking-wider">Pipeline Conversion</span>
-              <div className="mt-0.5 flex items-baseline gap-1.5">
-                <span className="text-[22px] font-bold text-emerald-600 leading-none">94.2%</span>
-                <span className="text-[10.5px] text-emerald-600 font-semibold">Overdue cleared</span>
-              </div>
-            </div>
-
-            {/* Stat 4 */}
-            <div className="px-5 py-3 flex flex-col justify-center">
-              <span className="text-[12px] font-semibold text-gray-400 uppercase tracking-wider">Active Days Range</span>
-              <div className="mt-0.5 flex items-baseline gap-1.5">
-                <span className="text-[22px] font-bold text-gray-900 leading-none">1 - 30+ Days</span>
-                <span className="text-[10.5px] text-gray-400 font-medium font-semibold">Overdue trigger</span>
-              </div>
-            </div>
-
           </div>
+
+          {/* Stat 2 */}
+          <div className="px-5 py-3 flex flex-col justify-center">
+            <span className="text-[14px] font-medium text-black tracking-tight">Auto-Escalation</span>
+            <div className="mt-0.5 flex items-baseline gap-1.5">
+              <span className="text-[22px] font-semibold text-gray-900 leading-none">Enabled</span>
+              <span className="text-[11.5px] text-gray-400 font-medium">Based on DPD trigger</span>
+            </div>
+          </div>
+
+          {/* Stat 3 */}
+          <div className="px-5 py-3 flex flex-col justify-center">
+            <span className="text-[14px] font-medium text-black tracking-tight">Pipeline Conversion</span>
+            <div className="mt-0.5 flex items-baseline gap-1.5">
+              <span className="text-[22px] font-semibold text-emerald-600 leading-none">94.2%</span>
+              <span className="text-[11.5px] text-emerald-600 font-semibold">Overdue cleared</span>
+            </div>
+          </div>
+
+          {/* Stat 4 */}
+          <div className="px-5 py-3 flex flex-col justify-center">
+            <span className="text-[14px] font-medium text-black tracking-tight">Active Days Range</span>
+            <div className="mt-0.5 flex items-baseline gap-1.5">
+              <span className="text-[22px] font-semibold text-gray-900 leading-none">1 - 30+ Days</span>
+              <span className="text-[11.5px] text-gray-400 font-medium font-semibold">Overdue trigger</span>
+            </div>
+          </div>
+
         </div>
       </div>
 
@@ -256,7 +254,7 @@ export function ToneEngineDashboard({
           </div>
 
           {/* New Creative Explanatory Banner: "How It Works" */}
-          <div className="bg-[#FFF8F5] border border-[#FF6A39]/20 rounded-2xl p-4 text-left select-none relative group overflow-hidden">
+          <div className="bg-white border border-[#EBEAE6]/60 rounded-[22px] p-4 text-left select-none relative group overflow-hidden">
             <div className="absolute right-3 bottom-0 translate-y-3 opacity-5 pointer-events-none text-[#FF6A39] font-bold text-5xl">
               ⚙️
             </div>
@@ -273,10 +271,7 @@ export function ToneEngineDashboard({
             </div>
           </div>
 
-          <div className="relative pl-4 space-y-3">
-            
-            {/* Visual solid gradient connector line representing tone escalation intensity */}
-            <div className="absolute left-[36px] top-6 bottom-6 w-[3px] bg-gradient-to-b from-emerald-400 via-amber-400 to-red-500 rounded-full opacity-80 pointer-events-none" />
+          <div className="relative pl-[56px] space-y-3">
 
             {phases.map((phase, idx) => {
               const isActive = activeIdx === idx
@@ -291,26 +286,34 @@ export function ToneEngineDashboard({
                       setActiveIdx(idx)
                       setIsEditing(false)
                     }}
-                    className={`relative flex flex-col md:flex-row items-start justify-between gap-4 p-4.5 rounded-2xl cursor-pointer transition-all duration-200 select-none ${
+                    className={`relative flex flex-col md:flex-row items-start justify-between gap-4 p-4.5 rounded-[22px] cursor-pointer transition-all duration-200 select-none ${
                       isActive
-                        ? 'bg-white border-2 border-[#FF6A39] shadow-md ring-4 ring-[#FF6A39]/5'
+                        ? 'bg-white border-2 border-[#FF6A39]'
                         : phase.enabled
-                          ? 'bg-white border border-[#EBEAE6] hover:border-gray-300 shadow-3xs'
-                          : 'bg-gray-50/70 border border-gray-200/60 opacity-60'
+                          ? 'bg-white border border-[#EBEAE6]/60 hover:border-gray-400'
+                          : 'bg-[#FAF9F6]/40 border border-[#EBEAE6]/45 opacity-60'
                     }`}
                   >
                     
+                    {/* Vertical line segments above and below the dot with elegant gaps */}
+                    {idx > 0 && (
+                      <div className="absolute left-[-27px] top-0 bottom-[calc(50%+16px)] w-[2px] bg-[#EBEAE6]" />
+                    )}
+                    {!lastPhase && (
+                      <div className="absolute left-[-27px] top-[calc(50%+16px)] bottom-[-32px] w-[2px] bg-[#EBEAE6]" />
+                    )}
+
                     {/* Visual Node Dot with pulsing ring for the active node */}
-                    <div className={`absolute left-[-22px] md:left-[-25px] top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 bg-white flex items-center justify-center transition-all z-10 ${
+                    <div className={`absolute left-[-36px] top-1/2 -translate-y-1/2 w-[20px] h-[20px] rounded-full border-2 bg-white flex items-center justify-center transition-all z-10 ${
                       isActive 
-                        ? 'border-[#FF6A39] ring-4 ring-[#FF6A39]/20 scale-110 shadow-sm' 
+                        ? 'border-[#FF6A39]' 
                         : phase.enabled ? 'border-gray-400' : 'border-gray-300'
                     }`}>
-                      <div className={`w-1.5 h-1.5 rounded-full ${
+                      <div className={`w-[8px] h-[8px] rounded-full transition-all ${
                         isActive ? 'bg-[#FF6A39]' : phase.enabled ? 'bg-gray-400' : 'bg-gray-300'
                       }`} />
                       {isActive && (
-                        <span className="absolute -inset-1 rounded-full border border-[#FF6A39]/30 animate-ping opacity-75 pointer-events-none" />
+                        <span className="absolute -inset-[5px] rounded-full bg-[#FF6A39]/10 animate-pulse-soft pointer-events-none border border-[#FF6A39]/20" />
                       )}
                     </div>
 
@@ -381,8 +384,8 @@ export function ToneEngineDashboard({
 
                   {/* Visual Connector Logic Label (between cards - tightened spacing) */}
                   {!lastPhase && phase.enabled && (
-                    <div className="relative left-12 my-1 text-[10px] font-bold text-gray-400 select-none flex items-center gap-2">
-                      <span className="bg-gray-100 px-2.5 py-0.5 rounded-full border border-gray-200/50">
+                    <div className="my-1.5 text-[10px] font-bold text-gray-400 select-none flex items-center gap-2 pl-[18px]">
+                      <span className="bg-white px-2.5 py-0.5 rounded-full border border-[#EBEAE6]/60">
                         {`If unpaid after Day ${phase.daysEnd} → Auto-escalate to next phase`}
                       </span>
                     </div>
@@ -398,7 +401,7 @@ export function ToneEngineDashboard({
         <div className="lg:col-span-5 lg:sticky lg:top-6 space-y-4">
           
           {/* Simulator Panel Container */}
-          <div className="bg-white border border-[#EBEAE6] rounded-2xl p-4.5 shadow-sm space-y-3.5">
+          <div className="bg-white border border-[#EBEAE6]/60 rounded-[22px] p-4.5 space-y-3.5">
             
             {/* Simulator Header */}
             <div className="border-b border-gray-100 pb-2.5 flex items-center justify-between select-none">
@@ -557,7 +560,7 @@ export function ToneEngineDashboard({
                   </span>
                   <button
                     onClick={startEdit}
-                    className="bg-gray-950 hover:bg-gray-900 text-white text-[11px] font-bold py-1 px-3 rounded-lg shadow-3xs transition-colors"
+                    className="bg-gray-950 hover:bg-gray-900 text-white text-[11px] font-bold py-1 px-3 rounded-lg transition-colors"
                   >
                     Edit Template
                   </button>
@@ -594,7 +597,7 @@ export function ToneEngineDashboard({
                             setEditedText(prev => prev + ' ' + t.key)
                             toast.success(`Added ${t.key} placeholder`)
                           }}
-                          className="bg-gray-100 hover:bg-gray-200 border border-gray-200 hover:border-gray-300 text-gray-700 hover:text-gray-900 font-bold px-2 py-0.5 rounded text-[10px] transition-all cursor-pointer shadow-3xs"
+                          className="bg-gray-100 hover:bg-gray-200 border border-gray-200 hover:border-gray-300 text-gray-700 hover:text-gray-900 font-semibold px-2 py-0.5 rounded text-[10px] transition-all cursor-pointer"
                         >
                           + {t.label}
                         </button>
@@ -605,7 +608,7 @@ export function ToneEngineDashboard({
                   <div className="flex items-center gap-2">
                     <button
                       onClick={saveEdit}
-                      className="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold py-1 px-3.5 rounded-lg shadow-3xs transition-colors"
+                      className="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold py-1 px-3.5 rounded-lg transition-colors"
                     >
                       Save Changes
                     </button>
