@@ -100,7 +100,7 @@ export function TopDefaulters({
           </div>
           {/* Action */}
           <Link
-            href="/reminders?customer=mehta"
+            href="/whatsapp-email-log?customer=mehta"
             className="group flex items-center gap-1 text-[13.5px] font-bold text-[#FF6A39] hover:text-[#E05B2E] active:scale-95 transition-all shrink-0 ml-4"
           >
             <span>Send Nudge</span>

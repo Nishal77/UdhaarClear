@@ -189,7 +189,7 @@ export function CustomerDetail({ customer }: CustomerDetailProps) {
               Edit
             </Link>
             <Link
-              href={`/reminders?customerId=${customer.id}`}
+              href={`/whatsapp-email-log?customerId=${customer.id}`}
               className="flex items-center gap-1.5 rounded-xl border border-gray-200 bg-white px-3.5 py-2 text-[13px] font-semibold text-gray-700 hover:bg-gray-50 transition-all"
             >
               <HugeiconsIcon icon={WhatsappIcon} size={14} className="text-emerald-500" />

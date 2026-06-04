@@ -508,11 +508,11 @@ export default async function DashboardPage() {
           </Link>
 
           <Link
-            href="/reminders"
+            href="/whatsapp-email-log"
             className="flex items-center gap-2 rounded-full bg-[#FF6A39] hover:bg-[#E05B2E] px-5 py-2.5 text-[14px] font-medium text-white active:scale-95 transition-all cursor-pointer shadow-3xs"
           >
             <HugeiconsIcon icon={SentIcon} className="w-3.5 h-3.5 text-white" />
-            Send Reminders
+            Communication Logs
           </Link>
 
           {/* Share Button Mockup */}

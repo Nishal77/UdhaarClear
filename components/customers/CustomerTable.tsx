@@ -188,7 +188,7 @@ function renderActionButton(c: CustomerWithSummary) {
     if (c.defaultTone === 'LEGAL') {
       return (
         <Link
-          href={`/reminders?customerId=${c.id}`}
+          href={`/whatsapp-email-log?customerId=${c.id}`}
           className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-red-600 hover:text-red-700 transition-all justify-end select-none group/btn"
         >
           <span>File MSME</span>
@@ -202,7 +202,7 @@ function renderActionButton(c: CustomerWithSummary) {
     }
     return (
       <Link
-        href={`/reminders?customerId=${c.id}`}
+        href={`/whatsapp-email-log?customerId=${c.id}`}
         className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-gray-900 hover:text-[#FF6A39] transition-all justify-end select-none group/btn"
       >
         <span>Remind</span>

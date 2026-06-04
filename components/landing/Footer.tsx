@@ -110,209 +110,166 @@ export default function Footer() {
 
       </div>
 
-      {/* 2. FOOTER DIRECTORY SECTION */}
-      <div className="bg-white border-t border-gray-100 py-16 md:py-24 px-6 md:px-8">
-        <div className="max-w-[1240px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-start text-left">
+      {/* 2. REDESIGNED DIRECTORY & MAILBOX FOOTER SECTION */}
+      <div className="bg-white border-t border-gray-100 pt-20 pb-16 px-6 md:px-12 lg:px-16">
+        <div className="max-w-[1240px] mx-auto">
           
-          {/* Logo & Description Column (Spans 5 on large) */}
-          <div className="col-span-1 lg:col-span-5 flex flex-col gap-6 pr-0 lg:pr-8">
-            {/* Logo */}
-            <Link href="#" className="flex items-center gap-2 group select-none self-start">
-              <div className="flex items-center justify-center w-8 h-8 rounded-lg text-[#0047FF]">
-                <svg className="w-7 h-7 transform group-hover:rotate-6 transition-transform duration-300 ease-out" viewBox="0 0 32 32" fill="currentColor">
-                  <rect x="7" y="14" width="5" height="14" rx="2.5" transform="rotate(-35 7 14)" />
-                  <rect x="15" y="9.5" width="5" height="14" rx="2.5" transform="rotate(-35 15 9.5)" />
-                </svg>
-              </div>
-              <span className="text-2xl font-medium tracking-tight text-gray-900 font-outfit">UdhaarClear</span>
-            </Link>
-
-            {/* Description Text */}
-            <p className="text-gray-500 text-sm md:text-[15px] leading-relaxed max-w-sm font-medium">
-              UdhaarClear, for a professional and seamless way of recovering B2B outstanding payments.
-            </p>
-
-            {/* Social Icons Badge Rows */}
-            <div className="flex items-center gap-4 mt-2">
-              {/* Facebook Icon */}
-              <Link 
-                href="#" 
-                className="w-8 h-8 rounded-full border border-gray-200/60 bg-gray-50/50 hover:bg-gray-100/60 flex items-center justify-center text-gray-400 hover:text-gray-700 transition-colors duration-200"
-              >
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M9 8H7v3h2v9h3v-9h3l.5-3H12V6c0-.88.39-1 1-1h2V2h-3c-2.9 0-4 1.55-4 3.5V8z" />
-                </svg>
-              </Link>
-              {/* Twitter/X Icon */}
-              <Link 
-                href="#" 
-                className="w-8 h-8 rounded-full border border-gray-200/60 bg-gray-50/50 hover:bg-gray-100/60 flex items-center justify-center text-gray-400 hover:text-gray-700 transition-colors duration-200"
-              >
-                <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                </svg>
-              </Link>
-              {/* YouTube Icon */}
-              <Link 
-                href="#" 
-                className="w-8 h-8 rounded-full border border-gray-200/60 bg-gray-50/50 hover:bg-gray-100/60 flex items-center justify-center text-gray-400 hover:text-gray-700 transition-colors duration-200"
-              >
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M23.498 6.163a3.003 3.003 0 00-2.11-2.11C19.52 3.5 12 3.5 12 3.5s-7.52 0-9.388.553a3.003 3.003 0 00-2.11 2.11C0 8.033 0 12 0 12s0 3.967.502 5.837a3.003 3.003 0 002.11 2.11c1.868.553 9.388.553 9.388.553s7.52 0 9.388-.553a3.003 3.003 0 002.11-2.11C24 15.967 24 12 24 12s0-3.967-.502-5.837zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
-                </svg>
-              </Link>
-            </div>
-          </div>
-
-          {/* Structured Directory Links Columns (Spans 7 on large) */}
-          <div className="col-span-1 lg:col-span-7 grid grid-cols-2 md:grid-cols-3 gap-8">
+          {/* Top Row: Logo & Link Columns Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-y-12 gap-x-8 pb-16 items-start">
             
-            {/* PRODUCT COLUMN */}
-            <div className="flex flex-col gap-4">
-              <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider select-none font-outfit">
-                Product
-              </span>
-              <ul className="flex flex-col gap-3">
-                <li>
-                  <Link href="#features" className="text-[15px] font-medium text-gray-600 hover:text-[#0047FF] transition-colors duration-200">
-                    Features
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#who-it-helps" className="text-[15px] font-medium text-gray-600 hover:text-[#0047FF] transition-colors duration-200">
-                    Who it Helps
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#pricing" className="text-[15px] font-medium text-gray-600 hover:text-[#0047FF] transition-colors duration-200">
-                    Pricing
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="text-[15px] font-medium text-gray-600 hover:text-[#0047FF] transition-colors duration-200">
-                    Integrations
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="text-[15px] font-medium text-gray-600 hover:text-[#0047FF] transition-colors duration-200">
-                    API
-                  </Link>
-                </li>
-              </ul>
+            {/* Left Column: Logo & Tagline (spans 6 on md) */}
+            <div className="md:col-span-6 flex flex-col gap-3">
+              <Link href="#" className="flex items-center gap-2 group select-none self-start">
+                <span className="text-3xl font-semibold tracking-tight text-gray-900 font-outfit lowercase">
+                  udhaarclear
+                </span>
+              </Link>
+              <p className="text-gray-400 text-sm md:text-base font-medium max-w-xs font-outfit">
+                Automated payment recovery for Indian businesses.
+              </p>
             </div>
 
-            {/* RESOURCES COLUMN */}
-            <div className="flex flex-col gap-4">
-              <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider select-none font-outfit">
-                Resources
-              </span>
-              <ul className="flex flex-col gap-3">
-                <li>
-                  <Link href="#" className="text-[15px] font-medium text-gray-600 hover:text-[#0047FF] transition-colors duration-200">
-                    Downloads
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="text-[15px] font-medium text-gray-600 hover:text-[#0047FF] transition-colors duration-200">
-                    Help Center
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="text-[15px] font-medium text-gray-600 hover:text-[#0047FF] transition-colors duration-200">
-                    Recovery Guides
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="text-[15px] font-medium text-gray-600 hover:text-[#0047FF] transition-colors duration-200">
-                    WhatsApp Templates
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="text-[15px] font-medium text-gray-600 hover:text-[#0047FF] transition-colors duration-200">
-                    Payment Status
-                  </Link>
-                </li>
-              </ul>
-            </div>
+            {/* Right Columns: Links (spans 6 on md) */}
+            <div className="md:col-span-6 grid grid-cols-3 gap-6 text-left">
+              
+              {/* Column 1: Product / Process */}
+              <div className="flex flex-col gap-4">
+                <h4 className="text-sm font-semibold text-gray-900 font-outfit">Product</h4>
+                <ul className="flex flex-col gap-3 text-xs md:text-sm text-gray-500 font-medium">
+                  <li>
+                    <Link href="#how-it-works" className="hover:text-gray-900 transition-colors duration-200">
+                      Process
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="#features" className="hover:text-gray-900 transition-colors duration-200">
+                      Services
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="#who-it-helps" className="hover:text-gray-900 transition-colors duration-200">
+                      Showcase
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="#pricing" className="hover:text-gray-900 transition-colors duration-200">
+                      Pricing
+                    </Link>
+                  </li>
+                </ul>
+              </div>
 
-            {/* COMPANY COLUMN */}
-            <div className="flex flex-col gap-4 col-span-2 md:col-span-1">
-              <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider select-none font-outfit">
-                Company
-              </span>
-              <ul className="flex flex-col gap-3">
-                <li>
-                  <Link href="#" className="text-[15px] font-medium text-gray-600 hover:text-[#0047FF] transition-colors duration-200">
-                    About Us
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="text-[15px] font-medium text-gray-600 hover:text-[#0047FF] transition-colors duration-200">
-                    Press
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="text-[15px] font-medium text-gray-600 hover:text-[#0047FF] transition-colors duration-200">
-                    Todoist
-                  </Link>
-                </li>
-                <li className="flex items-center gap-2">
-                  <Link href="#" className="text-[15px] font-medium text-gray-600 hover:text-[#0047FF] transition-colors duration-200">
-                    We are hiring!
-                  </Link>
-                  <span className="inline-block bg-[#0047FF]/10 text-[#0047FF] text-[9px] font-extrabold px-1.5 py-0.5 rounded uppercase tracking-wider select-none">
-                    New
-                  </span>
-                </li>
-              </ul>
+              {/* Column 2: Connect */}
+              <div className="flex flex-col gap-4">
+                <h4 className="text-sm font-semibold text-gray-900 font-outfit">Connect</h4>
+                <ul className="flex flex-col gap-3 text-xs md:text-sm text-gray-500 font-medium">
+                  <li>
+                    <a href="https://x.com" target="_blank" rel="noopener noreferrer" className="hover:text-gray-900 transition-colors duration-200">
+                      X
+                    </a>
+                  </li>
+                  <li>
+                    <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="hover:text-gray-900 transition-colors duration-200">
+                      LinkedIn
+                    </a>
+                  </li>
+                  <li>
+                    <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="hover:text-gray-900 transition-colors duration-200">
+                      YouTube
+                    </a>
+                  </li>
+                  <li>
+                    <a href="https://dribbble.com" target="_blank" rel="noopener noreferrer" className="hover:text-gray-900 transition-colors duration-200">
+                      Dribbble
+                    </a>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Column 3: Legal */}
+              <div className="flex flex-col gap-4">
+                <h4 className="text-sm font-semibold text-gray-900 font-outfit">Legal</h4>
+                <ul className="flex flex-col gap-3 text-xs md:text-sm text-gray-500 font-medium">
+                  <li>
+                    <Link href="/terms" className="hover:text-gray-900 transition-colors duration-200">
+                      Terms & Conditions
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/privacy" className="hover:text-gray-900 transition-colors duration-200">
+                      Privacy Policy
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/cookies" className="hover:text-gray-900 transition-colors duration-200">
+                      Cookie Policy
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+
             </div>
 
           </div>
 
-        </div>
-      </div>
-
-      {/* 3. LEGAL BAR & LANGUAGE SELECTOR Bottom Row */}
-      <div className="bg-[#FAFAFA] border-t border-gray-100 py-8 px-6 md:px-8">
-        <div className="max-w-[1240px] mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-          
-          {/* Legal Links & Copyright */}
-          <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-6 gap-y-2 text-xs md:text-sm font-medium text-gray-500">
-            <Link href="#" className="hover:text-gray-800 transition-colors">
-              Security
-            </Link>
-            <span className="text-gray-200 hidden sm:inline">|</span>
-            <Link href="#" className="hover:text-gray-800 transition-colors">
-              Privacy
-            </Link>
-            <span className="text-gray-200 hidden sm:inline">|</span>
-            <Link href="#" className="hover:text-gray-800 transition-colors">
-              Terms
-            </Link>
-            <span className="text-gray-300 hidden sm:inline">·</span>
-            <span className="text-gray-400 select-none">
-              &copy; {new Date().getFullYear()} UdhaarClear Inc.
-            </span>
-          </div>
-
-          {/* Language Selector Dropdown Menus */}
-          <div className="relative select-none shrink-0">
-            <select 
-              defaultValue="en" 
-              className="appearance-none bg-white border border-gray-200 text-gray-600 hover:text-gray-900 font-medium text-xs rounded-lg py-2 pl-3 pr-8 shadow-sm cursor-pointer focus:outline-none focus:border-blue-500 transition-all duration-200"
-            >
-              <option value="en">English</option>
-              <option value="es">Español</option>
-              <option value="fr">Français</option>
-              <option value="de">Deutsch</option>
-              <option value="ja">日本語</option>
-            </select>
-            {/* Custom chevron dropdown icon overlay */}
-            <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-400">
-              <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-              </svg>
+          {/* Bottom Row: Back to Top, Mailbox, and Contact Details */}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-y-8 gap-x-8 items-end pt-12 border-t border-gray-100">
+            
+            {/* Bottom-Left: Back to top button */}
+            <div className="md:col-span-4 flex items-center justify-start">
+              <button 
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                className="inline-flex items-center gap-3 bg-gray-900 hover:bg-black text-white rounded-full py-3 px-6 shadow-md transition-all duration-300 hover:scale-105 active:scale-95 group cursor-pointer"
+              >
+                <span className="font-semibold text-sm tracking-tight font-outfit">Back to top</span>
+                <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center text-black shrink-0 group-hover:-translate-y-0.5 transition-transform duration-200">
+                  <svg className="w-3 h-3 stroke-current" fill="none" strokeWidth="3" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="12" y1="19" x2="12" y2="5"></line>
+                    <polyline points="5 12 12 5 19 12"></polyline>
+                  </svg>
+                </div>
+              </button>
             </div>
+
+            {/* Bottom-Middle: Newsletter/Mailbox Box */}
+            <div className="md:col-span-5 flex flex-col gap-4 items-start w-full max-w-md">
+              <div className="text-left font-outfit">
+                <span className="block text-2xl font-bold text-gray-900 leading-tight">UdhaarClear</span>
+                <span className="block text-2xl font-medium text-gray-400 leading-tight">in your mailbox</span>
+              </div>
+              <form 
+                onSubmit={(e) => { e.preventDefault(); alert('Subscribed!'); }} 
+                className="w-full flex items-center bg-gray-50 border border-gray-200/80 rounded-full p-1.5 focus-within:ring-2 focus-within:ring-gray-900/10 focus-within:border-gray-900 transition-all duration-300"
+              >
+                <input 
+                  type="email" 
+                  placeholder="name@example.com" 
+                  required
+                  className="flex-1 bg-transparent px-4 py-2 text-sm text-gray-900 placeholder-gray-400 outline-none w-full font-outfit font-medium"
+                />
+                <button 
+                  type="submit"
+                  className="w-10 h-10 rounded-full bg-gray-900 hover:bg-black text-white flex items-center justify-center shrink-0 transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer"
+                >
+                  <svg className="w-4 h-4 stroke-current" fill="none" strokeWidth="2.5" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                  </svg>
+                </button>
+              </form>
+            </div>
+
+            {/* Bottom-Right: Contact Email & Copyright details */}
+            <div className="md:col-span-3 flex flex-col items-start md:items-end text-left md:text-right gap-3 font-outfit">
+              <a href="mailto:hello@udhaarclear.in" className="text-base font-bold text-gray-900 hover:underline">
+                hello@udhaarclear.in
+              </a>
+              <div className="flex flex-col gap-0.5 text-xs text-gray-400 font-medium">
+                <span>UdhaarClear</span>
+                <span>2026 &copy; All rights reserved</span>
+              </div>
+            </div>
+
           </div>
 
         </div>

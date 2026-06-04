@@ -3,6 +3,7 @@ import Hero from "@/components/landing/Hero";
 import Problem from "@/components/landing/Problem";
 import HowItWorks from "@/components/landing/HowItWorks";
 import Features from "@/components/landing/Features";
+import Integrations from "@/components/landing/Integrations";
 import WhoItHelps from "@/components/landing/WhoItHelps";
 import Solution from "@/components/landing/Solution";
 import ToneEngine from "@/components/landing/ToneEngine";
@@ -30,6 +31,7 @@ export default function LandingPage() {
         <Problem />
         <HowItWorks />
         <Features />
+        <Integrations />
         <WhoItHelps />
         <Solution />
         <ToneEngine />
@@ -40,5 +42,6 @@ export default function LandingPage() {
     </div>
   );
 }
+
 
 

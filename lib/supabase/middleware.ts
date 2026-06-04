@@ -33,7 +33,7 @@ export async function updateSession(request: NextRequest) {
     path.startsWith('/dashboard') ||
     path.startsWith('/customers') ||
     path.startsWith('/invoices') ||
-    path.startsWith('/reminders') ||
+    path.startsWith('/whatsapp-email-log') ||
     path.startsWith('/reports') ||
     path.startsWith('/settings') ||
     path.startsWith('/ca')

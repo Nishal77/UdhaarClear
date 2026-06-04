@@ -33,7 +33,7 @@ export default function Hero() {
           
           {/* Main Heading */}
           <h1 className="text-5xl md:text-[4rem] font-medium text-gray-900 tracking-tight max-w-5xl">
-            Get Paid Faster Without Spoiling Customer Relationships.
+            The fastest way to recover unpaid dues from your customers without a single phone call.
           </h1>
 
           {/* Paragraph Description */}

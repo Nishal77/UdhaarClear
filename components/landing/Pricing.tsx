@@ -277,7 +277,7 @@ export default function Pricing() {
   };
 
   return (
-    <section id="pricing" className="relative w-full bg-[#FFFFFF] py-20 md:py-28 lg:py-32 border-b border-gray-100">
+    <section id="pricing" className="relative w-full bg-[#FFFFFF] py-20 md:py-28 lg:py-32">
       {/* Decorative background grid and lights */}
       <div
         className="absolute inset-0 opacity-10 pointer-events-none"

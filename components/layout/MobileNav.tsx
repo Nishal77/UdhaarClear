@@ -16,7 +16,7 @@ const NAV_ITEMS = [
   { href: '/dashboard', label: 'Home', icon: DashboardSquare01Icon },
   { href: '/customers', label: 'Customers', icon: UserGroupIcon },
   { href: '/invoices', label: 'Invoices', icon: InvoiceIcon },
-  { href: '/reminders', label: 'Reminders', icon: WhatsappIcon },
+  { href: '/whatsapp-email-log', label: 'Logs', icon: WhatsappIcon },
   { href: '/settings', label: 'Settings', icon: Settings01Icon },
 ]
 
