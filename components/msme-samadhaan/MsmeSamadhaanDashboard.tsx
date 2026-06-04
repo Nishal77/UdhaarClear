@@ -5,13 +5,7 @@ import Link from 'next/link'
 import { formatINRCompact } from '@/lib/utils/currency'
 import { toast } from 'sonner'
 import { HugeiconsIcon } from '@hugeicons/react'
-import { 
-  Search01Icon,
-  GavelIcon,
-  Coins01Icon,
-  Chart01Icon,
-  HourglassIcon
-} from '@hugeicons/core-free-icons'
+import { Search01Icon } from '@hugeicons/core-free-icons'
 
 export interface EligibleInvoice {
   id: string
@@ -214,82 +208,46 @@ export function MsmeSamadhaanDashboard() {
         <div className="grid grid-cols-1 divide-y divide-[#EBEAE6]/60 md:grid-cols-4 md:divide-y-0 md:divide-x text-left">
             
             {/* Stat 1: Active Cases */}
-            <div className="px-6 py-5 flex flex-col justify-between min-h-[140px]">
-              <div className="flex items-start justify-between">
-                <span className="text-[11.5px] font-bold text-gray-400 uppercase tracking-wider">Active Samadhaan Cases</span>
-                <span className="p-1.5 rounded-lg bg-orange-50 text-orange-600 shrink-0">
-                  <HugeiconsIcon icon={GavelIcon} size={15} />
-                </span>
-              </div>
-              <div className="mt-2 flex flex-col gap-1.5">
-                <span className="text-[26px] font-bold text-gray-900 leading-none whitespace-nowrap block">
+            <div className="px-6 py-5 flex flex-col justify-center">
+              <span className="text-[14px] font-medium text-black tracking-tight">Active Samadhaan Cases</span>
+              <div className="mt-2.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                <span className="text-[26px] font-bold text-gray-900 leading-none whitespace-nowrap">
                   {filedCases.length} Claims
                 </span>
-                <div className="pt-0.5">
-                  <span className="inline-flex items-center gap-1 bg-orange-50 text-orange-700 px-2.5 py-0.5 rounded-full text-[10px] font-bold">
-                    Under council review
-                  </span>
-                </div>
+                <span className="text-[11.5px] text-orange-600 font-semibold whitespace-nowrap">Under council review</span>
               </div>
             </div>
 
             {/* Stat 2: Active Claims Amount */}
-            <div className="px-6 py-5 flex flex-col justify-between min-h-[140px]">
-              <div className="flex items-start justify-between">
-                <span className="text-[11.5px] font-bold text-gray-400 uppercase tracking-wider">Total Claims Value</span>
-                <span className="p-1.5 rounded-lg bg-emerald-50 text-emerald-600 shrink-0">
-                  <HugeiconsIcon icon={Coins01Icon} size={15} />
-                </span>
-              </div>
-              <div className="mt-2 flex flex-col gap-1.5">
-                <span className="text-[26px] font-bold text-gray-900 leading-none whitespace-nowrap block">
+            <div className="px-6 py-5 flex flex-col justify-center">
+              <span className="text-[14px] font-medium text-black tracking-tight">Total Claims Value</span>
+              <div className="mt-2.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                <span className="text-[26px] font-bold text-gray-900 leading-none whitespace-nowrap">
                   {formatINRCompact(totalActiveClaimsAmount)}
                 </span>
-                <div className="pt-0.5">
-                  <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 px-2.5 py-0.5 rounded-full text-[10px] font-bold">
-                    Interest: {formatINRCompact(totalInterestClaimed)}
-                  </span>
-                </div>
+                <span className="text-[11.5px] text-gray-400 font-medium whitespace-nowrap">
+                  (Interest: {formatINRCompact(totalInterestClaimed)})
+                </span>
               </div>
             </div>
 
             {/* Stat 3: RBI Compound Interest Rate */}
-            <div className="px-6 py-5 flex flex-col justify-between min-h-[140px]">
-              <div className="flex items-start justify-between">
-                <span className="text-[11.5px] font-bold text-gray-400 uppercase tracking-wider">Legal Interest Rate</span>
-                <span className="p-1.5 rounded-lg bg-blue-50 text-blue-600 shrink-0">
-                  <HugeiconsIcon icon={Chart01Icon} size={15} />
-                </span>
-              </div>
-              <div className="mt-2 flex flex-col gap-1.5">
-                <span className="text-[26px] font-bold text-gray-900 leading-none whitespace-nowrap block">
-                  3x RBI Rate
-                </span>
-                <div className="pt-0.5">
-                  <span className="inline-flex items-center gap-1 bg-blue-50 text-blue-700 px-2.5 py-0.5 rounded-full text-[10px] font-bold">
-                    20.25% Comp. Monthly
-                  </span>
-                </div>
+            <div className="px-6 py-5 flex flex-col justify-center">
+              <span className="text-[14px] font-medium text-black tracking-tight">Legal Interest Rate</span>
+              <div className="mt-2.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                <span className="text-[26px] font-bold text-emerald-600 leading-none whitespace-nowrap">3x RBI Rate</span>
+                <span className="text-[11.5px] text-emerald-600 font-semibold whitespace-nowrap">20.25% Comp. Monthly</span>
               </div>
             </div>
 
             {/* Stat 4: Eligible for Filing */}
-            <div className="px-6 py-5 flex flex-col justify-between min-h-[140px]">
-              <div className="flex items-start justify-between">
-                <span className="text-[11.5px] font-bold text-gray-400 uppercase tracking-wider">Filing Eligibility</span>
-                <span className="p-1.5 rounded-lg bg-red-50 text-[#FF6A39] shrink-0">
-                  <HugeiconsIcon icon={HourglassIcon} size={15} />
-                </span>
-              </div>
-              <div className="mt-2 flex flex-col gap-1.5">
-                <span className="text-[26px] font-bold text-gray-900 leading-none whitespace-nowrap block">
+            <div className="px-6 py-5 flex flex-col justify-center">
+              <span className="text-[14px] font-medium text-black tracking-tight">Filing Eligibility</span>
+              <div className="mt-2.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                <span className="text-[26px] font-bold text-[#FF6A39] leading-none whitespace-nowrap">
                   {totalEligibleCount} Invoices
                 </span>
-                <div className="pt-0.5">
-                  <span className="inline-flex items-center gap-1 bg-red-50 text-red-700 px-2.5 py-0.5 rounded-full text-[10px] font-bold">
-                    Unpaid &gt;45 days
-                  </span>
-                </div>
+                <span className="text-[11.5px] text-[#FF6A39] font-semibold whitespace-nowrap">Unpaid &gt;45 days</span>
               </div>
             </div>
 
