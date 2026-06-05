@@ -160,16 +160,16 @@ export default function IntegrationsClient({
       </div>
 
       {/* Integrations Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredIntegrations.map((item) => {
           const IconComponent = item.icon
           return (
             <div 
               key={item.id} 
-              className={`flex flex-col justify-between bg-white border rounded-[24px] p-6 text-left transition-all duration-300 ${
+              className={`flex flex-col justify-between bg-white border rounded-[24px] p-6 text-left transition-all duration-300 hover:-translate-y-1 ${
                 item.connected 
-                  ? 'border-emerald-500/30 shadow-[0_8px_30px_rgba(16,185,129,0.03)]' 
-                  : 'border-[#EBEAE6]/60 shadow-[0_8px_30px_rgba(0,0,0,0.01)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.03)] hover:border-gray-200/80'
+                  ? 'border-emerald-500/30 shadow-[0_8px_30px_rgba(16,185,129,0.04)] bg-gradient-to-b from-white to-emerald-50/10' 
+                  : 'border-[#EBEAE6]/60 shadow-[0_8px_30px_rgba(0,0,0,0.01)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.04)] hover:border-gray-300'
               }`}
             >
               <div>
@@ -191,7 +191,7 @@ export default function IntegrationsClient({
                 </div>
 
                 <h3 className="text-base font-bold text-gray-900 font-outfit leading-tight">{item.name}</h3>
-                <p className="mt-2 text-[13px] text-gray-400 font-medium leading-relaxed mb-6">
+                <p className="mt-2 text-[13px] text-gray-500 font-normal leading-relaxed mb-6">
                   {item.description}
                 </p>
               </div>
@@ -199,12 +199,12 @@ export default function IntegrationsClient({
               {/* Actions Footer */}
               <div>
                 {item.id === 'whatsapp' ? (
-                  <div className="pt-3 border-t border-gray-50 flex items-center gap-1.5 text-xs text-emerald-600 font-bold">
+                  <div className="pt-4 border-t border-gray-100/80 flex items-center gap-1.5 text-xs text-emerald-600 font-bold">
                     <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
                     <span>Included & active in your plan</span>
                   </div>
                 ) : (
-                  <div className="pt-3 border-t border-gray-50 flex justify-start">
+                  <div className="pt-4 border-t border-gray-100/80 flex justify-start">
                     <button
                       onClick={() => {
                         if (item.id === 'zoho') toggleMockConnection('zoho', zohoConnected, setZohoConnected, item.name)
