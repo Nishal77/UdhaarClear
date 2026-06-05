@@ -18,7 +18,7 @@ interface Integration {
   category: Category
   description: string
   connected: boolean
-  icon: React.ComponentType<{ className?: string }>
+  icon: React.ComponentType<{ className?: string }> | string
   iconColor: string
   bgColor: string
 }
@@ -76,9 +76,9 @@ export default function IntegrationsClient({
       category: 'accounting',
       description: 'Import your invoices, customer details, and past payments automatically from Zoho Books.',
       connected: zohoConnected,
-      icon: Puzzle,
-      iconColor: 'text-blue-600',
-      bgColor: 'bg-blue-50'
+      icon: 'https://img.icons8.com/fluency/48/zoho-books.png',
+      iconColor: '',
+      bgColor: 'bg-white border border-[#EBEAE6]/60'
     },
     {
       id: 'tally',
@@ -162,7 +162,6 @@ export default function IntegrationsClient({
       {/* Integrations Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredIntegrations.map((item) => {
-          const IconComponent = item.icon
           return (
             <div 
               key={item.id} 
@@ -175,8 +174,12 @@ export default function IntegrationsClient({
               <div>
                 <div className="flex items-center justify-between mb-4.5">
                   {/* Icon Frame */}
-                  <div className={`w-12 h-12 rounded-2xl ${item.bgColor} flex items-center justify-center ${item.iconColor} shrink-0 shadow-sm`}>
-                    <IconComponent className="w-5.5 h-5.5" />
+                  <div className={`w-12 h-12 rounded-2xl ${item.bgColor} flex items-center justify-center ${item.iconColor} shrink-0 shadow-sm overflow-hidden`}>
+                    {typeof item.icon === 'string' ? (
+                      <img src={item.icon} alt={item.name} className="w-7 h-7 object-contain" />
+                    ) : (
+                      React.createElement(item.icon, { className: 'w-5.5 h-5.5' })
+                    )}
                   </div>
 
                   {/* Status Badge */}
