@@ -204,8 +204,8 @@ export function MultiBusiness() {
         </div>
       </div>
 
-      {/* ── Workspace Switcher Grid ── */}
-      <div className="space-y-3.5 select-none text-left">
+      {/* ── Workspace Switcher Panel (Unified Premium Layout) ── */}
+      <div className="bg-white border border-[#EBEAE6] rounded-[22px] p-6 select-none text-left space-y-5">
         <div>
           <span className="text-[10px] font-bold text-blue-600 uppercase tracking-widest block">multi-tenant switchboard</span>
           <h3 className="text-[15px] font-extrabold text-gray-900 mt-0.5">Select Active Organization</h3>
@@ -215,10 +215,10 @@ export function MultiBusiness() {
           {entities.map((ent) => (
             <div
               key={ent.id}
-              className={`rounded-[22px] bg-white border p-6 flex flex-col justify-between min-h-[230px] transition-all duration-300 ${
+              className={`rounded-[18px] p-5 flex flex-col justify-between min-h-[235px] transition-all duration-300 ${
                 ent.primary
-                  ? 'border-[#FF6A39] shadow-sm ring-1 ring-[#FF6A39]'
-                  : 'border-[#EBEAE6] hover:border-gray-300 hover:shadow-xs'
+                  ? 'bg-white border-2 border-[#FF6A39] shadow-sm ring-1 ring-[#FF6A39]/10'
+                  : 'bg-gray-50/50 border border-[#EBEAE6] hover:border-gray-300 hover:shadow-xs'
               }`}
             >
               
