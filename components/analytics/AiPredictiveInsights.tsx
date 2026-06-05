@@ -585,7 +585,7 @@ export function AiPredictiveInsights() {
             <thead>
               <tr className="border-b border-[#EBEAE6] select-none bg-gray-50/50 text-left">
                 <th className="px-5 py-3.5 text-[13.5px] font-bold text-gray-600">Debtor Account</th>
-                <th className="px-4 py-3.5 text-[13.5px] font-bold text-gray-600">Outstanding Balance</th>
+                <th className="px-4 py-3.5 text-[13.5px] font-bold text-gray-600">Balance</th>
                 <th className="px-4 py-3.5 text-[13.5px] font-bold text-gray-600 w-[200px]">AI Payment Probability</th>
                 <th className="px-4 py-3.5 text-[13.5px] font-bold text-gray-600">Predicted Pay Date</th>
                 <th className="px-4 py-3.5 text-[13.5px] font-bold text-gray-600">AI Suggested Action</th>
@@ -665,13 +665,13 @@ export function AiPredictiveInsights() {
                           setSelectedProfile(row)
                           setDrawerOpen(true)
                         }}
-                        className="bg-gray-100 hover:bg-gray-200 text-gray-800 text-[12px] font-bold py-1.5 px-3 rounded-lg transition-colors cursor-pointer"
+                        className="bg-gray-100 hover:bg-gray-200 text-gray-800 text-[12px] font-semibold py-1.5 px-3 rounded-lg transition-colors cursor-pointer"
                       >
                         Inspect behavior
                       </button>
                       <button
                         onClick={() => handleApplyOptimization(row.customerName, row.recommendedAction)}
-                        className="bg-gray-950 hover:bg-gray-850 text-white text-[12px] font-bold py-1.5 px-3 rounded-lg transition-colors cursor-pointer"
+                        className="bg-gray-950 hover:bg-gray-850 text-white text-[12px] font-semibold py-1.5 px-3 rounded-lg transition-colors cursor-pointer"
                       >
                         Optimize
                       </button>
