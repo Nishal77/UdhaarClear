@@ -152,6 +152,19 @@ export const ChartLegendContent = React.forwardRef<
     return null
   }
 
+  // Filter out internal Recharts legend props to prevent React DOM warnings
+  const {
+    chartWidth,
+    chartHeight,
+    iconSize,
+    inactiveColor,
+    itemSorter,
+    align,
+    layout,
+    margin,
+    ...cleanProps
+  } = props as any
+
   return (
     <div
       ref={ref}
@@ -159,7 +172,7 @@ export const ChartLegendContent = React.forwardRef<
         "flex flex-wrap items-center justify-center gap-4 pt-2 text-xs",
         className
       )}
-      {...props}
+      {...cleanProps}
     >
       {payload.map((item: any) => {
         const key = item.value

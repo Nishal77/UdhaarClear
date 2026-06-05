@@ -394,14 +394,14 @@ export function AgingHeatmap() {
           <table className="w-full border-collapse">
             <thead>
               <tr className="border-b border-[#EBEAE6] select-none bg-gray-50/50">
-                <th className="px-5 py-4 text-left text-[13.5px] font-bold text-gray-600 w-[220px]">Customer</th>
-                <th className="px-4 py-4 text-center text-[13.5px] font-bold text-gray-600 w-[90px]">Risk Profile</th>
-                <th className="px-4 py-4 text-right text-[13.5px] font-bold text-gray-600 w-[110px]">Not Overdue</th>
-                <th className="px-4 py-4 text-right text-[13.5px] font-bold text-gray-600 w-[110px]">1-30 Days</th>
-                <th className="px-4 py-4 text-right text-[13.5px] font-bold text-gray-600 w-[110px]">31-45 Days</th>
-                <th className="px-4 py-4 text-right text-[13.5px] font-bold text-gray-600 w-[110px]">46-60 Days</th>
-                <th className="px-4 py-4 text-right text-[13.5px] font-bold text-gray-600 w-[110px]">61-90 Days</th>
-                <th className="px-4 py-4 text-right text-[13.5px] font-bold text-gray-600 w-[110px]">&gt;90 Days</th>
+                <th className="px-5 py-4 text-left text-[14px] font-semibold text-gray-600 w-[220px]">Customer</th>
+                <th className="px-4 py-4 text-center text-[14px] font-semibold text-gray-600 w-[90px]">Risk Profile</th>
+                <th className="px-4 py-4 text-right text-[14px] font-semibold text-gray-600 w-[110px]">Not Overdue</th>
+                <th className="px-4 py-4 text-right text-[14px] font-semibold text-gray-600 w-[110px]">1-30 Days</th>
+                <th className="px-4 py-4 text-right text-[14px] font-semibold text-gray-600 w-[110px]">31-45 Days</th>
+                <th className="px-4 py-4 text-right text-[14px] font-semibold text-gray-600 w-[110px]">46-60 Days</th>
+                <th className="px-4 py-4 text-right text-[14px] font-semibold text-gray-600 w-[110px]">61-90 Days</th>
+                <th className="px-4 py-4 text-right text-[14px] font-semibold text-gray-600 w-[110px]">&gt;90 Days</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#EBEAE6]/60 text-left">
@@ -418,7 +418,7 @@ export function AgingHeatmap() {
                     {/* Customer Info */}
                     <td className="px-5 py-4.5 w-[220px]">
                       <div>
-                        <span className="text-[14.5px] font-extrabold text-gray-900 block leading-tight">
+                        <span className="text-[14.5px] font-semibold text-gray-900 block leading-tight">
                           {row.customerName}
                         </span>
                         <span className="text-[11.5px] text-gray-500 font-semibold block mt-1.5">
@@ -511,7 +511,7 @@ export function AgingHeatmap() {
             {/* Bottom summary footer row */}
             <tfoot>
               <tr className="border-t border-[#EBEAE6] bg-gray-50/70 font-extrabold select-none text-right text-gray-900">
-                <td colSpan={2} className="px-5 py-5 text-left text-[13px] font-black uppercase tracking-wider text-gray-500">
+                <td colSpan={2} className="px-5 py-5 text-left text-[15px] font-medium tracking-tight text-gray-900">
                   Total Outstanding
                 </td>
                 <td className="px-4 py-5 text-[14.5px] font-extrabold text-emerald-700">{formatINRCompact(sumCurrent)}</td>
@@ -542,12 +542,9 @@ export function AgingHeatmap() {
       </div>
 
       {/* ── Actionable Aging Advice box (Smart Suggestions) ── */}
-      <div className="bg-white border border-[#EBEAE6] rounded-[22px] p-6 text-left select-none shadow-3xs space-y-5">
-        <div className="flex items-center gap-2 pb-1 border-b border-[#EBEAE6]/60">
-          <span className="p-1.5 rounded-lg bg-orange-50 text-[#FF6A39]">
-            <HugeiconsIcon icon={AiBrain01Icon} size={18} />
-          </span>
-          <h3 className="text-[15px] font-extrabold text-gray-900 uppercase tracking-wider">
+      <div className="bg-white border border-[#EBEAE6] rounded-[22px] p-6 text-left select-none space-y-5">
+        <div className="flex items-center">
+          <h3 className="text-[15px] font-extrabold text-gray-900 tracking-tight">
             AI Smart Suggestions
           </h3>
         </div>

@@ -150,6 +150,24 @@ const CategoryBar = React.forwardRef<HTMLDivElement, CategoryBarProps>(
       red: "bg-[#E14F4B]",
     }
 
+    const markerIndex = React.useMemo(() => {
+      if (adjustedMarkerValue === undefined) return -1
+      if (adjustedMarkerValue === 0) {
+        for (let idx = 0; idx < values.length; idx++) {
+          if (values[idx] > 0) return idx
+        }
+      }
+      let prefixSum = 0
+      for (let idx = 0; idx < values.length; idx++) {
+        prefixSum += values[idx]
+        if (prefixSum >= adjustedMarkerValue) return idx
+      }
+      return values.length - 1
+    }, [adjustedMarkerValue, values])
+
+    const markerColorKey = colors[markerIndex] ?? "gray"
+    const customMarkerBg = colorMap[markerColorKey as string] ?? getColorClassName(markerColorKey as AvailableChartColorsKeys, "bg")
+
     return (
       <div
         ref={forwardedRef}
@@ -160,7 +178,7 @@ const CategoryBar = React.forwardRef<HTMLDivElement, CategoryBarProps>(
         {...props}
       >
         {showLabels ? <BarLabels values={values} /> : null}
-        <div className="relative flex h-3 w-full items-center">
+        <div className="relative flex h-3.5 w-full items-center">
           <div className="flex h-full flex-1 items-center gap-1.5">
             {values.map((value, index) => {
               const barColor = colors[index] ?? "gray"
@@ -186,7 +204,7 @@ const CategoryBar = React.forwardRef<HTMLDivElement, CategoryBarProps>(
           {marker !== undefined ? (
             <div
               className={cx(
-                "absolute w-2 -translate-x-1/2",
+                "absolute w-3 -translate-x-1/2 flex items-center justify-center",
                 marker.showAnimation &&
                   "transform-gpu transition-all duration-300 ease-in-out",
               )}
@@ -199,9 +217,8 @@ const CategoryBar = React.forwardRef<HTMLDivElement, CategoryBarProps>(
                   <div
                     aria-hidden="true"
                     className={cx(
-                      "relative mx-auto h-4 w-1 rounded-full ring-2",
-                      "ring-white dark:ring-gray-950",
-                      markerBgColor,
+                      "relative mx-auto h-[18px] w-2.5 rounded-full border-2 border-white shadow-[0_1px_3px_rgba(0,0,0,0.25)] ring-1 ring-black/10",
+                      customMarkerBg,
                     )}
                   >
                     <div
@@ -213,9 +230,8 @@ const CategoryBar = React.forwardRef<HTMLDivElement, CategoryBarProps>(
               ) : (
                 <div
                   className={cx(
-                    "mx-auto h-4 w-1 rounded-full ring-2",
-                    "ring-white dark:ring-gray-950",
-                    markerBgColor,
+                    "mx-auto h-[18px] w-2.5 rounded-full border-2 border-white shadow-[0_1px_3px_rgba(0,0,0,0.25)] ring-1 ring-black/10",
+                    customMarkerBg,
                   )}
                 />
               )}
