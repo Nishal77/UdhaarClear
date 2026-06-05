@@ -108,10 +108,10 @@ export function MultiBusiness() {
   const totalReceivables = entities.reduce((s, e) => s + e.outstanding, 0)
 
   return (
-    <div className="bg-white border border-[#EBEAE6] rounded-[24px] p-6 md:p-8 space-y-6 text-left select-none">
+    <div className="space-y-4 select-none">
       
       {/* ── Page Header ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-gray-100">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 select-none">
         <div className="text-left">
           <nav className="flex items-center gap-1.5 text-[12px] text-gray-400">
             <Link href="/dashboard" className="hover:text-gray-600 transition-colors">Home</Link>
