@@ -26,10 +26,7 @@ import {
   UserMultipleIcon,
   Building02Icon,
   // Settings
-  Plug01Icon,
-  WebhookIcon,
   Settings01Icon,
-  SchoolReportCardIcon,
 } from '@hugeicons/core-free-icons'
 
 
@@ -78,16 +75,13 @@ const EXTRA_SECTIONS: NavSection[] = [
     title: 'Team & Access',
     items: [
       { href: '/team/members',  label: 'Team Members',  icon: UserMultipleIcon },
-      { href: '/team/business', label: 'Multi Business', icon: Building02Icon },
+      { href: '/team/business', label: 'Switch Business', icon: Building02Icon },
     ],
   },
   {
-    title: 'Settings',
+    title: 'Account',
     items: [
-      { href: '/settings/integrations', label: 'Integrations',    icon: Plug01Icon },
-      { href: '/settings/webhooks',     label: 'API & Webhooks',  icon: WebhookIcon },
       { href: '/settings',              label: 'Settings',        icon: Settings01Icon },
-      { href: '/settings/profile',      label: 'Business Profile', icon: SchoolReportCardIcon },
     ],
   },
 ]
