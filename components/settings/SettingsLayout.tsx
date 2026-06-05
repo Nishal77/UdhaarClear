@@ -11,7 +11,7 @@ const SETTINGS_TABS = [
   { label: 'Billing & Plans', href: '/settings/billing', icon: CreditCard },
   { label: 'Team Members', href: '/settings/team', icon: Users },
   { label: 'API & Webhooks', href: '/settings/webhooks', icon: Webhook },
-  { label: 'Integrations', href: '/settings/integrations', icon: Puzzle },
+  { label: 'Connected Apps', href: '/settings/integrations', icon: Puzzle },
 ]
 
 interface SettingsLayoutProps {

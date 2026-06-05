@@ -92,7 +92,7 @@ export function TopBar({ userName = 'User', businessName = 'UdhaarClear', userEm
           icon: WebhookIcon
         },
         {
-          label: 'Integrations',
+          label: 'Connected Apps',
           sub: 'Connect Stripe, WhatsApp & custom gateways',
           href: '/settings/integrations',
           icon: Plug01Icon

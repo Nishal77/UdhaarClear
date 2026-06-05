@@ -50,8 +50,8 @@ export default async function IntegrationsSettingsPage() {
 
   return (
     <SettingsLayout
-      title="Integrations"
-      description="Connect third-party billing software, message gateways, and payment service providers."
+      title="Connected Apps"
+      description="Link your accounting software, communication channels, and payment systems to automate collections."
     >
       <IntegrationsClient
         initialWabaId={business.wabaId}
