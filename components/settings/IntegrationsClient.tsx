@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Puzzle, CheckCircle2, MessageSquare, Landmark, FileSpreadsheet, CreditCard } from 'lucide-react'
+import { Puzzle, CheckCircle2, MessageSquare, Landmark, FileSpreadsheet, CreditCard, Mail } from 'lucide-react'
 
 interface IntegrationsClientProps {
   initialWabaId: string | null
@@ -71,8 +71,18 @@ export default function IntegrationsClient({
       bgColor: 'bg-emerald-50'
     },
     {
+      id: 'email',
+      name: 'Standard Email Alerts',
+      category: 'messaging',
+      description: 'Send automated, professional payment notices and invoice PDFs directly to your customers inboxes',
+      connected: true, // Active by default
+      icon: Mail,
+      iconColor: 'text-indigo-600',
+      bgColor: 'bg-indigo-50'
+    },
+    {
       id: 'zoho',
-      name: 'Zoho Books Sync',
+      name: 'Zoho Books',
       category: 'accounting',
       description: 'Import your invoices, customer details, and past payments automatically from Zoho Books.',
       connected: zohoConnected,
@@ -82,7 +92,7 @@ export default function IntegrationsClient({
     },
     {
       id: 'tally',
-      name: 'Tally Prime Sync',
+      name: 'Tally Prime',
       category: 'accounting',
       description: 'Hourly database sync of ledger files, pending sales, and customer profiles from Tally.',
       connected: tallyConnected,
@@ -92,23 +102,13 @@ export default function IntegrationsClient({
     },
     {
       id: 'razorpay',
-      name: 'Razorpay Payments',
+      name: 'UPI & Online Payments',
       category: 'payments',
-      description: 'Include automatic Razorpay payment links in reminders to let customers pay instantly.',
+      description: 'Allow customers to pay you immediately through UPI and online options right from their message alerts.',
       connected: razorpayConnected,
       icon: CreditCard,
       iconColor: 'text-indigo-600',
       bgColor: 'bg-indigo-50'
-    },
-    {
-      id: 'stripe',
-      name: 'Stripe Payments',
-      category: 'payments',
-      description: 'Accept credit card payments from international clients and domestic customers seamlessly.',
-      connected: stripeConnected,
-      icon: CreditCard,
-      iconColor: 'text-purple-600',
-      bgColor: 'bg-purple-50'
     },
     {
       id: 'excel',
@@ -148,9 +148,9 @@ export default function IntegrationsClient({
           <button
             key={cat.key}
             onClick={() => setActiveCategory(cat.key as Category)}
-            className={`px-4.5 py-2 text-xs font-bold rounded-full border transition-all duration-200 cursor-pointer ${
+            className={`px-4.5 py-2 text-xs font-semibold rounded-full border transition-all duration-200 cursor-pointer ${
               activeCategory === cat.key
-                ? 'bg-gray-900 border-transparent text-white shadow-sm'
+                ? 'bg-gray-900 border-transparent text-white'
                 : 'bg-white border-gray-200 text-gray-500 hover:text-gray-800 hover:border-gray-300'
             }`}
           >
@@ -160,15 +160,15 @@ export default function IntegrationsClient({
       </div>
 
       {/* Integrations Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
         {filteredIntegrations.map((item) => {
           return (
             <div 
               key={item.id} 
-              className={`flex flex-col justify-between bg-white border rounded-[24px] p-6 text-left transition-all duration-300 hover:-translate-y-1 ${
+              className={`flex flex-col justify-between bg-white border rounded-[24px] p-6 text-left transition-all ${
                 item.connected 
-                  ? 'border-emerald-500/30 shadow-[0_8px_30px_rgba(16,185,129,0.04)] bg-gradient-to-b from-white to-emerald-50/10' 
-                  : 'border-[#EBEAE6]/60 shadow-[0_8px_30px_rgba(0,0,0,0.01)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.04)] hover:border-gray-300'
+                  ? 'border-gray-200' 
+                  : 'border-[#EBEAE6]/60 hover:border-gray-300'
               }`}
             >
               <div>
@@ -183,7 +183,7 @@ export default function IntegrationsClient({
                   </div>
 
                   {/* Status Badge */}
-                  <span className={`inline-flex items-center gap-1.5 text-[10px] font-bold uppercase border px-3 py-1 rounded-full tracking-wider ${
+                  <span className={`inline-flex items-center gap-1.5 text-[11.5px] font-medium border px-3 py-1 rounded-full tracking-tight ${
                     item.connected
                       ? 'text-[#10B981] bg-[#E5F7ED] border-[#10B981]/15'
                       : 'text-gray-400 bg-gray-50 border-gray-200/80'
@@ -193,7 +193,7 @@ export default function IntegrationsClient({
                   </span>
                 </div>
 
-                <h3 className="text-base font-bold text-gray-900 font-outfit leading-tight">{item.name}</h3>
+                <h3 className="text-base font-semibold text-gray-900 font-outfit leading-tight">{item.name}</h3>
                 <p className="mt-2 text-[13px] text-gray-500 font-normal leading-relaxed mb-6">
                   {item.description}
                 </p>
@@ -201,10 +201,10 @@ export default function IntegrationsClient({
 
               {/* Actions Footer */}
               <div>
-                {item.id === 'whatsapp' ? (
-                  <div className="pt-4 border-t border-gray-100/80 flex items-center gap-1.5 text-xs text-emerald-600 font-bold">
+                {item.id === 'whatsapp' || item.id === 'email' ? (
+                  <div className="pt-4 border-t border-gray-100/80 flex items-center gap-1.5 text-xs text-emerald-600 font-medium">
                     <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                    <span>Included & active in your plan</span>
+                    <span>Included & active by default</span>
                   </div>
                 ) : (
                   <div className="pt-4 border-t border-gray-100/80 flex justify-start">
@@ -216,7 +216,7 @@ export default function IntegrationsClient({
                         if (item.id === 'razorpay') toggleMockConnection('razorpay', razorpayConnected, setRazorpayConnected, item.name)
                         if (item.id === 'excel') toggleMockConnection('excel', excelConnected, setExcelConnected, item.name)
                       }}
-                      className={`text-xs font-bold px-5 py-2.5 rounded-full border transition-all duration-200 active:scale-95 cursor-pointer ${
+                      className={`text-xs font-semibold px-5 py-2.5 rounded-full border transition-all duration-200 active:scale-95 cursor-pointer ${
                         item.connected
                           ? 'border-gray-200 text-rose-600 bg-white hover:bg-rose-50/40'
                           : 'bg-gray-900 border-transparent text-white shadow-sm hover:bg-gray-800'
