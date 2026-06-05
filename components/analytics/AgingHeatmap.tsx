@@ -10,7 +10,11 @@ import {
   HourglassIcon,
   InvoiceIcon,
   AiBrain01Icon,
-  Chart01Icon
+  Chart01Icon,
+  Search01Icon,
+  InformationCircleIcon,
+  Mail01Icon,
+  WhatsappIcon
 } from '@hugeicons/core-free-icons'
 
 // Mock Data structure for outstanding invoice details per cell
@@ -194,14 +198,14 @@ export function AgingHeatmap() {
   // Dynamic Heatmap Colors mapping function
   const getHeatmapColor = (amount: number, type: 'current' | 'dpd_1_30' | 'dpd_31_45' | 'dpd_46_60' | 'dpd_61_90' | 'dpd_90_plus') => {
     if (amount === 0) {
-      return 'bg-white text-gray-300 font-normal hover:bg-gray-50 border-dashed border-gray-100'
+      return 'bg-gray-50/30 text-gray-300 font-normal border border-dashed border-gray-200/50 hover:bg-gray-50/60 cursor-default'
     }
 
     const hoverClass = 'hover:scale-[1.02] hover:shadow-2xs cursor-pointer transition-all'
 
     switch (type) {
       case 'current':
-        return `bg-emerald-50/40 text-emerald-700 font-bold border border-emerald-100/30 ${hoverClass}`
+        return `bg-emerald-50/40 text-emerald-700 border border-emerald-100/30 ${hoverClass}`
       case 'dpd_1_30':
         return amount < 100000
           ? `bg-blue-50/40 text-blue-700 border border-blue-100/30 ${hoverClass}`
@@ -251,109 +255,91 @@ export function AgingHeatmap() {
   return (
     <div className="space-y-4">
 
-      {/* ── Metrics Bar (Premium Individual Cards) ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 select-none">
-        
-        {/* Metric 1: Total Accounts Receivable */}
-        <div className="bg-white border border-[#EBEAE6] rounded-2xl p-5 hover:border-gray-300 hover:shadow-xs transition-all duration-300 flex flex-col justify-between min-h-[140px] text-left">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Total Ledger (AR)</span>
-            <span className="p-1.5 rounded-lg bg-emerald-50 text-emerald-600">
-              <HugeiconsIcon icon={Coins01Icon} size={15} />
-            </span>
-          </div>
-          <div className="mt-3 space-y-1.5">
-            <span className="text-[25px] font-black text-gray-900 leading-none block">
-              {formatINRCompact(grandTotal)}
-            </span>
-            <div className="pt-0.5">
-              <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full text-[10px] font-bold">
-                ● Dynamic calculation
+      {/* ── Key Metrics Grid (Unified Premium Panel) ── */}
+      <div className="bg-white border border-[#EBEAE6] rounded-[22px] overflow-hidden select-none">
+        <div className="grid grid-cols-1 divide-y divide-[#EBEAE6]/60 md:grid-cols-4 md:divide-y-0 md:divide-x text-left">
+          
+          {/* Stat 1: Total Ledger */}
+          <div className="px-6 py-5 flex flex-col justify-center">
+            <span className="text-[14px] font-medium text-black tracking-tight block">Total Ledger (AR)</span>
+            <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+              <span className="text-[25px] font-semibold text-gray-900 leading-none whitespace-nowrap block">
+                {formatINRCompact(grandTotal)}
+              </span>
+              <span className="inline-flex items-center text-emerald-700 text-[11.5px] font-medium whitespace-nowrap">
+                Dynamic
               </span>
             </div>
           </div>
-        </div>
 
-        {/* Metric 2: Overdue AR */}
-        <div className="bg-white border border-[#EBEAE6] rounded-2xl p-5 hover:border-gray-300 hover:shadow-xs transition-all duration-300 flex flex-col justify-between min-h-[140px] text-left">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">At Risk (&gt;30 Days)</span>
-            <span className="p-1.5 rounded-lg bg-red-50 text-red-650">
-              <HugeiconsIcon icon={HourglassIcon} size={15} />
-            </span>
-          </div>
-          <div className="mt-3 space-y-1.5">
-            <span className="text-[25px] font-black text-gray-900 leading-none block">
-              {formatINRCompact(sum31_45 + sum46_60 + sum61_90 + sum90_plus)}
-            </span>
-            <div className="pt-0.5">
-              <span className="inline-flex items-center gap-1 bg-red-50 text-red-700 px-2 py-0.5 rounded-full text-[10px] font-bold">
-                ⚠️ Requires attention
+          {/* Stat 2: At Risk (>30 Days) */}
+          <div className="px-6 py-5 flex flex-col justify-center">
+            <span className="text-[14px] font-medium text-black tracking-tight block">At Risk (&gt;30 Days)</span>
+            <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+              <span className="text-[25px] font-semibold text-gray-900 leading-none whitespace-nowrap block">
+                {formatINRCompact(sum31_45 + sum46_60 + sum61_90 + sum90_plus)}
+              </span>
+              <span className="inline-flex items-center text-red-700 text-[11.5px] font-medium whitespace-nowrap">
+                Requires Attention
               </span>
             </div>
           </div>
-        </div>
 
-        {/* Metric 3: Critical Overdue */}
-        <div className="bg-white border border-[#EBEAE6] rounded-2xl p-5 hover:border-gray-300 hover:shadow-xs transition-all duration-300 flex flex-col justify-between min-h-[140px] text-left">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Critical (&gt;90 Days)</span>
-            <span className="p-1.5 rounded-lg bg-violet-50 text-violet-600">
-              <HugeiconsIcon icon={InvoiceIcon} size={15} />
-            </span>
-          </div>
-          <div className="mt-3 space-y-1.5">
-            <span className="text-[25px] font-black text-gray-900 leading-none block font-mono">
-              {formatINRCompact(sum90_plus)}
-            </span>
-            <div className="pt-0.5">
-              <span className="inline-flex items-center gap-1 bg-violet-50 text-violet-700 px-2 py-0.5 rounded-full text-[10px] font-bold">
-                ⏱️ Legal claim eligible
+          {/* Stat 3: Critical (>90 Days) */}
+          <div className="px-6 py-5 flex flex-col justify-center">
+            <span className="text-[14px] font-medium text-black tracking-tight block">Critical (&gt;90 Days)</span>
+            <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+              <span className="text-[25px] font-semibold text-gray-900 leading-none whitespace-nowrap block">
+                {formatINRCompact(sum90_plus)}
+              </span>
+              <span className="inline-flex items-center gap-1 text-violet-700 text-[11.5px] font-medium whitespace-nowrap">
+                Legal Eligible
               </span>
             </div>
           </div>
-        </div>
 
-        {/* Metric 4: Risk Index */}
-        <div className="bg-white border border-[#EBEAE6] rounded-2xl p-5 hover:border-gray-300 hover:shadow-xs transition-all duration-300 flex flex-col justify-between min-h-[140px] text-left">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Collection Index</span>
-            <span className="p-1.5 rounded-lg bg-blue-50 text-blue-600">
-              <HugeiconsIcon icon={Chart01Icon} size={15} />
-            </span>
-          </div>
-          <div className="mt-3 space-y-1.5">
-            <span className="text-[25px] font-black text-gray-900 leading-none block">
-              {grandTotal > 0 ? ((sumCurrent + sum1_30) / grandTotal * 100).toFixed(1) : '100'}%
-            </span>
-            <div className="pt-0.5">
-              <span className="inline-flex items-center gap-1 bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full text-[10px] font-bold">
-                Healthy portion: Current + 1-30d
+          {/* Stat 4: Risk Index */}
+          <div className="px-6 py-5 flex flex-col justify-center">
+            <span className="text-[14px] font-medium text-black tracking-tight block">Collection Index</span>
+            <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+              <span className="text-[25px] font-semibold text-gray-900 leading-none whitespace-nowrap block">
+                {grandTotal > 0 ? ((sumCurrent + sum1_30) / grandTotal * 100).toFixed(1) : '100'}%
+              </span>
+              <span className="inline-flex items-center text-blue-700 text-[11.5px] font-medium whitespace-nowrap">
+                Healthy portion
               </span>
             </div>
           </div>
-        </div>
 
+        </div>
       </div>
 
       {/* ── Heatmap Toolbar controls ── */}
-      <div className="bg-white border border-[#EBEAE6] rounded-xl p-4 select-none shadow-xs text-left">
+      <div className="bg-white border border-[#EBEAE6] rounded-xl p-4 select-none text-left">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           
           {/* Left Block: Filters */}
           <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
             {/* Search */}
-            <div className="relative flex-1 min-w-[200px]">
-              <span className="absolute inset-y-0 left-3.5 flex items-center pointer-events-none text-gray-400 text-sm">
-                🔍
+            <div className="relative flex-1 min-w-[240px] max-w-[340px] w-full">
+              <span className="absolute inset-y-0 left-4 flex items-center pointer-events-none z-10">
+                <HugeiconsIcon icon={Search01Icon} size={16} className="text-gray-400" />
               </span>
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search customers..."
-                className="w-full h-9 bg-gray-50 rounded-lg pl-9 pr-8 text-[12px] text-gray-800 border border-[#EBEAE6] focus:outline-none focus:bg-white focus:ring-2 focus:ring-[#FF6A39]/20 transition-all"
+                className="w-full h-10 bg-[#F1F1F1] rounded-full pl-11 pr-10 text-[13px] text-gray-800 focus:outline-none focus:bg-[#EBEBEB] focus:ring-2 focus:ring-[#FF6A39]/20 transition-all duration-200 border-0"
               />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute inset-y-0 right-4 flex items-center text-gray-400 hover:text-gray-600 text-xs font-semibold transition-colors z-10"
+                >
+                  Clear
+                </button>
+              )}
             </div>
 
             {/* Risk filter group */}
@@ -403,19 +389,19 @@ export function AgingHeatmap() {
       </div>
 
       {/* ── Heatmap Matrix Table ── */}
-      <div className="rounded-xl bg-white border border-[#EBEAE6] shadow-xs overflow-hidden">
+      <div className="rounded-[22px] bg-white border border-[#EBEAE6] shadow-3xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
               <tr className="border-b border-[#EBEAE6] select-none bg-gray-50/50">
-                <th className="px-5 py-3.5 text-left text-[12px] font-bold text-gray-500 w-[220px]">Customer</th>
-                <th className="px-4 py-3.5 text-center text-[12px] font-bold text-gray-500 w-[90px]">Risk Profile</th>
-                <th className="px-4 py-3.5 text-right text-[12px] font-bold text-gray-500 w-[110px]">Not Overdue</th>
-                <th className="px-4 py-3.5 text-right text-[12px] font-bold text-gray-500 w-[110px]">1-30 Days</th>
-                <th className="px-4 py-3.5 text-right text-[12px] font-bold text-gray-500 w-[110px]">31-45 Days</th>
-                <th className="px-4 py-3.5 text-right text-[12px] font-bold text-gray-500 w-[110px]">46-60 Days</th>
-                <th className="px-4 py-3.5 text-right text-[12px] font-bold text-gray-500 w-[110px]">61-90 Days</th>
-                <th className="px-4 py-3.5 text-right text-[12px] font-bold text-gray-500 w-[110px]">&gt;90 Days</th>
+                <th className="px-5 py-4 text-left text-[13.5px] font-bold text-gray-600 w-[220px]">Customer</th>
+                <th className="px-4 py-4 text-center text-[13.5px] font-bold text-gray-600 w-[90px]">Risk Profile</th>
+                <th className="px-4 py-4 text-right text-[13.5px] font-bold text-gray-600 w-[110px]">Not Overdue</th>
+                <th className="px-4 py-4 text-right text-[13.5px] font-bold text-gray-600 w-[110px]">1-30 Days</th>
+                <th className="px-4 py-4 text-right text-[13.5px] font-bold text-gray-600 w-[110px]">31-45 Days</th>
+                <th className="px-4 py-4 text-right text-[13.5px] font-bold text-gray-600 w-[110px]">46-60 Days</th>
+                <th className="px-4 py-4 text-right text-[13.5px] font-bold text-gray-600 w-[110px]">61-90 Days</th>
+                <th className="px-4 py-4 text-right text-[13.5px] font-bold text-gray-600 w-[110px]">&gt;90 Days</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#EBEAE6]/60 text-left">
@@ -430,12 +416,12 @@ export function AgingHeatmap() {
                   <tr key={row.id} className="hover:bg-gray-50/40 transition-colors">
                     
                     {/* Customer Info */}
-                    <td className="px-5 py-4 w-[220px]">
+                    <td className="px-5 py-4.5 w-[220px]">
                       <div>
-                        <span className="text-[13px] font-bold text-gray-900 block leading-tight">
+                        <span className="text-[14.5px] font-extrabold text-gray-900 block leading-tight">
                           {row.customerName}
                         </span>
-                        <span className="text-[10px] text-gray-400 font-medium block mt-1">
+                        <span className="text-[11.5px] text-gray-500 font-semibold block mt-1.5">
                           Total AR: {formatINRCompact(row.current + row.dpd_1_30 + row.dpd_31_45 + row.dpd_46_60 + row.dpd_61_90 + row.dpd_90_plus)}
                         </span>
                       </div>
@@ -443,7 +429,7 @@ export function AgingHeatmap() {
 
                     {/* Risk Badge */}
                     <td className="px-4 py-4 text-center w-[90px]">
-                      <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[9.5px] font-bold whitespace-nowrap ${
+                      <span className={`inline-flex items-center rounded-full px-3 py-0.5 text-[11px] font-extrabold tracking-wide whitespace-nowrap ${
                         row.riskLevel === 'CRITICAL'
                           ? 'bg-red-50 text-red-700 border border-red-200'
                           : row.riskLevel === 'HIGH'
@@ -458,60 +444,60 @@ export function AgingHeatmap() {
 
                     {/* Heatmap Cells */}
                     {/* Current */}
-                    <td className="px-2 py-2 text-right">
+                    <td className="px-1.5 py-3 text-right">
                       <div
                         onClick={() => handleCellClick(row.customerName, 'Not Overdue', row.invoices.current, row.current)}
-                        className={`mx-1 p-2 rounded-lg text-xs font-bold text-right ${getHeatmapColor(row.current, 'current')}`}
+                        className={`mx-0.5 py-2.5 px-2 rounded-xl text-[13.5px] font-extrabold text-center transition-all ${getHeatmapColor(row.current, 'current')}`}
                       >
                         {row.current > 0 ? formatINRCompact(row.current) : '—'}
                       </div>
                     </td>
 
                     {/* 1-30 Days */}
-                    <td className="px-2 py-2 text-right">
+                    <td className="px-1.5 py-3 text-right">
                       <div
                         onClick={() => handleCellClick(row.customerName, '1-30 Days DPD', row.invoices.dpd_1_30, row.dpd_1_30)}
-                        className={`mx-1 p-2 rounded-lg text-xs font-bold text-right ${getHeatmapColor(row.dpd_1_30, 'dpd_1_30')}`}
+                        className={`mx-0.5 py-2.5 px-2 rounded-xl text-[13.5px] font-extrabold text-center transition-all ${getHeatmapColor(row.dpd_1_30, 'dpd_1_30')}`}
                       >
                         {row.dpd_1_30 > 0 ? formatINRCompact(row.dpd_1_30) : '—'}
                       </div>
                     </td>
 
                     {/* 31-45 Days */}
-                    <td className="px-2 py-2 text-right">
+                    <td className="px-1.5 py-3 text-right">
                       <div
                         onClick={() => handleCellClick(row.customerName, '31-45 Days DPD', row.invoices.dpd_31_45, row.dpd_31_45)}
-                        className={`mx-1 p-2 rounded-lg text-xs font-bold text-right ${getHeatmapColor(row.dpd_31_45, 'dpd_31_45')}`}
+                        className={`mx-0.5 py-2.5 px-2 rounded-xl text-[13.5px] font-extrabold text-center transition-all ${getHeatmapColor(row.dpd_31_45, 'dpd_31_45')}`}
                       >
                         {row.dpd_31_45 > 0 ? formatINRCompact(row.dpd_31_45) : '—'}
                       </div>
                     </td>
 
                     {/* 46-60 Days */}
-                    <td className="px-2 py-2 text-right">
+                    <td className="px-1.5 py-3 text-right">
                       <div
                         onClick={() => handleCellClick(row.customerName, '46-60 Days DPD', row.invoices.dpd_46_60, row.dpd_46_60)}
-                        className={`mx-1 p-2 rounded-lg text-xs font-bold text-right ${getHeatmapColor(row.dpd_46_60, 'dpd_46_60')}`}
+                        className={`mx-0.5 py-2.5 px-2 rounded-xl text-[13.5px] font-extrabold text-center transition-all ${getHeatmapColor(row.dpd_46_60, 'dpd_46_60')}`}
                       >
                         {row.dpd_46_60 > 0 ? formatINRCompact(row.dpd_46_60) : '—'}
                       </div>
                     </td>
 
                     {/* 61-90 Days */}
-                    <td className="px-2 py-2 text-right">
+                    <td className="px-1.5 py-3 text-right">
                       <div
                         onClick={() => handleCellClick(row.customerName, '61-90 Days DPD', row.invoices.dpd_61_90, row.dpd_61_90)}
-                        className={`mx-1 p-2 rounded-lg text-xs font-bold text-right ${getHeatmapColor(row.dpd_61_90, 'dpd_61_90')}`}
+                        className={`mx-0.5 py-2.5 px-2 rounded-xl text-[13.5px] font-extrabold text-center transition-all ${getHeatmapColor(row.dpd_61_90, 'dpd_61_90')}`}
                       >
                         {row.dpd_61_90 > 0 ? formatINRCompact(row.dpd_61_90) : '—'}
                       </div>
                     </td>
 
                     {/* >90 Days */}
-                    <td className="px-2 py-2 text-right">
+                    <td className="px-1.5 py-3 text-right">
                       <div
                         onClick={() => handleCellClick(row.customerName, '>90 Days DPD', row.invoices.dpd_90_plus, row.dpd_90_plus)}
-                        className={`mx-1 p-2 rounded-lg text-xs font-bold text-right ${getHeatmapColor(row.dpd_90_plus, 'dpd_90_plus')}`}
+                        className={`mx-0.5 py-2.5 px-2 rounded-xl text-[13.5px] font-extrabold text-center transition-all ${getHeatmapColor(row.dpd_90_plus, 'dpd_90_plus')}`}
                       >
                         {row.dpd_90_plus > 0 ? formatINRCompact(row.dpd_90_plus) : '—'}
                       </div>
@@ -525,60 +511,81 @@ export function AgingHeatmap() {
             {/* Bottom summary footer row */}
             <tfoot>
               <tr className="border-t border-[#EBEAE6] bg-gray-50/70 font-extrabold select-none text-right text-gray-900">
-                <td colSpan={2} className="px-5 py-4 text-left text-xs font-black uppercase text-gray-500">
+                <td colSpan={2} className="px-5 py-5 text-left text-[13px] font-black uppercase tracking-wider text-gray-500">
                   Total Outstanding
                 </td>
-                <td className="px-4 py-4 text-xs font-mono">{formatINRCompact(sumCurrent)}</td>
-                <td className="px-4 py-4 text-xs font-mono">{formatINRCompact(sum1_30)}</td>
-                <td className="px-4 py-4 text-xs font-mono text-amber-700">{formatINRCompact(sum31_45)}</td>
-                <td className="px-4 py-4 text-xs font-mono text-orange-700">{formatINRCompact(sum46_60)}</td>
-                <td className="px-4 py-4 text-xs font-mono text-rose-700">{formatINRCompact(sum61_90)}</td>
-                <td className="px-4 py-4 text-xs font-mono text-red-700">{formatINRCompact(sum90_plus)}</td>
+                <td className="px-4 py-5 text-[14.5px] font-extrabold text-emerald-700">{formatINRCompact(sumCurrent)}</td>
+                <td className="px-4 py-5 text-[14.5px] font-extrabold text-blue-700">{formatINRCompact(sum1_30)}</td>
+                <td className="px-4 py-5 text-[14.5px] font-extrabold text-[#C06514]">{formatINRCompact(sum31_45)}</td>
+                <td className="px-4 py-5 text-[14.5px] font-extrabold text-[#D9791D]">{formatINRCompact(sum46_60)}</td>
+                <td className="px-4 py-5 text-[14.5px] font-extrabold text-[#E14F4B]">{formatINRCompact(sum61_90)}</td>
+                <td className="px-4 py-5 text-[14.5px] font-extrabold text-[#FF0000]">{formatINRCompact(sum90_plus)}</td>
               </tr>
             </tfoot>
           </table>
         </div>
       </div>
 
-      {/* ── Actionable Aging Advice box ── */}
-      <div className="bg-[#FAF9F6] border border-[#EBEAE6] rounded-[22px] p-5 text-left select-none shadow-3xs space-y-4">
-        <div className="flex items-center gap-2">
-          <span className="p-1 rounded-lg bg-orange-100 text-[#FF6A39]">
-            <HugeiconsIcon icon={AiBrain01Icon} size={16} />
+      {/* ── Interactive Heatmap Guide Banner ── */}
+      <div className="flex items-center gap-3 bg-blue-50/40 border border-blue-100/30 rounded-[20px] p-4 text-left select-none">
+        <span className="p-2 rounded-xl bg-blue-100 text-blue-600 shrink-0">
+          <HugeiconsIcon icon={InformationCircleIcon} size={18} />
+        </span>
+        <div className="space-y-0.5">
+          <span className="text-[13px] font-extrabold text-blue-900 block">
+            Interactive Heatmap Guide
           </span>
-          <h3 className="text-[14.5px] font-extrabold text-gray-900 uppercase tracking-wider">
-            Aging Heatmap Insights
+          <p className="text-[12.5px] text-blue-750 font-semibold leading-relaxed">
+            The heatmap table is fully interactive. Click on any colored amount cell above to open the Invoice Inspector, where you can view specific invoices and dispatch quick WhatsApp or Email reminders.
+          </p>
+        </div>
+      </div>
+
+      {/* ── Actionable Aging Advice box (Smart Suggestions) ── */}
+      <div className="bg-white border border-[#EBEAE6] rounded-[22px] p-6 text-left select-none shadow-3xs space-y-5">
+        <div className="flex items-center gap-2 pb-1 border-b border-[#EBEAE6]/60">
+          <span className="p-1.5 rounded-lg bg-orange-50 text-[#FF6A39]">
+            <HugeiconsIcon icon={AiBrain01Icon} size={18} />
+          </span>
+          <h3 className="text-[15px] font-extrabold text-gray-900 uppercase tracking-wider">
+            AI Smart Suggestions
           </h3>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           
-          {/* Insight 1: High concentration late */}
-          <div className="bg-white border-l-4 border-red-500 border-y border-r border-[#EBEAE6]/65 p-4 rounded-r-xl flex gap-3.5 hover:shadow-xs transition-shadow">
-            <div className="h-8.5 w-8.5 rounded-full bg-red-50 text-red-650 flex items-center justify-center flex-shrink-0 text-sm">
+          {/* Card 1: High concentration late */}
+          <div className="bg-gradient-to-br from-red-500/[0.03] to-red-500/[0.08] hover:from-red-500/[0.06] hover:to-red-500/[0.12] border border-red-500/20 p-5 rounded-2xl flex gap-4 transition-all duration-300 hover:shadow-2xs">
+            <div className="h-10 w-10 rounded-xl bg-red-500 text-white flex items-center justify-center flex-shrink-0 shadow-sm text-lg font-bold">
               🔥
             </div>
-            <div className="space-y-1">
-              <span className="text-xs font-bold text-gray-900 block leading-tight">
-                Critical Aging Concentration
+            <div className="space-y-2 flex-1">
+              <span className="text-[10px] font-extrabold text-red-700 uppercase tracking-widest block">
+                Risk Concentration Warning
               </span>
-              <p className="text-[11.5px] text-gray-500 font-medium leading-relaxed">
-                Over {formatINRCompact(sum90_plus + sum61_90)} ({( (sum90_plus + sum61_90) / (grandTotal || 1) * 100).toFixed(0)}% of your ledger) is overdue by more than 60 days. These accounts have entered critical collection probability ranges.
+              <h4 className="text-sm font-extrabold text-gray-900 leading-tight">
+                Overdue balances have reached critical collection ranges
+              </h4>
+              <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">
+                Over {formatINRCompact(sum90_plus + sum61_90)} ({((sum90_plus + sum61_90) / (grandTotal || 1) * 100).toFixed(0)}% of your ledger) is overdue by more than 60 days. These balances have entered high-risk ranges where customer repayment likelihood drops significantly.
               </p>
             </div>
           </div>
 
-          {/* Insight 2: Recovery opportunity */}
-          <div className="bg-white border-l-4 border-blue-500 border-y border-r border-[#EBEAE6]/65 p-4 rounded-r-xl flex gap-3.5 hover:shadow-xs transition-shadow">
-            <div className="h-8.5 w-8.5 rounded-full bg-blue-50 text-blue-650 flex items-center justify-center flex-shrink-0 text-sm">
+          {/* Card 2: Recovery opportunity */}
+          <div className="bg-gradient-to-br from-blue-500/[0.03] to-blue-500/[0.08] hover:from-blue-500/[0.06] hover:to-blue-500/[0.12] border border-blue-500/20 p-5 rounded-2xl flex gap-4 transition-all duration-300 hover:shadow-2xs">
+            <div className="h-10 w-10 rounded-xl bg-blue-500 text-white flex items-center justify-center flex-shrink-0 shadow-sm text-lg font-bold">
               💡
             </div>
-            <div className="space-y-1">
-              <span className="text-xs font-bold text-gray-900 block leading-tight">
-                Collection Action Guide
+            <div className="space-y-2 flex-1">
+              <span className="text-[10px] font-extrabold text-blue-700 uppercase tracking-widest block">
+                Interactive Drill-Down
               </span>
-              <p className="text-[11.5px] text-gray-500 font-medium leading-relaxed">
-                Clicking on colored cells opens the **Invoice Inspector**. Try selecting cells in the 31-45 and 46-60 DPD columns to dispatch assertive warnings.
+              <h4 className="text-sm font-extrabold text-gray-900 leading-tight">
+                Inspect details and dispatch reminders
+              </h4>
+              <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">
+                Click on any colored amount cell in the table below to open the Invoice Inspector. From there, you can view specific invoices and dispatch quick WhatsApp/Email reminders.
               </p>
             </div>
           </div>
@@ -590,81 +597,95 @@ export function AgingHeatmap() {
       {inspectorOpen && selectedCell && (
         <div className="fixed inset-0 z-50 flex justify-end select-none">
           {/* Backdrop */}
-          <div className="fixed inset-0 bg-black/40 backdrop-blur-xs" onClick={() => setInspectorOpen(false)} />
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300" onClick={() => setInspectorOpen(false)} />
 
-          <div className="relative z-10 w-full max-w-md bg-[#FAF9F6] shadow-2xl flex flex-col h-full border-l border-[#EBEAE6]">
+          <div className="relative z-10 w-full max-w-md bg-[#FFFFFF] flex flex-col h-full border-l border-[#EBEAE6] rounded-l-[28px] overflow-hidden">
             
             {/* Header */}
-            <div className="p-5 bg-white border-b border-gray-100 flex items-center justify-between">
-              <div className="text-left">
-                <span className="text-[10px] font-bold text-[#FF6A39] uppercase tracking-widest">
+            <div className="p-6 bg-white border-b border-gray-100 flex items-center justify-between">
+              <div className="text-left space-y-1">
+                <span className="inline-flex items-center rounded-full bg-orange-50 px-2.5 py-0.5 text-[11.5px] font-semibold text-[#FF6A39] border border-orange-100/50">
                   {selectedCell.bracketName} Bracket
                 </span>
-                <h3 className="text-[16px] font-bold text-gray-900 mt-0.5 leading-tight">
+                <h3 className="text-[18px] font-semibold text-gray-900 leading-tight">
                   {selectedCell.customerName}
                 </h3>
               </div>
               <button
                 onClick={() => setInspectorOpen(false)}
-                className="h-8 w-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors text-gray-500"
+                className="h-8 w-8 rounded-full bg-gray-50 hover:bg-gray-100 border border-gray-200/50 flex items-center justify-center transition-all text-gray-400 hover:text-gray-700 cursor-pointer"
               >
                 ✕
               </button>
             </div>
 
             {/* Cell Info Overview */}
-            <div className="p-5 overflow-y-auto flex-1 space-y-5 text-left">
-              <div className="bg-white border border-[#EBEAE6] p-4 rounded-xl space-y-1">
-                <div className="flex justify-between text-xs">
-                  <span className="text-gray-400">Total Cell Balance:</span>
-                  <span className="font-extrabold text-gray-900">{formatINRCompact(selectedCell.totalAmount)}</span>
-                </div>
-                <div className="flex justify-between text-xs">
-                  <span className="text-gray-400">Outstanding Invoices:</span>
-                  <span className="font-bold text-gray-800">{selectedCell.invoices.length} Files</span>
+            <div className="p-6 overflow-y-auto flex-1 space-y-6 text-left">
+              <div className=" text-left relative overflow-hidden">
+                
+                <span className="text-[14px] font-medium text-gray-600 tracking-tight block">
+                  Total Cell Balance
+                </span>
+                <span className="text-[28px] font-semibold text-gray-900 leading-none mt-2 block tracking-tight">
+                  {formatINRCompact(selectedCell.totalAmount)}
+                </span>
+                
+                <div className="mt-4 pt-3.5 border-t border-gray-100 flex items-center justify-between text-xs font-semibold text-gray-600">
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-[#FF6A39]" />
+                    {selectedCell.bracketName} DPD
+                  </span>
+                  <span>{selectedCell.invoices.length} {selectedCell.invoices.length === 1 ? 'Invoice' : 'Invoices'}</span>
                 </div>
               </div>
 
               {/* Invoices List */}
-              <div className="space-y-3">
-                <span className="text-[11.5px] font-bold text-gray-400 uppercase tracking-wider block">
+              <div className="space-y-4">
+                <span className="text-[14px] font-medium text-gray-600 tracking-tight block">
                   Invoice Breakdown
                 </span>
 
                 {selectedCell.invoices.length === 0 ? (
-                  <div className="text-xs text-gray-400 font-medium py-4 text-center">
+                  <div className="text-[14px] text-gray-600 font-medium py-8 text-center">
                     No active invoices mapped to this DPD cell.
                   </div>
                 ) : (
                   selectedCell.invoices.map((inv) => (
-                    <div key={inv.invoiceNumber} className="bg-white border border-[#EBEAE6] p-4 rounded-xl space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="font-mono text-xs font-bold bg-gray-100 px-2 py-0.5 rounded text-gray-700">
+                    <div key={inv.invoiceNumber} className="bg-white space-y-4 transition-all duration-300">
+                      <div className="flex items-center justify-between gap-3">
+                        <span className="font-mono text-[11.5px] font-bold bg-gray-50 border border-gray-100 px-2.5 py-1 rounded-lg text-gray-600">
                           {inv.invoiceNumber}
                         </span>
-                        <span className="text-xs font-extrabold text-red-650">
+                        <span className="text-[16px] font-bold text-gray-900">
                           {formatINRCompact(inv.amount)}
                         </span>
                       </div>
 
-                      <div className="flex justify-between text-[11px] text-gray-500 font-semibold border-b border-gray-50 pb-2">
-                        <span>Due: {inv.dueDate}</span>
-                        <span className="text-red-500">{inv.daysLate} Days Late</span>
+                      <div className="flex items-center justify-between text-[12px] text-gray-500 font-semibold border-b border-gray-100/60 pb-3">
+                        <span className="flex items-center gap-1.5">
+                          <HugeiconsIcon icon={InvoiceIcon} size={14} className="text-gray-400" />
+                          Due: {inv.dueDate}
+                        </span>
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-rose-50 border border-rose-100/30 text-red-600 font-extrabold text-[10px]">
+                          {inv.daysLate} Days Late
+                        </span>
                       </div>
 
                       {/* Reminder Actions */}
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 pt-0.5">
                         <button
                           onClick={() => triggerSimulatedReminder(inv.invoiceNumber, 'whatsapp')}
-                          className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-1.5 px-3 rounded-lg text-[10.5px] transition-colors cursor-pointer"
+                          className="flex-1 inline-flex items-center justify-center gap-1.5 bg-[#25D366] hover:bg-[#20ba5a] text-white font-semibold py-2 px-3 rounded-xl text-[11.5px] transition-all duration-200 shadow-2xs hover:shadow-xs cursor-pointer"
                         >
-                          💬 Send WhatsApp
+                          <HugeiconsIcon icon={WhatsappIcon} size={14} />
+                          Send WhatsApp
                         </button>
                         <button
                           onClick={() => triggerSimulatedReminder(inv.invoiceNumber, 'email')}
-                          className="flex-1 bg-gray-950 hover:bg-gray-850 text-white font-bold py-1.5 px-3 rounded-lg text-[10.5px] transition-colors cursor-pointer"
+                          className="flex-1 inline-flex items-center justify-center gap-1.5 bg-gray-950 hover:bg-gray-850 text-white font-semibold py-2 px-3 rounded-xl text-[11.5px] transition-all duration-200 shadow-2xs hover:shadow-xs cursor-pointer"
                         >
-                          ✉️ Send Email
+                          <HugeiconsIcon icon={Mail01Icon} size={14} />
+                          Send Email
                         </button>
                       </div>
                     </div>
@@ -674,15 +695,14 @@ export function AgingHeatmap() {
             </div>
 
             {/* Footer */}
-            <div className="p-5 bg-white border-t border-gray-100 flex gap-2.5">
+            <div className="p-6 bg-white border-t border-gray-100 flex gap-2.5">
               <button
                 onClick={() => setInspectorOpen(false)}
-                className="flex-1 border border-gray-200 hover:bg-gray-50 text-gray-700 font-semibold py-2.5 px-4 rounded-xl text-xs transition-colors"
+                className="flex-1 border border-gray-200 hover:bg-gray-50 text-gray-700 font-extrabold py-3 px-4 rounded-xl text-[12.5px] transition-colors cursor-pointer"
               >
                 Close Inspector
               </button>
             </div>
-
           </div>
         </div>
       )}
