@@ -2,14 +2,10 @@
 
 import { useState } from 'react'
 import { toast } from 'sonner'
+import Link from 'next/link'
+import { MoreHorizontal, UserX, UserCheck, Trash2 } from 'lucide-react'
 import { HugeiconsIcon } from '@hugeicons/react'
-import {
-  UserMultipleIcon,
-  Megaphone02Icon,
-  HourglassIcon,
-  Shield01Icon,
-  UserGroupIcon
-} from '@hugeicons/core-free-icons'
+import { ArrowRight01Icon } from '@hugeicons/core-free-icons'
 
 interface Member {
   id: string
@@ -20,6 +16,18 @@ interface Member {
   permissions: string[]
 }
 
+const permissionLabels: Record<string, string> = {
+  'All Features': 'All Features',
+  'billing': 'View Billing Info',
+  'billing_edit': 'Modify Billing Settings',
+  'all_customers': 'Access Customer Ledgers',
+  'send_reminders': 'Trigger Manual Reminders',
+  'edit_reminders': 'Configure Tone Rules',
+  'view_invoices': 'Read Invoice Records',
+  'view_reports': 'View Analytics & Heatmaps',
+  'audit_logs': 'Read Activity Logs'
+}
+
 export function TeamMembers() {
   const [members, setMembers] = useState<Member[]>([
     { id: 'm-1', name: 'Nishal Poojary', email: 'nishal@udhaarclear.com', role: 'OWNER', status: 'ACTIVE', permissions: ['All Features', 'billing', 'billing_edit'] },
@@ -28,6 +36,13 @@ export function TeamMembers() {
     { id: 'm-4', name: 'Amit Kumar', email: 'amit@udhaarclear.com', role: 'AUDITOR', status: 'ACTIVE', permissions: ['view_reports', 'audit_logs'] },
     { id: 'm-5', name: 'Kiran Mehta', email: 'kiran@udhaarclear.com', role: 'AGENT', status: 'INVITED', permissions: ['view_invoices', 'send_reminders'] }
   ])
+
+  const [activeMenuId, setActiveMenuId] = useState<string | null>(null)
+
+  const handleRemoveMember = (id: string) => {
+    setMembers(members.filter((m) => m.id !== id))
+    toast.success('Team member removed successfully')
+  }
 
   // Invite member state
   const [inviteOpen, setInviteOpen] = useState(false)
@@ -84,166 +99,210 @@ export function TeamMembers() {
   return (
     <div className="space-y-4">
 
-      {/* ── Team Metrics Grid ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 select-none">
-        
-        {/* Metric 1: Seats occupied */}
-        <div className="bg-white border border-[#EBEAE6] rounded-2xl p-5 hover:border-gray-300 hover:shadow-xs transition-all duration-300 flex flex-col justify-between min-h-[140px] text-left">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Seats occupied</span>
-            <span className="p-1.5 rounded-lg bg-blue-50 text-blue-600">
-              <HugeiconsIcon icon={UserMultipleIcon} size={15} />
-            </span>
-          </div>
-          <div className="mt-3 space-y-1.5">
-            <span className="text-[25px] font-black text-gray-900 leading-none block">
-              {members.length} / 8 Seats
-            </span>
-            <div className="pt-0.5">
-              <span className="inline-flex items-center gap-1 bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full text-[10px] font-bold">
-                ● 3 Invites available
-              </span>
-            </div>
-          </div>
+      {/* ── Page Header ── */}
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 select-none">
+        <div className="flex flex-col text-left">
+          <nav className="flex items-center gap-1.5 text-[12px] text-gray-400">
+            <Link href="/dashboard" className="hover:text-gray-600 transition-colors">Home</Link>
+            <span>›</span>
+            <span className="text-gray-400">Team & Access</span>
+            <span>›</span>
+            <span className="text-gray-600 font-medium">Team Members</span>
+          </nav>
+          <h1 className="text-[24px] font-bold text-gray-900 leading-tight mt-1">Team Access Control</h1>
+          <p className="mt-1 text-[13px] text-gray-400 font-medium">
+            Manage team seat configurations, select role permissions, and suspension controls.
+          </p>
         </div>
-
-        {/* Metric 2: Reminders Sent */}
-        <div className="bg-white border border-[#EBEAE6] rounded-2xl p-5 hover:border-gray-300 hover:shadow-xs transition-all duration-300 flex flex-col justify-between min-h-[140px] text-left">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Team dispatches (Today)</span>
-            <span className="p-1.5 rounded-lg bg-emerald-50 text-emerald-600">
-              <HugeiconsIcon icon={Megaphone02Icon} size={15} />
-            </span>
-          </div>
-          <div className="mt-3 space-y-1.5">
-            <span className="text-[25px] font-black text-gray-900 leading-none block">
-              185 Notices
-            </span>
-            <div className="pt-0.5">
-              <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full text-[10px] font-bold">
-                ▲ +8.2% vs Yesterday
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Metric 3: Avg Response time */}
-        <div className="bg-white border border-[#EBEAE6] rounded-2xl p-5 hover:border-gray-300 hover:shadow-xs transition-all duration-300 flex flex-col justify-between min-h-[140px] text-left">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Avg response time</span>
-            <span className="p-1.5 rounded-lg bg-orange-50 text-[#FF6A39]">
-              <HugeiconsIcon icon={HourglassIcon} size={15} />
-            </span>
-          </div>
-          <div className="mt-3 space-y-1.5">
-            <span className="text-[25px] font-black text-gray-900 leading-none block">
-              15 Mins
-            </span>
-            <div className="pt-0.5">
-              <span className="inline-flex items-center gap-1 bg-orange-50 text-orange-700 px-2 py-0.5 rounded-full text-[10px] font-bold">
-                ▼ -2m Improvement
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Metric 4: Security clearances */}
-        <div className="bg-white border border-[#EBEAE6] rounded-2xl p-5 hover:border-gray-300 hover:shadow-xs transition-all duration-300 flex flex-col justify-between min-h-[140px] text-left">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Access Clearance</span>
-            <span className="p-1.5 rounded-lg bg-violet-50 text-violet-600">
-              <HugeiconsIcon icon={Shield01Icon} size={15} />
-            </span>
-          </div>
-          <div className="mt-3 space-y-1.5">
-            <span className="text-[25px] font-black text-gray-900 leading-none block">
-              100% Secure
-            </span>
-            <div className="pt-0.5">
-              <span className="inline-flex items-center gap-1 bg-violet-50 text-violet-700 px-2 py-0.5 rounded-full text-[10px] font-bold">
-                ● 2-Factor Auth Active
-              </span>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-      {/* ── Table Toolbar Controls ── */}
-      <div className="bg-white border border-[#EBEAE6] rounded-xl p-4 select-none shadow-xs text-left">
-        <div className="flex items-center justify-between gap-4">
-          <div className="text-left space-y-0.5">
-            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block">Ledger access control</span>
-            <h3 className="text-[15px] font-extrabold text-gray-900 leading-tight">Team Members directory</h3>
-          </div>
+        <div className="flex items-center justify-end sm:pb-1 shrink-0">
           <button
             onClick={() => setInviteOpen(true)}
-            className="bg-[#FF6A39] hover:bg-[#E05B2E] text-white text-xs font-bold py-1.5 px-4 rounded-xl transition-all shadow-3xs cursor-pointer active:scale-95 flex items-center gap-1.5"
+            className="bg-[#FF6A39] hover:bg-[#E05B2E] text-white text-xs font-bold py-2 px-5 rounded-xl transition-all shadow-3xs cursor-pointer active:scale-95 flex items-center gap-1.5"
           >
             <span>+ Invite Member</span>
           </button>
         </div>
       </div>
 
+      {/* ── Team Scorecard Panel (Unified Premium Layout) ── */}
+      <div className="bg-white border border-[#EBEAE6] rounded-[22px] overflow-hidden select-none">
+        <div className="grid grid-cols-1 divide-y divide-[#EBEAE6]/60 md:grid-cols-4 md:divide-y-0 md:divide-x text-left">
+
+          {/* Metric 1: Seats occupied */}
+          <div className="px-6 py-5 flex flex-col justify-center">
+            <span className="text-[14px] font-medium text-black tracking-tight block">Seats occupied</span>
+            <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+              <span className="text-[25px] font-semibold text-gray-900 leading-none whitespace-nowrap block">
+                {members.length} / 8 Seats
+              </span>
+              <span className="inline-flex items-center text-blue-700 text-[11.5px] font-medium whitespace-nowrap">
+                {8 - members.length} Invites Left
+              </span>
+            </div>
+          </div>
+
+          {/* Metric 2: Team dispatches (Today) */}
+          <div className="px-6 py-5 flex flex-col justify-center">
+            <span className="text-[14px] font-medium text-black tracking-tight block">Team dispatches (Today)</span>
+            <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+              <span className="text-[25px] font-semibold text-gray-900 leading-none whitespace-nowrap block">
+                185 Notices
+              </span>
+              <span className="inline-flex items-center text-emerald-700 text-[11.5px] font-medium whitespace-nowrap">
+                ▲ +8.2% vs Yest.
+              </span>
+            </div>
+          </div>
+
+          {/* Metric 3: Avg Response time */}
+          <div className="px-6 py-5 flex flex-col justify-center">
+            <span className="text-[14px] font-medium text-black tracking-tight block">Avg response time</span>
+            <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+              <span className="text-[25px] font-semibold text-gray-900 leading-none whitespace-nowrap block">
+                15 Mins
+              </span>
+              <span className="inline-flex items-center text-orange-600 text-[11.5px] font-medium whitespace-nowrap">
+                ▼ -2m Imp.
+              </span>
+            </div>
+          </div>
+
+          {/* Metric 4: Security clearances */}
+          <div className="px-6 py-5 flex flex-col justify-center">
+            <span className="text-[14px] font-medium text-black tracking-tight block">Access Clearance</span>
+            <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+              <span className="text-[25px] font-semibold text-gray-900 leading-none whitespace-nowrap block">
+                100% Secure
+              </span>
+              <span className="inline-flex items-center text-violet-700 text-[11.5px] font-medium whitespace-nowrap">
+                2FA Active
+              </span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
       {/* ── Seat Allocation List Table ── */}
-      <div className="rounded-xl bg-white border border-[#EBEAE6] shadow-xs overflow-hidden select-none">
+      <div className="rounded-[22px] bg-white border border-[#EBEAE6] overflow-hidden select-none">
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
-              <tr className="border-b border-[#EBEAE6] select-none bg-gray-50/50 text-left">
-                <th className="px-5 py-3.5 text-[12px] font-bold text-gray-500">Name & Email</th>
-                <th className="px-4 py-3.5 text-[12px] font-bold text-gray-500">Role</th>
-                <th className="px-4 py-3.5 text-[12px] font-bold text-gray-500">Status</th>
-                <th className="px-4 py-3.5 text-[12px] font-bold text-gray-500 w-[240px]">Access permissions</th>
-                <th className="px-5 py-3.5 text-right text-[12px] font-bold text-gray-500">Actions</th>
+              <tr className="border-b border-[#EBEAE6] select-none bg-[#FAF9F6]/40 text-left">
+                <th className="px-6 py-4.5 text-[13.5px] font-bold text-gray-600">Name & Email</th>
+                <th className="px-6 py-4.5 text-[13px] font-bold text-gray-600 w-[130px]">Status</th>
+                <th className="px-6 py-4.5 text-[13px] font-bold text-gray-600">Access Permissions</th>
+                <th className="px-6 py-4.5 text-right text-[13px] font-bold text-gray-600 w-[120px]">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#EBEAE6]/60 text-left">
               {members.map((m) => (
                 <tr key={m.id} className="hover:bg-gray-50/40 transition-colors">
-                  <td className="px-5 py-4">
+                  <td className="px-6 py-5">
                     <div>
-                      <span className="text-[13px] font-bold text-gray-900 block leading-tight">{m.name}</span>
-                      <span className="text-[10.5px] text-gray-400 font-semibold block mt-1 font-mono">{m.email}</span>
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="text-[14.5px] font-bold text-gray-955 leading-tight">{m.name}</span>
+                        <span className="text-[12.5px] text-gray-400 font-semibold font-sans">
+                          ({m.role === 'OWNER' ? 'Owner' : m.role === 'MANAGER' ? 'Manager' : m.role === 'AGENT' ? 'Agent' : 'Auditor'})
+                        </span>
+                      </div>
+                      <span className="text-[12px] text-gray-500 font-medium block mt-1 font-sans">{m.email}</span>
                     </div>
                   </td>
-                  <td className="px-4 py-4">
-                    <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-0.5 text-[10px] font-bold border border-gray-150 text-gray-700">
-                      {m.role}
-                    </span>
+                  <td className="px-6 py-5">
+                    <div className="flex items-center gap-2 select-none">
+                      <span className={`w-2 h-2 rounded-full shrink-0 ${m.status === 'ACTIVE'
+                          ? 'bg-emerald-500'
+                          : m.status === 'INVITED'
+                            ? 'bg-amber-500'
+                            : 'bg-rose-500'
+                        }`} />
+                      <span className={`text-[13px] font-bold whitespace-nowrap ${m.status === 'ACTIVE'
+                          ? 'text-emerald-700'
+                          : m.status === 'INVITED'
+                            ? 'text-amber-700'
+                            : 'text-rose-700'
+                        }`}>
+                        {m.status === 'ACTIVE' ? 'Active' : m.status === 'INVITED' ? 'Invited' : 'Suspended'}
+                      </span>
+                    </div>
                   </td>
-                  <td className="px-4 py-4">
-                    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[9.5px] font-bold whitespace-nowrap ${
-                      m.status === 'ACTIVE'
-                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-250'
-                        : m.status === 'INVITED'
-                          ? 'bg-amber-50 text-amber-700 border border-amber-250'
-                          : 'bg-rose-50 text-rose-700 border border-rose-250'
-                    }`}>
-                      {m.status}
-                    </span>
-                  </td>
-                  <td className="px-4 py-4 max-w-[240px]">
-                    <div className="flex flex-wrap gap-1">
+                  <td className="px-6 py-5">
+                    <div className="flex flex-wrap gap-1.5">
                       {m.permissions.map((p) => (
-                        <span key={p} className="text-[9px] font-bold bg-[#FAF9F6] text-gray-500 border border-[#EBEAE6] px-1.5 py-0.2 rounded">
-                          {p}
+                        <span key={p} className="text-[11px] font-semibold bg-[#FAF9F6] text-gray-600 border border-[#EBEAE6] px-2 py-0.5 rounded-lg shadow-3xs">
+                          {permissionLabels[p] || p}
                         </span>
                       ))}
                     </div>
                   </td>
-                  <td className="px-5 py-4 text-right whitespace-nowrap">
-                    {m.role !== 'OWNER' && (
-                      <button
-                        onClick={() => handleToggleSuspend(m.id)}
-                        className={`text-xs font-bold py-1 px-2.5 rounded-lg transition-colors cursor-pointer ${
-                          m.status === 'SUSPENDED'
-                            ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700'
-                            : 'bg-rose-50 hover:bg-rose-100 text-rose-700'
-                        }`}
-                      >
-                        {m.status === 'SUSPENDED' ? 'Activate' : 'Suspend'}
-                      </button>
+                  <td className="px-6 py-5 text-right whitespace-nowrap">
+                    {m.role !== 'OWNER' ? (
+                      <div className="relative inline-block text-left">
+                        <button
+                          onClick={() => setActiveMenuId(activeMenuId === m.id ? null : m.id)}
+                          className="p-2 rounded-xl hover:bg-gray-100 border border-transparent hover:border-gray-200 transition-all text-gray-500 cursor-pointer active:scale-95 inline-flex items-center justify-center"
+                          title="Manage Access Options"
+                        >
+                          <MoreHorizontal size={16} />
+                        </button>
+                        {activeMenuId === m.id && (
+                          <>
+                            <div className="fixed inset-0 z-30" onClick={() => setActiveMenuId(null)} />
+                            <div className="absolute right-0 mt-1.5 w-48 bg-white border border-[#EBEAE6] rounded-2xl shadow-lg z-40 py-1.5 text-left select-none animate-in fade-in slide-in-from-top-1 duration-100">
+                              <div className="px-3.5 py-1 text-[12.5px] font-semibold text-gray-600 tracking-tight border-b border-gray-100/50 pb-1.5 mb-1">
+                                Access Control
+                              </div>
+                              <button
+                                onClick={() => {
+                                  handleToggleSuspend(m.id)
+                                  setActiveMenuId(null)
+                                }}
+                                className={`w-full px-3.5 py-2 text-xs font-semibold hover:bg-gray-50 flex items-center justify-between transition-colors cursor-pointer ${
+                                  m.status === 'SUSPENDED' ? 'text-emerald-700' : 'text-gray-700'
+                                }`}
+                              >
+                                {m.status === 'SUSPENDED' ? (
+                                  <>
+                                    <div className="flex items-center gap-2.5">
+                                      <UserCheck size={14} className="text-emerald-500" />
+                                      <span>Activate Access</span>
+                                    </div>
+                                    <HugeiconsIcon icon={ArrowRight01Icon} className="text-emerald-500" size={16} />
+                                  </>
+                                ) : (
+                                  <>
+                                    <div className="flex items-center gap-2.5">
+                                      <UserX size={14} className="text-rose-500" />
+                                      <span>Suspend Access</span>
+                                    </div>
+                                    <HugeiconsIcon icon={ArrowRight01Icon} className="text-rose-500" size={16} />
+                                  </>
+                                )}
+                              </button>
+                              <button
+                                onClick={() => {
+                                  if (confirm(`Are you sure you want to remove ${m.name} from the team?`)) {
+                                    handleRemoveMember(m.id)
+                                  }
+                                  setActiveMenuId(null)
+                                }}
+                                className="w-full px-3.5 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 flex items-center justify-between transition-colors cursor-pointer border-t border-gray-100/60 mt-1"
+                              >
+                                <div className="flex items-center gap-2.5">
+                                  <Trash2 size={14} className="text-red-500" />
+                                  <span>Remove Member</span>
+                                </div>
+                                <HugeiconsIcon icon={ArrowRight01Icon} className="text-red-500" size={16} />
+                              </button>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    ) : (
+                      <span className="text-[13px] font-medium text-gray-500 tracking-tight select-none bg-gray-50 px-2 py-0.5 rounded-md border border-gray-200">
+                        System Owner
+                      </span>
                     )}
                   </td>
                 </tr>
@@ -253,46 +312,13 @@ export function TeamMembers() {
         </div>
       </div>
 
-      {/* ── Role permissions Guide Card ── */}
-      <div className="bg-[#FAF9F6] border border-[#EBEAE6] rounded-[22px] p-5 text-left select-none shadow-3xs space-y-4">
-        <div className="flex items-center gap-2">
-          <span className="p-1 rounded-lg bg-orange-100 text-[#FF6A39]">
-            <HugeiconsIcon icon={UserGroupIcon} size={16} />
-          </span>
-          <h3 className="text-[14.5px] font-extrabold text-gray-900 uppercase tracking-wider">
-            Access Role Permissions Matrix
-          </h3>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-white border border-[#EBEAE6]/65 p-4 rounded-xl space-y-1">
-            <span className="text-xs font-extrabold text-gray-950 block">OWNER / ADMIN</span>
-            <p className="text-[11px] text-gray-500 font-medium leading-relaxed">
-              Full administrative privileges. Manage business profiles, edit billing details, integrate API webhooks, invite members, and toggle organization configurations.
-            </p>
-          </div>
-          <div className="bg-white border border-[#EBEAE6]/65 p-4 rounded-xl space-y-1">
-            <span className="text-xs font-extrabold text-blue-700 block">MANAGER</span>
-            <p className="text-[11px] text-gray-500 font-medium leading-relaxed">
-              Full collection operations capabilities. Modify tone engine settings, configure auto-reminder channels, download petition packs, and manage debtor profiles.
-            </p>
-          </div>
-          <div className="bg-white border border-[#EBEAE6]/65 p-4 rounded-xl space-y-1">
-            <span className="text-xs font-extrabold text-emerald-700 block">AGENT / AUDITOR</span>
-            <p className="text-[11px] text-gray-500 font-medium leading-relaxed">
-              Read-only audits and manual reminder triggers. Dispatch messages manually, audit aging heatmap values, and track active Facilitation Council case hearings.
-            </p>
-          </div>
-        </div>
-      </div>
-
       {/* ── INVITE MEMBER DRAWER ── */}
       {inviteOpen && (
         <div className="fixed inset-0 z-50 flex justify-end select-none">
           <div className="fixed inset-0 bg-black/40 backdrop-blur-xs" onClick={() => setInviteOpen(false)} />
 
           <div className="relative z-10 w-full max-w-md bg-[#FAF9F6] shadow-2xl flex flex-col h-full border-l border-[#EBEAE6]">
-            
+
             <div className="p-5 bg-white border-b border-gray-100 flex items-center justify-between">
               <div className="text-left">
                 <span className="text-[10px] font-bold text-[#FF6A39] uppercase tracking-widest">Team Access Portal</span>
@@ -307,7 +333,7 @@ export function TeamMembers() {
             </div>
 
             <form onSubmit={inviteSubmit => handleInviteSubmit(inviteSubmit)} className="p-5 overflow-y-auto flex-1 space-y-5 text-left">
-              
+
               {/* Name */}
               <div className="space-y-1.5">
                 <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wide block">Member Name</label>

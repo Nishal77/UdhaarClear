@@ -3,13 +3,6 @@
 import { useState } from 'react'
 import { formatINRCompact } from '@/lib/utils/currency'
 import { toast } from 'sonner'
-import { HugeiconsIcon } from '@hugeicons/react'
-import {
-  Coins01Icon,
-  HourglassIcon,
-  InvoiceIcon,
-  Chart01Icon
-} from '@hugeicons/core-free-icons'
 
 interface BusinessEntity {
   id: string
@@ -67,89 +60,63 @@ export function MultiBusiness() {
   return (
     <div className="space-y-4">
 
-      {/* ── Aggregated Stats Grid ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 select-none">
-        
-        {/* Stat 1: Total Businesses */}
-        <div className="bg-white border border-[#EBEAE6] rounded-2xl p-5 hover:border-gray-300 hover:shadow-xs transition-all duration-300 flex flex-col justify-between min-h-[140px] text-left">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Active Entities</span>
-            <span className="p-1.5 rounded-lg bg-blue-50 text-blue-600">
-              <HugeiconsIcon icon={InvoiceIcon} size={15} />
-            </span>
-          </div>
-          <div className="mt-3 space-y-1.5">
-            <span className="text-[25px] font-black text-gray-900 leading-none block">
-              {entities.length} Businesses
-            </span>
-            <div className="pt-0.5">
-              <span className="inline-flex items-center gap-1 bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full text-[10px] font-bold">
-                ● Unified access ledger
+      {/* ── Multi Business Scorecard Panel (Unified Premium Layout) ── */}
+      <div className="bg-white border border-[#EBEAE6] rounded-[22px] overflow-hidden select-none">
+        <div className="grid grid-cols-1 divide-y divide-[#EBEAE6]/60 md:grid-cols-4 md:divide-y-0 md:divide-x text-left">
+
+          {/* Metric 1: Total Businesses */}
+          <div className="px-6 py-5 flex flex-col justify-center">
+            <span className="text-[14px] font-medium text-black tracking-tight block">Active Entities</span>
+            <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+              <span className="text-[25px] font-semibold text-gray-900 leading-none whitespace-nowrap block">
+                {entities.length} Businesses
+              </span>
+              <span className="inline-flex items-center text-blue-700 text-[11.5px] font-medium whitespace-nowrap">
+                Unified access ledger
               </span>
             </div>
           </div>
-        </div>
 
-        {/* Stat 2: Aggregated Receivables */}
-        <div className="bg-white border border-[#EBEAE6] rounded-2xl p-5 hover:border-gray-300 hover:shadow-xs transition-all duration-300 flex flex-col justify-between min-h-[140px] text-left">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Aggregated AR</span>
-            <span className="p-1.5 rounded-lg bg-emerald-50 text-emerald-600">
-              <HugeiconsIcon icon={Coins01Icon} size={15} />
-            </span>
-          </div>
-          <div className="mt-3 space-y-1.5">
-            <span className="text-[25px] font-black text-gray-900 leading-none block">
-              {formatINRCompact(totalReceivables)}
-            </span>
-            <div className="pt-0.5">
-              <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full text-[10px] font-bold">
-                ● Across all entities
+          {/* Metric 2: Aggregated Receivables */}
+          <div className="px-6 py-5 flex flex-col justify-center">
+            <span className="text-[14px] font-medium text-black tracking-tight block">Aggregated AR</span>
+            <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+              <span className="text-[25px] font-semibold text-gray-900 leading-none whitespace-nowrap block">
+                {formatINRCompact(totalReceivables)}
+              </span>
+              <span className="inline-flex items-center text-emerald-700 text-[11.5px] font-medium whitespace-nowrap">
+                Across all entities
               </span>
             </div>
           </div>
-        </div>
 
-        {/* Stat 3: Top Performing */}
-        <div className="bg-white border border-[#EBEAE6] rounded-2xl p-5 hover:border-gray-300 hover:shadow-xs transition-all duration-300 flex flex-col justify-between min-h-[140px] text-left">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Top Org (Recovery)</span>
-            <span className="p-1.5 rounded-lg bg-orange-50 text-[#FF6A39]">
-              <HugeiconsIcon icon={Chart01Icon} size={15} />
-            </span>
-          </div>
-          <div className="mt-3 space-y-1.5">
-            <span className="text-[23px] font-black text-gray-900 leading-none block truncate max-w-[200px]">
-              Reddy Pharma
-            </span>
-            <div className="pt-0.5">
-              <span className="inline-flex items-center gap-1 bg-orange-50 text-orange-700 px-2 py-0.5 rounded-full text-[10px] font-bold">
+          {/* Metric 3: Top Performing */}
+          <div className="px-6 py-5 flex flex-col justify-center">
+            <span className="text-[14px] font-medium text-black tracking-tight block">Top Org (Recovery)</span>
+            <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+              <span className="text-[25px] font-semibold text-gray-900 leading-none whitespace-nowrap block truncate max-w-[200px]">
+                Reddy Pharma
+              </span>
+              <span className="inline-flex items-center text-orange-600 text-[11.5px] font-medium whitespace-nowrap">
                 86.4% success rate
               </span>
             </div>
           </div>
-        </div>
 
-        {/* Stat 4: Gateway Health */}
-        <div className="bg-white border border-[#EBEAE6] rounded-2xl p-5 hover:border-gray-300 hover:shadow-xs transition-all duration-300 flex flex-col justify-between min-h-[140px] text-left">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Gateway integration</span>
-            <span className="p-1.5 rounded-lg bg-violet-50 text-violet-600">
-              <HugeiconsIcon icon={HourglassIcon} size={15} />
-            </span>
-          </div>
-          <div className="mt-3 space-y-1.5">
-            <span className="text-[25px] font-black text-gray-900 leading-none block">
-              Razorpay API
-            </span>
-            <div className="pt-0.5">
-              <span className="inline-flex items-center gap-1 bg-violet-50 text-violet-700 px-2 py-0.5 rounded-full text-[10px] font-bold">
-                ● Active on 3 entities
+          {/* Metric 4: Gateway Health */}
+          <div className="px-6 py-5 flex flex-col justify-center">
+            <span className="text-[14px] font-medium text-black tracking-tight block">Gateway Integration</span>
+            <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+              <span className="text-[25px] font-semibold text-gray-900 leading-none whitespace-nowrap block">
+                Razorpay API
+              </span>
+              <span className="inline-flex items-center text-violet-700 text-[11.5px] font-medium whitespace-nowrap">
+                Active on 3 entities
               </span>
             </div>
           </div>
-        </div>
 
+        </div>
       </div>
 
       {/* ── Workspace Switcher Grid ── */}

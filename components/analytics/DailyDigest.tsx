@@ -4,14 +4,6 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { formatINRCompact } from '@/lib/utils/currency'
 import { toast } from 'sonner'
-import { HugeiconsIcon } from '@hugeicons/react'
-import {
-  AiBrain01Icon,
-  Coins01Icon,
-  HourglassIcon,
-  InvoiceIcon,
-  Chart01Icon
-} from '@hugeicons/core-free-icons'
 
 interface ChecklistItem {
   id: string
@@ -19,6 +11,9 @@ interface ChecklistItem {
   detail: string
   route: string
   routeLabel: string
+  category: 'Legal Action' | 'AI Optimization' | 'Accounting' | 'Compliance'
+  impact: string
+  why: string
   completed: boolean
 }
 
@@ -40,6 +35,9 @@ export function DailyDigest() {
       detail: 'MegaVision Electronics (₹22.00 L) is aged over 72 days and payment probability has dropped below 42%.',
       route: '/msme-samadhaan',
       routeLabel: 'File Case',
+      category: 'Legal Action',
+      impact: 'Recover ₹22.00 L + claim 3x interest',
+      why: 'MegaVision is 72 days late. A legal pre-notice is required to force payment and start MSME Facilitation Council proceedings.',
       completed: false
     },
     {
@@ -48,6 +46,9 @@ export function DailyDigest() {
       detail: 'The AI tone engine suggests editing the Week 3 WhatsApp notice to boost the read-to-pay rate by 15%.',
       route: '/tone-engine',
       routeLabel: 'Configure Tones',
+      category: 'AI Optimization',
+      impact: 'Speed up payments by 15%',
+      why: 'Politely demanding payment with firmer language makes buyers take action. This change resolves pending disputes.',
       completed: false
     },
     {
@@ -56,6 +57,9 @@ export function DailyDigest() {
       detail: 'Verify 3 digital payments (totaling ₹88.5K) that were auto-settled through Razorpay today.',
       route: '/payments',
       routeLabel: 'View Payments',
+      category: 'Accounting',
+      impact: 'Confirm ₹88.5K landed in bank',
+      why: 'Ensures that digital collections initiated through customer reminders have successfully reached your bank account.',
       completed: false
     },
     {
@@ -64,6 +68,9 @@ export function DailyDigest() {
       detail: 'Keep your MSME certificate details updated to guarantee Facilitation Council filing validity.',
       route: '/settings/profile',
       routeLabel: 'Open Profile',
+      category: 'Compliance',
+      impact: 'Maintain legal protection',
+      why: 'A valid Udyam registration is legally required to claim statutory interest or file disputes against late-paying buyers.',
       completed: false
     }
   ])
@@ -136,112 +143,82 @@ export function DailyDigest() {
     <div className="space-y-4">
 
       {/* ── Conversational AI Morning Briefing Alert ── */}
-      <div className="bg-gradient-to-r from-orange-50/50 via-amber-50/30 to-blue-50/30 border border-[#EBEAE6] rounded-[22px] p-5 text-left select-none shadow-3xs flex flex-col sm:flex-row gap-4 items-start">
-        <div className="h-10 w-10 rounded-xl bg-orange-100 text-[#FF6A39] flex items-center justify-center flex-shrink-0 text-lg shadow-3xs">
-          🤖
-        </div>
+      <div className="bg-[#FFFFFF] border border-[#EBEAE6] rounded-[22px] p-5 text-left select-none flex flex-col sm:flex-row gap-4 items-start">
         <div className="space-y-2 flex-1">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block">
-              AI Morning Briefing · {getTodayDateString()}
+            <span className="text-[15.5px] font-extrabold text-[#FF6A39] leading-tight block">
+              AI Morning Briefing · {getTodayDateString()} (For Business Owners)
             </span>
           </div>
-          <p className="text-[13px] text-gray-700 font-semibold leading-relaxed">
+          <p className="text-[14px] text-gray-500 font-medium leading-relaxed">
             Good morning, Nishal. Today's collections runway is highly active. You have <strong className="text-gray-900">₹85,000</strong> in expected settlements scheduled to clear by afternoon. The AI tone engine has auto-escalated <strong className="text-gray-900">3 customer accounts</strong> to strict reminder levels due to consecutive payment delays. WhatsApp response rates remain high at <strong className="text-emerald-700">85%</strong>, whereas Email responses are hitting a ceiling. We recommend filing 1 MSME Samadhaan dispute and reviewing today's 4 priority action items.
           </p>
         </div>
       </div>
 
-      {/* ── Daily Scorecard Grid ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 select-none">
-        
-        {/* Score 1: Invoices Logged Today */}
-        <div className="bg-white border border-[#EBEAE6] rounded-2xl p-5 hover:border-gray-300 hover:shadow-xs transition-all duration-300 flex flex-col justify-between min-h-[140px] text-left">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Invoices Logged Today</span>
-            <span className="p-1.5 rounded-lg bg-blue-50 text-blue-600">
-              <HugeiconsIcon icon={InvoiceIcon} size={15} />
-            </span>
-          </div>
-          <div className="mt-3 space-y-1.5">
-            <span className="text-[25px] font-black text-gray-900 leading-none block">
-              {formatINRCompact(185000)}
-            </span>
-            <div className="pt-0.5">
-              <span className="inline-flex items-center gap-1 bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full text-[10px] font-bold">
-                ● 5 New Invoices
+      {/* ── Daily Scorecard Panel (Unified Premium Layout) ── */}
+      <div className="bg-white border border-[#EBEAE6] rounded-[22px] overflow-hidden select-none">
+        <div className="grid grid-cols-1 divide-y divide-[#EBEAE6]/60 md:grid-cols-4 md:divide-y-0 md:divide-x text-left">
+
+          {/* Metric 1: Invoices Logged Today */}
+          <div className="px-6 py-5 flex flex-col justify-center">
+            <span className="text-[14px] font-medium text-black tracking-tight block">Invoices Logged Today</span>
+            <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+              <span className="text-[25px] font-semibold text-gray-900 leading-none whitespace-nowrap block">
+                {formatINRCompact(185000)}
+              </span>
+              <span className="inline-flex items-center text-blue-700 text-[11.5px] font-medium whitespace-nowrap">
+                5 New Invoices
               </span>
             </div>
           </div>
-        </div>
 
-        {/* Score 2: Payments Collected Today */}
-        <div className="bg-white border border-[#EBEAE6] rounded-2xl p-5 hover:border-gray-300 hover:shadow-xs transition-all duration-300 flex flex-col justify-between min-h-[140px] text-left">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Collected Today</span>
-            <span className="p-1.5 rounded-lg bg-emerald-50 text-emerald-600">
-              <HugeiconsIcon icon={Coins01Icon} size={15} />
-            </span>
-          </div>
-          <div className="mt-3 space-y-1.5">
-            <span className="text-[25px] font-black text-gray-900 leading-none block">
-              {formatINRCompact(88500)}
-            </span>
-            <div className="pt-0.5">
-              <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full text-[10px] font-bold">
+          {/* Metric 2: Collected Today */}
+          <div className="px-6 py-5 flex flex-col justify-center">
+            <span className="text-[14px] font-medium text-black tracking-tight block">Collected Today</span>
+            <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+              <span className="text-[25px] font-semibold text-gray-900 leading-none whitespace-nowrap block">
+                {formatINRCompact(88500)}
+              </span>
+              <span className="inline-flex items-center text-emerald-700 text-[11.5px] font-medium whitespace-nowrap">
                 ▲ 3 Cleared Payments
               </span>
             </div>
           </div>
-        </div>
 
-        {/* Score 3: Reminders Sent Today */}
-        <div className="bg-white border border-[#EBEAE6] rounded-2xl p-5 hover:border-gray-300 hover:shadow-xs transition-all duration-300 flex flex-col justify-between min-h-[140px] text-left">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Reminders Dispatched</span>
-            <span className="p-1.5 rounded-lg bg-orange-50 text-[#FF6A39]">
-              <HugeiconsIcon icon={HourglassIcon} size={15} />
-            </span>
-          </div>
-          <div className="mt-3 space-y-1.5">
-            <span className="text-[25px] font-black text-gray-900 leading-none block">
-              42 Sent
-            </span>
-            <div className="pt-0.5">
-              <span className="inline-flex items-center gap-1 bg-orange-50 text-orange-700 px-2 py-0.5 rounded-full text-[10px] font-bold">
-                ⚡ 91% Delivery Rate
+          {/* Metric 3: Reminders Dispatched */}
+          <div className="px-6 py-5 flex flex-col justify-center">
+            <span className="text-[14px] font-medium text-black tracking-tight block">Reminders Dispatched</span>
+            <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+              <span className="text-[25px] font-semibold text-gray-900 leading-none whitespace-nowrap block">
+                42 Sent
+              </span>
+              <span className="inline-flex items-center text-orange-600 text-[11.5px] font-medium whitespace-nowrap">
+                91% Delivery Rate
               </span>
             </div>
           </div>
-        </div>
 
-        {/* Score 4: Critical Accounts */}
-        <div className="bg-white border border-[#EBEAE6] rounded-2xl p-5 hover:border-gray-300 hover:shadow-xs transition-all duration-300 flex flex-col justify-between min-h-[140px] text-left">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Critical Accounts</span>
-            <span className="p-1.5 rounded-lg bg-red-50 text-red-650">
-              <HugeiconsIcon icon={Chart01Icon} size={15} />
-            </span>
-          </div>
-          <div className="mt-3 space-y-1.5">
-            <span className="text-[25px] font-black text-red-600 leading-none block">
-              2 Accounts
-            </span>
-            <div className="pt-0.5">
-              <span className="inline-flex items-center gap-1 bg-red-50 text-red-700 px-2 py-0.5 rounded-full text-[10px] font-bold">
-                ⚠️ &gt;60 Days Overdue
+          {/* Metric 4: Critical Accounts */}
+          <div className="px-6 py-5 flex flex-col justify-center">
+            <span className="text-[14px] font-medium text-black tracking-tight block">Critical Accounts</span>
+            <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+              <span className="text-[25px] font-semibold text-red-600 leading-none whitespace-nowrap block">
+                2 Accounts
+              </span>
+              <span className="inline-flex items-center text-red-700 text-[11.5px] font-medium whitespace-nowrap">
+                &gt;60 Days Overdue
               </span>
             </div>
           </div>
-        </div>
 
+        </div>
       </div>
 
       {/* ── Double-Column Action/Feed Grid ── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        
         {/* Left Column: Daily Collection Action Checklist */}
-        <div className="rounded-xl bg-white border border-[#EBEAE6] shadow-xs p-5 select-none text-left space-y-4">
+        <div className="bg-white border border-[#EBEAE6] rounded-[22px] p-6 text-left select-none shadow-3xs space-y-5">
           <div>
             <span className="text-[10px] font-bold text-blue-600 uppercase tracking-widest block">
               Priority Tasks
@@ -254,31 +231,83 @@ export function DailyDigest() {
             </p>
           </div>
 
-          <div className="divide-y divide-gray-100 space-y-3">
+          <div className="space-y-4">
             {checklist.map((item) => (
-              <div key={item.id} className="pt-3 flex gap-3 items-start group">
-                <input
-                  type="checkbox"
-                  checked={item.completed}
-                  onChange={() => handleToggleChecklist(item.id)}
-                  className="mt-1 h-4 w-4 rounded border-gray-300 text-[#FF6A39] focus:ring-[#FF6A39]/30 focus:outline-none transition-all cursor-pointer"
-                />
-                <div className="flex-1 space-y-1">
-                  <span className={`text-xs font-bold block leading-snug transition-all ${
-                    item.completed ? 'line-through text-gray-400' : 'text-gray-900'
-                  }`}>
-                    {item.task}
+              <div
+                key={item.id}
+                className={`p-4.5 rounded-2xl border transition-all duration-300 space-y-3.5 ${
+                  item.completed
+                    ? 'bg-gray-50/50 border-gray-100 opacity-60'
+                    : 'bg-white border-gray-100 hover:border-gray-300 shadow-3xs'
+                }`}
+              >
+                {/* Header row: Category & Impact */}
+                <div className="flex items-center justify-between gap-2 flex-wrap text-left">
+                  <span
+                    className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wide border ${
+                      item.category === 'Legal Action'
+                        ? 'bg-red-50 text-red-700 border-red-200'
+                        : item.category === 'AI Optimization'
+                          ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                          : item.category === 'Accounting'
+                            ? 'bg-blue-50 text-blue-700 border-blue-200'
+                            : 'bg-purple-50 text-purple-700 border-purple-200'
+                    }`}
+                  >
+                    {item.category === 'Legal Action' && '⚖️ '}
+                    {item.category === 'AI Optimization' && '🤖 '}
+                    {item.category === 'Accounting' && '💰 '}
+                    {item.category === 'Compliance' && '📋 '}
+                    {item.category}
                   </span>
-                  <p className={`text-[11px] font-medium leading-relaxed transition-all ${
-                    item.completed ? 'text-gray-350' : 'text-gray-500'
-                  }`}>
+
+                  <span className="text-[11px] font-bold text-gray-500 flex items-center gap-1.5">
+                    🎯 <strong className="text-gray-700 font-extrabold">{item.impact}</strong>
+                  </span>
+                </div>
+
+                {/* Task Checkbox & Title */}
+                <div className="flex gap-3 items-start text-left">
+                  <input
+                    type="checkbox"
+                    checked={item.completed}
+                    onChange={() => handleToggleChecklist(item.id)}
+                    className="mt-0.5 h-4.5 w-4.5 rounded-full border-gray-300 text-[#FF6A39] focus:ring-[#FF6A39]/30 focus:outline-none transition-all cursor-pointer"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <span
+                      className={`text-[13.5px] font-extrabold block leading-snug transition-all ${
+                        item.completed ? 'line-through text-gray-400' : 'text-gray-900'
+                      }`}
+                    >
+                      {item.task}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Explanation Context */}
+                <div className="pl-7.5 space-y-2.5 text-left">
+                  <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">
                     {item.detail}
                   </p>
+
+                  {/* Why this matters explanation */}
+                  {!item.completed && (
+                    <div className="bg-gray-50 border border-gray-100 rounded-xl p-3 text-[11px] text-gray-600 leading-relaxed font-semibold flex gap-2">
+                      <span className="text-sm shrink-0">💡</span>
+                      <div>
+                        <strong className="text-gray-800 block text-[11.5px] font-bold mb-0.5">Why this matters:</strong>
+                        {item.why}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Action Link Button */}
                   {!item.completed && (
                     <div className="pt-1 select-none">
-                      <Link 
+                      <Link
                         href={item.route}
-                        className="text-[10px] text-blue-600 font-bold hover:underline"
+                        className="inline-flex items-center justify-center bg-gray-950 hover:bg-gray-850 text-white font-bold py-1.5 px-3 rounded-lg text-[11px] transition-colors shadow-3xs cursor-pointer"
                       >
                         {item.routeLabel} →
                       </Link>
@@ -291,7 +320,7 @@ export function DailyDigest() {
         </div>
 
         {/* Right Column: Visual Activity Feed Timeline */}
-        <div className="rounded-xl bg-white border border-[#EBEAE6] shadow-xs p-5 select-none text-left space-y-4 flex flex-col justify-between">
+        <div className="bg-white border border-[#EBEAE6] rounded-[22px] p-6 text-left select-none shadow-3xs space-y-5 flex flex-col justify-between">
           <div className="space-y-1">
             <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest block">
               automated feed
@@ -306,40 +335,42 @@ export function DailyDigest() {
 
           <div className="pt-2 flex-1 relative pl-6 space-y-6">
             {/* Timeline line */}
-            <div className="absolute left-[9px] top-2 bottom-2 w-[2px] bg-gray-100" />
+            <div className="absolute left-[9px] top-2 bottom-2 w-[2px] bg-gray-100/80" />
 
             {activities.map((act) => (
               <div key={act.id} className="relative flex items-start gap-3">
                 {/* Timeline node */}
-                <span className={`absolute left-[-21px] top-1.5 h-3.5 w-3.5 rounded-full border-2 border-white ring-2 ${
+                <span className={`absolute left-[-21px] top-1.5 h-3.5 w-3.5 rounded-full border-2 border-white ring-4 ${
                   act.status === 'READ'
-                    ? 'bg-emerald-500 ring-emerald-500/20'
+                    ? 'bg-emerald-500 ring-emerald-500/10'
                     : act.status === 'DELIVERED'
-                      ? 'bg-blue-500 ring-blue-500/20'
-                      : 'bg-gray-300 ring-gray-300/20'
+                      ? 'bg-blue-500 ring-blue-500/10'
+                      : 'bg-gray-355 ring-gray-200/20'
                 }`} />
 
-                <div className="flex-1 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1.5">
-                  <div>
+                <div className="flex-1 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                  <div className="text-left">
                     <h4 className="text-xs font-bold text-gray-900 leading-tight">
                       {act.customerName}
                     </h4>
-                    <span className="text-[10.5px] text-gray-400 font-medium block mt-0.5">
-                      Invoice: <strong className="font-mono">{act.invoiceNumber}</strong> · Channel: <strong className="text-gray-600">{act.channel}</strong>
+                    <span className="text-[10.5px] text-gray-400 font-semibold block mt-1">
+                      Invoice: <strong className="font-mono text-gray-500 font-bold">{act.invoiceNumber}</strong> · Channel: <strong className="text-gray-600">{act.channel}</strong>
                     </span>
                   </div>
 
-                  <div className="text-right flex flex-col items-start sm:items-end select-none">
-                    <span className={`inline-flex items-center rounded px-1.5 py-0.5 text-[9px] font-bold ${
+                  <div className="text-right flex flex-col items-start sm:items-end select-none gap-1 shrink-0">
+                    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[9.5px] font-extrabold border ${
                       act.status === 'READ'
-                        ? 'bg-emerald-50 text-emerald-700'
+                        ? 'bg-emerald-50 text-emerald-700 border-emerald-100'
                         : act.status === 'DELIVERED'
-                          ? 'bg-blue-50 text-blue-700'
-                          : 'bg-gray-50 text-gray-500'
+                          ? 'bg-blue-50 text-blue-700 border-blue-100'
+                          : 'bg-gray-50 text-gray-500 border-gray-100'
                     }`}>
-                      {act.status}
+                      {act.status === 'READ' && '✓✓ '}
+                      {act.status === 'DELIVERED' && '✓ '}
+                      {act.statusLabel}
                     </span>
-                    <span className="text-[9px] text-gray-400 font-semibold block mt-1 font-mono">
+                    <span className="text-[9px] text-gray-400 font-semibold block mt-0.5 font-mono">
                       {act.time}
                     </span>
                   </div>
