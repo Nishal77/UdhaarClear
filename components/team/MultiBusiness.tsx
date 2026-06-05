@@ -152,12 +152,12 @@ export function MultiBusiness() {
           {/* Metric 1: Total Businesses */}
           <div className="px-6 py-5 flex flex-col justify-center">
             <span className="text-[14px] font-medium text-black tracking-tight block">Active Entities</span>
-            <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-              <span className="text-[25px] font-semibold text-gray-900 leading-none whitespace-nowrap block">
-                {entities.length} Businesses
+            <div className="mt-2 flex items-baseline gap-x-2 whitespace-nowrap overflow-hidden">
+              <span className="text-[25px] font-semibold text-gray-900 leading-none whitespace-nowrap">
+                {entities.length} Orgs
               </span>
-              <span className="inline-flex items-center text-blue-700 text-[11.5px] font-medium whitespace-nowrap">
-                Unified access ledger
+              <span className="text-blue-700 text-[11.5px] font-bold whitespace-nowrap">
+                Active
               </span>
             </div>
           </div>
@@ -165,12 +165,12 @@ export function MultiBusiness() {
           {/* Metric 2: Aggregated Receivables */}
           <div className="px-6 py-5 flex flex-col justify-center">
             <span className="text-[14px] font-medium text-black tracking-tight block">Aggregated AR</span>
-            <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-              <span className="text-[25px] font-semibold text-gray-900 leading-none whitespace-nowrap block">
+            <div className="mt-2 flex items-baseline gap-x-2 whitespace-nowrap overflow-hidden">
+              <span className="text-[25px] font-semibold text-gray-900 leading-none whitespace-nowrap">
                 {formatINRCompact(totalReceivables)}
               </span>
-              <span className="inline-flex items-center text-emerald-700 text-[11.5px] font-medium whitespace-nowrap">
-                Across all entities
+              <span className="text-emerald-700 text-[11.5px] font-bold whitespace-nowrap">
+                All Orgs
               </span>
             </div>
           </div>
@@ -178,25 +178,25 @@ export function MultiBusiness() {
           {/* Metric 3: Top Performing */}
           <div className="px-6 py-5 flex flex-col justify-center">
             <span className="text-[14px] font-medium text-black tracking-tight block">Top Org (Recovery)</span>
-            <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-              <span className="text-[25px] font-semibold text-gray-900 leading-none whitespace-nowrap block truncate max-w-[200px]">
-                {entities.find(e => e.successRate === Math.max(...entities.map(o => o.successRate)))?.name.split(' ')[0] || 'Reddy Pharma'}
+            <div className="mt-2 flex items-baseline gap-x-2 whitespace-nowrap overflow-hidden">
+              <span className="text-[25px] font-semibold text-gray-900 leading-none whitespace-nowrap truncate max-w-[120px]">
+                {entities.find(e => e.successRate === Math.max(...entities.map(o => o.successRate)))?.name.split(' ')[0] || 'Reddy'}
               </span>
-              <span className="inline-flex items-center text-orange-600 text-[11.5px] font-medium whitespace-nowrap">
-                {Math.max(...entities.map(e => e.successRate))}% success rate
+              <span className="text-orange-600 text-[11.5px] font-bold whitespace-nowrap">
+                {Math.max(...entities.map(e => e.successRate))}% Rec.
               </span>
             </div>
           </div>
 
           {/* Metric 4: Gateway Health */}
           <div className="px-6 py-5 flex flex-col justify-center">
-            <span className="text-[14px] font-medium text-black tracking-tight block">Gateway Integration</span>
-            <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-              <span className="text-[25px] font-semibold text-gray-900 leading-none whitespace-nowrap block">
-                Razorpay API
+            <span className="text-[14px] font-medium text-black tracking-tight block">Payment Gateways</span>
+            <div className="mt-2 flex items-baseline gap-x-2 whitespace-nowrap overflow-hidden">
+              <span className="text-[25px] font-semibold text-gray-900 leading-none whitespace-nowrap">
+                {entities.length} Active
               </span>
-              <span className="inline-flex items-center text-violet-700 text-[11.5px] font-medium whitespace-nowrap">
-                Active on {entities.length} entities
+              <span className="text-violet-700 text-[11.5px] font-bold whitespace-nowrap">
+                Auto-Sync
               </span>
             </div>
           </div>
