@@ -15,29 +15,5 @@ export default async function MultiBusinessPage() {
   })
   if (!dbUser?.ownedBusiness) redirect('/dashboard')
 
-  return (
-    <div className="space-y-4">
-      
-      {/* ── Page Header ── */}
-      <div className="flex flex-col select-none">
-        <nav className="flex items-center gap-1.5 text-[12px] text-gray-400 text-left">
-          <Link href="/dashboard" className="hover:text-gray-600 transition-colors">Home</Link>
-          <span>›</span>
-          <span className="text-gray-455">Team & Access</span>
-          <span>›</span>
-          <span className="text-gray-600 font-medium">Multi Business</span>
-        </nav>
-        <div className="flex items-center justify-between mt-1">
-          <h1 className="text-[24px] font-bold text-gray-900 leading-tight">Multi Business Manager</h1>
-        </div>
-        <p className="mt-1 text-[13px] text-gray-400 text-left font-medium">
-          Switch active workspaces, manage multiple business profiles, and monitor consolidated receivables.
-        </p>
-      </div>
-
-      {/* ── Interactive Workspace ── */}
-      <MultiBusiness />
-
-    </div>
-  )
+  return <MultiBusiness />
 }
