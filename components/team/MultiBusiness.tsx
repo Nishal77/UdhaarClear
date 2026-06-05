@@ -206,9 +206,11 @@ export function MultiBusiness() {
 
       {/* ── Workspace Switcher Panel (Unified Premium Layout) ── */}
       <div className="bg-white border border-[#EBEAE6] rounded-[22px] p-6 select-none text-left space-y-5">
-        <div>
-          <span className="text-[10px] font-bold text-blue-600 uppercase tracking-widest block">multi-tenant switchboard</span>
-          <h3 className="text-[15px] font-extrabold text-gray-900 mt-0.5">Select Active Organization</h3>
+        <div className="flex items-center justify-between pb-1">
+          <h3 className="text-[15px] font-extrabold text-gray-900">Select Active Organization</h3>
+          <span className="text-[11.5px] font-bold text-gray-400 bg-gray-50 border border-gray-100/60 px-2.5 py-0.5 rounded-full">
+            Up to 3 Orgs can be added
+          </span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
