@@ -32,7 +32,7 @@ export function MultiBusiness() {
   ])
 
   const [switchingId, setSwitchingId] = useState<string | null>(null)
-  
+
   // Add Business Form State
   const [addBusinessOpen, setAddBusinessOpen] = useState(false)
   const [newBusinessName, setNewBusinessName] = useState('')
@@ -48,7 +48,7 @@ export function MultiBusiness() {
   const handleSwitchWorkspace = (id: string, bName: string) => {
     if (switchingId) return
     setSwitchingId(id)
-    
+
     // Simulate workspace shifting handshake
     setTimeout(() => {
       setEntities(
@@ -109,7 +109,7 @@ export function MultiBusiness() {
 
   return (
     <div className="space-y-4 select-none">
-      
+
       {/* ── Page Header ── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 select-none">
         <div className="text-left">
@@ -137,10 +137,10 @@ export function MultiBusiness() {
       </div>
 
       {/* ── Layperson Info Banner ── */}
-      <div className="bg-amber-50/50 border border-amber-100/80 rounded-[20px] p-4 flex gap-3 text-[12.5px] text-amber-900 leading-relaxed font-semibold">
-        <AlertCircle size={16} className="text-[#FF6A39] shrink-0 mt-0.5" />
+      <div className="bg-[#FFFFFF] border border-[#EBEAE6] rounded-[20px] p-4 flex gap-3 text-[12.5px] text-gray-900 leading-relaxed font-semibold">
+        <AlertCircle size={16} className="text-red-400 shrink-0 mt-0.5" />
         <div>
-          <span className="font-extrabold text-amber-955 block mb-0.5">How multi-business switchboard works:</span>
+          <span className="font-semibold text-red-500 block mb-0.5">How multi-business switchboard works:</span>
           Your account has access to multiple legal business entities. Switching your active workspace below dynamically loads the specific organization's ledgers, settings, API keys, and notification channels.
         </div>
       </div>
@@ -217,30 +217,28 @@ export function MultiBusiness() {
           {entities.map((ent) => (
             <div
               key={ent.id}
-              className={`rounded-[18px] p-5 flex flex-col justify-between min-h-[235px] transition-all duration-300 ${
-                ent.primary
-                  ? 'bg-white border-2 border-[#FF6A39] shadow-sm ring-1 ring-[#FF6A39]/10'
-                  : 'bg-gray-50/50 border border-[#EBEAE6] hover:border-gray-300 hover:shadow-xs'
-              }`}
+              className={`rounded-[18px] p-5 flex flex-col justify-between min-h-[235px] transition-all duration-300 ${ent.primary
+                ? 'bg-white border border-[#FF6A39] shadow-sm ring-1 ring-[#FF6A39]/10'
+                : 'bg-gray-50/50 border border-[#EBEAE6] hover:border-gray-300 hover:shadow-xs'
+                }`}
             >
-              
+
               {/* Card Header info */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className={`h-10 w-10 rounded-xl flex items-center justify-center font-extrabold text-[13px] ${
-                    ent.primary ? 'bg-orange-50 text-[#FF6A39] border border-orange-100' : 'bg-slate-50 text-slate-700 border border-slate-100'
-                  }`}>
+                  <span className={`h-10 w-10 rounded-xl flex items-center justify-center font-semibold text-[13px] ${ent.primary ? 'bg-orange-50 text-[#FF6A39] border border-orange-100' : 'bg-slate-50 text-slate-700 border border-slate-100'
+                    }`}>
                     {ent.name.split(' ').map((w) => w[0]).join('').substring(0, 2)}
                   </span>
                   {ent.primary && (
-                    <span className="bg-[#FF6A39]/10 text-[#FF6A39] text-[9.5px] font-bold px-2.5 py-0.5 rounded-full border border-[#FF6A39]/25 flex items-center gap-1 select-none">
-                      <span className="h-1.5 w-1.5 rounded-full bg-[#FF6A39] animate-pulse" />
+                    <span className="bg-[#FF6A39]/10 text-[#FF6A39] text-[10.5px] font-semibold px-2.5 py-0.5 rounded-full border border-[#FF6A39]/25 flex items-center gap-1 select-none">
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#FF6A39]" />
                       Active Primary
                     </span>
                   )}
                 </div>
-                <h4 className="text-[15px] font-extrabold text-gray-900 leading-snug pt-1 truncate">{ent.name}</h4>
-                <span className="text-[11px] text-gray-400 font-semibold block truncate font-mono flex items-center gap-1">
+                <h4 className="text-[15px] font-semibold text-gray-900 leading-snug pt-1 truncate">{ent.name}</h4>
+                <span className="text-[11px] text-gray-400 font-medium block truncate font-mono flex items-center gap-1">
                   <Globe size={11} className="text-gray-300" />
                   {ent.domain}
                 </span>
@@ -249,12 +247,12 @@ export function MultiBusiness() {
               {/* Card Body stats */}
               <div className="border-t border-gray-100/80 pt-3.5 mt-4 flex justify-between text-xs text-gray-500 font-semibold">
                 <div>
-                  <span className="text-[10px] text-gray-400 uppercase tracking-wider block font-bold">Overdue AR</span>
-                  <span className="text-gray-900 font-extrabold text-[13px] font-mono">{formatINRCompact(ent.outstanding)}</span>
+                  <span className="text-[10px] text-gray-400 uppercase tracking-wider block font-semibold">Overdue AR</span>
+                  <span className="text-gray-900 font-semibold text-[13px]">{formatINRCompact(ent.outstanding)}</span>
                 </div>
                 <div className="text-right">
-                  <span className="text-[10px] text-gray-400 uppercase tracking-wider block font-bold">Recovery</span>
-                  <span className="text-emerald-600 font-extrabold text-[13px]">{ent.successRate}%</span>
+                  <span className="text-[10px] text-gray-400 uppercase tracking-wider block font-semibold">Recovery</span>
+                  <span className="text-emerald-600 font-semibold text-[13px]">{ent.successRate}%</span>
                 </div>
               </div>
 
@@ -263,7 +261,7 @@ export function MultiBusiness() {
                 {ent.primary ? (
                   <button
                     disabled
-                    className="w-full bg-[#FF6A39]/10 text-[#FF6A39] text-[12px] font-bold py-2 rounded-xl cursor-default text-center border border-[#FF6A39]/20"
+                    className="w-full bg-[#FF6A39]/10 text-[#FF6A39] text-[12px] font-semibold py-2 rounded-xl cursor-default text-center border border-[#FF6A39]/20"
                   >
                     Active Primary Organization
                   </button>
@@ -271,47 +269,11 @@ export function MultiBusiness() {
                   <button
                     onClick={() => handleSwitchWorkspace(ent.id, ent.name)}
                     disabled={switchingId !== null}
-                    className="w-full bg-gray-950 hover:bg-gray-850 disabled:opacity-50 text-white text-[12px] font-bold py-2 rounded-xl transition-all duration-200 cursor-pointer text-center active:scale-95"
+                    className="w-full bg-gray-950 hover:bg-gray-850 disabled:opacity-50 text-white text-[12px] font-semibold py-2 rounded-xl transition-all duration-200 cursor-pointer text-center active:scale-95"
                   >
                     {switchingId === ent.id ? 'Switching Workspace...' : 'Switch Workspace'}
                   </button>
                 )}
-              </div>
-
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* ── Multi-Tenant Activity Logs timeline ── */}
-      <div className="rounded-[22px] bg-white border border-[#EBEAE6] shadow-xs p-5 select-none text-left space-y-4">
-        <div>
-          <span className="text-[10px] font-bold text-violet-600 uppercase tracking-widest block font-bold">audit trail</span>
-          <h3 className="text-[15px] font-extrabold text-gray-900 leading-tight mt-0.5">Cross-Entity Activity Logs</h3>
-          <p className="text-xs text-gray-400 font-semibold mt-1">
-            Reconciled tracking events happening across all your registered business profiles.
-          </p>
-        </div>
-
-        <div className="relative pl-6 space-y-5">
-          <div className="absolute left-[9px] top-2 bottom-2 w-[2px] bg-gray-100" />
-
-          {logs.map((log) => (
-            <div key={log.id} className="relative flex items-start gap-3">
-              <span className="absolute left-[-21px] top-1.5 h-3.5 w-3.5 rounded-full border-2 border-white ring-2 bg-gray-300 ring-gray-200" />
-              
-              <div className="flex-1 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1">
-                <div>
-                  <h4 className="text-xs font-bold text-gray-900 leading-tight">
-                    {log.action}
-                  </h4>
-                  <span className="text-[10.5px] text-gray-400 font-medium block mt-0.5">
-                    Business: <strong className="text-gray-700">{log.entityName}</strong> · {log.details}
-                  </span>
-                </div>
-                <span className="text-[9px] text-gray-400 font-semibold font-mono whitespace-nowrap">
-                  {log.time}
-                </span>
               </div>
 
             </div>

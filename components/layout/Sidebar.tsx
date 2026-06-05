@@ -25,7 +25,6 @@ import {
   // Team & Access
   UserMultipleIcon,
   Building02Icon,
-  GlobeIcon,
   // Settings
   Plug01Icon,
   WebhookIcon,
@@ -80,7 +79,6 @@ const EXTRA_SECTIONS: NavSection[] = [
     items: [
       { href: '/team/members',  label: 'Team Members',  icon: UserMultipleIcon },
       { href: '/team/business', label: 'Multi Business', icon: Building02Icon },
-      { href: '/team/whitelabel', label: 'White Label', icon: GlobeIcon },
     ],
   },
   {
