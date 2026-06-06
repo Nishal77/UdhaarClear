@@ -4,6 +4,98 @@ import { prisma } from '@/lib/prisma/client'
 import { SettingsLayout } from '@/components/settings/SettingsLayout'
 import { User as UserIcon, Bell, Shield, Key, Laptop, Smartphone, AlertCircle, Calendar, ShieldCheck, Globe } from 'lucide-react'
 import { revalidatePath } from 'next/cache'
+import { headers } from 'next/headers'
+
+// Helper to retrieve user agent, IP, country, ISP, and detect VPN connection
+async function getSessionSecurityInfo() {
+  let ip = '127.0.0.1'
+  let userAgent = ''
+
+  try {
+    const headersList = await headers()
+    const forwardedFor = headersList.get('x-forwarded-for')
+    const realIp = headersList.get('x-real-ip')
+    userAgent = headersList.get('user-agent') || 'Mozilla/5.0'
+
+    if (forwardedFor) {
+      ip = forwardedFor.split(',')[0].trim()
+    } else if (realIp) {
+      ip = realIp
+    }
+  } catch (err) {
+    console.error('Failed to read request headers:', err)
+  }
+
+  // Parse User-Agent
+  let device = 'Mac'
+  let browser = 'Chrome'
+  const ua = userAgent.toLowerCase()
+
+  if (ua.includes('windows')) {
+    device = 'Windows'
+  } else if (ua.includes('macintosh') || ua.includes('mac os')) {
+    device = 'Mac'
+  } else if (ua.includes('iphone') || ua.includes('ipad')) {
+    device = 'iPhone'
+  } else if (ua.includes('android')) {
+    device = 'Android'
+  } else if (ua.includes('linux')) {
+    device = 'Linux'
+  }
+
+  if (ua.includes('firefox')) {
+    browser = 'Firefox'
+  } else if (ua.includes('chrome') && !ua.includes('chromium')) {
+    browser = 'Chrome'
+  } else if (ua.includes('safari') && !ua.includes('chrome')) {
+    browser = 'Safari'
+  } else if (ua.includes('edge') || ua.includes('edg')) {
+    browser = 'Edge'
+  }
+
+  let location = 'Local Development'
+  let resolvedIp = ip
+  let isp = 'Localhost Network'
+  let isVpn = false
+
+  try {
+    let url = `https://ipapi.co/${ip}/json/`
+    // Fallback for local testing to lookup the public gateway IP details
+    if (ip === '127.0.0.1' || ip === '::1' || ip.startsWith('192.168.') || ip.startsWith('10.') || ip.startsWith('127.')) {
+      url = 'https://ipapi.co/json/'
+    }
+
+    const res = await fetch(url, { next: { revalidate: 60 } })
+    if (res.ok) {
+      const data = await res.json()
+      if (data && !data.error) {
+        resolvedIp = data.ip || ip
+        location = data.city && data.country_name 
+          ? `${data.city}, ${data.country_name}` 
+          : data.country_name || location
+        isp = data.org || data.asn || 'Local Network Provider'
+
+        const vpnKeywords = [
+          'vpn', 'proxy', 'hosting', 'datacenter', 'cloudflare', 'digitalocean', 
+          'amazon', 'aws', 'google cloud', 'gce', 'mullvad', 'nordvpn', 
+          'expressvpn', 'tor exit', 'ovh', 'linode', 'vultr', 'm247', 'security'
+        ]
+        isVpn = vpnKeywords.some(keyword => isp.toLowerCase().includes(keyword))
+      }
+    }
+  } catch (err) {
+    console.error('Session GeoIP/VPN check failed:', err)
+  }
+
+  return {
+    device,
+    browser,
+    ip: resolvedIp,
+    location,
+    isp,
+    isVpn
+  }
+}
 
 export default async function MySettingsPage() {
   const supabase = await createClient()
@@ -17,6 +109,9 @@ export default async function MySettingsPage() {
   if (!dbUser?.ownedBusiness) redirect('/dashboard')
 
   const business = dbUser.ownedBusiness
+
+  // Resolve dynamic session info
+  const currentSession = await getSessionSecurityInfo()
 
   // Server Action to update user credentials
   async function updatePersonalDetails(formData: FormData) {
@@ -56,18 +151,20 @@ export default async function MySettingsPage() {
       title="My Settings" 
       description="Manage your personal preferences, login security, and system defaults."
     >
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 w-full text-left">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full text-left select-none">
+        
         {/* Left Column: Personal Info, Security, Sessions (Span 2) */}
-        <div className="lg:col-span-2 space-y-4">
+        <div className="lg:col-span-2 space-y-6">
+          
           {/* Card 1: Personal Details */}
-          <div className="bg-white border border-[#EBEAE6]/60 rounded-[22px] p-6">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 rounded-full bg-[#4F46E5]/10 text-[#4F46E5] flex items-center justify-center">
-                <UserIcon className="w-5 h-5" />
+          <div className="bg-white border border-[#EBEAE6]/60 rounded-[22px] p-6 shadow-[0_8px_30px_rgba(0,0,0,0.015)]">
+            <div className="flex items-center gap-3.5 mb-6">
+              <div className="w-11 h-11 rounded-2xl bg-[#4F46E5]/10 text-[#4F46E5] flex items-center justify-center shadow-sm">
+                <UserIcon className="w-5.5 h-5.5" />
               </div>
               <div>
                 <h2 className="text-base font-bold text-gray-900 font-outfit">Personal Information</h2>
-                <p className="text-xs text-gray-400">Update your account name and contact email.</p>
+                <p className="text-xs text-gray-400 font-medium">Update your account name and contact email.</p>
               </div>
             </div>
 
@@ -124,10 +221,10 @@ export default async function MySettingsPage() {
                 </div>
               </div>
 
-              <div className="pt-2 flex justify-end">
+              <div className="pt-3 flex justify-end">
                 <button
                   type="submit"
-                  className="bg-[#FF6B00] hover:bg-[#E05B2E] text-white text-xs font-semibold px-5 py-2.5 rounded-full shadow-sm hover:shadow active:scale-95 transition-all duration-200"
+                  className="bg-[#FF6B00] hover:bg-[#E05B2E] text-white text-xs font-bold px-5 py-2.5 rounded-full shadow-sm hover:shadow active:scale-95 transition-all duration-200 cursor-pointer"
                 >
                   Save Personal Details
                 </button>
@@ -136,41 +233,50 @@ export default async function MySettingsPage() {
           </div>
 
           {/* Card 2: Security & Credentials */}
-          <div className="bg-white border border-[#EBEAE6]/60 rounded-[22px] p-6">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 rounded-full bg-[#4F46E5]/10 text-[#4F46E5] flex items-center justify-center">
-                <Shield className="w-5 h-5" />
+          <div className="bg-white border border-[#EBEAE6]/60 rounded-[22px] p-6 shadow-[0_8px_30px_rgba(0,0,0,0.015)]">
+            <div className="flex items-center gap-3.5 mb-6">
+              <div className="w-11 h-11 rounded-2xl bg-[#4F46E5]/10 text-[#4F46E5] flex items-center justify-center shadow-sm">
+                <Shield className="w-5.5 h-5.5" />
               </div>
               <div>
                 <h2 className="text-base font-bold text-gray-900 font-outfit">Security & Password</h2>
-                <p className="text-xs text-gray-400">Manage security credentials and reset authentication password.</p>
+                <p className="text-xs text-gray-400 font-medium">Manage security credentials and reset authentication password.</p>
               </div>
             </div>
 
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-2">
               <div className="flex flex-col text-left">
                 <span className="text-sm font-semibold text-gray-800 font-outfit">Update Password</span>
-                <span className="text-xs text-gray-400">We will email you a password reset link to verify your identity.</span>
+                <span className="text-xs text-gray-400 font-medium mt-0.5 leading-normal">We will email you a password reset link to verify your identity.</span>
               </div>
               <button
-                className="flex items-center gap-1.5 border border-gray-300 bg-white text-gray-700 text-xs font-semibold px-4 py-2 rounded-full hover:bg-gray-50 active:scale-95 transition-all duration-200"
+                className="flex items-center gap-1.5 border border-gray-300 bg-white text-gray-700 text-xs font-bold px-4 py-2.5 rounded-full hover:bg-gray-50 active:scale-95 transition-all duration-200 cursor-pointer"
               >
-                <Key className="w-3.5 h-3.5" />
+                <Key className="w-3.5 h-3.5 text-gray-400" />
                 Reset Password
               </button>
             </div>
           </div>
 
           {/* Card 3: Active Login Sessions */}
-          <div className="bg-white border border-[#EBEAE6]/60 rounded-[22px] p-6">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 rounded-full bg-[#FF6B00]/10 text-[#FF6B00] flex items-center justify-center">
-                <Laptop className="w-5 h-5" />
+          <div className="bg-white border border-[#EBEAE6]/60 rounded-[22px] p-6 shadow-[0_8px_30px_rgba(0,0,0,0.015)]">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3.5">
+                <div className="w-11 h-11 rounded-2xl bg-[#FF6B00]/10 text-[#FF6B00] flex items-center justify-center shadow-sm">
+                  <Laptop className="w-5.5 h-5.5" />
+                </div>
+                <div>
+                  <h2 className="text-base font-bold text-gray-900 font-outfit">Active Security Sessions</h2>
+                  <p className="text-xs text-gray-400 font-medium">Devices currently logged into your UdhaarClear merchant panel.</p>
+                </div>
               </div>
-              <div>
-                <h2 className="text-base font-bold text-gray-900 font-outfit">Active Security Sessions</h2>
-                <p className="text-xs text-gray-400">Devices currently logged into your UdhaarClear merchant panel.</p>
-              </div>
+              
+              {currentSession.isVpn && (
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-[10px] font-bold text-amber-700 uppercase tracking-wider animate-pulse">
+                  <Globe className="w-3.5 h-3.5" />
+                  VPN Flagged
+                </div>
+              )}
             </div>
 
             <div className="overflow-x-auto">
@@ -178,45 +284,83 @@ export default async function MySettingsPage() {
                 <thead>
                   <tr className="border-b border-gray-100 text-gray-400 font-bold uppercase tracking-wider">
                     <th className="pb-3 font-outfit">Device & Browser</th>
-                    <th className="pb-3 font-outfit">Location</th>
+                    <th className="pb-3 font-outfit">Location / Network</th>
                     <th className="pb-3 font-outfit">IP Address</th>
                     <th className="pb-3 font-outfit">Last Active</th>
-                    <th className="pb-3 text-right font-outfit">Status</th>
+                    <th className="pb-3 text-right font-outfit">Status / Audit</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50 text-gray-600">
+                  {/* Current Dynamic Session */}
                   <tr className="hover:bg-gray-50/50">
-                    <td className="py-3 flex items-center gap-2 font-outfit text-gray-800">
-                      <Laptop className="w-4 h-4 text-indigo-500" /> Mac / Chrome
+                    <td className="py-3.5 flex items-center gap-2 font-outfit text-gray-800">
+                      {currentSession.device === 'iPhone' || currentSession.device === 'Android' ? (
+                        <Smartphone className="w-4 h-4 text-indigo-500 shrink-0" />
+                      ) : (
+                        <Laptop className="w-4 h-4 text-indigo-500 shrink-0" />
+                      )}
+                      {currentSession.device} / {currentSession.browser}
                     </td>
-                    <td className="py-3">Mumbai, India</td>
-                    <td className="py-3 font-mono">103.88.22.4</td>
-                    <td className="py-3">Active now</td>
-                    <td className="py-3 text-right">
-                      <span className="inline-flex items-center text-[9px] font-bold uppercase text-[#10B981] bg-[#E5F7ED] px-2 py-0.5 rounded-full">
-                        Current Session
-                      </span>
+                    <td className="py-3.5">
+                      <div className="flex flex-col">
+                        <span className="font-bold text-gray-800 leading-tight">{currentSession.location}</span>
+                        <span className="text-[10px] text-gray-400 font-medium mt-0.5 leading-none">{currentSession.isp}</span>
+                      </div>
+                    </td>
+                    <td className="py-3.5 font-mono text-gray-500">
+                      {currentSession.ip}
+                    </td>
+                    <td className="py-3.5 font-medium text-gray-900">
+                      Active now
+                    </td>
+                    <td className="py-3.5 text-right">
+                      <div className="flex flex-col items-end gap-1">
+                        <span className="inline-flex items-center text-[9px] font-bold uppercase text-[#10B981] bg-[#E5F7ED] border border-[#10B981]/15 px-2 py-0.5 rounded-full">
+                          Current Session
+                        </span>
+                        {currentSession.isVpn && (
+                          <span className="inline-flex items-center gap-1 text-[8.5px] font-bold text-rose-600 bg-rose-50 border border-rose-100 px-2 py-0.5 rounded-full uppercase">
+                            ⚠️ VPN Connection
+                          </span>
+                        )}
+                      </div>
                     </td>
                   </tr>
+
+                  {/* Archived Active Session (iPhone / Mobile) */}
                   <tr className="hover:bg-gray-50/50">
-                    <td className="py-3 flex items-center gap-2 font-outfit text-gray-600">
-                      <Smartphone className="w-4 h-4 text-emerald-500" /> iPhone / Safari
+                    <td className="py-3.5 flex items-center gap-2 font-outfit text-gray-600">
+                      <Smartphone className="w-4 h-4 text-emerald-500 shrink-0" /> iPhone / Safari
                     </td>
-                    <td className="py-3">Mumbai, India</td>
-                    <td className="py-3 font-mono">103.88.22.4</td>
-                    <td className="py-3">3 hours ago</td>
-                    <td className="py-3 text-right text-gray-400 font-medium">
+                    <td className="py-3.5">
+                      <div className="flex flex-col">
+                        <span className="font-bold text-gray-700 leading-tight">{currentSession.location}</span>
+                        <span className="text-[10px] text-gray-400 font-medium mt-0.5 leading-none">Reliance Jio Infocomm</span>
+                      </div>
+                    </td>
+                    <td className="py-3.5 font-mono text-gray-400">
+                      {currentSession.ip}
+                    </td>
+                    <td className="py-3.5 text-gray-400 font-medium">3 hours ago</td>
+                    <td className="py-3.5 text-right text-gray-400 font-medium">
                       Active
                     </td>
                   </tr>
+
+                  {/* Historical Session (Windows / Edge) */}
                   <tr className="hover:bg-gray-50/50">
-                    <td className="py-3 flex items-center gap-2 font-outfit text-gray-600">
-                      <Laptop className="w-4 h-4 text-gray-400" /> Windows / Edge
+                    <td className="py-3.5 flex items-center gap-2 font-outfit text-gray-600">
+                      <Laptop className="w-4 h-4 text-gray-400 shrink-0" /> Windows / Edge
                     </td>
-                    <td className="py-3">New Delhi, India</td>
-                    <td className="py-3 font-mono">182.72.198.6</td>
-                    <td className="py-3">May 29, 2026</td>
-                    <td className="py-3 text-right text-gray-400 font-medium">
+                    <td className="py-3.5">
+                      <div className="flex flex-col">
+                        <span className="font-bold text-gray-600 leading-tight">New Delhi, India</span>
+                        <span className="text-[10px] text-gray-400 font-medium mt-0.5 leading-none">Spectra Broadband</span>
+                      </div>
+                    </td>
+                    <td className="py-3.5 font-mono text-gray-400">182.72.198.6</td>
+                    <td className="py-3.5 text-gray-400 font-medium">May 29, 2026</td>
+                    <td className="py-3.5 text-right text-gray-400 font-medium">
                       Expired
                     </td>
                   </tr>
@@ -227,9 +371,9 @@ export default async function MySettingsPage() {
         </div>
 
         {/* Right Column: User Avatar, Preferences, Stats (Span 1) */}
-        <div className="space-y-4">
+        <div className="space-y-6">
           {/* Card 4: User Profile Avatar */}
-          <div className="bg-white border border-[#EBEAE6]/60 rounded-[22px] p-6 text-center">
+          <div className="bg-white border border-[#EBEAE6]/60 rounded-[22px] p-6 text-center shadow-[0_8px_30px_rgba(0,0,0,0.015)]">
             <div className="relative w-24 h-24 mx-auto mb-4 group select-none">
               <div className="w-full h-full rounded-full bg-[#E5F7ED] border border-[#E4E4E7] overflow-hidden shadow-sm flex items-center justify-center">
                 <img
@@ -280,14 +424,14 @@ export default async function MySettingsPage() {
           </div>
 
           {/* Card 5: System Preferences */}
-          <div className="bg-white border border-[#EBEAE6]/60 rounded-[22px] p-6">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 rounded-full bg-[#4F46E5]/10 text-[#4F46E5] flex items-center justify-center">
-                <Bell className="w-5 h-5" />
+          <div className="bg-white border border-[#EBEAE6]/60 rounded-[22px] p-6 shadow-[0_8px_30px_rgba(0,0,0,0.015)]">
+            <div className="flex items-center gap-3.5 mb-6">
+              <div className="w-11 h-11 rounded-2xl bg-[#4F46E5]/10 text-[#4F46E5] flex items-center justify-center shadow-sm">
+                <Bell className="w-5.5 h-5.5" />
               </div>
               <div>
                 <h2 className="text-base font-bold text-gray-900 font-outfit">System Settings</h2>
-                <p className="text-xs text-gray-400">Configure language and notification preferences.</p>
+                <p className="text-xs text-gray-400 font-medium">Configure language and notification preferences.</p>
               </div>
             </div>
 
