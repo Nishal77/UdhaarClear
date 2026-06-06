@@ -5,6 +5,7 @@ import { SettingsLayout } from '@/components/settings/SettingsLayout'
 import { CreditCard, Check, ShieldAlert, Sparkles, Download, Receipt, CheckCircle2 } from 'lucide-react'
 import { revalidatePath } from 'next/cache'
 import { PlanTier } from '@prisma/client'
+import { CancelSubscriptionButton } from '@/components/settings/CancelSubscriptionButton'
 
 // Helper to format currency
 const formatCurrency = (amount: number) => {
@@ -108,6 +109,41 @@ export default async function BillingSettingsPage() {
     revalidatePath('/settings/billing')
   }
 
+  // Server Action to cancel the subscription (downgrade to FREE)
+  async function handleCancelSubscription() {
+    'use server'
+    const supabaseClient = await createClient()
+    const { data: { user: authUser } } = await supabaseClient.auth.getUser()
+    if (!authUser) return
+
+    const userRecord = await prisma.user.findUnique({
+      where: { supabaseId: authUser.id },
+      include: { ownedBusiness: true }
+    })
+    if (!userRecord?.ownedBusiness) return
+
+    await prisma.business.update({
+      where: { id: userRecord.ownedBusiness.id },
+      data: { planTier: 'FREE' }
+    })
+
+    const nextMonth = new Date()
+    nextMonth.setMonth(nextMonth.getMonth() + 1)
+    
+    await prisma.subscription.create({
+      data: {
+        userId: userRecord.id,
+        planTier: 'FREE',
+        billingCycle: 'MONTHLY',
+        status: 'ACTIVE',
+        currentPeriodStart: new Date(),
+        currentPeriodEnd: nextMonth,
+      }
+    })
+
+    revalidatePath('/settings/billing')
+  }
+
   // Mock Invoice History
   const mockBillingHistory = [
     { id: 'INV-2026-003', date: 'May 15, 2026', amount: PLAN_DETAILS[currentTier].price, plan: currentPlan.name, status: 'Paid' },
@@ -183,22 +219,7 @@ export default async function BillingSettingsPage() {
                 </div>
                 
                 {currentTier !== 'FREE' ? (
-                  <form 
-                    action={updatePlanTier} 
-                    onSubmit={(e) => {
-                      if (!confirm('Are you sure you want to cancel your subscription? You will be downgraded to the Free Plan.')) {
-                        e.preventDefault()
-                      }
-                    }}
-                  >
-                    <input type="hidden" name="tier" value="FREE" />
-                    <button
-                      type="submit"
-                      className="text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-100/60 border border-rose-100 px-4 py-2.5 rounded-full transition-all duration-200 cursor-pointer active:scale-95 shadow-sm"
-                    >
-                      Cancel Subscription
-                    </button>
-                  </form>
+                  <CancelSubscriptionButton onCancel={handleCancelSubscription} />
                 ) : (
                   <span className="text-[11px] text-gray-400 font-medium italic">
                     Cancel anytime. Upgrade to unlock automation.
