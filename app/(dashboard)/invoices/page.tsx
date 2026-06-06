@@ -156,8 +156,15 @@ export default async function InvoicesPage({
     : SAMPLE_INVOICES
 
   const displayInvoices = isSampleData
-    ? (filteredSampleInvoices as unknown as typeof realInvoices)
+    ? filteredSampleInvoices
     : realInvoices.filter(i => !status || i.status === status)
+
+  // Map to ClientInvoice layout (Decimal -> number) for safe serialization
+  const serializedInvoices = displayInvoices.map((inv) => ({
+    ...inv,
+    amount: Number(inv.amount),
+    paidAmount: inv.paidAmount !== null && inv.paidAmount !== undefined ? Number(inv.paidAmount) : null,
+  }))
 
   // Aggregate stats (always across ALL invoices)
   let overdueSum = 0
@@ -415,7 +422,7 @@ export default async function InvoicesPage({
 
       {/* ── Invoice Table Panel ── */}
       <InvoiceTable
-        invoices={displayInvoices}
+        invoices={serializedInvoices}
         counts={{
           ALL: allCount,
           OVERDUE: overdueCount,

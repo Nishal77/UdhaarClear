@@ -27,12 +27,12 @@ export default async function NewInvoicePage({
   const { customerId } = await searchParams
 
   return (
-    <div className="max-w-2xl space-y-6">
+    <div className="w-full space-y-6">
       <PageHeader
         title="Add Invoice"
         description="Create a new invoice and set up automated payment reminders"
       />
-      <div className="rounded-xl bg-white p-6 shadow-sm border border-gray-200">
+      <div className="rounded-2xl bg-white p-8 border border-gray-200/60">
         <InvoiceForm
           customers={customers}
           defaultValues={customerId ? { customerId } : undefined}

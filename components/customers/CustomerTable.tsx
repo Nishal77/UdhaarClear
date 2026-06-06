@@ -13,6 +13,7 @@ interface CustomerWithSummary extends Customer {
   totalOverdue: number
   overdueCount: number
   nextDueDate: Date | null
+  invoiceCount: number
 }
 
 type FilterKey = 'all' | 'overdue' | 'due' | 'paid'
@@ -37,13 +38,17 @@ function applyFilter(customers: CustomerWithSummary[], filter: FilterKey): Custo
   switch (filter) {
     case 'overdue': return customers.filter((c) => c.totalOverdue > 0)
     case 'due': return customers.filter((c) => c.totalOutstanding > 0 && c.totalOverdue === 0)
-    case 'paid': return customers.filter((c) => c.totalOutstanding === 0 && !c.isBlocked)
+    case 'paid': return customers.filter((c) => c.totalOutstanding === 0 && !c.isBlocked && c.invoiceCount > 0)
     default: return customers
   }
 }
 
 
 function getTonePhaseBadge(c: CustomerWithSummary) {
+  if (c.invoiceCount === 0) {
+    return <span className="text-[13.5px] text-gray-400">-</span>
+  }
+
   if (c.totalOutstanding === 0) {
     return (
       <div className="flex flex-col text-left">
@@ -100,6 +105,10 @@ function getTonePhaseBadge(c: CustomerWithSummary) {
 }
 
 function getWhatsAppStatus(c: CustomerWithSummary) {
+  if (c.invoiceCount === 0) {
+    return <span className="text-[12.5px] text-gray-400">-</span>
+  }
+
   if (c.totalOutstanding === 0) {
     return (
       <div className="flex flex-col text-left">
@@ -146,6 +155,10 @@ function getWhatsAppStatus(c: CustomerWithSummary) {
 }
 
 function getLastActivity(c: CustomerWithSummary) {
+  if (c.invoiceCount === 0) {
+    return <span className="text-[12.5px] text-gray-400">-</span>
+  }
+
   if (c.totalOutstanding === 0) {
     return (
       <span className="text-[12.5px] font-medium text-gray-500 leading-tight">
@@ -168,6 +181,22 @@ function getLastActivity(c: CustomerWithSummary) {
 }
 
 function renderActionButton(c: CustomerWithSummary) {
+  if (c.invoiceCount === 0) {
+    return (
+      <Link
+        href={`/invoices/new?customerId=${c.id}`}
+        className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-[#FF6A39] hover:text-[#E05B2E] transition-all justify-end select-none group/btn"
+      >
+        <span>Invoice</span>
+        <HugeiconsIcon 
+          icon={ArrowRight02Icon} 
+          size={14} 
+          className="text-[#FF6A39]/70 group-hover/btn:translate-x-0.5 transition-transform duration-200" 
+        />
+      </Link>
+    )
+  }
+
   if (c.totalOutstanding === 0) {
     return (
       <Link
@@ -430,7 +459,9 @@ export function CustomerTable({
 
                     {/* Amount Due */}
                     <td className="px-4 py-4">
-                      {c.totalOutstanding === 0 ? (
+                      {c.invoiceCount === 0 ? (
+                        <span className="text-[13.5px] text-gray-400 font-medium">-</span>
+                      ) : c.totalOutstanding === 0 ? (
                         <div>
                           <p className="text-[14px] font-medium text-gray-500">₹0</p>
                           <p className="text-[11px] text-gray-400 font-medium mt-0.5 whitespace-nowrap">Paid</p>
@@ -452,7 +483,9 @@ export function CustomerTable({
 
                     {/* Invoices */}
                     <td className="px-4 py-4">
-                      {c.totalOutstanding === 0 ? (
+                      {c.invoiceCount === 0 ? (
+                        <span className="text-[13.5px] text-gray-400 font-medium">-</span>
+                      ) : c.totalOutstanding === 0 ? (
                         <span className="inline-flex items-center rounded-full bg-gray-50 border border-gray-200 px-2.5 py-0.5 text-[11px] font-semibold text-gray-500 whitespace-nowrap">
                           All clear
                         </span>

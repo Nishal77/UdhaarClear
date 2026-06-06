@@ -124,15 +124,13 @@ export function CustomerDetail({ customer }: CustomerDetailProps) {
       </nav>
 
       {/* ── Hero Header Card ── */}
-      <div className="rounded-2xl bg-white border border-[#EBEAE6]/60 overflow-hidden shadow-sm">
-        {/* Gradient accent bar */}
-        <div className={`h-[6px] w-full bg-gradient-to-r ${avatarGradient(customer.name)}`} />
+      <div className="rounded-[22px] bg-white border border-[#EBEAE6]/60 overflow-hidden">
 
         <div className="px-8 py-6 flex items-start justify-between gap-4">
           {/* Left: avatar + info */}
-          <div className="flex items-center gap-5">
+          <div className="flex items-center gap-4">
             {/* Avatar */}
-            <div className={`relative flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br ${avatarGradient(customer.name)} text-[20px] font-bold text-white shadow-lg`}>
+            <div className={`relative flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br ${avatarGradient(customer.name)} text-[20px] font-semibold text-white shadow-lg`}>
               {initials(customer.name)}
               {/* Online dot */}
               <span className="absolute -bottom-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-white">
@@ -213,22 +211,28 @@ export function CustomerDetail({ customer }: CustomerDetailProps) {
             { label: 'Total Collected',   value: formatINRCompact(collected),    color: 'text-emerald-600', sub: `${invoices.filter(i => i.status === 'PAID').length} paid` },
             { label: 'Total Invoices',    value: invoices.length.toString(),     color: 'text-gray-900', sub: 'All time' },
           ].map((s) => (
-            <div key={s.label} className="px-6 py-4">
-              <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{s.label}</p>
-              <p className={`mt-1 text-[22px] font-bold leading-none ${s.color}`}>{s.value}</p>
-              <p className="mt-0.5 text-[11px] text-gray-400">{s.sub}</p>
+            <div key={s.label} className="px-6 py-5 flex flex-col justify-center">
+              <p className="text-[14px] font-medium text-black tracking-tight">{s.label}</p>
+              <div className="mt-2.5 flex items-baseline gap-1.5">
+                <span className={`text-[26px] font-semibold leading-none tracking-tight ${s.color}`}>
+                  {s.value}
+                </span>
+                <span className="text-[11px] text-gray-600 font-medium whitespace-nowrap">
+                  {s.sub}
+                </span>
+              </div>
             </div>
           ))}
         </div>
       </div>
 
       {/* ── Two Column: Details + Reminder Activity ── */}
-      <div className="grid grid-cols-1 gap-5 lg:grid-cols-5">
+      <div className="grid grid-cols-1 gap-3 lg:grid-cols-5">
 
         {/* Contact Details */}
-        <div className="lg:col-span-2 rounded-2xl bg-white border border-[#EBEAE6]/60 shadow-sm overflow-hidden">
+        <div className="lg:col-span-2 rounded-[22px] bg-white border border-[#EBEAE6]/60 overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-100">
-            <h2 className="text-[14px] font-bold text-gray-900">Contact Details</h2>
+            <h2 className="text-[14px] font-semibold text-gray-900">Contact Details</h2>
           </div>
           <div className="px-6 py-5 space-y-4">
             <InfoRow icon={SmartPhone01Icon} label="Phone" value={customer.phone} />
@@ -262,9 +266,9 @@ export function CustomerDetail({ customer }: CustomerDetailProps) {
         </div>
 
         {/* Recovery Timeline */}
-        <div className="lg:col-span-3 rounded-2xl bg-white border border-[#EBEAE6]/60 shadow-sm overflow-hidden">
+        <div className="lg:col-span-3 rounded-[22px] bg-white border border-[#EBEAE6]/60 overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-            <h2 className="text-[14px] font-bold text-gray-900">Invoice Summary</h2>
+            <h2 className="text-[14px] font-semibold text-gray-900">Invoice Summary</h2>
             <Link
               href={`/invoices?customerId=${customer.id}`}
               className="text-[12px] font-semibold text-[#FF6A39] hover:text-[#E05B2E] transition-colors"

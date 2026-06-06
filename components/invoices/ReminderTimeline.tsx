@@ -30,12 +30,12 @@ export function ReminderTimeline({ reminders }: { reminders: Reminder[] }) {
 
   return (
     <div className="flow-root">
-      <ul className="-mb-8">
+      <ul className="-mb-6">
         {reminders.map((r, i) => {
           const Icon = STATUS_ICON[r.status]
           return (
             <li key={r.id}>
-              <div className="relative pb-8">
+              <div className="relative pb-6">
                 {i < reminders.length - 1 && (
                   <span className="absolute left-4 top-4 -ml-px h-full w-0.5 bg-gray-200" />
                 )}

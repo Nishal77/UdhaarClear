@@ -4,9 +4,9 @@ import { useEffect, useState, useCallback } from 'react'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type EventType = 'payment' | 'reminder' | 'opened' | 'escalation' | 'partial'
+export type EventType = 'payment' | 'reminder' | 'opened' | 'escalation' | 'partial'
 
-interface ActivityEvent {
+export interface ActivityEvent {
   id: string
   type: EventType
   customerName: string
@@ -15,20 +15,13 @@ interface ActivityEvent {
   time: string
 }
 
-// ─── Event Pool ───────────────────────────────────────────────────────────────
+// ─── Trigger Helper ───────────────────────────────────────────────────────────
 
-const EVENT_POOL: Omit<ActivityEvent, 'id' | 'time'>[] = [
-  { type: 'payment',    customerName: 'Mehta Textiles',      amount: '₹45,000',   detail: 'via UPI · Invoice #INV-0043' },
-  { type: 'reminder',   customerName: 'Sharma Electronics',  detail: 'Day 8 · Assertive · WhatsApp' },
-  { type: 'opened',     customerName: 'Gupta Traders',       detail: 'Invoice link clicked · Mobile' },
-  { type: 'payment',    customerName: 'Patel Pharma',        amount: '₹1,20,000', detail: 'via NEFT · Invoice #INV-0061' },
-  { type: 'escalation', customerName: 'Kapoor Metals',       detail: 'Escalated → Final Notice · Day 22' },
-  { type: 'partial',    customerName: 'Singh Constructions', amount: '₹30,000',   detail: 'Balance ₹70,000 remaining' },
-  { type: 'reminder',   customerName: 'Jain & Co.',          detail: 'Day 3 · Courteous · Email' },
-  { type: 'payment',    customerName: 'Reddy Pharma',        amount: '₹8,500',    detail: 'via Razorpay · INV-0077' },
-  { type: 'opened',     customerName: 'Agarwal Traders',     detail: 'Invoice opened · read for 2 min' },
-  { type: 'reminder',   customerName: 'Desai Exports',       detail: 'Day 15 · Firm · WhatsApp' },
-]
+export function triggerActivityToast(event: Omit<ActivityEvent, 'id' | 'time'>) {
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('app-activity-toast', { detail: event }))
+  }
+}
 
 // ─── Per-type config (label + dot color only) ─────────────────────────────────
 
@@ -40,15 +33,7 @@ const CFG: Record<EventType, { label: string; dot: string; amountColor: string }
   partial:    { label: 'Partial payment',  dot: '#0EA5E9', amountColor: '#0284C7' },
 }
 
-const INTERVAL = 5600  // ms between toasts
 const DURATION = 4800  // ms each toast lives
-
-// ─── Helpers ─────────────────────────────────────────────────────────────────
-
-let _uid = 0
-const uid = () => `t-${Date.now()}-${_uid++}`
-const TIMES = ['Just now', '1 min ago', '2 min ago', 'Moments ago']
-const randTime = () => TIMES[Math.floor(Math.random() * TIMES.length)]
 
 // ─── Toast Card ───────────────────────────────────────────────────────────────
 
@@ -215,29 +200,25 @@ function ToastCard({ event, onDismiss }: { event: ActivityEvent; onDismiss: (id:
 
 export function ActivityToast() {
   const [toasts, setToasts] = useState<ActivityEvent[]>([])
-  const [idx, setIdx] = useState(0)
 
   const dismiss = useCallback((id: string) => {
     setToasts(prev => prev.filter(t => t.id !== id))
   }, [])
 
-  const spawn = useCallback(() => {
-    const tmpl = EVENT_POOL[idx % EVENT_POOL.length]
-    setToasts(prev => [...prev.slice(-2), { ...tmpl, id: uid(), time: randTime() }])
-    setIdx(i => i + 1)
-  }, [idx])
-
   useEffect(() => {
-    const t = setTimeout(spawn, 2000)
-    return () => clearTimeout(t)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const handleActivity = (e: Event) => {
+      const customEvent = e as CustomEvent<Omit<ActivityEvent, 'id' | 'time'>>
+      const newEvent: ActivityEvent = {
+        ...customEvent.detail,
+        id: `t-${Date.now()}-${Math.random()}`,
+        time: 'Just now',
+      }
+      setToasts(prev => [...prev.slice(-2), newEvent])
+    }
+
+    window.addEventListener('app-activity-toast', handleActivity)
+    return () => window.removeEventListener('app-activity-toast', handleActivity)
   }, [])
-
-  useEffect(() => {
-    if (idx === 0) return
-    const t = setTimeout(spawn, INTERVAL)
-    return () => clearTimeout(t)
-  }, [idx, spawn])
 
   return (
     <>

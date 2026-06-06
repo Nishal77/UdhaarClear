@@ -10,6 +10,11 @@ import { formatDate, daysOverdue } from '@/lib/utils/date'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { ArrowRight02Icon, Search01Icon } from '@hugeicons/core-free-icons'
 
+export type ClientInvoice = Omit<InvoiceWithCustomer, 'amount' | 'paidAmount'> & {
+  amount: number
+  paidAmount: number | null
+}
+
 const STATUS_TABS = [
   { label: 'All',      value: undefined },
   { label: 'Overdue',  value: 'OVERDUE' },
@@ -41,7 +46,7 @@ function OverdueBadge({ days }: { days: number }) {
   )
 }
 
-function renderActionButton(inv: InvoiceWithCustomer) {
+function renderActionButton(inv: ClientInvoice) {
   if (inv.status === 'OVERDUE') {
     return (
       <Link
@@ -77,7 +82,7 @@ export function InvoiceTable({
   counts,
   activeStatus,
 }: {
-  invoices: InvoiceWithCustomer[]
+  invoices: ClientInvoice[]
   counts: {
     ALL: number
     OVERDUE: number

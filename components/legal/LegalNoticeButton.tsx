@@ -3,8 +3,17 @@
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { IconFileText } from '@tabler/icons-react'
+import { triggerActivityToast } from '@/components/shared/ActivityToast'
 
-export function LegalNoticeButton({ invoiceId, invoiceDaysOverdue }: { invoiceId: string; invoiceDaysOverdue: number }) {
+export function LegalNoticeButton({ 
+  invoiceId, 
+  invoiceDaysOverdue, 
+  customerName 
+}: { 
+  invoiceId: string; 
+  invoiceDaysOverdue: number; 
+  customerName: string 
+}) {
   const [loading, setLoading] = useState(false)
 
   if (invoiceDaysOverdue < 30) {
@@ -27,6 +36,11 @@ export function LegalNoticeButton({ invoiceId, invoiceDaysOverdue }: { invoiceId
       const { url } = await res.json()
       window.open(url, '_blank')
       toast.success('Legal notice generated')
+      triggerActivityToast({
+        type: 'escalation',
+        customerName: customerName,
+        detail: 'Legal notice generated'
+      })
     } catch {
       toast.error('Failed to generate legal notice')
     } finally {
