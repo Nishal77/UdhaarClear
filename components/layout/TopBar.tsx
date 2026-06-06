@@ -73,12 +73,6 @@ export function TopBar({ userName = 'User', businessName = 'UdhaarClear', userEm
           sub: 'Tax profile, GSTIN & defaults',
           href: '/settings/profile',
           icon: SchoolReportCardIcon
-        },
-        {
-          label: 'Team Members',
-          sub: 'Collaborators & permission roles',
-          href: '/settings/team',
-          icon: UserMultipleIcon
         }
       ]
     },

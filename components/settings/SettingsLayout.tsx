@@ -9,7 +9,6 @@ const SETTINGS_TABS = [
   { label: 'My Settings', href: '/settings', icon: Settings },
   { label: 'Business Profile', href: '/settings/profile', icon: User },
   { label: 'Billing & Plans', href: '/settings/billing', icon: CreditCard },
-  { label: 'Team Members', href: '/settings/team', icon: Users },
   { label: 'API & Webhooks', href: '/settings/webhooks', icon: Webhook },
   { label: 'Connected Apps', href: '/settings/integrations', icon: Puzzle },
 ]
