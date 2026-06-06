@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma/client'
 import { SettingsLayout } from '@/components/settings/SettingsLayout'
-import { CreditCard, Check, ShieldAlert, Sparkles, Download, FileText, CheckCircle2 } from 'lucide-react'
+import { CreditCard, Check, ShieldAlert, Sparkles, Download, Receipt, CheckCircle2 } from 'lucide-react'
 import { revalidatePath } from 'next/cache'
 import { PlanTier } from '@prisma/client'
 
@@ -120,231 +120,269 @@ export default async function BillingSettingsPage() {
       title="Billing & Plans"
       description="Manage your subscription details, check usage quotas, and inspect transaction invoices."
     >
-      <div className="space-y-4 w-full">
-        {/* Main Grid: Overview & Usage */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* Card 1: Current Plan Overview */}
-          <div className="md:col-span-2 bg-white border border-[#EBEAE6]/60 rounded-[22px] p-6 text-left flex flex-col justify-between">
-            <div>
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-full bg-[#4F46E5]/10 text-[#4F46E5] flex items-center justify-center">
-                  <CreditCard className="w-5 h-5" />
-                </div>
-                <div>
-                  <h2 className="text-base font-bold text-gray-900 font-outfit">Active Subscription</h2>
-                  <p className="text-xs text-gray-400">Current billing details and features</p>
-                </div>
-              </div>
-
-              <div className="mt-4 p-4 bg-gray-50/60 rounded-2xl border border-gray-100 flex items-center justify-between">
-                <div>
-                  <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Plan Name</span>
-                  <h3 className="text-lg font-bold text-gray-900 font-outfit mt-0.5">{currentPlan.name}</h3>
-                </div>
-                <div className="text-right">
-                  <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Pricing</span>
-                  <p className="text-lg font-bold text-gray-900 font-outfit mt-0.5">
-                    {currentPlan.price === 0 ? 'Free' : `${formatCurrency(currentPlan.price)}/mo`}
-                  </p>
-                </div>
-              </div>
-
-              <div className="mt-5 space-y-2">
-                <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider">Included Features:</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
-                  {currentPlan.features.map((feature, i) => (
-                    <div key={i} className="flex items-center gap-2 text-xs font-medium text-gray-600">
-                      <div className="w-4 h-4 rounded-full bg-[#E5F7ED] flex items-center justify-center text-[#2563EB] shrink-0">
-                        <Check className="w-2.5 h-2.5 text-[#10B981]" />
-                      </div>
-                      <span>{feature}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-6 pt-4 border-t border-gray-50 text-[11px] text-gray-400 font-medium">
-              Renewal Date: <span className="font-bold text-gray-600">June 15, 2026</span> (Auto-renews monthly via card/UPI).
-            </div>
-          </div>
-
-          {/* Card 2: Quota Limits Usage */}
-          <div className="bg-white border border-[#EBEAE6]/60 rounded-[22px] p-6 text-left flex flex-col justify-between">
-            <div>
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-full bg-[#FF6B00]/10 text-[#FF6B00] flex items-center justify-center">
-                  <Sparkles className="w-5 h-5" />
-                </div>
-                <div>
-                  <h2 className="text-base font-bold text-gray-900 font-outfit">Usage Quotas</h2>
-                  <p className="text-xs text-gray-400">Current tier limits</p>
-                </div>
-              </div>
-
-              <div className="space-y-5">
-                {/* Invoice usage */}
-                <div>
-                  <div className="flex justify-between text-xs font-bold text-gray-700 mb-1.5 font-outfit">
-                    <span>Invoices Created</span>
-                    <span className="text-gray-400">
-                      {invoiceCount} / {currentPlan.invoiceLimit === 999999 ? '∞' : currentPlan.invoiceLimit}
-                    </span>
+      <div className="space-y-6 w-full select-none">
+        
+        {/* Modern 2-Column Dashboard Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+          
+          {/* LEFT COLUMN: Current Plan & Change Plan */}
+          <div className="lg:col-span-2 space-y-6">
+            
+            {/* Active Subscription Details Card */}
+            <div className="bg-white border border-[#EBEAE6]/60 rounded-[24px] p-6 text-left flex flex-col justify-between shadow-[0_8px_30px_rgba(0,0,0,0.015)] relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-indigo-50/30 to-transparent pointer-events-none rounded-bl-full" />
+              
+              <div>
+                <div className="flex items-center gap-3.5 mb-5">
+                  <div className="w-11 h-11 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center shadow-sm">
+                    <CreditCard className="w-5.5 h-5.5" />
                   </div>
-                  <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-                    <div
-                      className="bg-[#4F46E5] h-full rounded-full transition-all duration-300"
-                      style={{
-                        width: `${Math.min(100, (invoiceCount / (currentPlan.invoiceLimit || 1)) * 100)}%`,
-                      }}
-                    />
-                  </div>
-                </div>
-
-                {/* Customer usage */}
-                <div>
-                  <div className="flex justify-between text-xs font-bold text-gray-700 mb-1.5 font-outfit">
-                    <span>Active Debtors</span>
-                    <span className="text-gray-400">
-                      {customerCount} / {currentPlan.customerLimit === 999999 ? '∞' : currentPlan.customerLimit}
-                    </span>
-                  </div>
-                  <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-                    <div
-                      className="bg-[#FF6B00] h-full rounded-full transition-all duration-300"
-                      style={{
-                        width: `${Math.min(100, (customerCount / (currentPlan.customerLimit || 1)) * 100)}%`,
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {currentTier === 'FREE' && (
-              <div className="mt-6 p-3 bg-blue-50/50 border border-blue-100 rounded-xl text-left">
-                <p className="text-[11px] font-medium text-blue-700 leading-normal flex items-start gap-1.5">
-                  <ShieldAlert className="w-3.5 h-3.5 mt-0.5 shrink-0" />
-                  You are approaching limits. Upgrade your tier below to continue printing reminders and syncing GST records.
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Plan Upgrade Selector Card */}
-        <div className="bg-white border border-[#EBEAE6]/60 rounded-[22px] p-6 text-left">
-          <div className="mb-6">
-            <h2 className="text-base font-bold text-gray-900 font-outfit">Change Plan Tier</h2>
-            <p className="text-xs text-gray-400">Select a pricing level that aligns with your volume of transactions.</p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {(Object.keys(PLAN_DETAILS) as PlanTier[]).map((tier) => {
-              const plan = PLAN_DETAILS[tier]
-              const isActive = currentTier === tier
-              return (
-                <div
-                  key={tier}
-                  className={`flex flex-col justify-between border rounded-[18px] p-5 transition-all duration-200 ${
-                    isActive
-                      ? 'border-[#FF6B00] bg-[#FFF0EB]/20'
-                      : 'border-gray-200/80 hover:border-gray-300 bg-white'
-                  }`}
-                >
                   <div>
-                    <div className="flex justify-between items-start mb-3">
-                      <h4 className="text-sm font-bold text-gray-800 font-outfit">{plan.name}</h4>
-                      {isActive && (
-                        <span className="text-[9px] font-bold text-[#FF6B00] bg-[#FFF0EB] border border-[#FF6B00]/25 px-2 py-0.5 rounded-full uppercase">
-                          Active
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-xl font-black text-gray-900 font-outfit">
-                      {plan.price === 0 ? '₹0' : formatCurrency(plan.price)}
-                      <span className="text-xs font-normal text-gray-400">/mo</span>
-                    </p>
-                    <ul className="mt-4 space-y-2">
-                      {plan.features.slice(0, 3).map((feat, i) => (
-                        <li key={i} className="flex items-start gap-1.5 text-[11px] font-semibold text-gray-500 leading-tight">
-                          <Check className="w-3 h-3 text-[#10B981] mt-0.5 shrink-0" />
-                          <span>{feat}</span>
-                        </li>
-                      ))}
-                    </ul>
+                    <h2 className="text-base font-bold text-gray-900 font-outfit">Active Subscription</h2>
+                    <p className="text-xs text-gray-400 font-medium">Manage payment settings, invoices, and billing period.</p>
                   </div>
+                </div>
 
-                  <form action={updatePlanTier} className="mt-6">
-                    <input type="hidden" name="tier" value={tier} />
+                <div className="p-5 bg-[#F8F9FA] rounded-[20px] border border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div>
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Plan Name</span>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <h3 className="text-lg font-bold text-gray-900 font-outfit leading-none">{currentPlan.name}</h3>
+                      <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-500/15 px-2 py-0.5 rounded-full uppercase leading-none">
+                        Active
+                      </span>
+                    </div>
+                  </div>
+                  <div className="sm:text-right">
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Pricing Rate</span>
+                    <p className="text-lg font-bold text-gray-900 font-outfit mt-0.5">
+                      {currentPlan.price === 0 ? 'Free' : `${formatCurrency(currentPlan.price)} / mo`}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-6 space-y-2.5">
+                  <h4 className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Plan Features included:</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-1.5">
+                    {currentPlan.features.map((feature, i) => (
+                      <div key={i} className="flex items-center gap-2 text-xs font-semibold text-gray-500">
+                        <div className="w-4 h-4 rounded-full bg-[#E5F7ED] flex items-center justify-center shrink-0">
+                          <Check className="w-2.5 h-2.5 text-[#10B981]" />
+                        </div>
+                        <span>{feature}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Renewal Date & Cancel Anytime action */}
+              <div className="mt-8 pt-5 border-t border-gray-100/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="text-[11px] text-gray-400 font-medium">
+                  Renewal Date: <span className="font-bold text-gray-600">June 15, 2026</span> (Renews auto-monthly).
+                </div>
+                
+                {currentTier !== 'FREE' ? (
+                  <form 
+                    action={updatePlanTier} 
+                    onSubmit={(e) => {
+                      if (!confirm('Are you sure you want to cancel your subscription? You will be downgraded to the Free Plan.')) {
+                        e.preventDefault()
+                      }
+                    }}
+                  >
+                    <input type="hidden" name="tier" value="FREE" />
                     <button
                       type="submit"
-                      disabled={isActive}
-                      className={`w-full text-center text-xs font-semibold py-2.5 px-4 rounded-full border transition-all duration-200 active:scale-95 cursor-pointer ${
-                        isActive
-                          ? 'bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed'
-                          : 'bg-[#FF6B00] hover:bg-[#E05B2E] border-transparent text-white shadow-sm hover:shadow'
-                      }`}
+                      className="text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-100/60 border border-rose-100 px-4 py-2.5 rounded-full transition-all duration-200 cursor-pointer active:scale-95 shadow-sm"
                     >
-                      {isActive ? 'Current Plan' : 'Select Plan'}
+                      Cancel Subscription
                     </button>
                   </form>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-
-        {/* Invoice List (Mock Billing History) */}
-        {mockBillingHistory.length > 0 && (
-          <div className="bg-white border border-[#EBEAE6]/60 rounded-[22px] p-6 text-left">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 rounded-full bg-[#4F46E5]/10 text-[#4F46E5] flex items-center justify-center">
-                <FileText className="w-5 h-5" />
-              </div>
-              <div>
-                <h2 className="text-base font-bold text-gray-900 font-outfit">Billing History</h2>
-                <p className="text-xs text-gray-400">Download previous transaction receipts and invoice statements.</p>
+                ) : (
+                  <span className="text-[11px] text-gray-400 font-medium italic">
+                    Cancel anytime. Upgrade to unlock automation.
+                  </span>
+                )}
               </div>
             </div>
 
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs font-semibold">
-                <thead>
-                  <tr className="border-b border-gray-100 text-gray-400 font-bold uppercase tracking-wider">
-                    <th className="pb-3 font-outfit">Receipt ID</th>
-                    <th className="pb-3 font-outfit">Date</th>
-                    <th className="pb-3 font-outfit">Plan</th>
-                    <th className="pb-3 font-outfit">Amount</th>
-                    <th className="pb-3 font-outfit">Status</th>
-                    <th className="pb-3 text-right font-outfit">Action</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-50 text-gray-600">
-                  {mockBillingHistory.map((invoice) => (
-                    <tr key={invoice.id} className="hover:bg-gray-50/50">
-                      <td className="py-3.5 font-mono">{invoice.id}</td>
-                      <td className="py-3.5">{invoice.date}</td>
-                      <td className="py-3.5 font-bold text-gray-800">{invoice.plan}</td>
-                      <td className="py-3.5">{formatCurrency(invoice.amount)}</td>
-                      <td className="py-3.5">
-                        <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase text-[#10B981] bg-[#E5F7ED] border border-[#10B981]/15 px-2 py-0.5 rounded-full">
-                          <CheckCircle2 className="w-3 h-3" /> {invoice.status}
-                        </span>
-                      </td>
-                      <td className="py-3.5 text-right">
-                        <button className="inline-flex items-center gap-1.5 border border-gray-200 hover:border-gray-300 bg-white text-gray-700 px-3 py-1.5 rounded-full hover:bg-gray-50 active:scale-95 transition-all">
-                          <Download className="w-3 h-3 text-gray-400" />
-                          Download PDF
+            {/* Change Plan Tier Selector */}
+            <div className="bg-white border border-[#EBEAE6]/60 rounded-[24px] p-6 text-left shadow-[0_8px_30px_rgba(0,0,0,0.015)]">
+              <div className="mb-6">
+                <h2 className="text-base font-bold text-gray-900 font-outfit">Upgrade / Downgrade Plan</h2>
+                <p className="text-xs text-gray-400 font-medium">Select a pricing level that aligns with your volume of transactions.</p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                {(Object.keys(PLAN_DETAILS) as PlanTier[]).map((tier) => {
+                  const plan = PLAN_DETAILS[tier]
+                  const isActive = currentTier === tier
+                  return (
+                    <div
+                      key={tier}
+                      className={`flex flex-col justify-between border rounded-[22px] p-6 transition-all duration-300 relative ${
+                        isActive
+                          ? 'border-[#FF6B00] bg-[#FFF0EB]/10 shadow-[0_8px_30px_rgba(255,107,0,0.03)]'
+                          : 'border-gray-200/80 hover:border-gray-300 bg-white hover:shadow-[0_12px_40px_rgba(0,0,0,0.03)] hover:-translate-y-0.5'
+                      }`}
+                    >
+                      <div>
+                        <div className="flex justify-between items-center mb-4">
+                          <h4 className="text-[15px] font-bold text-gray-800 font-outfit">{plan.name}</h4>
+                          {isActive && (
+                            <span className="text-[9px] font-bold text-[#FF6B00] bg-[#FFF0EB] border border-[#FF6B00]/25 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                              Current
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-2xl font-black text-gray-900 font-outfit leading-none">
+                          {plan.price === 0 ? '₹0' : formatCurrency(plan.price)}
+                          <span className="text-xs font-normal text-gray-400 lowercase ml-1">/ mo</span>
+                        </p>
+                        
+                        <div className="border-t border-gray-50 my-4" />
+                        
+                        <ul className="space-y-2.5">
+                          {plan.features.map((feat, i) => (
+                            <li key={i} className="flex items-start gap-2 text-xs font-semibold text-gray-500 leading-normal">
+                              <Check className="w-3.5 h-3.5 text-[#10B981] mt-0.5 shrink-0" />
+                              <span>{feat}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      <form action={updatePlanTier} className="mt-7">
+                        <input type="hidden" name="tier" value={tier} />
+                        <button
+                          type="submit"
+                          disabled={isActive}
+                          className={`w-full text-center text-xs font-bold py-3 px-4 rounded-full border transition-all duration-200 active:scale-95 cursor-pointer ${
+                            isActive
+                              ? 'bg-gray-50 border-gray-200 text-gray-400 cursor-not-allowed'
+                              : 'bg-[#FF6B00] hover:bg-[#E05B2E] border-transparent text-white shadow-sm hover:shadow'
+                          }`}
+                        >
+                          {isActive ? 'Current Active Tier' : `Select ${plan.name}`}
                         </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                      </form>
+                    </div>
+                  )
+                })}
+              </div>
             </div>
+
           </div>
-        )}
+
+          {/* RIGHT COLUMN: Usage Quotas & Invoice Receipts */}
+          <div className="space-y-6">
+            
+            {/* Quota Limits Card */}
+            <div className="bg-white border border-[#EBEAE6]/60 rounded-[24px] p-6 text-left flex flex-col justify-between shadow-[0_8px_30px_rgba(0,0,0,0.015)]">
+              <div>
+                <div className="flex items-center gap-3.5 mb-6">
+                  <div className="w-11 h-11 rounded-2xl bg-[#FF6B00]/10 text-[#FF6B00] flex items-center justify-center shadow-sm">
+                    <Sparkles className="w-5.5 h-5.5" />
+                  </div>
+                  <div>
+                    <h2 className="text-base font-bold text-gray-900 font-outfit">Usage Quotas</h2>
+                    <p className="text-xs text-gray-400 font-medium">Limits based on current tier.</p>
+                  </div>
+                </div>
+
+                <div className="space-y-5.5">
+                  {/* Invoice usage progress bar */}
+                  <div>
+                    <div className="flex justify-between text-xs font-bold text-gray-700 mb-1.5 font-outfit">
+                      <span>Invoices Created</span>
+                      <span className="text-gray-400">
+                        {invoiceCount} / {currentPlan.invoiceLimit === 999999 ? '∞' : currentPlan.invoiceLimit}
+                      </span>
+                    </div>
+                    <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
+                      <div
+                        className="bg-[#4F46E5] h-full rounded-full transition-all duration-300"
+                        style={{
+                          width: `${Math.min(100, (invoiceCount / (currentPlan.invoiceLimit || 1)) * 100)}%`,
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Customer usage progress bar */}
+                  <div>
+                    <div className="flex justify-between text-xs font-bold text-gray-700 mb-1.5 font-outfit">
+                      <span>Active Debtors</span>
+                      <span className="text-gray-400">
+                        {customerCount} / {currentPlan.customerLimit === 999999 ? '∞' : currentPlan.customerLimit}
+                      </span>
+                    </div>
+                    <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
+                      <div
+                        className="bg-[#FF6B00] h-full rounded-full transition-all duration-300"
+                        style={{
+                          width: `${Math.min(100, (customerCount / (currentPlan.customerLimit || 1)) * 100)}%`,
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {currentTier === 'FREE' && (
+                <div className="mt-6 p-4 bg-blue-50/50 border border-blue-100/60 rounded-2xl text-left">
+                  <p className="text-[11px] font-semibold text-blue-700 leading-relaxed flex items-start gap-2">
+                    <ShieldAlert className="w-4 h-4 mt-0.5 shrink-0 text-blue-500" />
+                    You are approaching limits. Upgrade your tier to enable automatic WhatsApp escalations and import spreadsheets.
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Billing History Card - Stacked vertical receipts format */}
+            <div className="bg-white border border-[#EBEAE6]/60 rounded-[24px] p-6 text-left shadow-[0_8px_30px_rgba(0,0,0,0.015)]">
+              <div className="flex items-center gap-3.5 mb-5">
+                <div className="w-11 h-11 rounded-2xl bg-[#4F46E5]/10 text-[#4F46E5] flex items-center justify-center shadow-sm">
+                  <Receipt className="w-5.5 h-5.5" />
+                </div>
+                <div>
+                  <h2 className="text-base font-bold text-gray-900 font-outfit">Billing History</h2>
+                  <p className="text-xs text-gray-400 font-medium">Download previous invoice statements.</p>
+                </div>
+              </div>
+
+              {mockBillingHistory.length > 0 ? (
+                <div className="space-y-3 max-h-[280px] overflow-y-auto pr-0.5 scrollbar-thin">
+                  {mockBillingHistory.map((invoice) => (
+                    <div key={invoice.id} className="flex items-center justify-between p-3.5 bg-gray-50/50 hover:bg-gray-50 rounded-2xl border border-gray-100/60 transition-all">
+                      <div className="flex flex-col text-left">
+                        <span className="text-xs font-bold text-gray-800 font-mono">{invoice.id}</span>
+                        <span className="text-[10.5px] text-gray-400 font-semibold mt-0.5">{invoice.date}</span>
+                      </div>
+                      
+                      <div className="flex items-center gap-2.5">
+                        <div className="text-right flex flex-col justify-center">
+                          <span className="text-xs font-bold text-gray-900 font-outfit leading-none">{formatCurrency(invoice.amount)}</span>
+                          <span className="text-[9px] font-bold text-[#10B981] uppercase mt-1 tracking-wider leading-none">Paid</span>
+                        </div>
+                        <button className="p-2 border border-gray-200 hover:border-gray-300 rounded-full hover:bg-white active:scale-95 transition-all text-gray-400 hover:text-gray-600 cursor-pointer">
+                          <Download className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="py-8 text-center border-2 border-dashed border-gray-100 rounded-2xl">
+                  <p className="text-xs text-gray-400 font-semibold">No transactions billed yet</p>
+                </div>
+              )}
+            </div>
+
+          </div>
+          
+        </div>
       </div>
     </SettingsLayout>
   )
