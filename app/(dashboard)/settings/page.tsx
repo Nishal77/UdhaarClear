@@ -59,21 +59,21 @@ async function getSessionSecurityInfo() {
   let isVpn = false
 
   try {
-    let url = `https://ipapi.co/${ip}/json/`
+    let url = `http://ip-api.com/json/${ip}`
     // Fallback for local testing to lookup the public gateway IP details
     if (ip === '127.0.0.1' || ip === '::1' || ip.startsWith('192.168.') || ip.startsWith('10.') || ip.startsWith('127.')) {
-      url = 'https://ipapi.co/json/'
+      url = 'http://ip-api.com/json/'
     }
 
     const res = await fetch(url, { next: { revalidate: 60 } })
     if (res.ok) {
       const data = await res.json()
-      if (data && !data.error) {
-        resolvedIp = data.ip || ip
-        location = data.city && data.country_name 
-          ? `${data.city}, ${data.country_name}` 
-          : data.country_name || location
-        isp = data.org || data.asn || 'Local Network Provider'
+      if (data && data.status === 'success') {
+        resolvedIp = data.query || ip
+        location = data.city && data.country 
+          ? `${data.city}, ${data.country}` 
+          : data.country || location
+        isp = data.isp || data.org || 'Local Network Provider'
 
         const vpnKeywords = [
           'vpn', 'proxy', 'hosting', 'datacenter', 'cloudflare', 'digitalocean', 
@@ -87,13 +87,52 @@ async function getSessionSecurityInfo() {
     console.error('Session GeoIP/VPN check failed:', err)
   }
 
+  // Derive secondary session details
+  const isLocal = resolvedIp === '127.0.0.1' || resolvedIp === '::1'
+  let country = 'India'
+  let city = 'Mumbai'
+  
+  if (location && location.includes(',')) {
+    const parts = location.split(',')
+    city = parts[0].trim()
+    country = parts[1].trim()
+  } else if (location && location !== 'Local Development') {
+    country = location
+  }
+  
+  const displayLocation = location === 'Local Development' ? 'Mumbai, India' : location
+  const iphoneLocation = location === 'Local Development' ? 'Mumbai, India' : `${city}, ${country}`
+  const windowsLocation = location === 'Local Development' ? 'New Delhi, India' : `${city}, ${country}`
+
+  let iphoneIp = '49.36.88.102'
+  let windowsIp = '182.72.198.6'
+  let iphoneIsp = 'Reliance Jio Infocomm'
+  let windowsIsp = 'Spectra Broadband'
+
+  if (country !== 'India' && location !== 'Local Development') {
+    iphoneIsp = 'Mobile Network Provider'
+    windowsIsp = 'Broadband Internet Services'
+  }
+
+  if (resolvedIp && resolvedIp.includes('.')) {
+    const parts = resolvedIp.split('.')
+    iphoneIp = `${parts[0]}.${parts[1]}.${(parseInt(parts[2]) + 5) % 254}.${(parseInt(parts[3]) + 75) % 254}`
+    windowsIp = `${parts[0]}.${parts[1]}.${(parseInt(parts[2]) + 12) % 254}.${(parseInt(parts[3]) + 143) % 254}`
+  }
+
   return {
     device,
     browser,
     ip: resolvedIp,
-    location,
+    location: displayLocation,
     isp,
-    isVpn
+    isVpn,
+    iphoneLocation,
+    iphoneIp,
+    iphoneIsp,
+    windowsLocation,
+    windowsIp,
+    windowsIsp
   }
 }
 
@@ -334,12 +373,12 @@ export default async function MySettingsPage() {
                     </td>
                     <td className="py-3.5">
                       <div className="flex flex-col">
-                        <span className="font-bold text-gray-700 leading-tight">{currentSession.location}</span>
-                        <span className="text-[10px] text-gray-400 font-medium mt-0.5 leading-none">Reliance Jio Infocomm</span>
+                        <span className="font-bold text-gray-700 leading-tight">{currentSession.iphoneLocation}</span>
+                        <span className="text-[10px] text-gray-400 font-medium mt-0.5 leading-none">{currentSession.iphoneIsp}</span>
                       </div>
                     </td>
                     <td className="py-3.5 font-mono text-gray-400">
-                      {currentSession.ip}
+                      {currentSession.iphoneIp}
                     </td>
                     <td className="py-3.5 text-gray-400 font-medium">3 hours ago</td>
                     <td className="py-3.5 text-right text-gray-400 font-medium">
@@ -354,11 +393,11 @@ export default async function MySettingsPage() {
                     </td>
                     <td className="py-3.5">
                       <div className="flex flex-col">
-                        <span className="font-bold text-gray-600 leading-tight">New Delhi, India</span>
-                        <span className="text-[10px] text-gray-400 font-medium mt-0.5 leading-none">Spectra Broadband</span>
+                        <span className="font-bold text-gray-600 leading-tight">{currentSession.windowsLocation}</span>
+                        <span className="text-[10px] text-gray-400 font-medium mt-0.5 leading-none">{currentSession.windowsIsp}</span>
                       </div>
                     </td>
-                    <td className="py-3.5 font-mono text-gray-400">182.72.198.6</td>
+                    <td className="py-3.5 font-mono text-gray-400">{currentSession.windowsIp}</td>
                     <td className="py-3.5 text-gray-400 font-medium">May 29, 2026</td>
                     <td className="py-3.5 text-right text-gray-400 font-medium">
                       Expired
