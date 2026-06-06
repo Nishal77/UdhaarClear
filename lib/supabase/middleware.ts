@@ -28,6 +28,7 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser()
 
   const path = request.nextUrl.pathname
+  const isOnboardingPath = path.startsWith('/onboarding')
 
   const isProtected =
     path.startsWith('/dashboard') ||
@@ -41,10 +42,29 @@ export async function updateSession(request: NextRequest) {
     path.startsWith('/team') ||
     path.startsWith('/ca')
 
-  if (isProtected && !user) {
-    const url = request.nextUrl.clone()
-    url.pathname = '/login'
-    return NextResponse.redirect(url)
+  if (!user) {
+    if (isProtected || isOnboardingPath) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/login'
+      return NextResponse.redirect(url)
+    }
+  } else {
+    // User is logged in
+    const isOnboarded = user.user_metadata?.onboarded === true
+
+    if (isOnboardingPath && isOnboarded) {
+      // User is already onboarded, send them to dashboard
+      const url = request.nextUrl.clone()
+      url.pathname = '/dashboard'
+      return NextResponse.redirect(url)
+    }
+
+    if (isProtected && !isOnboarded) {
+      // User is logged in but not onboarded, send them to onboarding
+      const url = request.nextUrl.clone()
+      url.pathname = '/onboarding'
+      return NextResponse.redirect(url)
+    }
   }
 
   return supabaseResponse

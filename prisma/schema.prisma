@@ -45,6 +45,12 @@ model Business {
   waPhoneId   String?
   waConnected Boolean @default(false)
 
+  // Payment collection details
+  upiId           String?
+  bankAccountNo   String?
+  bankIfsc        String?
+  bankAccountName String?
+
   planTier PlanTier @default(FREE)
 
   caId String?
