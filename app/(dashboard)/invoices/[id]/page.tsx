@@ -227,6 +227,11 @@ export default function InvoiceDetailPage() {
             <InfoRow icon={Clock01Icon} label="Credit Days" value={`${invoice.creditDays} days`} />
             <InfoRow icon={SentIcon} label="Reminder Tone" value={invoice.reminderTone} />
             <InfoRow icon={CheckmarkCircle01Icon} label="Auto Reminder" value={invoice.autoReminder ? 'Active' : 'Disabled'} />
+
+            {/* ── Recovery Schedule ── */}
+            {!isPaid && (
+              <RecoverySchedule dueDate={new Date(invoice.dueDate)} daysOverdueCount={days} />
+            )}
             
             {invoice.razorpayLinkUrl && (
               <div className="mt-3.5 rounded-xl bg-gray-50 p-4 border border-[#EBEAE6]/50">
@@ -272,6 +277,128 @@ export default function InvoiceDetailPage() {
             <ReminderTimeline reminders={invoice.reminders} />
           </div>
         </div>
+      </div>
+    </div>
+  )
+}
+
+// ── Recovery Schedule helper ──────────────────────────────────────────────────
+function addDays(date: Date, n: number): Date {
+  const d = new Date(date)
+  d.setDate(d.getDate() + n)
+  return d
+}
+
+function fmtShort(date: Date): string {
+  return date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
+}
+
+function RecoverySchedule({ dueDate, daysOverdueCount }: { dueDate: Date; daysOverdueCount: number }) {
+  // Phase windows (days overdue)
+  const phases = [
+    {
+      tone: 'GENTLE',
+      label: 'Gentle Reminders',
+      desc: '2 friendly nudges over 28 days',
+      color: 'emerald',
+      reminders: [
+        { label: 'Reminder 1', dayOffset: 7 },
+        { label: 'Reminder 2', dayOffset: 21 },
+      ],
+      endDay: 28,
+    },
+    {
+      tone: 'FIRM',
+      label: 'Firm Reminders',
+      desc: '2 firm notices — days 29 to 42',
+      color: 'orange',
+      reminders: [
+        { label: 'Reminder 3', dayOffset: 35 },
+        { label: 'Reminder 4', dayOffset: 42 },
+      ],
+      endDay: 42,
+    },
+    {
+      tone: 'LEGAL',
+      label: 'Legal Notice',
+      desc: 'Official legal warning — day 43+',
+      color: 'red',
+      reminders: [
+        { label: 'Legal Notice', dayOffset: 50 },
+        { label: 'Case Filing', dayOffset: 58 },
+      ],
+      endDay: 999,
+    },
+  ]
+
+  return (
+    <div className="mt-4 rounded-xl border border-[#EBEAE6]/70 bg-gray-50/60 overflow-hidden">
+      <div className="px-4 py-2.5 border-b border-[#EBEAE6]/60 flex items-center justify-between">
+        <p className="text-[10px] font-bold uppercase tracking-wider text-gray-500">Recovery Schedule</p>
+        <span className="text-[10px] font-semibold text-gray-400">Auto-escalation plan</span>
+      </div>
+      <div className="px-4 py-3 space-y-3.5">
+        {phases.map((phase, pi) => {
+          const phaseStart = pi === 0 ? 0 : phases[pi - 1].endDay
+          const isPast = daysOverdueCount > phase.endDay
+          const isActive = daysOverdueCount >= phaseStart && daysOverdueCount <= phase.endDay
+          const isFuture = daysOverdueCount < phaseStart
+
+          const dotColor = isPast
+            ? 'bg-gray-300'
+            : isActive
+            ? phase.color === 'emerald' ? 'bg-emerald-500' : phase.color === 'orange' ? 'bg-orange-500' : 'bg-red-500'
+            : 'bg-gray-200'
+
+          const labelColor = isPast
+            ? 'text-gray-400'
+            : isActive
+            ? phase.color === 'emerald' ? 'text-emerald-700' : phase.color === 'orange' ? 'text-orange-700' : 'text-red-700'
+            : 'text-gray-500'
+
+          const badgeBg = isFuture
+            ? 'bg-gray-100 text-gray-400'
+            : isActive
+            ? phase.color === 'emerald' ? 'bg-emerald-50 text-emerald-700' : phase.color === 'orange' ? 'bg-orange-50 text-orange-700' : 'bg-red-50 text-red-700'
+            : 'bg-gray-100 text-gray-400'
+
+          return (
+            <div key={pi} className="flex gap-3">
+              {/* Timeline spine */}
+              <div className="flex flex-col items-center">
+                <div className={`h-2.5 w-2.5 rounded-full mt-0.5 shrink-0 ${dotColor} ${isActive ? 'ring-2 ring-offset-1 ' + (phase.color === 'emerald' ? 'ring-emerald-300' : phase.color === 'orange' ? 'ring-orange-300' : 'ring-red-300') : ''}`} />
+                {pi < phases.length - 1 && (
+                  <div className={`w-0.5 flex-1 mt-1 ${isPast ? 'bg-gray-200' : 'bg-gray-100'}`} style={{ minHeight: 28 }} />
+                )}
+              </div>
+
+              {/* Content */}
+              <div className="flex-1 min-w-0 pb-1">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className={`text-[12px] font-semibold ${labelColor}`}>{phase.label}</span>
+                  <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wide ${badgeBg}`}>
+                    {isPast ? 'Done' : isActive ? 'Active' : 'Upcoming'}
+                  </span>
+                </div>
+                <p className="text-[11px] text-gray-400 mt-0.5">{phase.desc}</p>
+                <div className="mt-1.5 space-y-1">
+                  {phase.reminders.map((r, ri) => {
+                    const expectedDate = addDays(dueDate, r.dayOffset)
+                    const isThisPast = daysOverdueCount > r.dayOffset
+                    return (
+                      <div key={ri} className="flex items-center justify-between gap-2">
+                        <span className={`text-[11px] ${isThisPast ? 'text-gray-400 line-through' : 'text-gray-600'}`}>{r.label}</span>
+                        <span className={`text-[10px] font-semibold tabular-nums ${isThisPast ? 'text-gray-300' : 'text-gray-500'}`}>
+                          {fmtShort(expectedDate)}
+                        </span>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            </div>
+          )
+        })}
       </div>
     </div>
   )

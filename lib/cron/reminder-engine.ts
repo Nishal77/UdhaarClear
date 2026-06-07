@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma/client'
-import { isReminderDay } from '@/lib/whatsapp/tone-engine'
+import { isReminderDay, shouldAutoPause } from '@/lib/whatsapp/tone-engine'
 import { daysOverdue, isSunday } from '@/lib/utils/date'
 import { InvoiceStatus } from '@prisma/client'
 import { ReminderService } from '@/lib/services/reminder-service'
@@ -38,6 +38,15 @@ export async function runReminderEngine(): Promise<ReminderEngineResult> {
   for (const invoice of invoices) {
     try {
       const days = daysOverdue(invoice.dueDate)
+
+      if (shouldAutoPause(days)) {
+        await prisma.invoice.update({
+          where: { id: invoice.id },
+          data: { remindersPaused: true },
+        })
+        result.skipped++
+        continue
+      }
 
       if (!isReminderDay(days)) {
         result.skipped++
