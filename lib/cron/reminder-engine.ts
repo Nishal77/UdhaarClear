@@ -1,16 +1,8 @@
 import { prisma } from '@/lib/prisma/client'
-import { sendTemplateMessage } from '@/lib/whatsapp/client'
-import { selectTone, isReminderDay } from '@/lib/whatsapp/tone-engine'
-import {
-  TEMPLATE_NAMES,
-  buildGentleComponents,
-  buildFirmComponents,
-  buildLegalComponents,
-} from '@/lib/whatsapp/templates'
-import { createPaymentLink } from '@/lib/razorpay/payment-link'
-import { formatINR } from '@/lib/utils/currency'
-import { formatDate, daysOverdue, isSunday } from '@/lib/utils/date'
+import { isReminderDay } from '@/lib/whatsapp/tone-engine'
+import { daysOverdue, isSunday } from '@/lib/utils/date'
 import { InvoiceStatus } from '@prisma/client'
+import { ReminderService } from '@/lib/services/reminder-service'
 
 export interface ReminderEngineResult {
   sent: number
@@ -76,92 +68,15 @@ export async function runReminderEngine(): Promise<ReminderEngineResult> {
         })
       }
 
-      // Get or create payment link
-      let paymentLink = invoice.razorpayLinkUrl
-      if (!paymentLink) {
-        try {
-          const link = await createPaymentLink({
-            invoiceId: invoice.id,
-            businessId: invoice.businessId,
-            invoiceNumber: invoice.invoiceNumber,
-            amount: Number(invoice.amount),
-            customerName: invoice.customer.contactName ?? invoice.customer.name,
-            customerPhone: invoice.customer.phone,
-            customerEmail: invoice.customer.email,
-          })
-          paymentLink = link.short_url
-          await prisma.invoice.update({
-            where: { id: invoice.id },
-            data: { razorpayLinkId: link.id, razorpayLinkUrl: link.short_url },
-          })
-        } catch {
-          paymentLink = `${process.env.NEXT_PUBLIC_APP_URL}/pay/${invoice.id}`
-        }
-      }
-
-      const tone = selectTone(days, invoice.reminderTone)
-      const templateName = TEMPLATE_NAMES[tone]
-      const customerName = invoice.customer.contactName ?? invoice.customer.name
-      const amount = formatINR(Number(invoice.amount))
-
-      let components
-      let messageBody: string
-
-      if (tone === 'GENTLE') {
-        components = buildGentleComponents({
-          customerName,
-          businessName: invoice.business.name,
-          invoiceNumber: invoice.invoiceNumber,
-          invoiceDate: formatDate(invoice.invoiceDate),
-          amount,
-          dueDate: formatDate(invoice.dueDate),
-          paymentLink: paymentLink ?? '',
-        })
-        messageBody = `Reminder: Invoice ${invoice.invoiceNumber} for ${amount} from ${invoice.business.name} is ${days <= 0 ? `due on ${formatDate(invoice.dueDate)}` : `${days} days overdue`}. Pay: ${paymentLink}`
-      } else if (tone === 'FIRM') {
-        components = buildFirmComponents({
-          customerName,
-          invoiceNumber: invoice.invoiceNumber,
-          amount,
-          daysOverdue: String(days),
-          paymentLink: paymentLink ?? '',
-          businessPhone: invoice.business.phone,
-          businessName: invoice.business.name,
-        })
-        messageBody = `FIRM: Invoice ${invoice.invoiceNumber} for ${amount} is ${days} days overdue. Pay immediately: ${paymentLink}`
-      } else {
-        components = buildLegalComponents({
-          customerName,
-          invoiceNumber: invoice.invoiceNumber,
-          amount,
-          daysOverdue: String(days),
-          paymentLink: paymentLink ?? '',
-          businessName: invoice.business.name,
-        })
-        messageBody = `FINAL NOTICE: Invoice ${invoice.invoiceNumber} for ${amount} is ${days} days overdue. Legal action pending. Pay: ${paymentLink}`
-      }
-
-      const waResponse = await sendTemplateMessage({
-        to: invoice.customer.phone,
-        templateName,
-        languageCode: 'hi',
-        components,
+      const serviceResult = await ReminderService.sendReminder({
+        invoiceId: invoice.id,
+        channel: 'BOTH',
+        triggeredBy: 'AUTO',
       })
 
-      await prisma.reminder.create({
-        data: {
-          businessId: invoice.businessId,
-          invoiceId: invoice.id,
-          tone,
-          templateName,
-          messageBody,
-          dayOverdue: days,
-          status: 'SENT',
-          waMessageId: waResponse.messages?.[0]?.id,
-          paymentLinkUrl: paymentLink,
-          triggeredBy: 'AUTO',
-        },
-      })
+      if (serviceResult.error) {
+        result.errors.push(`Invoice ${invoice.id}: Partial success (${serviceResult.error})`)
+      }
 
       result.sent++
     } catch (err) {

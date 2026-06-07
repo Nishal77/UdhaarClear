@@ -17,11 +17,12 @@ export async function sendEmail(params: {
 }): Promise<void> {
   const resend = getResend()
 
-  // Default from: use verified Resend sandbox for dev, custom domain for prod
+  // Default from: use environment variable if set, otherwise fallback to custom domain for prod or sandbox for dev
   const from =
     params.from ??
+    process.env.RESEND_FROM_EMAIL ??
     (process.env.NODE_ENV === 'production'
-      ? 'UdhaarClear <noreply@udhaarclear.in>'
+      ? 'UdhaarClear <noreply@arogyavaan.com>'
       : 'UdhaarClear <onboarding@resend.dev>')
 
   const { error } = await resend.emails.send({

@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma/client'
-import { InvoiceTable } from '@/components/invoices/InvoiceTable'
+import { InvoiceTable, ClientInvoice } from '@/components/invoices/InvoiceTable'
 import { EmptyState } from '@/components/shared/EmptyState'
 import { formatINRCompact } from '@/lib/utils/currency'
 import Link from 'next/link'
@@ -422,7 +422,7 @@ export default async function InvoicesPage({
 
       {/* ── Invoice Table Panel ── */}
       <InvoiceTable
-        invoices={serializedInvoices}
+        invoices={serializedInvoices as ClientInvoice[]}
         counts={{
           ALL: allCount,
           OVERDUE: overdueCount,

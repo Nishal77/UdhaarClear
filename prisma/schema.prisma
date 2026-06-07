@@ -196,6 +196,7 @@ model Reminder {
   deliveredAt DateTime?
   readAt      DateTime?
   failReason  String?
+  outcome     String?
 
   paymentLinkUrl String?
   triggeredBy    TriggerSource @default(AUTO)
@@ -209,6 +210,7 @@ enum ReminderChannel {
   WHATSAPP
   EMAIL
   SMS
+  BOTH
 }
 
 enum ReminderStatus {
