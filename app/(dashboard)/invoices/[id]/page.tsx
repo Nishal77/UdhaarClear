@@ -290,105 +290,157 @@ function addDays(date: Date, n: number): Date {
 }
 
 function fmtShort(date: Date): string {
-  return date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
+  const day = String(date.getDate()).padStart(2, '0')
+  const month = date.toLocaleString('en-US', { month: 'short' })
+  const year = date.getFullYear()
+  return `${day} ${month} ${year}`
 }
 
 function RecoverySchedule({ dueDate, daysOverdueCount }: { dueDate: Date; daysOverdueCount: number }) {
-  // Phase windows (days overdue)
+  // Normalize base due date and today's date to midnight in local timezone
+  const baseDue = new Date(dueDate)
+  baseDue.setHours(0, 0, 0, 0)
+
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
+  // Phase windows (days overdue) matching tone-engine.ts boundaries
   const phases = [
     {
       tone: 'GENTLE',
       label: 'Gentle Reminders',
-      desc: '2 friendly nudges over 28 days',
+      desc: '4 friendly nudges over 7 days',
       color: 'emerald',
+      textColor: 'text-emerald-700',
+      borderColor: 'border-emerald-500',
+      bgColor: 'bg-emerald-500',
+      badgeBg: 'bg-emerald-50 text-emerald-700',
       reminders: [
-        { label: 'Reminder 1', dayOffset: 7 },
-        { label: 'Reminder 2', dayOffset: 21 },
+        { label: 'Reminder 1 (Pre-due)', dayOffset: -3 },
+        { label: 'Reminder 2 (Due Day)', dayOffset: 0 },
+        { label: 'Reminder 3', dayOffset: 3 },
+        { label: 'Reminder 4', dayOffset: 7 },
       ],
-      endDay: 28,
+      startDay: -3,
+      endDay: 7,
     },
     {
       tone: 'FIRM',
       label: 'Firm Reminders',
-      desc: '2 firm notices — days 29 to 42',
+      desc: '3 firm notices — days 8 to 27',
       color: 'orange',
+      textColor: 'text-orange-700',
+      borderColor: 'border-orange-500',
+      bgColor: 'bg-orange-500',
+      badgeBg: 'bg-orange-50 text-orange-700',
       reminders: [
-        { label: 'Reminder 3', dayOffset: 35 },
-        { label: 'Reminder 4', dayOffset: 42 },
+        { label: 'Reminder 5', dayOffset: 10 },
+        { label: 'Reminder 6', dayOffset: 15 },
+        { label: 'Reminder 7', dayOffset: 21 },
       ],
-      endDay: 42,
+      startDay: 8,
+      endDay: 27,
     },
     {
       tone: 'LEGAL',
       label: 'Legal Notice',
-      desc: 'Official legal warning — day 43+',
+      desc: '3 formal warnings & council escalation',
       color: 'red',
+      textColor: 'text-red-700',
+      borderColor: 'border-red-500',
+      bgColor: 'bg-red-500',
+      badgeBg: 'bg-red-50 text-red-700',
       reminders: [
-        { label: 'Legal Notice', dayOffset: 50 },
-        { label: 'Case Filing', dayOffset: 58 },
+        { label: 'Reminder 8', dayOffset: 28 },
+        { label: 'Reminder 9', dayOffset: 35 },
+        { label: 'Reminder 10 (Final)', dayOffset: 42 },
+        { label: 'Legal Notice Draft', dayOffset: 43 },
+        { label: 'Case Filing Portal', dayOffset: 51 },
       ],
+      startDay: 28,
       endDay: 999,
     },
   ]
 
   return (
-    <div className="mt-4 rounded-xl border border-[#EBEAE6]/70 bg-gray-50/60 overflow-hidden">
-      <div className="px-4 py-2.5 border-b border-[#EBEAE6]/60 flex items-center justify-between">
-        <p className="text-[10px] font-bold uppercase tracking-wider text-gray-500">Recovery Schedule</p>
-        <span className="text-[10px] font-semibold text-gray-400">Auto-escalation plan</span>
+    <div className="mt-5 rounded-2xl border border-[#EBEAE6] bg-white p-5 select-none shadow-3xs text-left">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-5 border-b border-gray-50 pb-3">
+        <h3 className="text-xs font-bold text-gray-500 tracking-wider">RECOVERY SCHEDULE</h3>
+        <span className="text-xs font-medium text-gray-400">Auto-escalation plan</span>
       </div>
-      <div className="px-4 py-3 space-y-3.5">
-        {phases.map((phase, pi) => {
-          const phaseStart = pi === 0 ? 0 : phases[pi - 1].endDay
-          const isPast = daysOverdueCount > phase.endDay
-          const isActive = daysOverdueCount >= phaseStart && daysOverdueCount <= phase.endDay
-          const isFuture = daysOverdueCount < phaseStart
 
-          const dotColor = isPast
-            ? 'bg-gray-300'
-            : isActive
-            ? phase.color === 'emerald' ? 'bg-emerald-500' : phase.color === 'orange' ? 'bg-orange-500' : 'bg-red-500'
-            : 'bg-gray-200'
+      {/* Timeline items list */}
+      <div className="space-y-5">
+        {phases.map((phase, pi) => {
+          const isPast = daysOverdueCount > phase.endDay
+          const isActive = daysOverdueCount >= phase.startDay && daysOverdueCount <= phase.endDay
+          const isFuture = daysOverdueCount < phase.startDay
+
+          // Custom dot markup matching design
+          let dotElement
+          if (isActive) {
+            dotElement = (
+              <div className={`h-5 w-5 rounded-full border-2 ${phase.borderColor} bg-white flex items-center justify-center shrink-0`}>
+                <div className={`h-2.5 w-2.5 rounded-full ${phase.bgColor}`} />
+              </div>
+            )
+          } else {
+            dotElement = (
+              <div className="h-5 w-5 flex items-center justify-center shrink-0">
+                <div className={`h-3.5 w-3.5 rounded-full ${isPast ? 'bg-gray-300' : 'bg-gray-200'}`} />
+              </div>
+            )
+          }
 
           const labelColor = isPast
-            ? 'text-gray-400'
+            ? 'text-gray-400 font-semibold'
             : isActive
-            ? phase.color === 'emerald' ? 'text-emerald-700' : phase.color === 'orange' ? 'text-orange-700' : 'text-red-700'
-            : 'text-gray-500'
+            ? `${phase.textColor} font-bold`
+            : 'text-gray-700 font-semibold'
 
-          const badgeBg = isFuture
+          const badgeText = isPast ? 'DONE' : isActive ? 'ACTIVE' : 'UPCOMING'
+          const badgeBg = isPast
             ? 'bg-gray-100 text-gray-400'
             : isActive
-            ? phase.color === 'emerald' ? 'bg-emerald-50 text-emerald-700' : phase.color === 'orange' ? 'bg-orange-50 text-orange-700' : 'bg-red-50 text-red-700'
+            ? phase.badgeBg
             : 'bg-gray-100 text-gray-400'
 
           return (
             <div key={pi} className="flex gap-3">
-              {/* Timeline spine */}
+              {/* Spine Connector */}
               <div className="flex flex-col items-center">
-                <div className={`h-2.5 w-2.5 rounded-full mt-0.5 shrink-0 ${dotColor} ${isActive ? 'ring-2 ring-offset-1 ' + (phase.color === 'emerald' ? 'ring-emerald-300' : phase.color === 'orange' ? 'ring-orange-300' : 'ring-red-300') : ''}`} />
+                {dotElement}
                 {pi < phases.length - 1 && (
-                  <div className={`w-0.5 flex-1 mt-1 ${isPast ? 'bg-gray-200' : 'bg-gray-100'}`} style={{ minHeight: 28 }} />
+                  <div className={`w-0.5 flex-1 mt-1.5 ${isPast ? 'bg-gray-200' : 'bg-gray-100'}`} style={{ minHeight: 110 }} />
                 )}
               </div>
 
-              {/* Content */}
+              {/* Phase details */}
               <div className="flex-1 min-w-0 pb-1">
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  <span className={`text-[12px] font-semibold ${labelColor}`}>{phase.label}</span>
-                  <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wide ${badgeBg}`}>
-                    {isPast ? 'Done' : isActive ? 'Active' : 'Upcoming'}
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className={`text-[13px] ${labelColor}`}>{phase.label}</span>
+                  <span className={`text-[9.5px] font-bold px-1.5 py-0.5 rounded-md tracking-wide ${badgeBg}`}>
+                    {badgeText}
                   </span>
                 </div>
-                <p className="text-[11px] text-gray-400 mt-0.5">{phase.desc}</p>
-                <div className="mt-1.5 space-y-1">
+                <p className="text-[12px] text-gray-400 mt-1 font-medium">{phase.desc}</p>
+                
+                {/* Reminders schedule rows */}
+                <div className="mt-2.5 space-y-2 pl-0.5">
                   {phase.reminders.map((r, ri) => {
-                    const expectedDate = addDays(dueDate, r.dayOffset)
-                    const isThisPast = daysOverdueCount > r.dayOffset
+                    const expectedDate = addDays(baseDue, r.dayOffset)
+                    expectedDate.setHours(0, 0, 0, 0)
+                    
+                    // Direct date-to-date past check for perfect local timezone accuracy
+                    const isThisPast = expectedDate.getTime() <= today.getTime()
+
                     return (
-                      <div key={ri} className="flex items-center justify-between gap-2">
-                        <span className={`text-[11px] ${isThisPast ? 'text-gray-400 line-through' : 'text-gray-600'}`}>{r.label}</span>
-                        <span className={`text-[10px] font-semibold tabular-nums ${isThisPast ? 'text-gray-300' : 'text-gray-500'}`}>
+                      <div key={ri} className="flex items-center justify-between gap-2 text-xs">
+                        <span className={isThisPast ? 'text-gray-400 line-through font-medium' : 'text-gray-650 font-medium'}>
+                          {r.label}
+                        </span>
+                        <span className={`tabular-nums font-semibold ${isThisPast ? 'text-gray-300' : 'text-gray-700'}`}>
                           {fmtShort(expectedDate)}
                         </span>
                       </div>

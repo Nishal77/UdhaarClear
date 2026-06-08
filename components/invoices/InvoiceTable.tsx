@@ -24,23 +24,39 @@ const STATUS_TABS = [
 ] as const
 
 function OverdueBadge({ days }: { days: number }) {
-  if (days > 30) return (
-    <span className="text-[12.5px] font-bold text-[#FF0000] whitespace-nowrap">
+  // LEGAL phase: 28+ days overdue
+  if (days >= 28) return (
+    <span className="text-[12.5px] font-bold text-[#A32D2D] whitespace-nowrap">
       {days} days overdue
     </span>
   )
+  // FIRM phase: 8–27 days overdue
+  if (days >= 8) return (
+    <span className="text-[12.5px] font-semibold text-[#E24B4A] whitespace-nowrap">
+      {days} days overdue
+    </span>
+  )
+  // GENTLE phase: 1–7 days overdue
   if (days > 0) return (
-    <span className="text-[12.5px] font-semibold text-[#FF8C42] whitespace-nowrap">
-      {days} days overdue
+    <span className="text-[12.5px] font-semibold text-[#D85A30] whitespace-nowrap">
+      {days === 1 ? '1 day overdue' : `${days} days overdue`}
     </span>
   )
+  // Due today
   if (days === 0) return (
-    <span className="text-[12.5px] font-semibold text-amber-500 whitespace-nowrap">
+    <span className="text-[12.5px] font-semibold text-[#BA7517] whitespace-nowrap">
       Due today
     </span>
   )
+  // Warning zone: 1–2 days before due → yellow
+  if (days >= -2) return (
+    <span className="text-[12.5px] font-semibold text-[#EF9F27] whitespace-nowrap">
+      Due in {Math.abs(days)} {Math.abs(days) === 1 ? 'day' : 'days'}
+    </span>
+  )
+  // Upcoming: more than 2 days away → neutral gray
   return (
-    <span className="text-[12.5px] text-gray-500 font-medium whitespace-nowrap">
+    <span className="text-[12.5px] text-gray-400 font-medium whitespace-nowrap">
       In {Math.abs(days)} days
     </span>
   )

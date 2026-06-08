@@ -2,10 +2,12 @@ import { prisma } from '@/lib/prisma/client'
 import { sendTemplateMessage } from '@/lib/whatsapp/client'
 import { selectTone } from '@/lib/whatsapp/tone-engine'
 import {
-  TEMPLATE_NAMES,
+  getLegalTemplateName,
   buildGentleComponents,
   buildFirmComponents,
-  buildLegalComponents,
+  buildLegal28Components,
+  buildLegal35Components,
+  buildLegal42Components,
 } from '@/lib/whatsapp/templates'
 import { buildReminderEmail } from '@/lib/email/templates/payment-reminder'
 import { sendEmail } from '@/lib/email/client'
@@ -89,10 +91,18 @@ export class ReminderService {
     const shouldSendWhatsApp = false
     const shouldSendEmail = (channel === 'EMAIL' || channel === 'BOTH' || channel === 'WHATSAPP') && !!invoice.customer.email
 
-    const templateName = TEMPLATE_NAMES[tone]
+    const legalRef = `UC-${new Date().getFullYear()}-${invoice.invoiceNumber.replace(/[^A-Z0-9]/gi, '').toUpperCase()}`
+
+    // Pick the correct WhatsApp template name (LEGAL has 3 day-specific variants)
+    const templateName = tone === 'LEGAL'
+      ? getLegalTemplateName(days)
+      : tone === 'FIRM'
+        ? 'payment_reminder_firm'
+        : 'payment_reminder_gentle'
+
     let messageBody = ''
 
-    // Build components and construct fallback text representation
+    // Build WABA components and a plain-text fallback for the DB log
     let components
     if (tone === 'GENTLE') {
       components = buildGentleComponents({
@@ -104,28 +114,52 @@ export class ReminderService {
         dueDate: formatDate(invoice.dueDate),
         paymentLink: paymentLink ?? '',
       })
-      messageBody = `Reminder: Invoice ${invoice.invoiceNumber} for ${amount} from ${invoice.business.name} is ${days <= 0 ? `due on ${formatDate(invoice.dueDate)}` : `${days} days overdue`}. Pay: ${paymentLink}`
+      messageBody = `Hi ${customerName}, invoice ${invoice.invoiceNumber} from ${invoice.business.name} for ${amount} is ${days <= 0 ? `due on ${formatDate(invoice.dueDate)}` : `${days} days overdue`}. Pay: ${paymentLink}`
     } else if (tone === 'FIRM') {
+      const deadlineDate = new Date()
+      deadlineDate.setDate(deadlineDate.getDate() + 5)
+      const deadlineStr = deadlineDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
       components = buildFirmComponents({
         customerName,
         invoiceNumber: invoice.invoiceNumber,
         amount,
         daysOverdue: String(days),
+        deadlineDate: deadlineStr,
         paymentLink: paymentLink ?? '',
         businessPhone: invoice.business.phone,
         businessName: invoice.business.name,
       })
-      messageBody = `FIRM: Invoice ${invoice.invoiceNumber} for ${amount} is ${days} days overdue. Pay immediately: ${paymentLink}`
-    } else {
-      components = buildLegalComponents({
+      messageBody = `Dear ${customerName}, invoice ${invoice.invoiceNumber} for ${amount} is ${days} days overdue. Pay by ${deadlineStr}: ${paymentLink}`
+    } else if (days <= 28) {
+      // LEGAL day +28 — formal demand, 7-day window
+      components = buildLegal28Components({
+        customerName,
+        invoiceNumber: invoice.invoiceNumber,
+        businessName: invoice.business.name,
+        amount,
+        paymentLink: paymentLink ?? '',
+        legalRefNo: legalRef,
+      })
+      messageBody = `⚠️ Dear ${customerName}, a formal legal demand notice has been sent to your email. Invoice ${invoice.invoiceNumber} for ${amount} is 28 days overdue. Pay within 7 days to avoid MSME Facilitation Council filing: ${paymentLink} — Ref: ${legalRef}`
+    } else if (days <= 35) {
+      // LEGAL day +35 — 48-hour ultimatum
+      components = buildLegal35Components({
         customerName,
         invoiceNumber: invoice.invoiceNumber,
         amount,
-        daysOverdue: String(days),
         paymentLink: paymentLink ?? '',
-        businessName: invoice.business.name,
       })
-      messageBody = `FINAL NOTICE: Invoice ${invoice.invoiceNumber} for ${amount} is ${days} days overdue. Legal action pending. Pay: ${paymentLink}`
+      messageBody = `🚨 Dear ${customerName}, 48-hour window running. Invoice ${invoice.invoiceNumber} for ${amount} is 35 days overdue. Filing with MSME Facilitation Council cannot be reversed once initiated. Pay immediately: ${paymentLink}`
+    } else {
+      // LEGAL day +42 — proceedings initiated
+      components = buildLegal42Components({
+        customerName,
+        amount,
+        invoiceNumber: invoice.invoiceNumber,
+        businessPhone: invoice.business.phone,
+        legalRefNo: legalRef,
+      })
+      messageBody = `🔴 Dear ${customerName}, formal legal proceedings have been initiated for non-payment of ${amount} (Invoice ${invoice.invoiceNumber}, Ref: ${legalRef}). Pay immediately and share UTR with ${invoice.business.phone} to halt proceedings.`
     }
 
     // 2. Dispatch WhatsApp Template message
@@ -233,7 +267,7 @@ export class ReminderService {
         businessId: invoice.businessId,
         invoiceId: invoiceId,
         tone,
-        templateName: channel === 'EMAIL' ? `email_${tone.toLowerCase()}` : templateName,
+        templateName: channel === 'EMAIL' ? `email_${tone.toLowerCase()}_d${days}` : templateName,
         messageBody,
         dayOverdue: days,
         status: isFailed ? 'FAILED' : 'SENT',

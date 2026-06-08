@@ -8,17 +8,18 @@ import { ReminderTone } from '@prisma/client'
  *  Legal    (days +45 → +60): +45, +60
  *  Auto-pause after day +67  (no further automated sends)
  */
-export const REMINDER_SCHEDULE_DAYS = [-3, 0, 3, 7, 10, 15, 21, 30, 45, 60] as const
+export const REMINDER_SCHEDULE_DAYS = [-3, 0, 3, 7, 10, 15, 21, 28, 35, 42] as const
 
 export type ReminderScheduleDay = (typeof REMINDER_SCHEDULE_DAYS)[number]
 
 /** After this many days overdue, auto-reminders are paused permanently. */
-export const AUTO_PAUSE_AFTER_DAYS = 67
+export const AUTO_PAUSE_AFTER_DAYS = 42
 
 /** Tone phase boundaries (inclusive lower bound). */
 const GENTLE_MAX_DAYS = 7   // days -3 → +7
-const FIRM_MAX_DAYS   = 44  // days +8 → +44
-// Legal: days +45+
+const FIRM_MAX_DAYS   = 27  // days +8 → +27
+// Legal: days +28+
+
 
 /** Visual phase label — used by UI and analytics. */
 export type ReminderPhase = 'GENTLE' | 'FIRM' | 'LEGAL' | 'PAUSED'
