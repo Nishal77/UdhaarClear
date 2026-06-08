@@ -26,14 +26,25 @@ export async function POST(request: Request) {
     })
     if (!invoice) return new Response('OK', { status: 200 })
 
-    // Mark invoice paid
+    // Normalise Razorpay method string → human-readable label
+    const methodLabel: Record<string, string> = {
+      upi: 'UPI',
+      card: 'Card',
+      netbanking: 'Netbanking',
+      wallet: 'Wallet',
+      emi: 'EMI',
+      paylater: 'Pay Later',
+    }
+    const paymentMethod = methodLabel[payment.method] ?? payment.method.toUpperCase()
+
+    // Mark invoice paid + stop all future reminders
     await prisma.invoice.update({
       where: { id: invoiceId },
       data: {
         status: 'PAID',
         paidAt: new Date(),
         paidAmount: payment.amount / 100,
-        paymentMethod: 'UPI',
+        paymentMethod,
         paymentRef: payment.id,
         autoReminder: false,
       },

@@ -143,15 +143,31 @@ export default function InvoiceDetailPage() {
                     {sending ? 'Sending...' : 'Send Reminder'}
                   </span>
                 </button>
-                <a
-                  href={`/api/invoices/${id}/preview-email`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center gap-1.5 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 px-4 py-2.5 text-[13px] font-semibold text-gray-700 transition-all select-none cursor-pointer"
-                >
+                <div className="flex items-center gap-1.5 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 px-3.5 py-2.5 text-[13px] font-semibold text-gray-700 transition-all select-none cursor-pointer">
                   <HugeiconsIcon icon={SentIcon} size={14} className="text-gray-500" />
-                  Preview Email
-                </a>
+                  <select
+                    onChange={(e) => {
+                      if (e.target.value) {
+                        window.open(`/api/invoices/${id}/preview-email?day=${e.target.value}`, '_blank')
+                        e.target.value = '' // reset selection
+                      }
+                    }}
+                    className="bg-transparent border-none outline-none font-semibold text-gray-700 cursor-pointer pr-1"
+                    defaultValue=""
+                  >
+                    <option value="" disabled>Preview Email</option>
+                    <option value="-3">Day -3 (Gentle: Due in 3d)</option>
+                    <option value="0">Day 0 (Gentle: Due today)</option>
+                    <option value="3">Day 3 (Gentle: 3d overdue)</option>
+                    <option value="7">Day 7 (Gentle: 7d overdue)</option>
+                    <option value="10">Day 10 (Firm: 10d overdue)</option>
+                    <option value="15">Day 15 (Firm: 15d overdue)</option>
+                    <option value="21">Day 21 (Firm: 21d overdue)</option>
+                    <option value="28">Day 28 (Legal: 28d overdue)</option>
+                    <option value="35">Day 35 (Legal: 35d overdue)</option>
+                    <option value="42">Day 42 (Legal: 42d overdue)</option>
+                  </select>
+                </div>
                 <button
                   onClick={markPaid}
                   disabled={markingPaid}

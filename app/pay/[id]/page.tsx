@@ -4,6 +4,7 @@ import { formatINR } from '@/lib/utils/currency'
 import { format } from 'date-fns'
 import type { Metadata } from 'next'
 import PaymentClient from './PaymentClient'
+import { getPayMode, splitIntoParts } from '@/lib/payments/routing'
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params
@@ -48,28 +49,19 @@ export default async function PayPage({ params }: { params: Promise<{ id: string
   const formattedDue = format(invoice.dueDate, 'd MMM yyyy')
   const formattedInvoice = format(invoice.invoiceDate, 'd MMM yyyy')
 
-  // Determine payment mode
-  // < 1,00,000  → UPI only
-  // 1,00,000 – 10,00,000 → UPI in parts + NEFT
-  // > 10,00,000 → RTGS only
-  const UPI_LIMIT = 100_000
-  const RTGS_THRESHOLD = 1_000_000
-
-  type PayMode = 'upi' | 'split' | 'rtgs'
-  const payMode: PayMode = amount < UPI_LIMIT ? 'upi' : amount < RTGS_THRESHOLD ? 'split' : 'rtgs'
+  // Determine payment mode using shared routing logic:
+  //   < ₹50K   → 'upi'    (pure Razorpay / UPI link)
+  //   ₹50K–₹2L → 'hybrid' (show both UPI parts + bank transfer)
+  //   > ₹2L    → 'bank'   (NEFT/RTGS only — finance teams won't click a payment link)
+  const payMode = getPayMode(amount)
 
   // Build UPI deep-link
   const upiLink = invoice.business.upiId
     ? `upi://pay?pa=${encodeURIComponent(invoice.business.upiId)}&pn=${encodeURIComponent(invoice.business.name)}&am=${amount.toFixed(2)}&cu=INR&tn=${encodeURIComponent(`Invoice ${invoice.invoiceNumber}`)}`
     : null
 
-  const parts = payMode === 'split'
-    ? (() => {
-        const count = Math.ceil(amount / 99_000)
-        const base = Math.floor(amount / count)
-        return Array.from({ length: count }, (_, i) => i === count - 1 ? amount - base * (count - 1) : base)
-      })()
-    : []
+  // Split into UPI-safe parts (≤ ₹99K each) for hybrid mode
+  const parts = payMode === 'hybrid' ? splitIntoParts(amount) : []
 
   return (
     <PaymentClient

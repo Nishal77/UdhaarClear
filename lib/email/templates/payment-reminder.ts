@@ -72,134 +72,112 @@ function shell(opts: ShellOptions): string {
   const halfAmount = formatAmountVal(Math.round(rawAmount / 2))
 
   const isPreview = params.reminderId === 'preview-mode-no-id'
-  const hasBankNo  = !!params.bankAccountNo || isPreview
-  const hasUpi     = !!params.upiId || isPreview
+  const hasBankNo = !!params.bankAccountNo || isPreview
+  const hasUpi = !!params.upiId || isPreview
 
   const displayAccountName = params.bankAccountName || params.businessName
-  const displayAccountNo   = params.bankAccountNo   || (isPreview ? '918789876567' : '')
-  const displayIfsc        = params.bankIfsc         || (isPreview ? 'SBIN0003490'  : '')
-  const displayUpi         = params.upiId            || (isPreview ? 'sbi3490@ibl'  : '')
-
-  const cleanPhone = params.businessPhone.replace(/[^0-9]/g, '')
-  const waPhone    = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone
-  const waText     = encodeURIComponent(`Hi, I paid Invoice ${params.invoiceNumber} of ${params.amount}. UTR: `)
+  const displayAccountNo = params.bankAccountNo || (isPreview ? '918789876567' : '')
+  const displayIfsc = params.bankIfsc || (isPreview ? 'SBIN0003490' : '')
+  const displayUpi = params.upiId || (isPreview ? 'sbi3490@ibl' : '')
 
   const installmentsHtml = showInstallments ? `
-    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #e2e8f0;border-radius:12px;border-collapse:separate;margin-bottom:24px;font-size:13px;background-color:#ffffff;overflow:hidden">
-      <tr>
-        <td style="padding:14px 20px;border-bottom:1px solid #e2e8f0;background-color:#f8fafc">
-          <span style="font-size:11px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:0.05em">Flexible 2-term option</span>
-        </td>
-      </tr>
-      <tr>
-        <td style="padding:16px 20px;border-bottom:1px solid #f1f5f9">
-          <table width="100%" cellpadding="0" cellspacing="0" border="0">
-            <tr>
-              <td>
-                <div style="font-size:11px;color:#64748b;margin-bottom:3px">Term 1 — 50%</div>
-                <div style="font-size:16px;font-weight:700;color:#0f172a">${halfAmount}</div>
-              </td>
-              <td align="right" width="130">
-                <a href="${params.paymentLink}?split=1" style="display:inline-block;background-color:${accentColor};color:#fff;font-size:12px;font-weight:700;padding:8px 18px;border-radius:6px;text-decoration:none;letter-spacing:-0.01em">Pay term 1</a>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-      <tr>
-        <td style="padding:16px 20px">
-          <table width="100%" cellpadding="0" cellspacing="0" border="0">
-            <tr>
-              <td>
-                <div style="font-size:11px;color:#64748b;margin-bottom:3px">Term 2 — 50%</div>
-                <div style="font-size:16px;font-weight:700;color:#94a3b8">${halfAmount}</div>
-              </td>
-              <td align="right" width="130">
-                <span style="display:inline-block;background:#f5f3ff;color:#6d28d9;font-size:11px;font-weight:600;padding:6px 12px;border-radius:20px">Due in 15 days</span>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>` : ''
+      <!-- INSTALLMENTS (2-term option) -->
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #e2e8f0;border-radius:12px;border-collapse:separate;margin-bottom:24px;font-size:13px;overflow:hidden">
+        <tr>
+          <td style="padding:10px 20px;border-bottom:1px solid #e2e8f0;background-color:#F5F4EE">
+            <span style="font-size:10px;font-weight:600;color:#475569;text-transform:uppercase;letter-spacing:0.05em">Flexible 2-term option</span>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:12px 20px;border-bottom:1px solid #f1f5f9">
+            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td>
+                  <div style="font-size:10.5px;color:#334155;margin-bottom:2px">Term 1 — 50%</div>
+                  <div style="font-size:15px;font-weight:600;color:#0f172a">${halfAmount}</div>
+                </td>
+                <td align="right" width="130">
+                  <a href="${params.paymentLink}?split=1" style="display:inline-block;background-color:#376E55;color:#fff;font-size:11.5px;font-weight:500;padding:7px 16px;border-radius:6px;text-decoration:none">Pay term 1</a>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:12px 20px">
+            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td>
+                  <div style="font-size:10.5px;color:#334155;margin-bottom:2px">Term 2 — 50%</div>
+                  <div style="font-size:15px;font-weight:600;color:#94a3b8">${halfAmount}</div>
+                </td>
+                <td align="right" width="130">
+                  <span style="display:inline-block;background:#f5f3ff;color:#6d28d9;font-size:10.5px;font-weight:500;padding:5px 12px;border-radius:20px">Due in 15 days</span>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>` : ''
 
   const bankHtml = (hasBankNo || hasUpi) ? `
-    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;border-collapse:separate;margin-top:24px;overflow:hidden">
-      <tr>
-        <td style="padding:14px 20px 10px">
-          <span style="font-size:11px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:0.05em">Direct transfer details</span>
-        </td>
-      </tr>
-      <tr>
-        <td style="padding:0 20px 14px">
-          <table width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size:12.5px">
-            ${hasBankNo ? `
-            <tr>
-              <td style="color:#64748b;padding-bottom:8px">Account name</td>
-              <td align="right" style="font-weight:600;color:#0f172a;padding-bottom:8px">${displayAccountName}</td>
-            </tr>
-            <tr>
-              <td style="color:#64748b;padding-bottom:8px">Account number</td>
-              <td align="right" style="font-weight:600;color:#0f172a;font-family:monospace;font-size:13px;padding-bottom:8px">${displayAccountNo}</td>
-            </tr>
-            <tr>
-              <td style="color:#64748b;padding-bottom:${hasUpi ? '8px' : '0'}">IFSC</td>
-              <td align="right" style="font-weight:600;color:#0f172a;font-family:monospace;font-size:13px;padding-bottom:${hasUpi ? '8px' : '0'}">${displayIfsc}</td>
-            </tr>` : ''}
-            ${hasUpi ? `
-            <tr>
-              <td style="color:#64748b">UPI ID</td>
-              <td align="right" style="font-weight:600;color:#0f172a;font-family:monospace;font-size:13px">${displayUpi}</td>
-            </tr>` : ''}
-          </table>
-        </td>
-      </tr>
-    </table>` : ''
+        <!-- BANK / UPI DETAILS -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #e2e8f0;border-radius:12px;border-collapse:separate;margin-top:24px;overflow:hidden;background-color:#ffffff">
+          <tr>
+            <td colspan="2" style="padding:10px 20px;border-bottom:1px solid #e2e8f0;background-color:#F5F4EE">
+              <span style="font-size:10px;font-weight:600;color:#475569;text-transform:uppercase;letter-spacing:0.05em">Direct transfer details</span>
+            </td>
+          </tr>
+          ${hasBankNo ? `
+          <tr>
+            <td width="50%" style="padding:12px 20px;border-bottom:1px solid #e2e8f0;color:#334155;font-size:13px">Account name</td>
+            <td width="50%" align="right" style="padding:12px 20px;border-bottom:1px solid #e2e8f0;font-weight:600;color:#0f172a;font-size:13.5px">${displayAccountName}</td>
+          </tr>
+          <tr>
+            <td width="50%" style="padding:12px 20px;border-bottom:1px solid #e2e8f0;color:#334155;font-size:13px">Account number</td>
+            <td width="50%" align="right" style="padding:12px 20px;border-bottom:1px solid #e2e8f0;font-weight:600;color:#0f172a;font-family:monospace;font-size:13.5px">${displayAccountNo}</td>
+          </tr>
+          <tr>
+            <td width="50%" style="padding:12px 20px;${hasUpi ? 'border-bottom:1px solid #e2e8f0;' : ''}color:#334155;font-size:13px">IFSC</td>
+            <td width="50%" align="right" style="padding:12px 20px;${hasUpi ? 'border-bottom:1px solid #e2e8f0;' : ''}font-weight:600;color:#0f172a;font-family:monospace;font-size:13.5px">${displayIfsc}</td>
+          </tr>` : ''}
+          ${hasUpi ? `
+          <tr>
+            <td width="50%" style="padding:12px 20px;color:#334155;font-size:13px">UPI ID</td>
+            <td width="50%" align="right" style="padding:12px 20px;font-weight:600;color:#0f172a;font-family:monospace;font-size:13.5px">${displayUpi}</td>
+          </tr>` : ''}
+        </table>` : ''
 
   const utrHtml = `
-    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;margin-top:24px">
-      <tr>
-        <td style="padding:20px;text-align:center">
-          <div style="font-size:13.5px;font-weight:700;color:#0f172a;margin-bottom:6px">Paid via bank transfer?</div>
-          <p style="font-size:12px;color:#475569;margin:0 0 16px;line-height:1.5">Share your UTR / transaction ID and we'll mark this invoice as settled.</p>
-          <table align="center" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:360px;margin:0 auto">
-            <tr>
-              <td style="padding-right:8px">
-                <input type="text" placeholder="Enter UTR / txn ID" style="width:100%;box-sizing:border-box;border:1px solid #cbd5e1;border-radius:6px;padding:9px 12px;font-size:12.5px;color:#0f172a;background:#ffffff;outline:none" />
-              </td>
-              <td width="80">
-                <a href="${params.paymentLink}?proof=1" style="display:block;background:${accentColor};color:#ffffff;text-align:center;border-radius:6px;padding:10px 0;font-size:12.5px;font-weight:700;text-decoration:none;letter-spacing:-0.01em">Submit</a>
-              </td>
-            </tr>
-          </table>
-          <div style="margin-top:16px;padding-top:14px;border-top:1px dashed #cbd5e1">
-            <a href="https://wa.me/${waPhone}?text=${waText}" style="color:#16a34a;font-size:12.5px;font-weight:600;text-decoration:none;display:inline-block">
-              Submit via WhatsApp bot ↗
-            </a>
-          </div>
-        </td>
-      </tr>
-    </table>`
+        <!-- UTR SUBMISSION -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#F5F4EE;border:1px dashed #cbd5e1;border-radius:12px;margin-top:24px">
+          <tr>
+            <td style="padding:20px;text-align:center">
+              <div style="font-size:13.5px;font-weight:600;color:#0f172a;margin-bottom:6px">Paid via bank transfer?</div>
+              <p style="font-size:12px;color:#475569;margin:0 0 16px;line-height:1.5">Share your UTR / transaction ID and we'll mark this invoice as settled.</p>
+              <a href="${params.paymentLink}?proof=1" style="display:inline-block;background:#376E55;color:#ffffff;border-radius:6px;padding:10px 24px;font-size:12.5px;font-weight:500;text-decoration:none">Submit UTR</a>
+            </td>
+          </tr>
+        </table>`
 
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<meta name="x-apple-disable-message-reformatting"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="x-apple-disable-message-reformatting">
 <title>${params.invoiceNumber} · ${params.businessName}</title>
 </head>
-<body style="margin:0;padding:0;background-color:#f8fafc;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif">
+<body style="margin:0;padding:0;background-color:#F5F4EE;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif">
 
-<div style="display:none;max-height:0;overflow:hidden">${previewText}&nbsp;&#847;&nbsp;</div>
+<div style="display:none;max-height:0;overflow:hidden">${previewText}</div>
 
-<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f8fafc;padding:32px 16px">
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#F5F4EE;padding:32px 16px">
 <tr><td align="center">
 
-  <!-- Outer card -->
-  <table width="580" cellpadding="0" cellspacing="0" border="0" style="background-color:#ffffff;border-radius:16px;overflow:hidden;border:1px solid #e2e8f0;box-shadow:0 4px 12px rgba(0, 0, 0, 0.03)">
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:580px;background-color:#ffffff;border-radius:16px;overflow:hidden;border:1px solid #e2e8f0">
 
-    <!-- Header -->
+    <!-- HEADER -->
     <tr>
       <td style="padding:24px 32px 20px;border-bottom:1px solid #f1f5f9">
         <table width="100%" cellpadding="0" cellspacing="0" border="0">
@@ -207,110 +185,100 @@ function shell(opts: ShellOptions): string {
             <td>
               <table cellpadding="0" cellspacing="0" border="0">
                 <tr>
-                  <td style="width:24px;height:24px;background-color:#0f172a;border-radius:6px;text-align:center;vertical-align:middle;display:inline-block">
-                    <span style="font-size:12px;font-weight:900;color:#ffffff;line-height:24px;font-family:-apple-system,BlinkMacSystemFont,sans-serif">U</span>
+                  <td style="width:24px;height:24px;background-color:#0f172a;border-radius:6px;text-align:center;vertical-align:middle">
+                    <span style="font-size:12px;font-weight:900;color:#ffffff;line-height:24px">U</span>
                   </td>
-                  <td style="padding-left:8px;font-size:14px;font-weight:700;color:#0f172a;vertical-align:middle;letter-spacing:-0.02em">udhaarclear</td>
+                  <td style="padding-left:8px;font-size:14px;font-weight:700;color:#0f172a;vertical-align:middle">udhaarclear</td>
                   <td style="padding-left:6px;font-size:12px;color:#64748b;vertical-align:middle">/ via ${params.businessName}</td>
                 </tr>
               </table>
             </td>
-            <td align="right">
-              ${badgeHtml}
-            </td>
+            <td align="right">${badgeHtml}</td>
           </tr>
         </table>
       </td>
     </tr>
 
-    <!-- Body -->
+    <!-- BODY -->
     <tr>
       <td style="padding:32px 32px 40px">
-
+        
         <div style="font-size:14.5px;color:#334155;line-height:1.6">
           ${bodyHtml}
         </div>
+        
 
-        <!-- Invoice summary -->
-        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #e2e8f0;border-radius:12px;border-collapse:separate;margin:24px 0;background-color:#ffffff;overflow:hidden">
+        <!-- INVOICE SUMMARY -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #e2e8f0;border-radius:12px;border-collapse:separate;margin:24px 0;overflow:hidden">
           <tr>
-            <td width="50%" style="padding:12px 20px;border-bottom:1px solid #e2e8f0;color:#64748b;font-size:13px">Invoice number</td>
-            <td width="50%" align="right" style="padding:12px 20px;border-bottom:1px solid #e2e8f0;font-weight:600;color:#0f172a;font-family:monospace;font-size:13.5px">${params.invoiceNumber}</td>
+            <td width="50%" style="padding:12px 20px;border-bottom:1px solid #e2e8f0;color:#334155;font-size:13px">Invoice number</td>
+            <td width="50%" align="right" style="padding:12px 20px;border-bottom:1px solid #e2e8f0;font-weight:600;color:#0f172a;font-family:monospace;font-size:13.5px">#${params.invoiceNumber}</td>
           </tr>
           <tr>
-            <td width="50%" style="padding:12px 20px;border-bottom:1px solid #e2e8f0;color:#64748b;font-size:13px">Invoice date</td>
+            <td width="50%" style="padding:12px 20px;border-bottom:1px solid #e2e8f0;color:#334155;font-size:13px">Invoice date</td>
             <td width="50%" align="right" style="padding:12px 20px;border-bottom:1px solid #e2e8f0;font-weight:500;color:#0f172a;font-size:13.5px">${params.invoiceDate}</td>
           </tr>
           <tr>
-            <td width="50%" style="padding:12px 20px;border-bottom:1px solid #e2e8f0;color:#64748b;font-size:13px">Due date</td>
-            <td width="50%" align="right" style="padding:12px 20px;border-bottom:1px solid #e2e8f0;font-weight:700;color:${accentColor};font-size:13.5px">${params.dueDate}</td>
+            <td width="50%" style="padding:12px 20px;border-bottom:1px solid #e2e8f0;color:#334155;font-size:13px">Due date</td>
+            <td width="50%" align="right" style="padding:12px 20px;border-bottom:1px solid #e2e8f0;font-weight:600;color:${accentColor};font-size:13.5px">${params.dueDate}</td>
           </tr>
           <tr>
-            <td width="50%" style="padding:16px 20px;background-color:#f8fafc;border-bottom-left-radius:12px;border-right:4px solid #ffffff;font-size:14px;font-weight:700;color:#475569;vertical-align:middle">Amount due</td>
-            <td width="50%" align="right" style="padding:16px 20px;background-color:#f8fafc;border-bottom-right-radius:12px;font-size:22px;font-weight:800;color:#0f172a;vertical-align:middle">${params.amount}</td>
+            <td width="50%" style="padding:16px 20px;background-color:#F5F4EE;font-size:14px;font-weight:600;color:#475569">Amount due</td>
+            <td width="50%" align="right" style="padding:16px 20px;background-color:#F5F4EE;font-size:20px;font-weight:600;color:#0f172a">${params.amount}</td>
           </tr>
         </table>
-
-        <!-- Installments (GENTLE only) -->
+        
         ${installmentsHtml}
 
-        <!-- CTA -->
+        <!-- CTA BUTTON -->
         <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:28px 0 10px">
           <tr>
             <td align="center">
-              <a href="${params.paymentLink}" style="display:inline-block;background-color:${accentColor};color:#ffffff;font-size:15px;font-weight:700;padding:14px 40px;border-radius:8px;text-decoration:none;letter-spacing:-0.01em;box-shadow:0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.03)">
+              <a href="${params.paymentLink}" style="display:inline-block;background-color:#376E55;color:#ffffff;font-size:15px;font-weight:500;padding:14px 40px;border-radius:8px;text-decoration:none">
                 Pay ${params.amount} now &nbsp;→
               </a>
             </td>
           </tr>
         </table>
 
-        <!-- Payment methods -->
-        <p style="text-align:center;font-size:11.5px;color:#94a3b8;margin:8px 0 24px">
-          UPI (GPay, PhonePe, Paytm) &nbsp;·&nbsp; Cards &nbsp;·&nbsp; Netbanking &nbsp;·&nbsp; Wallets
-        </p>
+  <div style="display: flex; justify-content: center; margin: 8px 0 24px;">
+  <div style="display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px;">
+    
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#376E55" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+       <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+    </svg>
 
-        <!-- Bank / UPI details -->
+    <span style="font-weight: 600; color: #376E55;">100% Secure:</span>
+    <span style="color: #475569; font-weight: 500;">UPI &nbsp;·&nbsp; Cards &nbsp;·&nbsp; Netbanking &nbsp;·&nbsp; Wallets</span>
+    
+  </div>
+</div>
+
         ${bankHtml}
 
-        <!-- UTR submission -->
         ${utrHtml}
 
-        <!-- Discrepancy note -->
-        <p style="margin-top:28px;padding-top:20px;border-top:1px solid #f1f5f9;font-size:11.5px;color:#94a3b8;line-height:1.6;text-align:center">
-          For discrepancies, contact ${params.businessName} at <strong style="color:#64748b">${params.businessPhone}</strong>
+        <p style="margin-top:28px;padding-top:20px;border-top:1px solid #f1f5f9;font-size:11.5px;color:#475569;line-height:1.6;text-align:center">
+          For support, contact ${params.businessName} at <strong style="color:#64748b">${params.businessPhone}</strong>
         </p>
 
       </td>
     </tr>
   </table>
 
-  <!-- Footer watermark -->
-  <table width="580" cellpadding="0" cellspacing="0" border="0" style="margin-top:24px">
-    <tr>
-      <td align="center" style="padding-bottom:8px">
-        <div style="width:20px;height:20px;background-color:#cbd5e1;border-radius:5px;display:inline-block;text-align:center;vertical-align:middle">
-          <span style="font-size:10px;font-weight:800;color:#ffffff;line-height:20px">U</span>
-        </div>
-      </td>
-    </tr>
+  <!-- FOOTER -->
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:580px;margin-top:24px">
     <tr>
       <td align="center">
-        <p style="font-size:11.5px;color:#94a3b8;margin:0 0 4px;font-weight:500">Powered by UdhaarClear</p>
-        <p style="font-size:11px;color:#cbd5e1;margin:0;line-height:1.6">
-          Sent on behalf of ${params.businessName}.&nbsp;
-          <a href="${APP_URL}/unsubscribe" style="color:#94a3b8;text-decoration:underline">Unsubscribe</a> &nbsp;·&nbsp;
-          <a href="${APP_URL}/dispute?inv=${params.invoiceNumber}" style="color:#94a3b8;text-decoration:underline">Dispute invoice</a>
-        </p>
+        <p style="font-size:11.5px;color:#94a3b8;margin:0 0 4px;font-weight:500">Powered by UdhaarClear.in</p>
+       
       </td>
     </tr>
   </table>
 
 </td></tr>
 </table>
-
 ${params.reminderId ? `<img src="${APP_URL}/api/reminders/track/email-open?reminderId=${params.reminderId}" width="1" height="1" style="display:none" alt="" />` : ''}
-
 </body>
 </html>`
 }
@@ -320,10 +288,10 @@ ${params.reminderId ? `<img src="${APP_URL}/api/reminders/track/email-open?remin
 // Days: -3, 0, +3, +7
 
 export function buildGentleEmail(params: ReminderEmailParams): { subject: string; html: string } {
-  const name     = firstName(params.customerName)
-  const isDue    = params.daysOverdue === 0
+  const name = firstName(params.customerName)
+  const isDue = params.daysOverdue === 0
   const isPreDue = params.daysOverdue < 0
-  const daysAbs  = Math.abs(params.daysOverdue)
+  const daysAbs = Math.abs(params.daysOverdue)
 
   const subject = isDue
     ? `Invoice ${params.invoiceNumber} is due today — ${params.businessName}`
@@ -339,7 +307,7 @@ export function buildGentleEmail(params: ReminderEmailParams): { subject: string
       ? `Invoice ${params.invoiceNumber} for ${params.amount} is due in ${daysAbs} ${daysAbs === 1 ? 'day' : 'days'}.`
       : `Invoice ${params.invoiceNumber} for ${params.amount} is ${params.daysOverdue} days overdue.`
 
-  const badge = `<span style="background-color:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:0.03em;text-transform:uppercase">Payment reminder</span>`
+  const badge = `<span style="background-color:#f0fdf4;color:#16a34a;font-size:11px;font-weight:500;padding:4px 12px;border-radius:20px;">Payment Reminder</span>`
 
   let body: string
 
@@ -394,7 +362,9 @@ export function buildGentleEmail(params: ReminderEmailParams): { subject: string
 
   return {
     subject,
-    html: shell({ accentColor: '#0f6e56', previewText: preview, badgeHtml: badge, bodyHtml: body, showInstallments: true, params }),
+    // Hide installment option above ₹2L — showing it contradicts the urgency
+    // of FIRM/LEGAL tones and looks weak for large B2B invoices.
+    html: shell({ accentColor: '#376E55', previewText: preview, badgeHtml: badge, bodyHtml: body, showInstallments: parseAmountStr(params.amount) < 200_000, params }),
   }
 }
 
@@ -402,15 +372,15 @@ export function buildGentleEmail(params: ReminderEmailParams): { subject: string
 // Days: +10, +15, +21
 
 export function buildFirmEmail(params: ReminderEmailParams): { subject: string; html: string } {
-  const name         = firstName(params.customerName)
+  const name = firstName(params.customerName)
   const deadlineDate = dateInDays(5)  // for day +10: pay within 5 days of this notice
-  const fridayDate   = dateInDays(3)  // for day +15: 3 days from now
+  const fridayDate = dateInDays(3)  // for day +15: 3 days from now
 
   let subject: string
   let preview: string
   let body: string
 
-  if (params.daysOverdue <= 10) {
+  if (params.daysOverdue < 15) {
     // Day +10 — tone shift, first firm touch
     subject = `Action required — invoice ${params.invoiceNumber} is 10 days overdue`
     preview = `Payment of ${params.amount} is 10 days overdue. Please settle by ${deadlineDate}.`
@@ -429,7 +399,7 @@ export function buildFirmEmail(params: ReminderEmailParams): { subject: string; 
           </td>
         </tr>
       </table>`
-  } else if (params.daysOverdue <= 15) {
+  } else if (params.daysOverdue < 21) {
     // Day +15 — hard deadline
     subject = `Final deadline — settle by ${fridayDate} | invoice ${params.invoiceNumber}`
     preview = `Invoice ${params.invoiceNumber} for ${params.amount} is 15 days overdue. Settle by ${fridayDate} or this escalates.`
@@ -466,7 +436,7 @@ export function buildFirmEmail(params: ReminderEmailParams): { subject: string; 
       </table>`
   }
 
-  const badge = `<span style="background-color:#fffbeb;color:#d97706;border:1px solid #fef3c7;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:0.03em;text-transform:uppercase">Action required</span>`
+  const badge = `<span style="background-color:#fffbeb;color:#d97706;border:1px solid #fef3c7;font-size:11px;font-weight:500;padding:4px 12px;border-radius:20px;">Action required</span>`
 
   return {
     subject,
@@ -484,7 +454,7 @@ export function buildLegalEmail(params: ReminderEmailParams): { subject: string;
   let preview: string
   let body: string
 
-  if (params.daysOverdue <= 28) {
+  if (params.daysOverdue < 35) {
     // Day +28 — MSME threshold, 7-day window
     subject = `Formal legal demand notice — MSME Act 2006 applies | ${params.invoiceNumber}`
     preview = `Formal demand. ${params.amount} is 28 days overdue. Settle within 7 days or proceedings begin. Ref: ${refNo}.`
@@ -512,7 +482,7 @@ export function buildLegalEmail(params: ReminderEmailParams): { subject: string;
           </td>
         </tr>
       </table>`
-  } else if (params.daysOverdue <= 35) {
+  } else if (params.daysOverdue < 42) {
     // Day +35 — 48-hour ultimatum
     subject = `48 hours remaining — MSME Facilitation Council filing pending | Ref: ${refNo}`
     preview = `Our formal notice has not been acted upon. 48 hours remain before MSME filing. Ref: ${refNo}.`
@@ -520,7 +490,7 @@ export function buildLegalEmail(params: ReminderEmailParams): { subject: string;
       <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:18px">
         <tr>
           <td style="background-color:#fef2f2;border:1px solid #fee2e2;border-radius:8px;padding:12px 16px">
-            <span style="font-size:11px;font-weight:800;color:#991b1b;letter-spacing:0.05em;text-transform:uppercase">Urgent Legal Notice</span>
+            <span style="font-size:11px;font-weight:800;color:#991b1b;">Urgent Legal Notice</span>
             <span style="font-size:11px;color:#991b1b;margin-left:12px;font-family:monospace;font-weight:600">Ref: ${refNo}</span>
           </td>
         </tr>
@@ -570,7 +540,7 @@ export function buildLegalEmail(params: ReminderEmailParams): { subject: string;
       </table>`
   }
 
-  const badge = `<span style="background-color:#fef2f2;color:#dc2626;border:1px solid #fee2e2;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:0.03em;text-transform:uppercase">${params.daysOverdue >= 42 ? 'Final demand' : 'Legal notice'}</span>`
+  const badge = `<span style="background-color:#fef2f2;color:#dc2626;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;">${params.daysOverdue >= 42 ? 'Final demand' : 'Legal notice'}</span>`
 
   return {
     subject,
@@ -584,7 +554,7 @@ export function buildReminderEmail(
   tone: 'GENTLE' | 'FIRM' | 'LEGAL',
   params: ReminderEmailParams
 ): { subject: string; html: string } {
-  if (tone === 'FIRM')  return buildFirmEmail(params)
+  if (tone === 'FIRM') return buildFirmEmail(params)
   if (tone === 'LEGAL') return buildLegalEmail(params)
   return buildGentleEmail(params)
 }

@@ -16,8 +16,8 @@ export interface TemplateComponent {
 
 /** Pick the right legal template name based on the exact overdue day. */
 export function getLegalTemplateName(daysOverdue: number): string {
-  if (daysOverdue <= 28) return TEMPLATE_NAMES.LEGAL_28
-  if (daysOverdue <= 35) return TEMPLATE_NAMES.LEGAL_35
+  if (daysOverdue < 35) return TEMPLATE_NAMES.LEGAL_28
+  if (daysOverdue < 42) return TEMPLATE_NAMES.LEGAL_35
   return TEMPLATE_NAMES.LEGAL_42
 }
 

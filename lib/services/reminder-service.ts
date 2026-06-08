@@ -130,7 +130,7 @@ export class ReminderService {
         businessName: invoice.business.name,
       })
       messageBody = `Dear ${customerName}, invoice ${invoice.invoiceNumber} for ${amount} is ${days} days overdue. Pay by ${deadlineStr}: ${paymentLink}`
-    } else if (days <= 28) {
+    } else if (days < 35) {
       // LEGAL day +28 — formal demand, 7-day window
       components = buildLegal28Components({
         customerName,
@@ -141,7 +141,7 @@ export class ReminderService {
         legalRefNo: legalRef,
       })
       messageBody = `⚠️ Dear ${customerName}, a formal legal demand notice has been sent to your email. Invoice ${invoice.invoiceNumber} for ${amount} is 28 days overdue. Pay within 7 days to avoid MSME Facilitation Council filing: ${paymentLink} — Ref: ${legalRef}`
-    } else if (days <= 35) {
+    } else if (days < 42) {
       // LEGAL day +35 — 48-hour ultimatum
       components = buildLegal35Components({
         customerName,

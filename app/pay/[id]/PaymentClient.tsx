@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 import { formatINR } from '@/lib/utils/currency'
 
-type PayMode = 'upi' | 'split' | 'rtgs'
+type PayMode = 'upi' | 'hybrid' | 'bank'
 
 interface Props {
   invoiceId: string
@@ -274,8 +274,8 @@ export default function PaymentClient({
               </>
             )}
 
-            {/* ── MODE: Split UPI + NEFT (₹1L – ₹10L) ── */}
-            {payMode === 'split' && (
+            {/* ── MODE: Hybrid — UPI parts + bank transfer (₹50K – ₹2L) ── */}
+            {payMode === 'hybrid' && (
               <>
                 <div className="rounded-xl bg-amber-50 border border-amber-200/60 px-4 py-3 flex items-start gap-2.5">
                   <span className="text-[16px] flex-shrink-0">⚠️</span>
@@ -343,27 +343,27 @@ export default function PaymentClient({
               </>
             )}
 
-            {/* ── MODE: RTGS only (> ₹10L) ── */}
-            {payMode === 'rtgs' && (
+            {/* ── MODE: Bank transfer only (> ₹2L) — finance teams prefer NEFT/RTGS ── */}
+            {payMode === 'bank' && (
               <>
                 <div className="rounded-xl bg-blue-50 border border-blue-200/60 px-4 py-3 flex items-start gap-2.5">
                   <span className="text-[16px] flex-shrink-0">🏦</span>
                   <div>
-                    <p className="text-[13px] font-semibold text-blue-900">RTGS recommended for this amount</p>
-                    <p className="text-[12px] text-blue-700 mt-0.5 leading-relaxed">Amounts above ₹10 lakh use RTGS for same-day guaranteed settlement. UPI is not available for this transaction.</p>
+                    <p className="text-[13px] font-semibold text-blue-900">Bank transfer (NEFT / RTGS)</p>
+                    <p className="text-[12px] text-blue-700 mt-0.5 leading-relaxed">Use your bank's net banking or visit the branch. Share the UTR number once done — we'll confirm within 1 business day.</p>
                   </div>
                 </div>
 
                 {bankAccountNo ? (
                   <>
                     <div>
-                      <p className="text-[13px] font-semibold text-gray-700 mb-3">RTGS bank details</p>
+                      <p className="text-[13px] font-semibold text-gray-700 mb-3">Bank transfer details</p>
                       <div className="rounded-xl border border-[#EBEAE6] bg-white divide-y divide-[#EBEAE6]/60 overflow-hidden">
                         <BankRow label="Account holder" value={bankAccountName ?? ''} copyLabel="Name" />
                         <BankRow label="Account number" value={bankAccountNo} copyLabel="Account no." />
                         <BankRow label="IFSC code" value={bankIfsc ?? ''} copyLabel="IFSC" />
                         <div className="px-4 py-3">
-                          <p className="text-[11.5px] text-gray-400">Transfer type: <span className="font-semibold text-blue-700">RTGS</span> · Amount: <span className="font-semibold text-gray-900">{formattedAmount}</span></p>
+                          <p className="text-[11.5px] text-gray-400">Transfer type: <span className="font-semibold text-blue-700">NEFT / RTGS</span> · Amount: <span className="font-semibold text-gray-900">{formattedAmount}</span></p>
                         </div>
                       </div>
                     </div>
@@ -386,7 +386,7 @@ export default function PaymentClient({
 
                     <button onClick={() => setShowVerify(true)} className="w-full h-12 rounded-xl bg-gray-900 hover:bg-gray-800 text-white text-[14px] font-semibold transition-all flex items-center justify-center gap-2">
                       <svg viewBox="0 0 20 20" fill="none" className="w-4 h-4" aria-hidden="true"><path d="M4 10l4.5 4.5L16 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                      I&apos;ve made the RTGS transfer
+                      I&apos;ve made the bank transfer
                     </button>
                   </>
                 ) : (

@@ -25,7 +25,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     return new Response('Invoice not found', { status: 404 })
   }
 
-  const days = daysOverdue(invoice.dueDate)
+  const days = searchParams.get('day') ? parseInt(searchParams.get('day')!) : daysOverdue(invoice.dueDate)
   const tone = toneQuery || selectTone(days, invoice.reminderTone)
   const customerName = invoice.customer.contactName ?? invoice.customer.name
   const amount = formatINR(Number(invoice.amount))
