@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { formatINR } from '@/lib/utils/currency'
 
@@ -183,7 +184,7 @@ export default function PaymentClient({
   upiId, upiLink, bankAccountNo, bankIfsc, bankAccountName,
   payMode, parts, isPaid, description,
 }: Props) {
-
+  const router = useRouter()
   const [showVerify, setShowVerify] = useState(false)
   const [activePartIdx, setActivePartIdx] = useState(0)
 
@@ -334,7 +335,7 @@ export default function PaymentClient({
                       <BankRow label="IFSC code" value={bankIfsc ?? ''} copyLabel="IFSC" />
                       <div className="px-4 py-3"><p className="text-[11.5px] text-gray-400">Transfer type: <span className="font-semibold text-gray-600">NEFT</span> · Amount: <span className="font-semibold text-gray-900">{formattedAmount}</span></p></div>
                     </div>
-                    <button onClick={() => setShowVerify(true)} className="mt-3 w-full h-11 rounded-xl bg-gray-900 hover:bg-gray-800 text-white text-[13.5px] font-semibold transition-all flex items-center justify-center gap-2">
+                    <button onClick={() => router.push(`/pay/${invoiceId}/confirm`)} className="mt-3 w-full h-11 rounded-xl bg-gray-900 hover:bg-gray-800 text-white text-[13.5px] font-semibold transition-all flex items-center justify-center gap-2">
                       <svg viewBox="0 0 20 20" fill="none" className="w-4 h-4" aria-hidden="true"><path d="M4 10l4.5 4.5L16 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                       I&apos;ve made the NEFT transfer
                     </button>
@@ -384,7 +385,7 @@ export default function PaymentClient({
                       ))}
                     </div>
 
-                    <button onClick={() => setShowVerify(true)} className="w-full h-12 rounded-xl bg-gray-900 hover:bg-gray-800 text-white text-[14px] font-semibold transition-all flex items-center justify-center gap-2">
+                    <button onClick={() => router.push(`/pay/${invoiceId}/confirm`)} className="w-full h-12 rounded-xl bg-gray-900 hover:bg-gray-800 text-white text-[14px] font-semibold transition-all flex items-center justify-center gap-2">
                       <svg viewBox="0 0 20 20" fill="none" className="w-4 h-4" aria-hidden="true"><path d="M4 10l4.5 4.5L16 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                       I&apos;ve made the bank transfer
                     </button>

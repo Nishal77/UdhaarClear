@@ -155,7 +155,7 @@ function shell(opts: ShellOptions): string {
             <td style="padding:20px;text-align:center">
               <div style="font-size:13.5px;font-weight:600;color:#0f172a;margin-bottom:6px">Paid via bank transfer?</div>
               <p style="font-size:12px;color:#475569;margin:0 0 16px;line-height:1.5">Share your UTR / transaction ID and we'll mark this invoice as settled.</p>
-              <a href="${params.paymentLink}?proof=1" style="display:inline-block;background:#376E55;color:#ffffff;border-radius:6px;padding:10px 24px;font-size:12.5px;font-weight:500;text-decoration:none">Submit UTR</a>
+              <a href="${params.paymentLink}/confirm" style="display:inline-block;background:#376E55;color:#ffffff;border-radius:6px;padding:10px 24px;font-size:12.5px;font-weight:500;text-decoration:none">Submit UTR</a>
             </td>
           </tr>
         </table>`

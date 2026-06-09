@@ -97,7 +97,7 @@ export function CustomerDetail({ customer }: CustomerDetailProps) {
   const { invoices } = customer
 
   const outstanding = invoices
-    .filter((i) => ['PENDING', 'DUE', 'OVERDUE', 'PARTIALLY_PAID'].includes(i.status))
+    .filter((i) => ['PENDING', 'DUE', 'OVERDUE', 'PENDING_CONFIRMATION', 'PARTIALLY_PAID'].includes(i.status))
     .reduce((s, i) => s + Number(i.amount), 0)
 
   const overdue = invoices

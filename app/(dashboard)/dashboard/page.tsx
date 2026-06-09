@@ -11,6 +11,7 @@ import { RecoveryTrend } from '@/components/dashboard/RecoveryTrend'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { SentIcon, Share03Icon } from '@hugeicons/core-free-icons'
 import { Dot } from 'lucide-react'
+import { IncomingPayments } from '@/components/dashboard/IncomingPayments'
 
 async function getDashboardData(businessId: string) {
   const now = new Date()
@@ -18,10 +19,10 @@ async function getDashboardData(businessId: string) {
   const today = new Date(now)
   today.setHours(0, 0, 0, 0)
 
-  const [outstandingAgg, overdueAgg, collectedAgg, reminderCount, topDefaultersRaw, recentReminders, recentPaid, overdueInvoicesRaw] =
+  const [outstandingAgg, overdueAgg, collectedAgg, reminderCount, topDefaultersRaw, recentReminders, recentPaid, overdueInvoicesRaw, pendingConfirmationsRaw] =
     await Promise.all([
       prisma.invoice.aggregate({
-        where: { businessId, status: { in: ['PENDING', 'DUE', 'OVERDUE', 'PARTIALLY_PAID'] } },
+        where: { businessId, status: { in: ['PENDING', 'DUE', 'OVERDUE', 'PENDING_CONFIRMATION', 'PARTIALLY_PAID'] } },
         _sum: { amount: true },
         _count: true,
       }),
@@ -61,6 +62,11 @@ async function getDashboardData(businessId: string) {
         include: { customer: true },
         orderBy: { dueDate: 'asc' },
         take: 5,
+      }),
+      prisma.invoice.findMany({
+        where: { businessId, status: 'PENDING_CONFIRMATION' },
+        include: { customer: true },
+        orderBy: { updatedAt: 'desc' },
       }),
     ])
 
@@ -148,6 +154,17 @@ async function getDashboardData(businessId: string) {
     })
   )
 
+  const pendingConfirmations = pendingConfirmationsRaw.map((inv) => ({
+    id: inv.id,
+    invoiceNumber: inv.invoiceNumber,
+    customerName: inv.customer.name,
+    amount: Number(inv.amount),
+    dueDate: inv.dueDate.toISOString(),
+    paymentRef: inv.paymentRef,
+    documentUrl: inv.documentUrl,
+    updatedAt: inv.updatedAt.toISOString(),
+  }))
+
   return {
     stats: {
       totalOutstanding: Number(outstandingAgg._sum.amount ?? 0),
@@ -162,6 +179,7 @@ async function getDashboardData(businessId: string) {
     overdueInvoices,
     activities,
     chartData,
+    pendingConfirmations,
   }
 }
 
@@ -179,7 +197,7 @@ export default async function DashboardPage() {
 
   if (!dbUser?.ownedBusiness) redirect('/onboarding')
 
-  const { stats, overdueInvoices, activities, chartData } = await getDashboardData(
+  const { stats, overdueInvoices, activities, chartData, pendingConfirmations } = await getDashboardData(
     dbUser.ownedBusiness.id
   )
 
@@ -521,6 +539,9 @@ export default async function DashboardPage() {
           </button>
         </div>
       </div>
+
+      {/* ── Incoming Payments Section ── */}
+      <IncomingPayments initialConfirmations={pendingConfirmations} />
 
       {/* ── Unified Dashboard Stats & Trackers Panel ── */}
       <div className="bg-white border border-[#EBEAE6]/60 rounded-[32px] overflow-hidden flex flex-col">

@@ -176,6 +176,7 @@ export default async function InvoicesPage({
   let overdueCount = 0
   let dueCount = 0
   let pendingCount = 0
+  let pendingConfirmationCount = 0
   let paidCount = 0
 
   if (isSampleData) {
@@ -183,10 +184,11 @@ export default async function InvoicesPage({
     overdueCount = SAMPLE_INVOICES.filter(i => i.status === 'OVERDUE').length
     dueCount = SAMPLE_INVOICES.filter(i => i.status === 'DUE').length
     pendingCount = SAMPLE_INVOICES.filter(i => i.status === 'PENDING').length
+    pendingConfirmationCount = 0
     paidCount = SAMPLE_INVOICES.filter(i => i.status === 'PAID').length
 
     totalOutstanding = SAMPLE_INVOICES
-      .filter((i) => ['PENDING', 'DUE', 'OVERDUE', 'PARTIALLY_PAID'].includes(i.status))
+      .filter((i) => ['PENDING', 'DUE', 'OVERDUE', 'PENDING_CONFIRMATION', 'PARTIALLY_PAID'].includes(i.status))
       .reduce((sum, i) => sum + i.amount, 0)
 
     overdueSum = SAMPLE_INVOICES
@@ -210,6 +212,7 @@ export default async function InvoicesPage({
       dbOverdueCount,
       dbDueCount,
       dbPendingCount,
+      dbPendingConfirmationCount,
       dbPaidCount
     ] = await Promise.all([
       prisma.invoice.aggregate({
@@ -228,13 +231,14 @@ export default async function InvoicesPage({
         _count: true,
       }),
       prisma.invoice.aggregate({
-        where: { businessId, status: { in: ['PENDING', 'DUE', 'OVERDUE', 'PARTIALLY_PAID'] } },
+        where: { businessId, status: { in: ['PENDING', 'DUE', 'OVERDUE', 'PENDING_CONFIRMATION', 'PARTIALLY_PAID'] } },
         _sum: { amount: true },
       }),
       prisma.invoice.count({ where: { businessId } }),
       prisma.invoice.count({ where: { businessId, status: 'OVERDUE' } }),
       prisma.invoice.count({ where: { businessId, status: 'DUE' } }),
       prisma.invoice.count({ where: { businessId, status: 'PENDING' } }),
+      prisma.invoice.count({ where: { businessId, status: 'PENDING_CONFIRMATION' } }),
       prisma.invoice.count({ where: { businessId, status: 'PAID' } }),
     ])
 
@@ -242,6 +246,7 @@ export default async function InvoicesPage({
     overdueCount = dbOverdueCount
     dueCount = dbDueCount
     pendingCount = dbPendingCount
+    pendingConfirmationCount = dbPendingConfirmationCount
     paidCount = dbPaidCount
 
     totalOutstanding = Number(totalAgg._sum.amount ?? 0)
@@ -253,7 +258,7 @@ export default async function InvoicesPage({
   // Aging calculations (for unpaid/outstanding invoices: PENDING, DUE, OVERDUE)
   const unpaidInvoicesForAging = isSampleData
     ? SAMPLE_INVOICES.filter(i => ['PENDING', 'DUE', 'OVERDUE'].includes(i.status))
-    : realInvoices.filter(i => ['PENDING', 'DUE', 'OVERDUE', 'PARTIALLY_PAID'].includes(i.status))
+    : realInvoices.filter(i => ['PENDING', 'DUE', 'OVERDUE', 'PENDING_CONFIRMATION', 'PARTIALLY_PAID'].includes(i.status))
 
   let onTrackCount = 0     // 0-7 days
   let watchingCount = 0    // 8-21 days
@@ -428,6 +433,7 @@ export default async function InvoicesPage({
           OVERDUE: overdueCount,
           DUE: dueCount,
           PENDING: pendingCount,
+          PENDING_CONFIRMATION: pendingConfirmationCount,
           PAID: paidCount,
         }}
         activeStatus={status}

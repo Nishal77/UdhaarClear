@@ -30,6 +30,7 @@ export default function InvoiceDetailPage() {
   const [loading, setLoading] = useState(true)
   const [sending, setSending] = useState(false)
   const [markingPaid, setMarkingPaid] = useState(false)
+  const [rejecting, setRejecting] = useState(false)
 
   useEffect(() => {
     fetch(`/api/invoices/${id}`)
@@ -95,6 +96,29 @@ export default function InvoiceDetailPage() {
     }
   }
 
+  async function rejectConfirmation() {
+    if (!invoice) return
+    setRejecting(true)
+    try {
+      const days = daysOverdue(invoice.dueDate)
+      const res = await fetch(`/api/invoices/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          status: days > 0 ? 'OVERDUE' : days === 0 ? 'DUE' : 'PENDING',
+          autoReminder: true,
+          paymentRef: null,
+        }),
+      })
+      if (!res.ok) { toast.error('Failed to reject verification'); return }
+      toast.success('UTR verification rejected. Reminders resumed.')
+      const d = await res.json()
+      setInvoice((prev) => prev ? { ...prev, ...d.invoice } : null)
+    } finally {
+      setRejecting(false)
+    }
+  }
+
   if (loading) return <PageLoader />
   if (!invoice) return <p className="text-gray-500 p-8">Invoice not found</p>
 
@@ -111,6 +135,72 @@ export default function InvoiceDetailPage() {
         <span>›</span>
         <span className="font-medium text-gray-700">{invoice.invoiceNumber}</span>
       </nav>
+
+      {/* ── Payment Verification Required Notice (Pending confirmation) ── */}
+      {invoice.status === 'PENDING_CONFIRMATION' && (
+        <div className="rounded-[22px] border border-indigo-200 bg-gradient-to-br from-indigo-50/20 via-white to-indigo-50/5 p-6 shadow-[0_4px_20px_rgba(79,70,229,0.03)] select-none">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
+            <div className="flex items-start gap-4">
+              <div className="w-11 h-11 rounded-2xl bg-indigo-100 border border-indigo-200/40 flex items-center justify-center text-indigo-600 shrink-0">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                  <path d="M12 8v4"></path>
+                  <path d="M12 16h.01"></path>
+                </svg>
+              </div>
+              <div className="space-y-1">
+                <h2 className="text-[15.5px] font-extrabold text-gray-900 tracking-tight flex items-center gap-2">
+                  <span>Payment Verification Required</span>
+                  <span className="inline-flex items-center rounded-full bg-indigo-600 px-2 py-0.5 text-[9px] font-bold text-white select-none">
+                    Action Needed
+                  </span>
+                </h2>
+                <p className="text-[13px] text-gray-500 font-medium leading-relaxed max-w-[580px]">
+                  Customer self-reported a direct bank transfer of <strong className="text-gray-700">{formatINRCompact(Number(invoice.amount))}</strong>. 
+                  Automatic reminders have been paused while verification is pending.
+                </p>
+                <div className="flex flex-wrap items-center gap-3 pt-1">
+                  <span className="text-xs font-bold text-indigo-700 bg-indigo-50 border border-indigo-100/50 rounded-lg px-2.5 py-1 font-mono">
+                    UTR: {invoice.paymentRef}
+                  </span>
+                  {invoice.paymentMethod && (
+                    <span className="text-xs text-gray-500 font-medium bg-gray-50 border border-gray-100 rounded-lg px-2.5 py-1">
+                      Corridor: {invoice.paymentMethod}
+                    </span>
+                  )}
+                  {invoice.documentUrl && (
+                    <a 
+                      href={invoice.documentUrl} 
+                      target="_blank" 
+                      rel="noreferrer"
+                      className="text-xs text-[#FF6A39] hover:text-[#E05B2E] underline font-bold flex items-center gap-1"
+                    >
+                      <span>View Screenshot Receipt 📷</span>
+                    </a>
+                  )}
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-2.5 shrink-0 self-end md:self-center">
+              <button
+                onClick={rejectConfirmation}
+                disabled={rejecting}
+                className="px-4 py-2.5 rounded-xl border border-rose-200 text-rose-700 bg-white hover:bg-rose-50/60 font-semibold text-xs transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-40"
+              >
+                {rejecting ? 'Rejecting...' : 'Reject UTR'}
+              </button>
+              <button
+                onClick={markPaid}
+                disabled={markingPaid}
+                className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs transition-all shadow-sm flex items-center gap-1.5 cursor-pointer disabled:opacity-40 border-0"
+              >
+                {markingPaid ? 'Approving...' : 'Approve & Mark Paid'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── Hero Header Card ── */}
       <div className="rounded-[22px] bg-white border border-[#EBEAE6]/60 overflow-hidden">
@@ -243,6 +333,17 @@ export default function InvoiceDetailPage() {
             <InfoRow icon={Clock01Icon} label="Credit Days" value={`${invoice.creditDays} days`} />
             <InfoRow icon={SentIcon} label="Reminder Tone" value={invoice.reminderTone} />
             <InfoRow icon={CheckmarkCircle01Icon} label="Auto Reminder" value={invoice.autoReminder ? 'Active' : 'Disabled'} />
+            {invoice.paymentRef && (
+              <InfoRow 
+                icon={CheckmarkCircle01Icon} 
+                label="UTR / Ref No" 
+                value={
+                  <span className="font-mono font-bold text-indigo-700 bg-indigo-50 border border-indigo-100 rounded px-1.5 py-0.5 select-all">
+                    {invoice.paymentRef}
+                  </span>
+                } 
+              />
+            )}
 
             {/* ── Recovery Schedule ── */}
             {!isPaid && (
@@ -267,6 +368,34 @@ export default function InvoiceDetailPage() {
               <div className="mt-3.5 rounded-xl bg-gray-50 p-4 border border-[#EBEAE6]/50">
                 <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-1">Description</p>
                 <p className="text-[13px] text-gray-600 leading-relaxed">{invoice.description}</p>
+              </div>
+            )}
+
+            {invoice.documentUrl && (
+              <div className="mt-3.5 rounded-xl bg-gray-50 p-4 border border-[#EBEAE6]/50">
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-1">
+                  {invoice.status === 'PENDING_CONFIRMATION' ? 'Awaiting Verification Proof' : 'Attached Document'}
+                </p>
+                <div className="flex flex-col gap-2">
+                  <a
+                    href={invoice.documentUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-xs text-[#FF6A39] hover:text-[#E05B2E] underline font-semibold break-all flex items-center gap-1.5"
+                  >
+                    <span>View Submitted Receipt / Screenshot</span>
+                  </a>
+                  {invoice.documentUrl.includes('payment-proofs') && (
+                    <div className="mt-1">
+                      <img 
+                        src={invoice.documentUrl} 
+                        alt="Payment proof screenshot" 
+                        className="max-h-48 w-auto rounded-lg border border-[#EBEAE6] object-contain cursor-pointer hover:opacity-90 transition-opacity" 
+                        onClick={() => window.open(invoice.documentUrl!, '_blank')}
+                      />
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </div>

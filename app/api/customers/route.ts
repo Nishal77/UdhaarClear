@@ -32,7 +32,7 @@ export async function GET(request: Request) {
 
   const customersWithSummary = customers.map((c) => {
     const totalOutstanding = c.invoices
-      .filter((i) => ['PENDING', 'DUE', 'OVERDUE', 'PARTIALLY_PAID'].includes(i.status))
+      .filter((i) => ['PENDING', 'DUE', 'OVERDUE', 'PENDING_CONFIRMATION', 'PARTIALLY_PAID'].includes(i.status))
       .reduce((sum, i) => sum + Number(i.amount), 0)
     const overdueInvoices = c.invoices.filter((i) => i.status === 'OVERDUE')
     const totalOverdue = overdueInvoices.reduce((sum, i) => sum + Number(i.amount), 0)

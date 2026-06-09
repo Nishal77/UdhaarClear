@@ -14,7 +14,7 @@ export async function GET() {
 
   const [outstandingResult, overdueResult, collectedResult, reminderCount] = await Promise.all([
     prisma.invoice.aggregate({
-      where: { businessId, status: { in: ['PENDING', 'DUE', 'OVERDUE', 'PARTIALLY_PAID'] } },
+      where: { businessId, status: { in: ['PENDING', 'DUE', 'OVERDUE', 'PENDING_CONFIRMATION', 'PARTIALLY_PAID'] } },
       _sum: { amount: true },
     }),
     prisma.invoice.aggregate({

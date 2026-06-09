@@ -24,7 +24,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
   if (!customer) return apiError('NOT_FOUND', 'Customer not found', 404)
 
   const outstanding = customer.invoices
-    .filter((i) => ['PENDING', 'DUE', 'OVERDUE', 'PARTIALLY_PAID'].includes(i.status))
+    .filter((i) => ['PENDING', 'DUE', 'OVERDUE', 'PENDING_CONFIRMATION', 'PARTIALLY_PAID'].includes(i.status))
     .reduce((sum, i) => sum + Number(i.amount), 0)
   const overdue = customer.invoices
     .filter((i) => i.status === 'OVERDUE')

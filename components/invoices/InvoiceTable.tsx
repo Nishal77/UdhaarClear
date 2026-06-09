@@ -20,6 +20,7 @@ const STATUS_TABS = [
   { label: 'Overdue',  value: 'OVERDUE' },
   { label: 'Due',      value: 'DUE' },
   { label: 'Pending',  value: 'PENDING' },
+  { label: 'Awaiting Confirm', value: 'PENDING_CONFIRMATION' },
   { label: 'Paid',     value: 'PAID' },
 ] as const
 
@@ -99,13 +100,7 @@ export function InvoiceTable({
   activeStatus,
 }: {
   invoices: ClientInvoice[]
-  counts: {
-    ALL: number
-    OVERDUE: number
-    DUE: number
-    PENDING: number
-    PAID: number
-  }
+  counts: Record<string, number>
   activeStatus: string | undefined
 }) {
   const router = useRouter()
@@ -224,6 +219,8 @@ export function InvoiceTable({
               indicator = <span className="h-1.5 w-1.5 rounded-full bg-amber-400 flex-shrink-0" />
             } else if (tab.value === 'PENDING') {
               indicator = <span className="h-1.5 w-1.5 rounded-full bg-blue-500 flex-shrink-0" />
+            } else if (tab.value === 'PENDING_CONFIRMATION') {
+              indicator = <span className="h-1.5 w-1.5 rounded-full bg-indigo-500 flex-shrink-0 animate-pulse" />
             } else if (tab.value === 'PAID') {
               indicator = <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 flex-shrink-0" />
             }

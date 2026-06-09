@@ -9,10 +9,19 @@ const patchSchema = z.object({
   reminderTone: z.enum(['GENTLE', 'FIRM', 'LEGAL']).optional(),
   autoReminder: z.boolean().optional(),
   remindersPaused: z.boolean().optional(),
-  status: z.enum(['PAID', 'DISPUTED', 'WRITTEN_OFF', 'PARTIALLY_PAID']).optional(),
+  status: z.enum([
+    'PENDING',
+    'DUE',
+    'OVERDUE',
+    'PENDING_CONFIRMATION',
+    'PARTIALLY_PAID',
+    'PAID',
+    'DISPUTED',
+    'WRITTEN_OFF'
+  ]).optional(),
   paidAmount: z.number().positive().optional(),
   paymentMethod: z.string().optional(),
-  paymentRef: z.string().optional(),
+  paymentRef: z.string().nullable().optional(),
 })
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
