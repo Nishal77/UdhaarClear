@@ -131,7 +131,7 @@ export default function Navbar() {
           Sign in
         </Link>
         <Link
-          href="/login"
+          href="/signup"
           className="inline-flex items-center justify-center gap-1.5 px-4.5 py-2.5 text-[12.5px] font-medium text-white bg-[#262624] hover:bg-gray-800 active:scale-95 rounded-full transition-all duration-200 shrink-0"
         >
           <span>Create account</span>

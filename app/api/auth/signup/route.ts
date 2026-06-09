@@ -5,9 +5,9 @@ import { sendEmail } from '@/lib/email/client'
 import { otpVerificationEmail } from '@/lib/email/templates/otp-verification'
 
 const signupSchema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters'),
   email: z.string().email('Invalid email'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
+  name: z.string().optional(),
 })
 
 export async function POST(request: Request) {
@@ -20,7 +20,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: message }, { status: 400 })
   }
 
-  const { name, email, password } = parsed.data
+  const { email, password } = parsed.data
+  const name = parsed.data.name || email.split('@')[0]
 
   // Check Supabase Auth directly — the public.users table may lag or be missing
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
