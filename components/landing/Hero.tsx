@@ -23,7 +23,7 @@ export default function Hero() {
       <section 
         className="relative bg-neutral-950 bg-cover bg-center bg-no-repeat overflow-hidden flex flex-col items-center justify-start pt-24"
         style={{
-          backgroundImage: "url('/hero99.jpeg')"
+          backgroundImage: "url('/heronew.png')"
         }}
       >
       
@@ -37,15 +37,26 @@ export default function Hero() {
         />
         
         {/* Main Content (Centered) */}
-        <div className="relative max-w-[1340px] mx-auto px-8 flex flex-col items-center text-center justify-center w-full z-10 pt-16 lg:pt-24 space-y-10">
+        <div className="relative max-w-[1340px] mx-auto px-8 flex flex-col items-center text-center justify-center w-full z-10 pt-16 lg:pt-24 space-y-8">
           
-          {/* Main Heading */}
-          <h1 className="text-5xl md:text-[4rem] font-medium text-white tracking-tight max-w-5xl">
-            The fastest way to recover unpaid dues from your customers without a single phone call.
-          </h1>
+          <div className="flex flex-col items-center space-y-4">
+            {/* Announcement Badge */}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-gray-500/20 bg-gray-500/5 hover:bg-gray-500/10 text-gray-800 text-xs font-semibold tracking-tight transition-all duration-200 select-none cursor-pointer shadow-sm">
+              <span className="flex h-2 w-2 rounded-full bg-gray-500 animate-pulse" />
+              <span className="text-[11px] md:text-xs">Built for Indian MSMEs — Reclaim outstanding dues automatically</span>
+              <svg className="w-3 h-3 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+
+            {/* Main Heading */}
+            <h1 className="text-5xl md:text-[4rem] font-medium text-black tracking-tight max-w-5xl">
+              The fastest way to recover unpaid dues from your customers without a single phone call.
+            </h1>
+          </div>
 
           {/* Paragraph Description */}
-          <p className="text-gray-300 text-lg md:text-xl leading-relaxed max-w-3xl mx-auto font-normal">
+          <p className="text-gray-600 text-lg md:text-xl leading-relaxed max-w-3xl mx-auto font-normal">
             UdhaarClear sends smart WhatsApp reminders that escalate from polite to legal, with a one tap UPI payment link in every message. Stop chasing. Start collecting.
           </p>
 
