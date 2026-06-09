@@ -20,29 +20,37 @@ export default function Hero() {
         `
       }} />
 
-      {/* Ensured no min-h-screen and no bottom padding on the section */}
       <section 
-        className="relative bg-white bg-cover bg-center bg-no-repeat overflow-hidden flex flex-col items-center justify-start pt-24"
+        className="relative bg-neutral-950 bg-cover bg-center bg-no-repeat overflow-hidden flex flex-col items-center justify-start pt-24"
         style={{
           backgroundImage: "url('/hero99.jpeg')"
         }}
       >
+      
+
+        {/* Noise overlay */}
+        <div 
+          className="absolute inset-0 opacity-[0.035] mix-blend-overlay pointer-events-none z-0" 
+          style={{
+            backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E\")"
+          }}
+        />
         
         {/* Main Content (Centered) */}
         <div className="relative max-w-[1340px] mx-auto px-8 flex flex-col items-center text-center justify-center w-full z-10 pt-16 lg:pt-24 space-y-10">
           
           {/* Main Heading */}
-          <h1 className="text-5xl md:text-[4rem] font-medium text-gray-900 tracking-tight max-w-5xl">
+          <h1 className="text-5xl md:text-[4rem] font-medium text-white tracking-tight max-w-5xl">
             The fastest way to recover unpaid dues from your customers without a single phone call.
           </h1>
 
           {/* Paragraph Description */}
-          <p className="text-gray-700 text-lg md:text-xl leading-relaxed max-w-3xl mx-auto font-normal">
+          <p className="text-gray-300 text-lg md:text-xl leading-relaxed max-w-3xl mx-auto font-normal">
             UdhaarClear sends smart WhatsApp reminders that escalate from polite to legal, with a one tap UPI payment link in every message. Stop chasing. Start collecting.
           </p>
 
           {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          {/* <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               href="#"
               className="inline-flex items-center justify-center bg-[#0047FF] hover:bg-blue-700 active:scale-95 text-white font-medium px-8 py-4 rounded-full shadow-lg shadow-blue-500/15 transition-all duration-200 text-base select-none"
@@ -58,7 +66,7 @@ export default function Hero() {
               </svg>
               Schedule a Demo
             </button>
-          </div>
+          </div> */}
         </div>
 
         {/* Dashboard Mockup Image */}
