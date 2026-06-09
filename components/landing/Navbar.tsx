@@ -1,86 +1,69 @@
 "use client";
 
 import Link from "next/link";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { ArrowRight01Icon } from "@hugeicons/core-free-icons";
 
 export default function Navbar() {
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-4 mt-6 max-w-[1340px] mx-auto transition-all duration-300">
+    <nav className="fixed top-5 left-1/2 -translate-x-1/2 w-[95%] max-w-[1140px] z-50 flex items-center justify-between pl-6 pr-2 py-2 rounded-2xl bg-white/[0.8] hover:bg-white/[0.9] backdrop-blur-md border border-black/[0.08] hover:border-black/[0.15] shadow-[0_12px_32px_rgba(0,0,0,0.03)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.06)] select-none transition-all duration-300">
       {/* Logo */}
-      <Link href="#" className="flex items-center gap-2 group select-none">
-        <div className="flex items-center justify-center w-8 h-8 rounded-lg text-[#0047FF]">
-          <svg className="w-7 h-7 transform group-hover:rotate-6 transition-transform duration-300 ease-out" viewBox="0 0 32 32" fill="currentColor">
-            {/* Left pill */}
-            <rect x="7" y="14" width="5" height="14" rx="2.5" transform="rotate(-35 7 14)" />
-            {/* Right pill */}
-            <rect x="15" y="9.5" width="5" height="14" rx="2.5" transform="rotate(-35 15 9.5)" />
-          </svg>
+      <Link href="#" className="flex items-center gap-2.5 group">
+        <div className="flex items-center justify-center w-7.5 h-7.5 rounded-lg bg-gray-900 shrink-0">
+          {/* Yellow/Gold brand glyph matching Zite icon style but representing 'U' */}
+          <span className="text-[#FFC72C] font-black text-[15.5px] tracking-tight">U</span>
         </div>
-        <span className="text-2xl font-medium tracking-tight text-gray-900">UdhaarClear</span>
+        <span className="text-[17px] font-bold tracking-tight text-gray-950">UdhaarClear</span>
       </Link>
 
-      {/* Center Navigation Pill */}
-      <div className="hidden md:flex items-center gap-1 bg-gray-200 rounded-full p-1.5">
-        <Link
-          href="#"
-          className="flex items-center px-5 py-2 text-base font-medium text-[#0047FF] bg-[#EEF2FF] rounded-full transition-all duration-200"
-        >
-          <span className="w-1.5 h-1.5 rounded-full bg-[#0047FF] mr-2 shrink-0" />
-          Product
+      {/* Navigation Links */}
+      <div className="hidden md:flex items-center gap-7">
+        <div className="relative group cursor-pointer">
+          <span className="flex items-center gap-1 text-[13.5px] font-semibold text-gray-700 hover:text-gray-950 transition-colors">
+            Product
+            <svg className="w-3 h-3 text-gray-400 group-hover:text-gray-600 transition-colors translate-y-[0.5px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            </svg>
+          </span>
+        </div>
+
+        <Link href="#how-it-works" className="text-[13.5px] font-medium text-gray-700 hover:text-gray-950 transition-colors">
+          How it works
         </Link>
-        <Link
-          href="#"  
-          className="px-5 py-2 text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-200/30 rounded-full transition-all duration-200"
-        >
-        How it works
+
+        <Link href="#features" className="text-[13.5px] font-medium text-gray-700 hover:text-gray-950 transition-colors">
+          Features
         </Link>
-        <Link
-          href="#"
-          className="px-5 py-2 text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-200/30 rounded-full transition-all duration-200"
-        >
-          Features 
-        </Link>
-        <Link
-          href="#pricing"
-          className="px-5 py-2 text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-200/30 rounded-full transition-all duration-200"
-        >
+
+        <Link href="#pricing" className="text-[13.5px] font-medium text-gray-700 hover:text-gray-950 transition-colors">
           Pricing
         </Link>
-        <Link
-          href="#"
-          className="px-5 py-2 text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-200/30 rounded-full transition-all duration-200"
-        >
+
+        <Link href="#who-it-helps" className="text-[13.5px] font-medium text-gray-700 hover:text-gray-950 transition-colors">
           For CAs
         </Link>
-        <Link
-          href="#"
-          className="px-5 py-2 text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-200/30 rounded-full transition-all duration-200"
-        >
-          Resources
-        </Link>
-        {/* <Link
-          href="#"
-          className="px-5 py-2 text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-200/30 rounded-full transition-all duration-200"
-        >
-          Blog
-        </Link>
-        <Link
-          href="#"
-          className="px-5 py-2 text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-200/30 rounded-full transition-all duration-200"
-        >
-          All pages
-        </Link> */}
+
+        <div className="relative group cursor-pointer">
+          <span className="flex items-center gap-1 text-[13.5px] font-medium text-gray-700 hover:text-gray-950 transition-colors">
+            Resources
+            <svg className="w-3 h-3 text-gray-400 group-hover:text-gray-600 transition-colors translate-y-[0.5px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            </svg>
+          </span>
+        </div>
       </div>
 
-      {/* Get Template Button */}
-      <div>
+      {/* Actions */}
+      <div className="flex items-center gap-3">
+        <Link href="/login" className="text-[13.5px] font-medium text-gray-700 hover:text-gray-950 px-3 py-2 transition-colors">
+          Sign in
+        </Link>
         <Link
           href="/login"
-          className="inline-flex items-center justify-center gap-1 px-7 py-3 text-base font-medium text-white bg-[#0140C1] rounded-full hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-500/20 active:scale-95 transition-all duration-200"
+          className="inline-flex items-center justify-center gap-1.5 px-4.5 py-2.5 text-[12.5px] font-medium text-white bg-[#262624] hover:bg-gray-800 active:scale-95 rounded-full transition-all duration-200 shrink-0"
         >
-          Login
-          <HugeiconsIcon icon={ArrowRight01Icon} size={16} />
+          <span>Create account</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="translate-y-[0.5px]">
+            <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
         </Link>
       </div>
     </nav>

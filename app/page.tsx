@@ -10,21 +10,11 @@ import ToneEngine from "@/components/landing/ToneEngine";
 import Pricing from "@/components/landing/Pricing";
 import FAQ from "@/components/landing/FAQ";
 import Footer from "@/components/landing/Footer";
-import GradualBlur from "@/components/ui/GradualBlur";
+import ChatWidget from "@/components/landing/ChatWidget";
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-white">
-      <GradualBlur
-        target="page"
-        position="top"
-        height="6.5rem"
-        strength={3}
-        divCount={8}
-        curve="bezier"
-        exponential={true}
-        style={{ zIndex: 40 }}
-      />
+    <div className="min-h-screen bg-white font-landing-system relative">
       <Navbar />
       <main>
         <Hero />
@@ -39,6 +29,7 @@ export default function LandingPage() {
         <FAQ />
         <Footer />
       </main>
+      <ChatWidget />
     </div>
   );
 }

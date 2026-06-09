@@ -24,7 +24,7 @@ export default function Hero() {
       <section 
         className="relative bg-white bg-cover bg-center bg-no-repeat overflow-hidden flex flex-col items-center justify-start pt-24"
         style={{
-          backgroundImage: "url('/hero2.jpg')"
+          backgroundImage: "url('/hero99.jpeg')"
         }}
       >
         

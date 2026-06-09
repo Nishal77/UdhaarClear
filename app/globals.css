@@ -116,3 +116,19 @@ body {
   animation-timing-function: cubic-bezier(0.19, 1, 0.22, 1);
 }
 
+/* Landing Page specific system font overrides (excluding headings) */
+.font-landing-system {
+  --font-outfit: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Ubuntu, Arial, sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Ubuntu, Arial, sans-serif;
+}
+
+.font-landing-system h1,
+.font-landing-system h2,
+.font-landing-system h3,
+.font-landing-system h4,
+.font-landing-system h5,
+.font-landing-system h6 {
+  --font-outfit: 'Outfit', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif !important;
+}
+
