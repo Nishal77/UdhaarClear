@@ -3,8 +3,23 @@ import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma/client'
 import Link from 'next/link'
 import { HugeiconsIcon } from '@hugeicons/react'
-import { CreditCardIcon, ArrowRight02Icon } from '@hugeicons/core-free-icons'
+import { CreditCardIcon } from '@hugeicons/core-free-icons'
 import { formatINRCompact } from '@/lib/utils/currency'
+
+function formatSettledDate(date: Date) {
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+  const d = new Date(date)
+  const day = d.getDate()
+  const month = months[d.getMonth()]
+  
+  let hours = d.getHours()
+  const minutes = d.getMinutes().toString().padStart(2, '0')
+  const ampm = hours >= 12 ? 'PM' : 'AM'
+  hours = hours % 12
+  hours = hours ? hours : 12 // 12-hour formatting
+  
+  return `${day} ${month}, ${hours}:${minutes} ${ampm}`
+}
 
 export default async function PaymentsPage() {
   const supabase = await createClient()
@@ -19,46 +34,57 @@ export default async function PaymentsPage() {
 
   const business = dbUser.ownedBusiness
 
-  // Mock static statistics for payments
+  // 1. Total Collected
+  const allInvoices = await prisma.invoice.findMany({
+    where: {
+      businessId: business.id,
+      paidAmount: { not: null }
+    },
+    select: {
+      paidAmount: true
+    }
+  })
+  const totalCollected = allInvoices.reduce((sum, inv) => sum + Number(inv.paidAmount ?? 0), 0)
+
+  // 2. Gateway Configuration
+  const gatewayName = business.wabaId || business.waConnected ? 'Razorpay' : 'UPI Link'
+  const gatewayDesc = business.wabaId || business.waConnected ? 'Smart Collect VA' : 'Direct Settlement'
+
+  // 3. Settled Invoices log
+  const settledInvoices = await prisma.invoice.findMany({
+    where: {
+      businessId: business.id,
+      status: { in: ['PAID', 'PARTIALLY_PAID'] },
+      paidAmount: { gt: 0 }
+    },
+    include: {
+      customer: true
+    },
+    orderBy: [
+      { paidAt: 'desc' },
+      { updatedAt: 'desc' }
+    ]
+  })
+
+  // Format the payments list to match the visual layout structure
+  const paymentsLog = settledInvoices.map((inv) => ({
+    id: inv.id,
+    customerName: inv.customer.name,
+    invoiceNumber: inv.invoiceNumber,
+    amount: Number(inv.paidAmount ?? 0),
+    method: inv.paymentMethod || 'UPI · Smart Collect',
+    reference: inv.paymentRef || '—',
+    settledAt: inv.paidAt ? formatSettledDate(inv.paidAt) : formatSettledDate(inv.updatedAt),
+    status: inv.status === 'PAID' ? 'SETTLED' : 'PARTIAL'
+  }))
+
   const stats = {
-    totalCollected: 1842000,
-    gateway: 'Razorpay Smart Collect',
+    totalCollected,
+    gateway: gatewayName,
+    gatewayDescription: gatewayDesc,
     speed: 'Instant UPI',
     successRate: 99.4
   }
-
-  const paymentsLog = [
-    {
-      id: 'tx-1',
-      customerName: 'Ramesh Traders Pvt. Ltd.',
-      invoiceNumber: 'INV-2026-001',
-      amount: 185000,
-      method: 'UPI · PhonePe',
-      reference: 'UPI88920194883',
-      settledAt: '31 May, 2:14 PM',
-      status: 'SETTLED'
-    },
-    {
-      id: 'tx-2',
-      customerName: 'Sunita Fabrics',
-      invoiceNumber: 'INV-2026-003',
-      amount: 88500,
-      method: 'UPI · GooglePay',
-      reference: 'UPI77218394882',
-      settledAt: '31 May, 10:45 AM',
-      status: 'SETTLED'
-    },
-    {
-      id: 'tx-3',
-      customerName: 'Priya Exports & Co.',
-      invoiceNumber: 'INV-2026-005',
-      amount: 47000,
-      method: 'UPI · PayTM',
-      reference: 'UPI44291884021',
-      settledAt: '29 May, 4:30 PM',
-      status: 'SETTLED'
-    }
-  ]
 
   return (
     <div className="space-y-6">
@@ -85,7 +111,7 @@ export default async function PaymentsPage() {
         </p>
       </div>
 
-      {/* ── Stat Cards (Unified split card) ── */}
+      {/* ── Stat Cards ── */}
       <div className="bg-white border border-[#EBEAE6]/60 rounded-[22px] overflow-hidden select-none">
         <div className="grid grid-cols-1 divide-y divide-[#EBEAE6]/60 md:grid-cols-4 md:divide-y-0 md:divide-x">
 
@@ -107,10 +133,10 @@ export default async function PaymentsPage() {
             <span className="text-[14px] font-medium text-black tracking-tight">Active Gateway</span>
             <div className="mt-2.5 flex items-baseline gap-1.5">
               <span className="text-[21px] font-bold text-gray-900 tracking-tight leading-none">
-                Razorpay
+                {stats.gateway}
               </span>
               <span className="text-[11px] text-gray-400 font-medium whitespace-nowrap">
-                Smart Collect VA
+                {stats.gatewayDescription}
               </span>
             </div>
           </div>
@@ -166,65 +192,77 @@ export default async function PaymentsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {paymentsLog.map((log, idx) => (
-                <tr key={log.id} className="group transition-colors hover:bg-gray-50/40">
-                  
-                  {/* Index */}
-                  <td className="px-6 py-4 text-[12px] font-medium text-gray-400 select-none whitespace-nowrap">
-                    {String(idx + 1).padStart(2, '0')}
+              {paymentsLog.length === 0 ? (
+                <tr>
+                  <td colSpan={8} className="px-6 py-12 text-center text-[13px] text-gray-400 font-medium select-none">
+                    No settled payments recorded yet.
                   </td>
-
-                  {/* Customer Info */}
-                  <td className="px-4 py-4">
-                    <span className="text-[14px] font-semibold text-gray-900 block leading-tight">
-                      {log.customerName}
-                    </span>
-                  </td>
-
-                  {/* Invoice badge */}
-                  <td className="px-4 py-4 whitespace-nowrap">
-                    <span className="inline-flex items-center rounded-lg bg-gray-100 px-2 py-0.5 text-[11px] font-mono font-semibold text-gray-700">
-                      {log.invoiceNumber}
-                    </span>
-                  </td>
-
-                  {/* Amount */}
-                  <td className="px-4 py-4 whitespace-nowrap">
-                    <span className="text-[14px] font-semibold text-gray-900 block">
-                      {formatINRCompact(log.amount)}
-                    </span>
-                  </td>
-
-                  {/* Payment Method */}
-                  <td className="px-4 py-4 whitespace-nowrap">
-                    <span className="text-[13px] text-gray-600 font-semibold">
-                      {log.method}
-                    </span>
-                  </td>
-
-                  {/* UPI Ref */}
-                  <td className="px-4 py-4 whitespace-nowrap">
-                    <span className="text-[12px] text-gray-400 font-mono font-semibold">
-                      {log.reference}
-                    </span>
-                  </td>
-
-                  {/* Timestamp */}
-                  <td className="px-4 py-4 whitespace-nowrap">
-                    <span className="text-[13px] text-gray-500 font-medium">
-                      {log.settledAt}
-                    </span>
-                  </td>
-
-                  {/* Status */}
-                  <td className="px-6 py-4 text-right whitespace-nowrap">
-                    <span className="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-bold text-emerald-600 select-none">
-                      {log.status}
-                    </span>
-                  </td>
-
                 </tr>
-              ))}
+              ) : (
+                paymentsLog.map((log, idx) => (
+                  <tr key={log.id} className="group transition-colors hover:bg-gray-50/40">
+                    
+                    {/* Index */}
+                    <td className="px-6 py-4 text-[12px] font-medium text-gray-400 select-none whitespace-nowrap">
+                      {String(idx + 1).padStart(2, '0')}
+                    </td>
+
+                    {/* Customer Info */}
+                    <td className="px-4 py-4">
+                      <span className="text-[14px] font-semibold text-gray-900 block leading-tight">
+                        {log.customerName}
+                      </span>
+                    </td>
+
+                    {/* Invoice badge */}
+                    <td className="px-4 py-4 whitespace-nowrap">
+                      <span className="inline-flex items-center rounded-lg bg-gray-100 px-2 py-0.5 text-[11px] font-mono font-semibold text-gray-700">
+                        {log.invoiceNumber}
+                      </span>
+                    </td>
+
+                    {/* Amount */}
+                    <td className="px-4 py-4 whitespace-nowrap">
+                      <span className="text-[14px] font-semibold text-gray-900 block">
+                        {formatINRCompact(log.amount)}
+                      </span>
+                    </td>
+
+                    {/* Payment Method */}
+                    <td className="px-4 py-4 whitespace-nowrap">
+                      <span className="text-[13px] text-gray-600 font-semibold">
+                        {log.method}
+                      </span>
+                    </td>
+
+                    {/* UPI Ref */}
+                    <td className="px-4 py-4 whitespace-nowrap">
+                      <span className="text-[12px] text-gray-400 font-mono font-semibold">
+                        {log.reference}
+                      </span>
+                    </td>
+
+                    {/* Timestamp */}
+                    <td className="px-4 py-4 whitespace-nowrap">
+                      <span className="text-[13px] text-gray-500 font-medium">
+                        {log.settledAt}
+                      </span>
+                    </td>
+
+                    {/* Status */}
+                    <td className="px-6 py-4 text-right whitespace-nowrap">
+                      <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-bold select-none ${
+                        log.status === 'SETTLED'
+                          ? 'bg-emerald-50 text-emerald-600'
+                          : 'bg-amber-50 text-amber-600'
+                      }`}>
+                        {log.status === 'SETTLED' ? 'SETTLED' : 'PARTIAL'}
+                      </span>
+                    </td>
+
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

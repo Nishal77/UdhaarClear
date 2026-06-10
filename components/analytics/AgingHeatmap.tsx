@@ -1,24 +1,20 @@
 'use client'
 
-import { useState } from 'react'
-import Link from 'next/link'
+import { useState, useEffect } from 'react'
 import { formatINRCompact } from '@/lib/utils/currency'
 import { toast } from 'sonner'
 import { HugeiconsIcon } from '@hugeicons/react'
 import {
-  Coins01Icon,
-  HourglassIcon,
   InvoiceIcon,
-  AiBrain01Icon,
-  Chart01Icon,
   Search01Icon,
   InformationCircleIcon,
   Mail01Icon,
   WhatsappIcon
 } from '@hugeicons/core-free-icons'
 
-// Mock Data structure for outstanding invoice details per cell
+// Data structures for outstanding invoice details per DPD cell
 interface DetailInvoice {
+  id: string
   invoiceNumber: string
   amount: number
   daysLate: number
@@ -46,124 +42,11 @@ interface HeatmapRow {
   }
 }
 
-const HEATMAP_DATA: HeatmapRow[] = [
-  {
-    id: 'c-1',
-    customerName: 'Reddy Enterprises',
-    riskLevel: 'HIGH',
-    current: 150000,
-    dpd_1_30: 80000,
-    dpd_31_45: 0,
-    dpd_46_60: 120000,
-    dpd_61_90: 0,
-    dpd_90_plus: 0,
-    invoices: {
-      current: [{ invoiceNumber: 'INV-2026-012', amount: 150000, daysLate: 0, dueDate: '15 Jun 2026', status: 'CURRENT' }],
-      dpd_1_30: [{ invoiceNumber: 'INV-2026-009', amount: 80000, daysLate: 15, dueDate: '20 May 2026', status: 'OVERDUE' }],
-      dpd_31_45: [],
-      dpd_46_60: [{ invoiceNumber: 'INV-2026-004', amount: 120000, daysLate: 50, dueDate: '15 Apr 2026', status: 'OVERDUE' }],
-      dpd_61_90: [],
-      dpd_90_plus: []
-    }
-  },
-  {
-    id: 'c-2',
-    customerName: 'Bharat Steel Works',
-    riskLevel: 'HIGH',
-    current: 0,
-    dpd_1_30: 0,
-    dpd_31_45: 640000,
-    dpd_46_60: 0,
-    dpd_61_90: 0,
-    dpd_90_plus: 0,
-    invoices: {
-      current: [],
-      dpd_1_30: [],
-      dpd_31_45: [{ invoiceNumber: 'INV-2026-002', amount: 640000, daysLate: 42, dueDate: '23 Apr 2026', status: 'OVERDUE' }],
-      dpd_46_60: [],
-      dpd_61_90: [],
-      dpd_90_plus: []
-    }
-  },
-  {
-    id: 'c-3',
-    customerName: 'MegaVision Electronics',
-    riskLevel: 'CRITICAL',
-    current: 0,
-    dpd_1_30: 350000,
-    dpd_31_45: 0,
-    dpd_46_60: 0,
-    dpd_61_90: 1850000,
-    dpd_90_plus: 0,
-    invoices: {
-      current: [],
-      dpd_1_30: [{ invoiceNumber: 'INV-2026-010', amount: 350000, daysLate: 22, dueDate: '13 May 2026', status: 'OVERDUE' }],
-      dpd_31_45: [],
-      dpd_46_60: [],
-      dpd_61_90: [{ invoiceNumber: 'INV-2026-006', amount: 1850000, daysLate: 72, dueDate: '24 Mar 2026', status: 'OVERDUE' }],
-      dpd_90_plus: []
-    }
-  },
-  {
-    id: 'c-4',
-    customerName: 'Tara Decoratives',
-    riskLevel: 'CRITICAL',
-    current: 50000,
-    dpd_1_30: 0,
-    dpd_31_45: 0,
-    dpd_46_60: 0,
-    dpd_61_90: 0,
-    dpd_90_plus: 120000,
-    invoices: {
-      current: [{ invoiceNumber: 'INV-2026-015', amount: 50000, daysLate: 0, dueDate: '22 Jun 2026', status: 'CURRENT' }],
-      dpd_1_30: [],
-      dpd_31_45: [],
-      dpd_46_60: [],
-      dpd_61_90: [],
-      dpd_90_plus: [{ invoiceNumber: 'INV-2026-007', amount: 120000, daysLate: 95, dueDate: '01 Mar 2026', status: 'OVERDUE' }]
-    }
-  },
-  {
-    id: 'c-5',
-    customerName: 'Karan Logistics Ltd.',
-    riskLevel: 'LOW',
-    current: 450000,
-    dpd_1_30: 0,
-    dpd_31_45: 0,
-    dpd_46_60: 0,
-    dpd_61_90: 0,
-    dpd_90_plus: 0,
-    invoices: {
-      current: [{ invoiceNumber: 'INV-2026-018', amount: 450000, daysLate: 0, dueDate: '18 Jun 2026', status: 'CURRENT' }],
-      dpd_1_30: [],
-      dpd_31_45: [],
-      dpd_46_60: [],
-      dpd_61_90: [],
-      dpd_90_plus: []
-    }
-  },
-  {
-    id: 'c-6',
-    customerName: 'Vertex Solutions Co.',
-    riskLevel: 'MEDIUM',
-    current: 0,
-    dpd_1_30: 0,
-    dpd_31_45: 89000,
-    dpd_46_60: 0,
-    dpd_61_90: 0,
-    dpd_90_plus: 0,
-    invoices: {
-      current: [],
-      dpd_1_30: [],
-      dpd_31_45: [{ invoiceNumber: 'INV-2026-011', amount: 89000, daysLate: 33, dueDate: '02 May 2026', status: 'OVERDUE' }],
-      dpd_46_60: [],
-      dpd_61_90: [],
-      dpd_90_plus: []
-    }
-  }
-]
-
 export function AgingHeatmap() {
+  const [heatmapData, setHeatmapData] = useState<HeatmapRow[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  
   const [searchQuery, setSearchQuery] = useState('')
   const [riskFilter, setRiskFilter] = useState<'ALL' | 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW'>('ALL')
   
@@ -176,9 +59,37 @@ export function AgingHeatmap() {
     totalAmount: number
   } | null>(null)
 
+  // Fetch live heatmap metrics from the backend API
+  useEffect(() => {
+    let isMounted = true
+    setLoading(true)
+    fetch('/api/analytics/heatmap')
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to fetch aging heatmap data')
+        return res.json()
+      })
+      .then((data) => {
+        if (isMounted) {
+          setHeatmapData(data)
+          setLoading(false)
+        }
+      })
+      .catch((err) => {
+        console.error('Heatmap fetch error:', err)
+        if (isMounted) {
+          setError(err.message || 'Failed to fetch aging heatmap data')
+          setLoading(false)
+        }
+      })
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
   // Calculations for sums of columns
   const getFilteredRows = () => {
-    return HEATMAP_DATA.filter((row) => {
+    return heatmapData.filter((row) => {
       const matchesSearch = row.customerName.toLowerCase().includes(searchQuery.toLowerCase())
       const matchesRisk = riskFilter === 'ALL' || row.riskLevel === riskFilter
       return matchesSearch && matchesRisk
@@ -248,8 +159,74 @@ export function AgingHeatmap() {
     setInspectorOpen(true)
   }
 
-  const triggerSimulatedReminder = (invNum: string, type: 'whatsapp' | 'email') => {
-    toast.success(`Reminder sent for ${invNum} via ${type === 'whatsapp' ? 'WhatsApp' : 'Email'}`)
+  // Dispatch real manual email or WhatsApp reminders using the remind API
+  const triggerReminder = async (invoiceId: string, type: 'whatsapp' | 'email') => {
+    const promise = fetch(`/api/invoices/${invoiceId}/remind`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ channel: type }),
+    }).then(async (res) => {
+      const resJson = await res.json()
+      if (!res.ok) {
+        throw new Error(resJson.message || 'Failed to send reminder')
+      }
+      return resJson
+    })
+
+    toast.promise(promise, {
+      loading: 'Sending reminder...',
+      success: 'Reminder sent successfully!',
+      error: (err) => err.message || 'Failed to send reminder',
+    })
+  }
+
+  if (loading) {
+    return (
+      <div className="space-y-4 animate-pulse select-none">
+        {/* Key Metrics Grid Skeleton */}
+        <div className="bg-white border border-[#EBEAE6] rounded-[22px] overflow-hidden">
+          <div className="grid grid-cols-1 divide-y divide-[#EBEAE6]/60 md:grid-cols-4 md:divide-y-0 md:divide-x">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="px-6 py-6 space-y-2.5">
+                <div className="h-4 w-32 bg-gray-200 rounded" />
+                <div className="h-6 w-24 bg-gray-150 rounded" />
+              </div>
+            ))}
+          </div>
+        </div>
+        {/* Toolbar Skeleton */}
+        <div className="bg-white border border-[#EBEAE6] rounded-xl p-4 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="h-10 w-full md:w-[340px] bg-gray-150 rounded-full" />
+          <div className="h-6 w-full md:w-[200px] bg-gray-100 rounded" />
+        </div>
+        {/* Table Skeleton */}
+        <div className="bg-white border border-[#EBEAE6] rounded-[22px] p-6 space-y-4">
+          <div className="h-10 bg-gray-100 rounded-xl" />
+          <div className="space-y-3">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="h-12 bg-gray-50 rounded-lg" />
+            ))}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="bg-red-50/50 border border-red-100 rounded-[22px] p-8 text-center select-none space-y-3">
+        <span className="text-lg font-bold text-red-800 block">Failed to Load Aging Heatmap</span>
+        <p className="text-[13px] text-red-600 font-semibold max-w-md mx-auto">{error}</p>
+        <button
+          onClick={() => window.location.reload()}
+          className="px-5 py-2.5 bg-red-600 text-white rounded-xl text-xs font-bold hover:bg-red-700 transition-colors shadow-sm"
+        >
+          Retry
+        </button>
+      </div>
+    )
   }
 
   return (
@@ -629,7 +606,7 @@ export function AgingHeatmap() {
                 
                 <div className="mt-4 pt-3.5 border-t border-gray-100 flex items-center justify-between text-xs font-semibold text-gray-600">
                   <span className="flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-[#FF6A39]" />
+                     <span className="w-2 h-2 rounded-full bg-[#FF6A39]" />
                     {selectedCell.bracketName} DPD
                   </span>
                   <span>{selectedCell.invoices.length} {selectedCell.invoices.length === 1 ? 'Invoice' : 'Invoices'}</span>
@@ -671,14 +648,14 @@ export function AgingHeatmap() {
                       {/* Reminder Actions */}
                       <div className="flex gap-2 pt-0.5">
                         <button
-                          onClick={() => triggerSimulatedReminder(inv.invoiceNumber, 'whatsapp')}
+                          onClick={() => triggerReminder(inv.id, 'whatsapp')}
                           className="flex-1 inline-flex items-center justify-center gap-1.5 bg-[#25D366] hover:bg-[#20ba5a] text-white font-semibold py-2 px-3 rounded-xl text-[11.5px] transition-all duration-200 shadow-2xs hover:shadow-xs cursor-pointer"
                         >
                           <HugeiconsIcon icon={WhatsappIcon} size={14} />
                           Send WhatsApp
                         </button>
                         <button
-                          onClick={() => triggerSimulatedReminder(inv.invoiceNumber, 'email')}
+                          onClick={() => triggerReminder(inv.id, 'email')}
                           className="flex-1 inline-flex items-center justify-center gap-1.5 bg-gray-950 hover:bg-gray-850 text-white font-semibold py-2 px-3 rounded-xl text-[11.5px] transition-all duration-200 shadow-2xs hover:shadow-xs cursor-pointer"
                         >
                           <HugeiconsIcon icon={Mail01Icon} size={14} />
