@@ -20,25 +20,25 @@ export default function Hero() {
         `
       }} />
 
-      <section 
+      <section
         className="relative bg-neutral-950 bg-cover bg-center bg-no-repeat overflow-hidden flex flex-col items-center justify-start pt-24"
         style={{
           backgroundImage: "url('/heronew.png')"
         }}
       >
-      
+
 
         {/* Noise overlay */}
-        <div 
-          className="absolute inset-0 opacity-[0.035] mix-blend-overlay pointer-events-none z-0" 
+        <div
+          className="absolute inset-0 opacity-[0.035] mix-blend-overlay pointer-events-none z-0"
           style={{
             backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E\")"
           }}
         />
-        
+
         {/* Main Content (Centered) */}
         <div className="relative max-w-[1340px] mx-auto px-8 flex flex-col items-center text-center justify-center w-full z-10 pt-16 lg:pt-24 space-y-8">
-          
+
           <div className="flex flex-col items-center space-y-4">
             {/* Announcement Badge */}
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-gray-500/20 bg-gray-500/5 hover:bg-gray-500/10 text-gray-800 text-xs font-semibold tracking-tight transition-all duration-200 select-none cursor-pointer shadow-sm">
@@ -83,9 +83,9 @@ export default function Hero() {
         {/* Dashboard Mockup Image */}
         {/* Removed CSS mask and added items-end to push the image firmly to the bottom edge */}
         <div className="w-full max-w-[1440px] mx-auto relative z-10 flex justify-center items-end mt-1 px-4 md:px-8 overflow-hidden">
-          <img 
-            src="/hero5.png" 
-            alt="Dashboard mockup" 
+          <img
+            src="/hero5.png"
+            alt="Dashboard mockup"
             className="w-full h-auto select-none block max-w-full drop-shadow-2xl -mb-[18%]"
             style={{
               clipPath: "inset(0px 0px 18% 0px)"

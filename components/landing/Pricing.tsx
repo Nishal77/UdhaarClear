@@ -20,17 +20,17 @@ export default function Pricing() {
 
   const plans = [
     {
-      name: "Starter",
-      description: "Small trader or freelancer just starting to organise collections.",
-      monthlyPrice: 799,
-      yearlyPrice: 666,
+      name: "Free",
+      description: "Micro-merchants and freelancers testing automated khata ledger recovery.",
+      monthlyPrice: 0,
+      yearlyPrice: 0,
       periodLabel: {
         monthly: "/month",
         yearly: "/mo",
       },
       billingLabel: {
         monthly: "Billed Per Month",
-        yearly: "billed annually — save ₹1,596",
+        yearly: "Free Forever",
       },
       badge: null,
       isHighlighted: false,
@@ -39,56 +39,85 @@ export default function Pricing() {
       descColor: "text-gray-500",
       priceColor: "text-gray-900",
       features: [
-        "15 Active Invoices /month",
-        "Automated WhatsApp Reminders",
-        "UPI Payment Links",
-        "Customer Ledgers (Khata Book)",
-        "Basic Reports & Dashboard",
-        "Standard Email Support",
+        "3 Active Invoices /month",
+        "Manual Ledger Uploads",
+        "Standard Email Reminders",
+        "Basic MSME Dues Calculator",
+        "UPI Payout Checkout",
+        "Unlimited View Seats",
+      ],
+      checkBg: "border-gray-400 text-gray-700",
+    },
+    {
+      name: "Starter",
+      description: "Small traders and retail merchants establishing recovery sequences.",
+      monthlyPrice: 999,
+      yearlyPrice: 799,
+      periodLabel: {
+        monthly: "/month",
+        yearly: "/mo",
+      },
+      billingLabel: {
+        monthly: "Billed Per Month",
+        yearly: "billed annually — save ₹2,400",
+      },
+      badge: null,
+      isHighlighted: false,
+      bgColor: "bg-[#EDEDED]",
+      textColor: "text-gray-900",
+      descColor: "text-gray-500",
+      priceColor: "text-gray-900",
+      features: [
+        "25 Active Invoices /month",
+        "Automated WhatsApp Alerts",
+        "Tally & Zoho Utility Sync",
+        "Basic AI Tone Engine (Reminders)",
+        "Court-Ready MSME Interest Logs",
+        "Standard Chat Support",
       ],
       checkBg: "border-gray-400 text-gray-700",
     },
     {
       name: "Growth",
-      description: "Growing business with regular outstanding. ROI is 4.6× in working capital alone.",
-      monthlyPrice: 1999,
-      yearlyPrice: 1666,
+      description: "Growing wholesalers and distributors with regular late invoices.",
+      monthlyPrice: 2499,
+      yearlyPrice: 1999,
       periodLabel: {
         monthly: "/month",
         yearly: "/mo",
       },
       billingLabel: {
         monthly: "Billed Per Month",
-        yearly: "billed annually — save ₹3,996",
+        yearly: "billed annually — save ₹6,000",
       },
       badge: "POPULAR",
       isHighlighted: true,
-      bgColor: "bg-[#4F46E5]", // Premium Indigo/Blue as requested
+      bgColor: "bg-[#4F46E5]",
       textColor: "text-white",
       descColor: "text-indigo-200",
       priceColor: "text-white",
       features: [
-        "75 Active Invoices /month",
-        "Custom WhatsApp Templates",
-        "Smart Follow-up Escalation Rules",
-        "Automatic Retry Sequences",
-        "Advanced Analytics Dashboard",
-        "Priority Call & WhatsApp Support",
+        "100 Active Invoices /month",
+        "Auto-Draft MSME Legal Notices",
+        "1-Click MSME Samadhaan Docs",
+        "Full AI Tone Engine (Escalation)",
+        "Daily AI Recovery Insights",
+        "Priority Support",
       ],
       checkBg: "border-white/40 text-white",
     },
     {
-      name: "Scale",
-      description: "Medium enterprise with large invoice volumes and a team managing collections.",
-      monthlyPrice: 4999,
-      yearlyPrice: 4166,
+      name: "Professional",
+      description: "Large manufacturers and CA Agencies managing multiple ledger networks.",
+      monthlyPrice: 6999,
+      yearlyPrice: 5599,
       periodLabel: {
         monthly: "/month",
         yearly: "/mo",
       },
       billingLabel: {
         monthly: "Billed Per Month",
-        yearly: "billed annually — save ₹9,996",
+        yearly: "billed annually — save ₹16,800",
       },
       badge: null,
       isHighlighted: false,
@@ -97,40 +126,11 @@ export default function Pricing() {
       descColor: "text-gray-500",
       priceColor: "text-gray-900",
       features: [
-        "300 Active Invoices /month",
-        "Dedicated WhatsApp API (WABA)",
-        "Custom Branding & Domain Map",
-        "Multi-user Access (5 Seats)",
-        "Full API & Webhooks Access",
-        "Dedicated Integration Manager",
-      ],
-      checkBg: "border-gray-400 text-gray-700",
-    },
-    {
-      name: "CA / Agency",
-      description: "Chartered Accountants and collection agencies managing multiple client businesses.",
-      monthlyPrice: 9999,
-      yearlyPrice: 9999,
-      periodLabel: {
-        monthly: "/month",
-        yearly: "/month",
-      },
-      billingLabel: {
-        monthly: "Per agency · Up to 25 clients included",
-        yearly: "Per agency · Up to 25 clients included",
-      },
-      badge: null,
-      isHighlighted: false,
-      bgColor: "bg-[#EDEDED]",
-      textColor: "text-gray-900",
-      descColor: "text-gray-500",
-      priceColor: "text-gray-900",
-      features: [
-        "Up to 25 Client Accounts Included",
-        "Shared Clients Dashboard",
-        "Automated Client Due Reminders",
-        "White-labeled PDF Ledger Reports",
-        "CA/Agency Portal Console",
+        "500 Active Invoices /month",
+        "Dedicated WABA Connection",
+        "AI Cash Flow & Forecast Reports",
+        "Custom API & ERP Integrations",
+        "Multi-tenant CA/Agency Console",
         "Dedicated Account Manager",
       ],
       checkBg: "border-gray-400 text-gray-700",
@@ -141,72 +141,72 @@ export default function Pricing() {
     {
       name: "Invoices & Customers",
       features: [
-        { name: "Active invoices", starter: "Up to 50", growth: "Up to 300", scale: "Unlimited", ca: "Unlimited" },
+        { name: "Active invoices", starter: "Up to 3", growth: "Up to 25", scale: "Up to 100", ca: "Up to 500" },
         { name: "Customer profiles", starter: "Yes", growth: "Yes", scale: "Yes", ca: "Yes" },
-        { name: "Customer health scores", starter: "Basic", growth: "Full", scale: "Full + AI", ca: "Full + AI" },
+        { name: "Customer health scores", starter: "Basic", growth: "Basic", scale: "Full (AI)", ca: "Full + AI Insights" },
         { name: "Excel / CSV import", starter: "Yes", growth: "Yes", scale: "Yes", ca: "Yes" },
-        { name: "Tally ERP sync", starter: "No", growth: "Yes", scale: "Yes", ca: "Yes" },
+        { name: "Tally & Zoho Sync", starter: "No", growth: "Yes", scale: "Yes", ca: "Yes" },
       ],
     },
     {
       name: "WhatsApp Reminders",
       features: [
-        { name: "WhatsApp reminders (Meta API)", starter: "Unlimited", growth: "Unlimited", scale: "Unlimited", ca: "Unlimited" },
+        { name: "WhatsApp reminders (Meta API)", starter: "No", growth: "Unlimited", scale: "Unlimited", ca: "Unlimited" },
         { name: "Razorpay UPI in every message", starter: "Yes", growth: "Yes", scale: "Yes", ca: "Yes" },
-        { name: "AI Tone Engine (3 phases)", starter: "Basic", growth: "Full", scale: "Full + Custom", ca: "Full + Custom" },
-        { name: "Custom message templates", starter: "No", growth: "Yes", scale: "Yes", ca: "Yes + per-client" },
+        { name: "AI Tone Engine (3 phases)", starter: "No", growth: "Basic AI", scale: "Full AI (Auto)", ca: "Full + Custom Tuning" },
+        { name: "Custom message templates", starter: "No", growth: "No", scale: "Yes", ca: "Yes" },
         { name: "Read receipt tracking", starter: "Yes", growth: "Yes", scale: "Yes", ca: "Yes" },
         { name: "UPI link tap tracking", starter: "Yes", growth: "Yes", scale: "Yes", ca: "Yes" },
-        { name: "Scheduled reminder timing", starter: "Default only", growth: "Custom", scale: "Custom", ca: "Custom per client" },
+        { name: "Scheduled reminder timing", starter: "Default only", growth: "Default only", scale: "Custom", ca: "Custom" },
       ],
     },
     {
-      name: "Legal & MSME",
+      name: "Legal & MSME (Exclusive)",
       features: [
-        { name: "Legal notice (MSME Act 2006)", starter: "No", growth: "Yes — Auto", scale: "Yes — Auto", ca: "Yes — Auto" },
-        { name: "MSME Samadhaan filing doc", starter: "No", growth: "Yes", scale: "Yes", ca: "Yes" },
-        { name: "Compound interest calculation", starter: "No", growth: "Yes", scale: "Yes", ca: "Yes" },
+        { name: "Legal notice (MSME Act 2006)", starter: "No", growth: "No", scale: "Yes — Auto Draft", ca: "Yes — Auto Draft" },
+        { name: "MSME Samadhaan filing doc", starter: "No", growth: "No", scale: "Yes (1-Click)", ca: "Yes (1-Click)" },
+        { name: "Compound interest calculation", starter: "Yes (Standard)", growth: "Yes (MSME Sec 16)", scale: "Yes (MSME Sec 16)", ca: "Yes (MSME Sec 16)" },
       ],
     },
     {
       name: "Dashboard & Analytics",
       features: [
         { name: "Live recovery dashboard", starter: "Yes", growth: "Yes", scale: "Yes", ca: "Yes" },
-        { name: "Recovery analytics & reports", starter: "Basic", growth: "Full", scale: "Full + Export", ca: "Full + per-client" },
-        { name: "AI predictive insights", starter: "No", growth: "No", scale: "Yes", ca: "Yes" },
+        { name: "Recovery analytics & reports", starter: "Basic", growth: "Basic", scale: "Full", ca: "Full + Export" },
+        { name: "AI predictive insights", starter: "No", growth: "No", scale: "Daily insights", ca: "Cash flow predictions" },
         { name: "Invoice aging heatmap", starter: "Yes", growth: "Yes", scale: "Yes", ca: "Yes" },
-        { name: "Daily email / WhatsApp summary", starter: "No", growth: "Yes", scale: "Yes", ca: "Yes" },
+        { name: "Daily email / WhatsApp summary", starter: "No", growth: "No", scale: "Yes", ca: "Yes" },
       ],
     },
     {
       name: "Team & Access",
       features: [
-        { name: "Team members / users", starter: "1 user", growth: "1 user", scale: "Up to 5", ca: "Unlimited" },
-        { name: "Role-based permissions", starter: "No", growth: "No", scale: "Yes", ca: "Yes" },
-        { name: "Multi-business accounts", starter: "No", growth: "No", scale: "Yes (2)", ca: "Up to 25 clients" },
-        { name: "White-label branding", starter: "No", growth: "No", scale: "Optional add-on", ca: "Yes — Included" },
+        { name: "Team members / users", starter: "1 user", growth: "1 user", scale: "Unlimited", ca: "Unlimited" },
+        { name: "Role-based permissions", starter: "No", growth: "No", scale: "No", ca: "Yes" },
+        { name: "Multi-business accounts", starter: "No", growth: "No", scale: "No", ca: "Up to 5 clients" },
+        { name: "White-label branding", starter: "No", growth: "No", scale: "No", ca: "Yes — Included" },
       ],
     },
     {
       name: "Support",
       features: [
-        { name: "Customer support", starter: "Email only", growth: "Priority WhatsApp", scale: "Dedicated account manager", ca: "Dedicated + onboarding" },
-        { name: "Setup assistance", starter: "Self-service", growth: "Guided setup call", scale: "Full onboarding", ca: "Full + client onboarding" },
+        { name: "Customer support", starter: "Email only", growth: "Chat support", scale: "Priority Support", ca: "Dedicated manager" },
+        { name: "Setup assistance", starter: "Self-service", growth: "Self-service", scale: "Guided setup call", ca: "Full onboarding" },
       ],
     },
     {
       name: "API & Reliability",
       features: [
-        { name: "API access + webhooks", starter: "No", growth: "No", scale: "Yes", ca: "Yes" },
-        { name: "SLA-backed uptime", starter: "No", growth: "No", scale: "99.9% SLA", ca: "99.9% SLA" },
-        { name: "Free trial", starter: "14 days free", growth: "14 days free", scale: "14 days free", ca: "30 days free" },
+        { name: "API access + webhooks", starter: "No", growth: "No", scale: "No", ca: "Yes" },
+        { name: "SLA-backed uptime", starter: "No", growth: "No", scale: "No", ca: "99.9% SLA" },
+        { name: "Free trial", starter: "No", growth: "7 days free", scale: "7 days free", ca: "7 days free" },
       ],
     },
   ];
 
   const renderValue = (val: string, colName: string, isHighlighted: boolean) => {
     if (val === "Yes") {
-      if (colName === "growth") {
+      if (colName === "scale") {
         return (
           <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#4F46E5] text-white shadow-sm">
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round">
@@ -243,25 +243,28 @@ export default function Pricing() {
       );
     }
 
-    // Purple highlights for CA Plan
+    // Purple highlights for Professional Plan (ca)
     const isPurpleHighlight = colName === "ca" && (
-      val === "Unlimited" ||
-      val === "Up to 25 clients" ||
-      val === "Yes — Included" ||
-      val === "30 days free"
+      val.includes("500") ||
+      val.includes("Yes — Included") ||
+      val.includes("Dedicated manager") ||
+      val.includes("7 days free") ||
+      val.includes("predictions") ||
+      val.includes("Custom Tuning")
     );
 
     if (isPurpleHighlight) {
       return <span className="text-[#8B5CF6] font-bold text-sm md:text-base">{val}</span>;
     }
 
-    // Bold highlights for Growth
-    const isBoldHighlight = colName === "growth" && (
-      val === "Up to 300" ||
-      val === "Full" ||
-      val === "Yes — Auto" ||
-      val === "Priority WhatsApp" ||
-      val === "Custom"
+    // Bold highlights for Growth (scale)
+    const isBoldHighlight = colName === "scale" && (
+      val.includes("100") ||
+      val.includes("Full") ||
+      val.includes("Auto Draft") ||
+      val.includes("1-Click") ||
+      val.includes("Priority Support") ||
+      val.includes("Daily insights")
     );
 
     if (isBoldHighlight) {
@@ -510,7 +513,7 @@ export default function Pricing() {
                       >
                         <div className="flex flex-col items-center w-full">
                           <span className="text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-widest font-outfit">
-                            {plan.name === "CA / Agency" ? "CA & AGENCY PLAN" : `${plan.name.toUpperCase()} PLAN`}
+                            {plan.name === "Professional" ? "PROFESSIONAL PLAN" : `${plan.name.toUpperCase()} PLAN`}
                           </span>
 
                           <div className="mt-2 flex items-baseline justify-center gap-0.5">
@@ -535,12 +538,8 @@ export default function Pricing() {
                                 : "bg-gray-100 text-gray-750 hover:bg-gray-200 active:scale-95"
                               }`}
                           >
-                            {plan.name === "CA / Agency" ? "Get Started" : "Start Trial"}
+                            {plan.name === "Professional" ? "Get Started" : "Start Trial"}
                           </button>
-
-                          <p className="mt-3 text-[10px] md:text-xs text-gray-500 font-medium max-w-[150px] leading-normal">
-                            {plan.description}
-                          </p>
                         </div>
                       </th>
                     );
@@ -600,11 +599,11 @@ export default function Pricing() {
                             <td className="py-4 px-2 text-center w-[17.5%] border-b border-gray-100 border-l border-gray-200/30 bg-white">
                               {renderValue(feature.starter, "starter", false)}
                             </td>
-                            <td className="py-4 px-2 text-center w-[17.5%] bg-[#4F46E5]/[0.015] border-b border-gray-100 border-l border-gray-200/30">
-                              {renderValue(feature.growth, "growth", true)}
-                            </td>
                             <td className="py-4 px-2 text-center w-[17.5%] border-b border-gray-100 border-l border-gray-200/30 bg-white">
-                              {renderValue(feature.scale, "scale", false)}
+                              {renderValue(feature.growth, "growth", false)}
+                            </td>
+                            <td className="py-4 px-2 text-center w-[17.5%] bg-[#4F46E5]/[0.015] border-b border-gray-100 border-l border-gray-200/30">
+                              {renderValue(feature.scale, "scale", true)}
                             </td>
                             <td className="py-4 pl-2 pr-6 text-center w-[17.5%] border-b border-gray-100 border-l border-gray-200/30 bg-white">
                               {renderValue(feature.ca, "ca", false)}

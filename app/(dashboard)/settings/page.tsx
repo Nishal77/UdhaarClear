@@ -175,15 +175,33 @@ export default async function MySettingsPage() {
 
   // Format date
   const joinedDate = new Date(dbUser.createdAt).toLocaleDateString('en-US', {
+    day: 'numeric',
     month: 'long',
     year: 'numeric'
   })
 
   // Calculate profile completion (out of 4 items: name, phone, legalName, gstin)
-  let completionPoints = 25 // base for email
-  if (dbUser.name) completionPoints += 25
-  if (dbUser.phone) completionPoints += 25
-  if (business.gstin) completionPoints += 25
+  const isNameFilled = !!(dbUser.name && dbUser.name.trim() !== '')
+  const isPhoneFilled = !!(dbUser.phone && dbUser.phone.trim() !== '')
+  const isGstinFilled = !!(business.gstin && business.gstin.trim() !== '')
+
+  let completionPoints = 25 // base for email (always present)
+  if (isNameFilled) completionPoints += 25
+  if (isPhoneFilled) completionPoints += 25
+  if (isGstinFilled) completionPoints += 25
+
+  let profileWarningMessage = ''
+  if (completionPoints < 100) {
+    const missing: string[] = []
+    if (!isPhoneFilled) missing.push('contact phone number')
+    if (!isGstinFilled) missing.push('GSTIN on Business Profile')
+    
+    if (missing.length === 2) {
+      profileWarningMessage = 'Fill in contact phone number and GSTIN on Business Profile to reach 100%.'
+    } else if (missing.length === 1) {
+      profileWarningMessage = `Fill in ${missing[0]} to reach 100%.`
+    }
+  }
 
   return (
     <SettingsLayout 
@@ -452,7 +470,7 @@ export default async function MySettingsPage() {
               {completionPoints < 100 && (
                 <div className="flex gap-1.5 p-2.5 bg-amber-50/50 border border-amber-100 rounded-xl text-[10.5px] text-amber-800 leading-snug">
                   <AlertCircle className="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" />
-                  <span>Fill in contact phone number and GSTIN on Business Profile to reach 100%.</span>
+                  <span>{profileWarningMessage}</span>
                 </div>
               )}
             </div>
