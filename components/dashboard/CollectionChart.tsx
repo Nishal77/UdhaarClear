@@ -109,7 +109,7 @@ export function CollectionChart({ data }: { data: MonthData[] }) {
                   usePointStyle: true,
                   pointStyle: 'circle',
                   padding: 16,
-                  font: { family: 'Outfit', size: 11 },
+                  font: { family: 'Instrument Sans', size: 11 },
                   color: '#6B7280',
                   boxWidth: 7,
                   boxHeight: 7,
@@ -121,8 +121,8 @@ export function CollectionChart({ data }: { data: MonthData[] }) {
                 bodyColor: '#fff',
                 padding: 10,
                 cornerRadius: 10,
-                titleFont: { family: 'Outfit', size: 11 },
-                bodyFont: { family: 'Outfit', size: 13, weight: 'bold' },
+                titleFont: { family: 'Instrument Sans', size: 11 },
+                bodyFont: { family: 'Instrument Sans', size: 13, weight: 'bold' },
                 callbacks: {
                   label: (ctx) => ` ${ctx.dataset.label}: ${formatINRCompact(ctx.parsed.y ?? 0)}`,
                 },
@@ -133,7 +133,7 @@ export function CollectionChart({ data }: { data: MonthData[] }) {
                 grid: { display: false },
                 border: { display: false },
                 ticks: {
-                  font: { family: 'Outfit', size: 11 },
+                  font: { family: 'Instrument Sans', size: 11 },
                   color: '#9CA3AF',
                 },
               },
@@ -141,7 +141,7 @@ export function CollectionChart({ data }: { data: MonthData[] }) {
                 grid: { color: 'rgba(0,0,0,0.04)' },
                 border: { display: false, dash: [4, 4] },
                 ticks: {
-                  font: { family: 'Outfit', size: 11 },
+                  font: { family: 'Instrument Sans', size: 11 },
                   color: '#9CA3AF',
                   callback: (v) => formatINRCompact(Number(v)),
                   maxTicksLimit: 5,
