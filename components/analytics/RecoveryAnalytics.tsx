@@ -35,243 +35,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
-// Mock data structures for the different Time Ranges
-const TIME_RANGE_DATA = {
-  '30_days': {
-    metrics: {
-      totalRecovered: 240000,
-      recoveredDiff: '+14.2% vs last 30d',
-      rate: 88.5,
-      daysToCollect: 24,
-      daysDiff: '-3 days improvement',
-      outstanding: 58000,
-    },
-    trend: [
-      { date: 'Week 1', 'Recovered Amount': 45000, 'New Invoices Logged': 52000 },
-      { date: 'Week 2', 'Recovered Amount': 68000, 'New Invoices Logged': 70000 },
-      { date: 'Week 3', 'Recovered Amount': 55000, 'New Invoices Logged': 48000 },
-      { date: 'Week 4', 'Recovered Amount': 72000, 'New Invoices Logged': 60000 },
-    ],
-    rateTrend: [
-      { date: 'Week 1', 'Recovery Rate': 80 },
-      { date: 'Week 2', 'Recovery Rate': 84 },
-      { date: 'Week 3', 'Recovery Rate': 85 },
-      { date: 'Week 4', 'Recovery Rate': 88.5 },
-    ],
-    channels: [
-      { name: 'WhatsApp', value: 118000 },
-      { name: 'Email', value: 42000 },
-      { name: 'Legal Notices', value: 30000 },
-      { name: 'MSME Samadhaan', value: 50000 },
-    ],
-    aging: [
-      { name: '0-30 Days DPD', value: 132000, colorClass: 'bg-gradient-to-r from-emerald-500/5 to-emerald-500/15' },
-      { name: '31-45 Days DPD', value: 58000, colorClass: 'bg-gradient-to-r from-blue-500/5 to-blue-500/15' },
-      { name: '46-60 Days DPD', value: 32000, colorClass: 'bg-gradient-to-r from-amber-500/5 to-amber-500/15' },
-      { name: '>60 Days DPD', value: 18000, colorClass: 'bg-gradient-to-r from-rose-500/5 to-rose-500/15' },
-    ],
-  },
-  '90_days': {
-    metrics: {
-      totalRecovered: 840000,
-      recoveredDiff: '+10.8% vs last 90d',
-      rate: 85.2,
-      daysToCollect: 26,
-      daysDiff: '-4 days improvement',
-      outstanding: 145000,
-    },
-    trend: [
-      { date: 'March', 'Recovered Amount': 240000, 'New Invoices Logged': 260000 },
-      { date: 'April', 'Recovered Amount': 280000, 'New Invoices Logged': 295000 },
-      { date: 'May', 'Recovered Amount': 320000, 'New Invoices Logged': 285000 },
-    ],
-    rateTrend: [
-      { date: 'March', 'Recovery Rate': 82 },
-      { date: 'April', 'Recovery Rate': 84 },
-      { date: 'May', 'Recovery Rate': 85.2 },
-    ],
-    channels: [
-      { name: 'WhatsApp', value: 395000 },
-      { name: 'Email', value: 160000 },
-      { name: 'Legal Notices', value: 125000 },
-      { name: 'MSME Samadhaan', value: 160000 },
-    ],
-    aging: [
-      { name: '0-30 Days DPD', value: 480000, colorClass: 'bg-gradient-to-r from-emerald-500/5 to-emerald-500/15' },
-      { name: '31-45 Days DPD', value: 195000, colorClass: 'bg-gradient-to-r from-blue-500/5 to-blue-500/15' },
-      { name: '46-60 Days DPD', value: 110000, colorClass: 'bg-gradient-to-r from-amber-500/5 to-amber-500/15' },
-      { name: '>60 Days DPD', value: 55000, colorClass: 'bg-gradient-to-r from-rose-500/5 to-rose-500/15' },
-    ],
-  },
-  '6_months': {
-    metrics: {
-      totalRecovered: 1842000,
-      recoveredDiff: '+12.3% MoM',
-      rate: 86.4,
-      daysToCollect: 28,
-      daysDiff: '-7 days improvement',
-      outstanding: 458000,
-    },
-    trend: [
-      { date: 'Dec 25', 'Recovered Amount': 220000, 'New Invoices Logged': 250000 },
-      { date: 'Jan 26', 'Recovered Amount': 260000, 'New Invoices Logged': 310000 },
-      { date: 'Feb 26', 'Recovered Amount': 340000, 'New Invoices Logged': 320000 },
-      { date: 'Mar 26', 'Recovered Amount': 310000, 'New Invoices Logged': 290000 },
-      { date: 'Apr 26', 'Recovered Amount': 342000, 'New Invoices Logged': 360000 },
-      { date: 'May 26', 'Recovered Amount': 370000, 'New Invoices Logged': 340000 },
-    ],
-    rateTrend: [
-      { date: 'Dec 25', 'Recovery Rate': 78 },
-      { date: 'Jan 26', 'Recovery Rate': 80 },
-      { date: 'Feb 26', 'Recovery Rate': 82 },
-      { date: 'Mar 26', 'Recovery Rate': 81 },
-      { date: 'Apr 26', 'Recovery Rate': 85 },
-      { date: 'May 26', 'Recovery Rate': 86.4 },
-    ],
-    channels: [
-      { name: 'WhatsApp', value: 828900 },
-      { name: 'Email', value: 368400 },
-      { name: 'Legal Notices', value: 276300 },
-      { name: 'MSME Samadhaan', value: 368400 },
-    ],
-    aging: [
-      { name: '0-30 Days DPD', value: 1120000, colorClass: 'bg-gradient-to-r from-emerald-500/5 to-emerald-500/15' },
-      { name: '31-45 Days DPD', value: 412000, colorClass: 'bg-gradient-to-r from-blue-500/5 to-blue-500/15' },
-      { name: '46-60 Days DPD', value: 210000, colorClass: 'bg-gradient-to-r from-amber-500/5 to-amber-500/15' },
-      { name: '>60 Days DPD', value: 100000, colorClass: 'bg-gradient-to-r from-rose-500/5 to-rose-500/15' },
-    ],
-  },
-  'ytd': {
-    metrics: {
-      totalRecovered: 3820000,
-      recoveredDiff: '+15.5% vs YTD Target',
-      rate: 87.1,
-      daysToCollect: 27,
-      daysDiff: '-8 days improvement',
-      outstanding: 890000,
-    },
-    trend: [
-      { date: 'Jan', 'Recovered Amount': 540000, 'New Invoices Logged': 590000 },
-      { date: 'Feb', 'Recovered Amount': 610000, 'New Invoices Logged': 630000 },
-      { date: 'Mar', 'Recovered Amount': 740000, 'New Invoices Logged': 710000 },
-      { date: 'Apr', 'Recovered Amount': 920000, 'New Invoices Logged': 890000 },
-      { date: 'May', 'Recovered Amount': 1010000, 'New Invoices Logged': 980000 },
-    ],
-    rateTrend: [
-      { date: 'Jan', 'Recovery Rate': 75 },
-      { date: 'Feb', 'Recovery Rate': 79 },
-      { date: 'Mar', 'Recovery Rate': 82 },
-      { date: 'Apr', 'Recovery Rate': 85 },
-      { date: 'May', 'Recovery Rate': 87.1 },
-    ],
-    channels: [
-      { name: 'WhatsApp', value: 1719000 },
-      { name: 'Email', value: 764000 },
-      { name: 'Legal Notices', value: 573000 },
-      { name: 'MSME Samadhaan', value: 764000 },
-    ],
-    aging: [
-      { name: '0-30 Days DPD', value: 2310000, colorClass: 'bg-gradient-to-r from-emerald-500/5 to-emerald-500/15' },
-      { name: '31-45 Days DPD', value: 890000, colorClass: 'bg-gradient-to-r from-blue-500/5 to-blue-500/15' },
-      { name: '46-60 Days DPD', value: 420000, colorClass: 'bg-gradient-to-r from-amber-500/5 to-amber-500/15' },
-      { name: '>60 Days DPD', value: 200000, colorClass: 'bg-gradient-to-r from-rose-500/5 to-rose-500/15' },
-    ],
-  }
-}
 
-const chartData = [
-  { date: "2024-04-01", desktop: 222, mobile: 150 },
-  { date: "2024-04-02", desktop: 97, mobile: 180 },
-  { date: "2024-04-03", desktop: 167, mobile: 120 },
-  { date: "2024-04-04", desktop: 242, mobile: 260 },
-  { date: "2024-04-05", desktop: 373, mobile: 290 },
-  { date: "2024-04-06", desktop: 301, mobile: 340 },
-  { date: "2024-04-07", desktop: 245, mobile: 180 },
-  { date: "2024-04-08", desktop: 409, mobile: 320 },
-  { date: "2024-04-09", desktop: 59, mobile: 110 },
-  { date: "2024-04-10", desktop: 261, mobile: 190 },
-  { date: "2024-04-11", desktop: 327, mobile: 350 },
-  { date: "2024-04-12", desktop: 292, mobile: 210 },
-  { date: "2024-04-13", desktop: 342, mobile: 380 },
-  { date: "2024-04-14", desktop: 137, mobile: 220 },
-  { date: "2024-04-15", desktop: 120, mobile: 170 },
-  { date: "2024-04-16", desktop: 138, mobile: 190 },
-  { date: "2024-04-17", desktop: 446, mobile: 360 },
-  { date: "2024-04-18", desktop: 364, mobile: 410 },
-  { date: "2024-04-19", desktop: 243, mobile: 180 },
-  { date: "2024-04-20", desktop: 89, mobile: 150 },
-  { date: "2024-04-21", desktop: 137, mobile: 200 },
-  { date: "2024-04-22", desktop: 224, mobile: 170 },
-  { date: "2024-04-23", desktop: 138, mobile: 230 },
-  { date: "2024-04-24", desktop: 387, mobile: 290 },
-  { date: "2024-04-25", desktop: 215, mobile: 250 },
-  { date: "2024-04-26", desktop: 75, mobile: 130 },
-  { date: "2024-04-27", desktop: 383, mobile: 420 },
-  { date: "2024-04-28", desktop: 122, mobile: 180 },
-  { date: "2024-04-29", desktop: 315, mobile: 240 },
-  { date: "2024-04-30", desktop: 454, mobile: 380 },
-  { date: "2024-05-01", desktop: 165, mobile: 220 },
-  { date: "2024-05-02", desktop: 293, mobile: 310 },
-  { date: "2024-05-03", desktop: 247, mobile: 190 },
-  { date: "2024-05-04", desktop: 385, mobile: 420 },
-  { date: "2024-05-05", desktop: 481, mobile: 390 },
-  { date: "2024-05-06", desktop: 498, mobile: 520 },
-  { date: "2024-05-07", desktop: 388, mobile: 300 },
-  { date: "2024-05-08", desktop: 149, mobile: 210 },
-  { date: "2024-05-09", desktop: 227, mobile: 180 },
-  { date: "2024-05-10", desktop: 293, mobile: 330 },
-  { date: "2024-05-11", desktop: 335, mobile: 270 },
-  { date: "2024-05-12", desktop: 197, mobile: 240 },
-  { date: "2024-05-13", desktop: 197, mobile: 160 },
-  { date: "2024-05-14", desktop: 448, mobile: 490 },
-  { date: "2024-05-15", desktop: 473, mobile: 380 },
-  { date: "2024-05-16", desktop: 338, mobile: 400 },
-  { date: "2024-05-17", desktop: 499, mobile: 420 },
-  { date: "2024-05-18", desktop: 315, mobile: 350 },
-  { date: "2024-05-19", desktop: 235, mobile: 180 },
-  { date: "2024-05-20", desktop: 177, mobile: 230 },
-  { date: "2024-05-21", desktop: 82, mobile: 140 },
-  { date: "2024-05-22", desktop: 81, mobile: 120 },
-  { date: "2024-05-23", desktop: 252, mobile: 290 },
-  { date: "2024-05-24", desktop: 294, mobile: 220 },
-  { date: "2024-05-25", desktop: 201, mobile: 250 },
-  { date: "2024-05-26", desktop: 213, mobile: 170 },
-  { date: "2024-05-27", desktop: 420, mobile: 460 },
-  { date: "2024-05-28", desktop: 233, mobile: 190 },
-  { date: "2024-05-29", desktop: 78, mobile: 130 },
-  { date: "2024-05-30", desktop: 340, mobile: 280 },
-  { date: "2024-05-31", desktop: 178, mobile: 230 },
-  { date: "2024-06-01", desktop: 178, mobile: 200 },
-  { date: "2024-06-02", desktop: 470, mobile: 410 },
-  { date: "2024-06-03", desktop: 103, mobile: 160 },
-  { date: "2024-06-04", desktop: 439, mobile: 380 },
-  { date: "2024-06-05", desktop: 88, mobile: 140 },
-  { date: "2024-06-06", desktop: 294, mobile: 250 },
-  { date: "2024-06-07", desktop: 323, mobile: 370 },
-  { date: "2024-06-08", desktop: 385, mobile: 320 },
-  { date: "2024-06-09", desktop: 438, mobile: 480 },
-  { date: "2024-06-10", desktop: 155, mobile: 200 },
-  { date: "2024-06-11", desktop: 92, mobile: 150 },
-  { date: "2024-06-12", desktop: 492, mobile: 420 },
-  { date: "2024-06-13", desktop: 81, mobile: 130 },
-  { date: "2024-06-14", desktop: 426, mobile: 380 },
-  { date: "2024-06-15", desktop: 307, mobile: 350 },
-  { date: "2024-06-16", desktop: 371, mobile: 310 },
-  { date: "2024-06-17", desktop: 475, mobile: 520 },
-  { date: "2024-06-18", desktop: 107, mobile: 170 },
-  { date: "2024-06-19", desktop: 341, mobile: 290 },
-  { date: "2024-06-20", desktop: 408, mobile: 450 },
-  { date: "2024-06-21", desktop: 169, mobile: 210 },
-  { date: "2024-06-22", desktop: 317, mobile: 270 },
-  { date: "2024-06-23", desktop: 480, mobile: 530 },
-  { date: "2024-06-24", desktop: 132, mobile: 180 },
-  { date: "2024-06-25", desktop: 141, mobile: 190 },
-  { date: "2024-06-26", desktop: 434, mobile: 380 },
-  { date: "2024-06-27", desktop: 448, mobile: 490 },
-  { date: "2024-06-28", desktop: 149, mobile: 200 },
-  { date: "2024-06-29", desktop: 103, mobile: 160 },
-  { date: "2024-06-30", desktop: 446, mobile: 400 },
-]
 
 const chartConfig = {
   desktop: {
@@ -285,38 +49,98 @@ const chartConfig = {
 } satisfies ChartConfig
 
 export function RecoveryAnalytics() {
-  const [timeRange, setTimeRange] = React.useState<keyof typeof TIME_RANGE_DATA>('6_months')
-  const currentData = TIME_RANGE_DATA[timeRange]
+  const [timeRange, setTimeRange] = React.useState<string>('6_months')
+  const [data, setData] = React.useState<any>(null)
+  const [loading, setLoading] = React.useState<boolean>(true)
 
-  const filteredData = React.useMemo(() => {
-    let daysToSubtract = 90
-    if (timeRange === "30_days") {
-      daysToSubtract = 30
-    } else if (timeRange === "90_days") {
-      daysToSubtract = 90
-    } else if (timeRange === "6_months") {
-      daysToSubtract = 90
-    } else if (timeRange === "ytd") {
-      daysToSubtract = 90
+  React.useEffect(() => {
+    let isMounted = true
+    setLoading(true)
+    fetch(`/api/analytics/recovery?timeRange=${timeRange}`)
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to fetch')
+        return res.json()
+      })
+      .then((fetchedData) => {
+        if (isMounted) {
+          setData(fetchedData)
+          setLoading(false)
+        }
+      })
+      .catch((err) => {
+        console.error(err)
+        if (isMounted) setLoading(false)
+      })
+    return () => {
+      isMounted = false
     }
-
-    const referenceDate = new Date("2024-06-30")
-    const startDate = new Date(referenceDate)
-    startDate.setDate(startDate.getDate() - daysToSubtract)
-
-    return chartData.filter((item) => {
-      const date = new Date(item.date)
-      return date >= startDate
-    })
   }, [timeRange])
-
   // Value formatting utility for currency (INR)
   const currencyFormatter = (value: number) => {
-    return `₹${(value / 100000).toFixed(2)} L`
+    return formatINRCompact(value)
   }
 
-  // Calculate sum for channel percentages display
-  const totalChannelsValue = currentData.channels.reduce((sum, item) => sum + item.value, 0)
+  const channelValueFormatter = (value: number) => {
+    return formatINRCompact(value)
+  }
+
+  const metrics = data?.metrics ?? {
+    totalRecovered: 0,
+    recoveredDiffPercent: 0,
+    recoveredDiffText: '0.0% vs last period',
+    rate: 0,
+    daysToCollect: 0,
+    daysDiff: 0,
+    daysDiffText: '0 days change',
+    outstanding: 0,
+  }
+
+  const totalChannelsValue = (data?.channels ?? []).reduce((sum: number, item: any) => sum + item.value, 0)
+  const trendData = data?.trend ?? []
+  const channelsData = data?.channels ?? []
+  const agingData = data?.aging ?? []
+
+  // Dynamic Y-axis limit scaling
+  const yAxisMax = React.useMemo(() => {
+    if (!trendData || trendData.length === 0) return 300000 // default 3 Lakh
+
+    // Find the maximum value in both series (desktop and mobile)
+    const maxVal = trendData.reduce((accMax: number, point: any) => {
+      const desktopVal = Number(point.desktop ?? 0)
+      const mobileVal = Number(point.mobile ?? 0)
+      return Math.max(accMax, desktopVal, mobileVal)
+    }, 0)
+
+    if (maxVal <= 0) return 300000 // default 3 Lakh
+
+    // Add +50% buffer to keep the chart clean and spaced out
+    const target = maxVal * 1.5
+
+    // Round up step size to a clean interval to produce exactly 4 clean ticks
+    // (step = yAxisMax / 3, since ticks are: 0, step, 2*step, 3*step)
+    let step = 0
+    if (target >= 10000000) { // Crore range (>= 1 Cr)
+      const rawStep = target / 3
+      step = Math.ceil(rawStep / 1000000) * 1000000 // round to nearest 10 Lakh (0.1 Cr)
+    } else if (target >= 100000) { // Lakh range (>= 1 L)
+      const rawStep = target / 3
+      if (rawStep > 200000) {
+        step = Math.ceil(rawStep / 100000) * 100000 // round to nearest 1L
+      } else if (rawStep > 100000) {
+        step = Math.ceil(rawStep / 50000) * 50000 // round to nearest 50k
+      } else {
+        step = Math.ceil(rawStep / 10000) * 10000 // round to nearest 10k
+      }
+    } else if (target >= 1000) { // Thousand range (>= 1k)
+      const rawStep = target / 3
+      step = Math.ceil(rawStep / 1000) * 1000 // round to nearest 1k
+    } else {
+      const rawStep = target / 3
+      step = Math.ceil(rawStep / 10) * 10 // round to nearest 10
+    }
+
+    return step * 3
+  }, [trendData])
 
   return (
     <div className="space-y-4">
@@ -344,7 +168,7 @@ export function RecoveryAnalytics() {
           <span className="text-[12px] font-semibold text-gray-600 pl-2">Timeframe:</span>
           <select
             value={timeRange}
-            onChange={(e) => setTimeRange(e.target.value as any)}
+            onChange={(e) => setTimeRange(e.target.value)}
             className="bg-gray-50/70 border border-gray-100 hover:bg-gray-100/50 transition-colors rounded-lg px-2.5 py-1 text-[12px] font-bold text-gray-800 focus:outline-none cursor-pointer"
           >
             <option value="30_days">Last 30 Days</option>
@@ -362,53 +186,85 @@ export function RecoveryAnalytics() {
           {/* Stat 1: Total Debt Recovered */}
           <div className="px-6 py-5 flex flex-col justify-center">
             <span className="text-[14px] font-medium text-black tracking-tight">Total Recovered</span>
-            <div className="mt-2.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-              <span className="text-[26px] font-bold text-gray-900 leading-none whitespace-nowrap">
-                {currencyFormatter(currentData.metrics.totalRecovered)}
-              </span>
-              <span className="text-[11.5px] text-emerald-600 font-semibold whitespace-nowrap">
-                ▲ {currentData.metrics.recoveredDiff}
-              </span>
-            </div>
+            {loading ? (
+              <div className="mt-3.5 space-y-2 animate-pulse">
+                <div className="h-7 w-24 bg-gray-200 rounded-lg" />
+                <div className="h-4 w-32 bg-gray-100 rounded-md" />
+              </div>
+            ) : (
+              <div className="mt-2.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                <span className="text-[26px] font-bold text-gray-900 leading-none whitespace-nowrap">
+                  {currencyFormatter(metrics.totalRecovered)}
+                </span>
+                <span className={`text-[11.5px] font-semibold whitespace-nowrap ${
+                  metrics.recoveredDiffPercent >= 0 ? 'text-emerald-600' : 'text-rose-600'
+                }`}>
+                  {metrics.recoveredDiffPercent >= 0 ? '▲' : '▼'} {metrics.recoveredDiffText}
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Stat 2: Recovery Success */}
           <div className="px-6 py-5 flex flex-col justify-center">
             <span className="text-[14px] font-medium text-black tracking-tight">Recovery Success</span>
-            <div className="mt-2.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-              <span className="text-[26px] font-bold text-gray-900 leading-none whitespace-nowrap">
-                {currentData.metrics.rate}%
-              </span>
-              <span className="text-[11.5px] text-gray-500 font-medium whitespace-nowrap">
-                Target: 80%
-              </span>
-            </div>
+            {loading ? (
+              <div className="mt-3.5 space-y-2 animate-pulse">
+                <div className="h-7 w-24 bg-gray-200 rounded-lg" />
+                <div className="h-4 w-32 bg-gray-100 rounded-md" />
+              </div>
+            ) : (
+              <div className="mt-2.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                <span className="text-[26px] font-bold text-gray-900 leading-none whitespace-nowrap">
+                  {metrics.rate}%
+                </span>
+                <span className="text-[11.5px] text-gray-500 font-medium whitespace-nowrap">
+                  Target: 80%
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Stat 3: Average Days to Collect */}
           <div className="px-6 py-5 flex flex-col justify-center">
             <span className="text-[14px] font-medium text-black tracking-tight">Avg Days to Collect</span>
-            <div className="mt-2.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-              <span className="text-[26px] font-bold text-gray-900 leading-none whitespace-nowrap">
-                {currentData.metrics.daysToCollect} Days
-              </span>
-              <span className="text-[11.5px] text-orange-600 font-semibold whitespace-nowrap">
-                ▼ {currentData.metrics.daysDiff}
-              </span>
-            </div>
+            {loading ? (
+              <div className="mt-3.5 space-y-2 animate-pulse">
+                <div className="h-7 w-24 bg-gray-200 rounded-lg" />
+                <div className="h-4 w-32 bg-gray-100 rounded-md" />
+              </div>
+            ) : (
+              <div className="mt-2.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                <span className="text-[26px] font-bold text-gray-900 leading-none whitespace-nowrap">
+                  {metrics.daysToCollect} Days
+                </span>
+                <span className={`text-[11.5px] font-semibold whitespace-nowrap ${
+                  metrics.daysDiff === 0 ? 'text-gray-500' : metrics.daysDiff < 0 ? 'text-emerald-600' : 'text-rose-600'
+                }`}>
+                  {metrics.daysDiff === 0 ? '' : metrics.daysDiff < 0 ? '▼ ' : '▲ '}{metrics.daysDiffText}
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Stat 4: Outstanding Receivables */}
           <div className="px-6 py-5 flex flex-col justify-center">
             <span className="text-[14px] font-medium text-black tracking-tight">Outstanding Queue</span>
-            <div className="mt-2.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-              <span className="text-[26px] font-bold text-gray-900 leading-none whitespace-nowrap">
-                {currencyFormatter(currentData.metrics.outstanding)}
-              </span>
-              <span className="text-[11.5px] text-gray-500 font-semibold whitespace-nowrap">
-                Awaiting Reminders
-              </span>
-            </div>
+            {loading ? (
+              <div className="mt-3.5 space-y-2 animate-pulse">
+                <div className="h-7 w-24 bg-gray-200 rounded-lg" />
+                <div className="h-4 w-32 bg-gray-100 rounded-md" />
+              </div>
+            ) : (
+              <div className="mt-2.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                <span className="text-[26px] font-bold text-gray-900 leading-none whitespace-nowrap">
+                  {currencyFormatter(metrics.outstanding)}
+                </span>
+                <span className="text-[11.5px] text-gray-500 font-semibold whitespace-nowrap">
+                  Awaiting Reminders
+                </span>
+              </div>
+            )}
           </div>
 
         </div>
@@ -433,7 +289,7 @@ export function RecoveryAnalytics() {
               config={chartConfig}
               className="aspect-auto h-[320px] w-full"
             >
-              <RechartsAreaChart data={filteredData} margin={{ left: 10, right: 10 }}>
+              <RechartsAreaChart data={trendData} margin={{ left: 10, right: 10 }}>
                 <defs>
                   <linearGradient id="fillDesktop" x1="0" y1="0" x2="0" y2="1">
                     <stop
@@ -481,7 +337,9 @@ export function RecoveryAnalytics() {
                   axisLine={false}
                   tickMargin={12}
                   width={60}
-                  tickFormatter={(value) => `₹${value}K`}
+                  domain={[0, yAxisMax]}
+                  tickCount={4}
+                  tickFormatter={formatINRCompact}
                   className="text-xs font-semibold fill-gray-400"
                 />
                 <ChartTooltip
@@ -541,37 +399,52 @@ export function RecoveryAnalytics() {
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6 py-4 flex-1">
             <div className="h-40 w-40 flex-shrink-0 flex items-center justify-center relative">
-              <DonutChart
-                data={currentData.channels}
-                category="name"
-                value="value"
-                colors={['emerald', 'blue', 'orange', 'violet']}
-                valueFormatter={currencyFormatter}
-                showLabel={true}
-                label="Channels"
-              />
+              {loading ? (
+                <div className="h-32 w-32 rounded-full border-8 border-gray-100 border-t-gray-300 animate-spin" />
+              ) : (
+                <DonutChart
+                  data={channelsData}
+                  category="name"
+                  value="value"
+                  colors={['emerald', 'blue', 'orange', 'violet']}
+                  valueFormatter={channelValueFormatter}
+                  showLabel={true}
+                  label="Channels"
+                />
+              )}
             </div>
             
             <div className="space-y-2 flex-1 w-full max-w-[200px]">
-              {currentData.channels.map((chan, idx) => {
-                const percentage = ((chan.value / totalChannelsValue) * 100).toFixed(0)
-                const colorsArr = ['bg-emerald-500', 'bg-blue-500', 'bg-orange-500', 'bg-violet-500']
-                
-                return (
-                  <div key={chan.name} className="flex items-center justify-between text-xs font-semibold">
-                    <div className="flex items-center gap-2">
-                      <span className={`h-2.5 w-2.5 rounded-full ${colorsArr[idx % colorsArr.length]}`} />
-                      <span className="text-gray-600">{chan.name}</span>
+              {loading ? (
+                <div className="space-y-3 animate-pulse">
+                  {[1, 2, 3, 4].map((i) => (
+                    <div key={i} className="flex justify-between items-center">
+                      <div className="h-3.5 w-24 bg-gray-200 rounded" />
+                      <div className="h-3.5 w-10 bg-gray-150 rounded" />
                     </div>
-                    <div className="text-gray-900 flex items-center gap-1.5">
-                      <span>{percentage}%</span>
-                      <span className="text-[10px] text-gray-400 font-normal font-mono">
-                        ({(chan.value / 1000).toFixed(0)}K)
-                      </span>
+                  ))}
+                </div>
+              ) : (
+                channelsData.map((chan: any, idx: number) => {
+                  const percentage = totalChannelsValue > 0 ? ((chan.value / totalChannelsValue) * 100).toFixed(0) : '0'
+                  const colorsArr = ['bg-emerald-500', 'bg-blue-500', 'bg-orange-500', 'bg-violet-500']
+                  
+                  return (
+                    <div key={chan.name} className="flex items-center justify-between text-xs font-semibold">
+                      <div className="flex items-center gap-2">
+                        <span className={`h-2.5 w-2.5 rounded-full ${colorsArr[idx % colorsArr.length]}`} />
+                        <span className="text-gray-600">{chan.name}</span>
+                      </div>
+                      <div className="text-gray-900 flex items-center gap-1.5">
+                        <span>{percentage}%</span>
+                        <span className="text-[10px] text-gray-400 font-normal font-mono">
+                          ({channelValueFormatter(chan.value)})
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                )
-              })}
+                  )
+                })
+              )}
             </div>
           </div>
         </div>
@@ -591,10 +464,24 @@ export function RecoveryAnalytics() {
           </div>
 
           <div className="py-2 flex-1 flex items-center">
-            <BarList
-              data={currentData.aging}
-              valueFormatter={currencyFormatter}
-            />
+            {loading ? (
+              <div className="space-y-4 w-full animate-pulse">
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="space-y-1.5">
+                    <div className="flex justify-between text-xs">
+                      <div className="h-3 w-24 bg-gray-200 rounded" />
+                      <div className="h-3 w-12 bg-gray-150 rounded" />
+                    </div>
+                    <div className="h-2 w-full bg-gray-100 rounded" />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <BarList
+                data={agingData}
+                valueFormatter={currencyFormatter}
+              />
+            )}
           </div>
         </div>
 

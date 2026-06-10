@@ -43,6 +43,9 @@ export async function updateSession(request: NextRequest) {
     path.startsWith('/ca')
 
   if (!user) {
+    if (process.env.NODE_ENV === 'development') {
+      return supabaseResponse
+    }
     if (isProtected || isOnboardingPath) {
       const url = request.nextUrl.clone()
       url.pathname = '/login'

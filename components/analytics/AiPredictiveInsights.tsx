@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { formatINRCompact } from '@/lib/utils/currency'
 import { CategoryBar } from '@/components/ui/CategoryBar'
 import { BarList } from '@/components/ui/BarList'
@@ -36,7 +36,7 @@ import {
 } from "@/components/ui/select"
 
 interface DebtorMlProfile {
-  id: string
+  customerId: string
   customerName: string
   balance: number
   probability: number
@@ -50,198 +50,6 @@ interface DebtorMlProfile {
     mlSummary: string
   }
 }
-
-const DEBTOR_ML_PROFILES: DebtorMlProfile[] = [
-  {
-    id: 'db-1',
-    customerName: 'Reddy Enterprises',
-    balance: 200000,
-    probability: 74,
-    predictedDate: '12 Jun 2026 (±2d)',
-    riskLevel: 'MEDIUM',
-    recommendedAction: 'Shift to WhatsApp Friday Reminders',
-    recommendedRoute: '/tone-engine',
-    behavior: {
-      avgDelayDays: 18,
-      responseRates: [
-        { name: 'WhatsApp', value: 85 },
-        { name: 'Email', value: 20 },
-        { name: 'Calls', value: 45 }
-      ],
-      mlSummary: 'Customer typically pays on Friday afternoons. Reminders dispatched on Thursdays or Fridays receive 4x quicker responses than early-week notices.'
-    }
-  },
-  {
-    id: 'db-2',
-    customerName: 'Bharat Steel Works',
-    balance: 640000,
-    probability: 88,
-    predictedDate: '18 Jun 2026 (±3d)',
-    riskLevel: 'LOW',
-    recommendedAction: 'Trigger Friendly WhatsApp Notice',
-    recommendedRoute: '/tone-engine',
-    behavior: {
-      avgDelayDays: 8,
-      responseRates: [
-        { name: 'WhatsApp', value: 92 },
-        { name: 'Email', value: 40 },
-        { name: 'Calls', value: 60 }
-      ],
-      mlSummary: 'Highly responsive client. Tends to clear balances immediately after a friendly WhatsApp follow-up. Email remains unread.'
-    }
-  },
-  {
-    id: 'db-3',
-    customerName: 'MegaVision Electronics',
-    balance: 2200000,
-    probability: 41,
-    predictedDate: 'High Default Risk (>60d late)',
-    riskLevel: 'CRITICAL',
-    recommendedAction: 'File MSME Samadhaan pre-notice',
-    recommendedRoute: '/msme-samadhaan',
-    behavior: {
-      avgDelayDays: 52,
-      responseRates: [
-        { name: 'WhatsApp', value: 15 },
-        { name: 'Email', value: 5 },
-        { name: 'Calls', value: 10 }
-      ],
-      mlSummary: 'Zero response across electronic channels. Historical trends suggest legal escalation triggers immediate conciliation. Recommend filing MSME Samadhaan dispute immediately.'
-    }
-  },
-  {
-    id: 'db-4',
-    customerName: 'Tara Decoratives',
-    balance: 170000,
-    probability: 48,
-    predictedDate: 'Default threat (>95d late)',
-    riskLevel: 'CRITICAL',
-    recommendedAction: 'Claim 3x RBI compound interest',
-    recommendedRoute: '/msme-samadhaan',
-    behavior: {
-      avgDelayDays: 65,
-      responseRates: [
-        { name: 'WhatsApp', value: 30 },
-        { name: 'Email', value: 10 },
-        { name: 'Calls', value: 20 }
-      ],
-      mlSummary: 'Severe payment delays. Escalating reminders have exhausted efficiency. Claim compounding interest via Facilitation Council to force recovery.'
-    }
-  },
-  {
-    id: 'db-5',
-    customerName: 'Vertex Solutions Co.',
-    balance: 89000,
-    probability: 91,
-    predictedDate: '08 Jun 2026 (±1d)',
-    riskLevel: 'LOW',
-    recommendedAction: 'Trigger auto-billing sync',
-    recommendedRoute: '/settings',
-    behavior: {
-      avgDelayDays: 4,
-      responseRates: [
-        { name: 'WhatsApp', value: 95 },
-        { name: 'Email', value: 80 },
-        { name: 'Calls', value: 70 }
-      ],
-      mlSummary: 'Consistent payor. Delays are usually administrative. Triggering automated accounting ledger matching will speed up clearance.'
-    }
-  }
-]
-
-const chartData = [
-  { date: "2024-04-01", desktop: 222, mobile: 150 },
-  { date: "2024-04-02", desktop: 97, mobile: 180 },
-  { date: "2024-04-03", desktop: 167, mobile: 120 },
-  { date: "2024-04-04", desktop: 242, mobile: 260 },
-  { date: "2024-04-05", desktop: 373, mobile: 290 },
-  { date: "2024-04-06", desktop: 301, mobile: 340 },
-  { date: "2024-04-07", desktop: 245, mobile: 180 },
-  { date: "2024-04-08", desktop: 409, mobile: 320 },
-  { date: "2024-04-09", desktop: 59, mobile: 110 },
-  { date: "2024-04-10", desktop: 261, mobile: 190 },
-  { date: "2024-04-11", desktop: 327, mobile: 350 },
-  { date: "2024-04-12", desktop: 292, mobile: 210 },
-  { date: "2024-04-13", desktop: 342, mobile: 380 },
-  { date: "2024-04-14", desktop: 137, mobile: 220 },
-  { date: "2024-04-15", desktop: 120, mobile: 170 },
-  { date: "2024-04-16", desktop: 138, mobile: 190 },
-  { date: "2024-04-17", desktop: 446, mobile: 360 },
-  { date: "2024-04-18", desktop: 364, mobile: 410 },
-  { date: "2024-04-19", desktop: 243, mobile: 180 },
-  { date: "2024-04-20", desktop: 89, mobile: 150 },
-  { date: "2024-04-21", desktop: 137, mobile: 200 },
-  { date: "2024-04-22", desktop: 224, mobile: 170 },
-  { date: "2024-04-23", desktop: 138, mobile: 230 },
-  { date: "2024-04-24", desktop: 387, mobile: 290 },
-  { date: "2024-04-25", desktop: 215, mobile: 250 },
-  { date: "2024-04-26", desktop: 75, mobile: 130 },
-  { date: "2024-04-27", desktop: 383, mobile: 420 },
-  { date: "2024-04-28", desktop: 122, mobile: 180 },
-  { date: "2024-04-29", desktop: 315, mobile: 240 },
-  { date: "2024-04-30", desktop: 454, mobile: 380 },
-  { date: "2024-05-01", desktop: 165, mobile: 220 },
-  { date: "2024-05-02", desktop: 293, mobile: 310 },
-  { date: "2024-05-03", desktop: 247, mobile: 190 },
-  { date: "2024-05-04", desktop: 385, mobile: 420 },
-  { date: "2024-05-05", desktop: 481, mobile: 390 },
-  { date: "2024-05-06", desktop: 498, mobile: 520 },
-  { date: "2024-05-07", desktop: 388, mobile: 300 },
-  { date: "2024-05-08", desktop: 149, mobile: 210 },
-  { date: "2024-05-09", desktop: 227, mobile: 180 },
-  { date: "2024-05-10", desktop: 293, mobile: 330 },
-  { date: "2024-05-11", desktop: 335, mobile: 270 },
-  { date: "2024-05-12", desktop: 197, mobile: 240 },
-  { date: "2024-05-13", desktop: 197, mobile: 160 },
-  { date: "2024-05-14", desktop: 448, mobile: 490 },
-  { date: "2024-05-15", desktop: 473, mobile: 380 },
-  { date: "2024-05-16", desktop: 338, mobile: 400 },
-  { date: "2024-05-17", desktop: 499, mobile: 420 },
-  { date: "2024-05-18", desktop: 315, mobile: 350 },
-  { date: "2024-05-19", desktop: 235, mobile: 180 },
-  { date: "2024-05-20", desktop: 177, mobile: 230 },
-  { date: "2024-05-21", desktop: 82, mobile: 140 },
-  { date: "2024-05-22", desktop: 81, mobile: 120 },
-  { date: "2024-05-23", desktop: 252, mobile: 290 },
-  { date: "2024-05-24", desktop: 294, mobile: 220 },
-  { date: "2024-05-25", desktop: 201, mobile: 250 },
-  { date: "2024-05-26", desktop: 213, mobile: 170 },
-  { date: "2024-05-27", desktop: 420, mobile: 460 },
-  { date: "2024-05-28", desktop: 233, mobile: 190 },
-  { date: "2024-05-29", desktop: 78, mobile: 130 },
-  { date: "2024-05-30", desktop: 340, mobile: 280 },
-  { date: "2024-05-31", desktop: 178, mobile: 230 },
-  { date: "2024-06-01", desktop: 178, mobile: 200 },
-  { date: "2024-06-02", desktop: 470, mobile: 410 },
-  { date: "2024-06-03", desktop: 103, mobile: 160 },
-  { date: "2024-06-04", desktop: 439, mobile: 380 },
-  { date: "2024-06-05", desktop: 88, mobile: 140 },
-  { date: "2024-06-06", desktop: 294, mobile: 250 },
-  { date: "2024-06-07", desktop: 323, mobile: 370 },
-  { date: "2024-06-08", desktop: 385, mobile: 320 },
-  { date: "2024-06-09", desktop: 438, mobile: 480 },
-  { date: "2024-06-10", desktop: 155, mobile: 200 },
-  { date: "2024-06-11", desktop: 92, mobile: 150 },
-  { date: "2024-06-12", desktop: 492, mobile: 420 },
-  { date: "2024-06-13", desktop: 81, mobile: 130 },
-  { date: "2024-06-14", desktop: 426, mobile: 380 },
-  { date: "2024-06-15", desktop: 307, mobile: 350 },
-  { date: "2024-06-16", desktop: 371, mobile: 310 },
-  { date: "2024-06-17", desktop: 475, mobile: 520 },
-  { date: "2024-06-18", desktop: 107, mobile: 170 },
-  { date: "2024-06-19", desktop: 341, mobile: 290 },
-  { date: "2024-06-20", desktop: 408, mobile: 450 },
-  { date: "2024-06-21", desktop: 169, mobile: 210 },
-  { date: "2024-06-22", desktop: 317, mobile: 270 },
-  { date: "2024-06-23", desktop: 480, mobile: 530 },
-  { date: "2024-06-24", desktop: 132, mobile: 180 },
-  { date: "2024-06-25", desktop: 141, mobile: 190 },
-  { date: "2024-06-26", desktop: 434, mobile: 380 },
-  { date: "2024-06-27", desktop: 448, mobile: 490 },
-  { date: "2024-06-28", desktop: 149, mobile: 200 },
-  { date: "2024-06-29", desktop: 103, mobile: 160 },
-  { date: "2024-06-30", desktop: 446, mobile: 400 },
-]
 
 const chartConfig = {
   baseline: {
@@ -282,17 +90,50 @@ const getTrackerData = (probability: number) => {
   })
 }
 
+
 export function AiPredictiveInsights() {
   const [searchQuery, setSearchQuery] = useState('')
   const [riskFilter, setRiskFilter] = useState<'ALL' | 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW'>('ALL')
-  const [timeRange, setTimeRange] = useState('90d')
+  const [timeRange, setTimeRange] = useState('30d')
+
+  // API states
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [apiData, setApiData] = useState<any>(null)
 
   // Drawer states
-  const [selectedProfile, setSelectedProfile] = useState<DebtorMlProfile | null>(null)
+  const [selectedProfile, setSelectedProfile] = useState<any | null>(null)
   const [drawerOpen, setDrawerOpen] = useState(false)
 
+  useEffect(() => {
+    let isMounted = true
+    setLoading(true)
+    fetch('/api/analytics/predictive')
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to fetch predictions')
+        return res.json()
+      })
+      .then((resJson) => {
+        if (isMounted) {
+          setApiData(resJson)
+          setLoading(false)
+        }
+      })
+      .catch((err) => {
+        console.error(err)
+        if (isMounted) {
+          setError(err.message || 'Failed to fetch AI insights')
+          setLoading(false)
+        }
+      })
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
   const getFilteredDebtors = () => {
-    return DEBTOR_ML_PROFILES.filter((db) => {
+    const profiles = apiData?.debtorProfiles ?? []
+    return profiles.filter((db: any) => {
       const matchesSearch = db.customerName.toLowerCase().includes(searchQuery.toLowerCase())
       const matchesRisk = riskFilter === 'ALL' || db.riskLevel === riskFilter
       return matchesSearch && matchesRisk
@@ -301,29 +142,124 @@ export function AiPredictiveInsights() {
 
   const filteredDebtors = getFilteredDebtors()
 
-  const filteredData = chartData.filter((item) => {
-    const date = new Date(item.date)
-    const referenceDate = new Date("2024-06-30")
-    let daysToSubtract = 90
-    if (timeRange === "30d") {
-      daysToSubtract = 30
-    } else if (timeRange === "7d") {
-      daysToSubtract = 7
-    }
-    const startDate = new Date(referenceDate)
-    startDate.setDate(startDate.getDate() - daysToSubtract)
-    return date >= startDate
-  })
+  const runwayDailyData = useMemo(() => {
+    if (!apiData?.runway) return []
+    const limit = timeRange === '7d' ? 7 : timeRange === '30d' ? 30 : 90
+    return apiData.runway.slice(0, limit)
+  }, [apiData, timeRange])
 
-  const runwayDailyData = filteredData.map((item) => ({
-    date: item.date,
-    baseline: item.desktop * 3000,
-    worstCase: item.mobile * 1800,
-    outstanding: (item.desktop + item.mobile) * 4500,
-  }))
+  const chartTicks = useMemo(() => {
+    if (runwayDailyData.length === 0) return undefined
+    const ticks: string[] = []
+    
+    let step = 1
+    if (timeRange === '30d') {
+      step = 2
+    } else if (timeRange === '90d') {
+      step = 7
+    }
+
+    for (let i = 0; i < runwayDailyData.length; i += step) {
+      ticks.push(runwayDailyData[i].date)
+    }
+
+    const lastDate = runwayDailyData[runwayDailyData.length - 1].date
+    const lastTick = ticks[ticks.length - 1]
+    if (lastTick && !ticks.includes(lastDate)) {
+      const lastTickTime = new Date(lastTick).getTime()
+      const lastDateTime = new Date(lastDate).getTime()
+      const diffDays = Math.round(Math.abs(lastDateTime - lastTickTime) / (1000 * 60 * 60 * 24))
+      if (diffDays >= step) {
+        ticks.push(lastDate)
+      }
+    }
+    return ticks
+  }, [runwayDailyData, timeRange])
+
+  const yAxisMax = useMemo(() => {
+    if (!runwayDailyData || runwayDailyData.length === 0) return 100000
+
+    const maxVal = runwayDailyData.reduce((accMax: number, point: any) => {
+      const bVal = Number(point.baseline ?? 0)
+      const wVal = Number(point.worstCase ?? 0)
+      const oVal = Number(point.outstanding ?? 0)
+      return Math.max(accMax, bVal, wVal, oVal)
+    }, 0)
+
+    if (maxVal <= 0) return 100000
+
+    const target = maxVal * 1.2
+
+    let step = 0
+    if (target >= 10000000) {
+      const rawStep = target / 3
+      step = Math.ceil(rawStep / 1000000) * 1000000
+    } else if (target >= 100000) {
+      const rawStep = target / 3
+      if (rawStep > 200000) {
+        step = Math.ceil(rawStep / 100000) * 100000
+      } else if (rawStep > 100000) {
+        step = Math.ceil(rawStep / 50000) * 50000
+      } else {
+        step = Math.ceil(rawStep / 10000) * 10000
+      }
+    } else if (target >= 1000) {
+      const rawStep = target / 3
+      step = Math.ceil(rawStep / 1000) * 1000
+    } else {
+      const rawStep = target / 3
+      step = Math.ceil(rawStep / 10) * 10
+    }
+
+    return step * 3
+  }, [runwayDailyData])
 
   const handleApplyOptimization = (cName: string, actionName: string) => {
     toast.success(`Applied AI recommendation: "${actionName}" for ${cName}`)
+  }
+
+  const metrics = apiData?.metrics ?? {
+    projected30dRecoveries: 0,
+    avgProbability: 0,
+    projectedBadDebt: 0,
+    mlOptimizationsCount: 0,
+    mlOptimizationsValue: 0,
+    aiSuggestionText: 'Add outstanding invoices to generate AI collections predictions.',
+  }
+
+  if (loading) {
+    return (
+      <div className="space-y-4 animate-pulse select-none">
+        {/* ML Metrics Panel Skeleton */}
+        <div className="bg-white border border-[#EBEAE6] rounded-[22px] overflow-hidden">
+          <div className="grid grid-cols-1 divide-y divide-[#EBEAE6]/60 md:grid-cols-4 md:divide-y-0 md:divide-x">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="px-6 py-6 space-y-2.5">
+                <div className="h-4 w-32 bg-gray-200 rounded" />
+                <div className="h-6 w-24 bg-gray-150 rounded" />
+              </div>
+            ))}
+          </div>
+        </div>
+        {/* Chart Skeleton */}
+        <div className="bg-white border border-[#EBEAE6] rounded-[22px] p-6 h-[400px] flex flex-col justify-between">
+          <div className="space-y-2">
+            <div className="h-4 w-48 bg-gray-200 rounded" />
+            <div className="h-3 w-96 bg-gray-150 rounded" />
+          </div>
+          <div className="h-[280px] bg-gray-100/40 rounded-xl" />
+        </div>
+        {/* Table Skeleton */}
+        <div className="bg-white border border-[#EBEAE6] rounded-[22px] p-6 space-y-4">
+          <div className="h-10 bg-gray-100 rounded-xl" />
+          <div className="space-y-3">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="h-12 bg-gray-50 rounded-lg" />
+            ))}
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -338,7 +274,7 @@ export function AiPredictiveInsights() {
             <span className="text-[14px] font-medium text-black tracking-tight block">Projected 30d Recoveries</span>
             <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
               <span className="text-[25px] font-semibold text-gray-900 leading-none whitespace-nowrap block">
-                {formatINRCompact(1450000)}
+                {formatINRCompact(metrics.projected30dRecoveries)}
               </span>
               <span className="inline-flex items-center text-emerald-700 text-[11.5px] font-medium whitespace-nowrap">
                 AI Projected Baseline
@@ -351,7 +287,7 @@ export function AiPredictiveInsights() {
             <span className="text-[14px] font-medium text-black tracking-tight block">Average Probability</span>
             <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
               <span className="text-[25px] font-semibold text-gray-900 leading-none whitespace-nowrap block">
-                68.4%
+                {metrics.avgProbability.toFixed(1)}%
               </span>
               <span className="inline-flex items-center text-blue-700 text-[11.5px] font-medium whitespace-nowrap">
                 Confidence: High
@@ -364,7 +300,7 @@ export function AiPredictiveInsights() {
             <span className="text-[14px] font-medium text-black tracking-tight block">Projected Bad Debt</span>
             <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
               <span className="text-[25px] font-semibold text-gray-900 leading-none whitespace-nowrap block">
-                3.8%
+                {metrics.projectedBadDebt.toFixed(1)}%
               </span>
               <span className="inline-flex items-center text-red-700 text-[11.5px] font-medium whitespace-nowrap">
                 Target limit: &lt;5.0%
@@ -377,10 +313,10 @@ export function AiPredictiveInsights() {
             <span className="text-[14px] font-medium text-black tracking-tight block">ML Optimizations</span>
             <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
               <span className="text-[25px] font-semibold text-gray-900 leading-none whitespace-nowrap block">
-                5 Actions
+                {metrics.mlOptimizationsCount} Actions
               </span>
               <span className="inline-flex items-center text-violet-700 text-[11.5px] font-medium whitespace-nowrap">
-                Est. impact: +₹1.80 L
+                Est. impact: +{formatINRCompact(metrics.mlOptimizationsValue)}
               </span>
             </div>
           </div>
@@ -471,10 +407,10 @@ export function AiPredictiveInsights() {
               <CartesianGrid vertical={false} strokeDasharray="3 3" className="stroke-gray-200/50" />
               <XAxis
                 dataKey="date"
+                ticks={chartTicks}
                 tickLine={false}
                 axisLine={false}
                 tickMargin={8}
-                minTickGap={32}
                 tickFormatter={(value: any) => {
                   const date = new Date(value)
                   return date.toLocaleDateString("en-US", {
@@ -489,7 +425,9 @@ export function AiPredictiveInsights() {
                 axisLine={false}
                 tickMargin={8}
                 width={64}
-                tickFormatter={(value: any) => `₹${(value / 1000).toFixed(0)}K`}
+                domain={[0, yAxisMax]}
+                tickCount={4}
+                tickFormatter={formatINRCompact}
                 className="text-xs font-semibold fill-gray-400"
               />
               <ChartTooltip
@@ -509,21 +447,21 @@ export function AiPredictiveInsights() {
               />
               <Area
                 dataKey="outstanding"
-                type="natural"
+                type="monotone"
                 fill="url(#fillOutstanding)"
                 stroke="var(--color-outstanding)"
                 strokeWidth={2}
               />
               <Area
                 dataKey="baseline"
-                type="natural"
+                type="monotone"
                 fill="url(#fillBaseline)"
                 stroke="var(--color-baseline)"
                 strokeWidth={2}
               />
               <Area
                 dataKey="worstCase"
-                type="natural"
+                type="monotone"
                 fill="url(#fillWorstCase)"
                 stroke="var(--color-worstCase)"
                 strokeWidth={2}
@@ -600,8 +538,8 @@ export function AiPredictiveInsights() {
                   </td>
                 </tr>
               ) : (
-                filteredDebtors.map((row) => (
-                  <tr key={row.id} className="hover:bg-gray-50/40 transition-colors">
+                filteredDebtors.map((row: any) => (
+                  <tr key={row.customerId} className="hover:bg-gray-50/40 transition-colors">
 
                     {/* Customer Info */}
                     <td className="px-5 py-4.5">
@@ -708,7 +646,7 @@ export function AiPredictiveInsights() {
             Collection Optimization Available
           </h4> */}
           <p className="text-[13.5px] text-gray-600 font-medium leading-relaxed">
-            Applying Friday afternoon scheduling on **Reddy Enterprises** is projected to recover ₹2,00,000 approximately 8 days earlier. Click the "Optimize" button in the table to apply this scheduling rule.
+            {metrics.aiSuggestionText}
           </p>
         </div>
       </div>

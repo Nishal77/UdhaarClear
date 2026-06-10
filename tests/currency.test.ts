@@ -17,14 +17,15 @@ describe('formatINR', () => {
 
 describe('formatINRCompact', () => {
   it('formats in crores', () => {
-    expect(formatINRCompact(10000000)).toContain('Cr')
+    expect(formatINRCompact(10000000)).toBe('₹1cr')
   })
 
   it('formats in lakhs', () => {
-    expect(formatINRCompact(500000)).toContain('L')
+    expect(formatINRCompact(500000)).toBe('₹5L')
   })
 
-  it('formats thousands in K', () => {
-    expect(formatINRCompact(5000)).toContain('K')
+  it('formats thousands in k', () => {
+    expect(formatINRCompact(5000)).toBe('₹5k')
   })
 })
+

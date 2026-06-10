@@ -59,6 +59,7 @@ model Business {
   customers Customer[]
   invoices  Invoice[]
   reminders Reminder[]
+  aiInsight AiInsight?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -155,6 +156,9 @@ model Invoice {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@index([businessId])
+  @@index([customerId])
+  @@index([paidAt])
   @@map("invoices")
 }
 
@@ -204,6 +208,8 @@ model Reminder {
 
   createdAt DateTime @default(now())
 
+  @@index([businessId])
+  @@index([invoiceId])
   @@map("reminders")
 }
 
@@ -262,3 +268,19 @@ enum SubscriptionStatus {
   CANCELLED
   TRIALING
 }
+
+// ─────────────────────────────────────────────
+// AI PREDICTIVE INSIGHTS CACHE
+// ─────────────────────────────────────────────
+
+model AiInsight {
+  id         String   @id @default(cuid())
+  businessId String   @unique
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  insights   Json
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("ai_insights")
+}
+
