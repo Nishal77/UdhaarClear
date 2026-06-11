@@ -11,6 +11,7 @@ import Pricing from "@/components/landing/Pricing";
 import FAQ from "@/components/landing/FAQ";
 import Footer from "@/components/landing/Footer";
 import ChatWidget from "@/components/landing/ChatWidget";
+import CookieConsent from "@/components/landing/CookieConsent";
 
 export default function LandingPage() {
   return (
@@ -30,6 +31,7 @@ export default function LandingPage() {
         <Footer />
       </main>
       <ChatWidget />
+      <CookieConsent />
     </div>
   );
 }
