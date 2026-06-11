@@ -1,6 +1,23 @@
 "use client";
 
 import Link from "next/link";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ArrowDown01Icon } from "@hugeicons/core-free-icons";
+import { 
+  Settings, 
+  TrendingUp, 
+  Scale, 
+  QrCode, 
+  LayoutDashboard, 
+  Factory, 
+  Store, 
+  Truck, 
+  Briefcase, 
+  Calculator,
+  Calendar,
+  FileText,
+  Gavel
+} from "lucide-react";
 
 export default function Navbar() {
   return (
@@ -19,50 +36,72 @@ export default function Navbar() {
         
         {/* Product Dropdown */}
         <div className="relative group py-2">
-          <span className="flex items-center gap-1 text-[13.5px] font-semibold text-gray-700 hover:text-gray-950 transition-colors cursor-pointer">
+          <span className="flex items-center gap-1 text-[14.5px] font-medium text-gray-700 hover:text-gray-950 transition-colors cursor-pointer">
             Product
-            <svg className="w-3 h-3 text-gray-400 group-hover:text-gray-600 transition-colors translate-y-[0.5px] group-hover:rotate-180 duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-            </svg>
+            <HugeiconsIcon 
+              icon={ArrowDown01Icon} 
+              size={11} 
+              className="text-gray-500 group-hover:text-gray-600 transition-transform group-hover:rotate-180 duration-200 translate-y-[0.5px]" 
+            />
           </span>
 
           {/* Premium Dropdown Card */}
-          <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[380px] bg-white border border-gray-100 rounded-2xl shadow-xl p-4 opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-200 pointer-events-none group-hover:pointer-events-auto z-50">
-            <div className="flex flex-col gap-2">
+          <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[380px] bg-white border border-gray-200/60 rounded-[24px] shadow-[0_16px_48px_rgba(0,0,0,0.06)] p-5 opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-200 pointer-events-none group-hover:pointer-events-auto z-50">
+            <div className="px-3 mb-2">
+              <span className="text-[15.5px] font-medium text-gray-500 tracking-tight font-medium">
+                Solutions
+              </span>
+            </div>
+            
+            <div className="flex flex-col gap-1">
               
-              <a href="#how-we-recover" className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-gray-50 transition-colors text-left">
-                <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-[#0047FF] shrink-0 shadow-sm border border-blue-100/30">
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
+              <a href="#how-it-works" className="flex items-start gap-3.5 p-2 rounded-2xl hover:bg-gray-50 transition-colors text-left group/item">
+                <div className="w-9 h-9 rounded-xl border border-gray-200/60 bg-white flex items-center justify-center text-gray-700 shrink-0 transition-colors">
+                  <Settings className="w-4.5 h-4.5 text-gray-700" />
                 </div>
-                <div>
-                  <h5 className="text-[12.5px] font-bold text-gray-900">Collections Engine</h5>
-                  <p className="text-[10.5px] text-gray-500 mt-0.5 leading-normal">Automated WhatsApp, SMS & IVR recovery tracks.</p>
+                <div className="flex flex-col justify-center min-w-0">
+                  <h5 className="text-[13.5px] font-medium text-black group-hover/item:text-black transition-colors leading-tight">Collections Engine</h5>
+                  <p className="text-[12.5px] text-gray-500 mt-0.5 leading-tight truncate">Automated WhatsApp, SMS & IVR recovery.</p>
                 </div>
               </a>
 
-              <a href="#features" className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-gray-50 transition-colors text-left">
-                <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center text-amber-600 shrink-0 shadow-sm border border-amber-100/30">
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                  </svg>
+              <a href="#features" className="flex items-start gap-3.5 p-2 rounded-2xl hover:bg-gray-50 transition-colors text-left group/item">
+                <div className="w-9 h-9 rounded-xl border border-gray-200/60 bg-white flex items-center justify-center text-gray-700 shrink-0 transition-colors">
+                  <TrendingUp className="w-4.5 h-4.5 text-gray-700" />
                 </div>
-                <div>
-                  <h5 className="text-[12.5px] font-bold text-gray-900">Smart Escalations</h5>
-                  <p className="text-[10.5px] text-gray-500 mt-0.5 leading-normal">Seamless transition from polite alerts to draft legal notices.</p>
+                <div className="flex flex-col justify-center min-w-0">
+                  <h5 className="text-[13.5px] font-medium text-black group-hover/item:text-black transition-colors leading-tight">Smart Escalations</h5>
+                  <p className="text-[12.5px] text-gray-500 mt-0.5 leading-tight truncate">Automatic escalations from polite to strict.</p>
                 </div>
               </a>
 
-              <a href="#integrations" className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-gray-50 transition-colors text-left">
-                <div className="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center text-green-600 shrink-0 shadow-sm border border-green-100/30">
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                  </svg>
+              <a href="#features" className="flex items-start gap-3.5 p-2 rounded-2xl hover:bg-gray-50 transition-colors text-left group/item">
+                <div className="w-9 h-9 rounded-xl border border-gray-200/60 bg-white flex items-center justify-center text-gray-700 shrink-0 transition-colors">
+                  <Scale className="w-4.5 h-4.5 text-gray-700" />
                 </div>
-                <div>
-                  <h5 className="text-[12.5px] font-bold text-gray-900">UPI FastPay</h5>
-                  <p className="text-[10.5px] text-gray-500 mt-0.5 leading-normal">Embedded one-click UPI links in every payment alert.</p>
+                <div className="flex flex-col justify-center min-w-0">
+                  <h5 className="text-[13.5px] font-medium text-black group-hover/item:text-black transition-colors leading-tight">Legal Notice Generator</h5>
+                  <p className="text-[12.5px] text-gray-500 mt-0.5 leading-tight truncate">Auto-draft legal notice PDFs instantly.</p>
+                </div>
+              </a>
+
+              <a href="#features" className="flex items-start gap-3.5 p-2 rounded-2xl hover:bg-gray-50 transition-colors text-left group/item">
+                <div className="w-9 h-9 rounded-xl border border-gray-200/60 bg-white flex items-center justify-center text-gray-700 shrink-0 transition-colors">
+                  <QrCode className="w-4.5 h-4.5 text-gray-700" />
+                </div>
+                <div className="flex flex-col justify-center min-w-0">
+                  <h5 className="text-[13.5px] font-medium text-black group-hover/item:text-black transition-colors leading-tight">UPI FastPay Links</h5>
+                  <p className="text-[12.5px] text-gray-500 mt-0.5 leading-tight truncate">One-click UPI links inside payment alerts.</p>
+                </div>
+              </a>
+
+              <a href="/dashboard" className="flex items-start gap-3.5 p-2 rounded-2xl hover:bg-gray-50 transition-colors text-left group/item">
+                <div className="w-9 h-9 rounded-xl border border-gray-200/60 bg-white flex items-center justify-center text-gray-700 shrink-0 transition-colors">
+                  <LayoutDashboard className="w-4.5 h-4.5 text-gray-700" />
+                </div>
+                <div className="flex flex-col justify-center min-w-0">
+                  <h5 className="text-[13.5px] font-medium text-black group-hover/item:text-black transition-colors leading-tight">Recovery Dashboard</h5>
+                  <p className="text-[12.5px] text-gray-500 mt-0.5 leading-tight truncate">Real-time recovery tracking & heatmaps.</p>
                 </div>
               </a>
 
@@ -70,48 +109,74 @@ export default function Navbar() {
           </div>
         </div>
 
-        <Link href="#how-it-works" className="text-[13.5px] font-medium text-gray-700 hover:text-gray-950 transition-colors">
-          How it works
-        </Link>
-
-        <Link href="#integrations" className="text-[13.5px] font-medium text-gray-700 hover:text-gray-950 transition-colors">
-          Tally & Zoho Sync
-        </Link>
-
-        {/* MSME & Legal Hub Dropdown */}
+        {/* Who It's For Dropdown */}
         <div className="relative group py-2">
-          <span className="flex items-center gap-1 text-[13.5px] font-semibold text-gray-700 hover:text-gray-950 transition-colors cursor-pointer">
-            MSME Hub
-            <svg className="w-3 h-3 text-gray-400 group-hover:text-gray-600 transition-colors translate-y-[0.5px] group-hover:rotate-180 duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-            </svg>
+          <span className="flex items-center gap-1 text-[15.5px] font-medium text-gray-700 hover:text-gray-950 transition-colors cursor-pointer">
+            Who It's For
+            <HugeiconsIcon 
+              icon={ArrowDown01Icon} 
+              size={11} 
+              className="text-gray-500 group-hover:text-gray-600 transition-transform group-hover:rotate-180 duration-200 translate-y-[0.5px]" 
+            />
           </span>
 
           {/* Premium Dropdown Card */}
-          <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[380px] bg-white border border-gray-100 rounded-2xl shadow-xl p-4 opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-200 pointer-events-none group-hover:pointer-events-auto z-50">
-            <div className="flex flex-col gap-2">
-              
-              <a href="#" className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-gray-50 transition-colors text-left">
-                <div className="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center text-orange-600 shrink-0 shadow-sm border border-orange-100/30">
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                  </svg>
+          <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[340px] bg-white border border-gray-200/60 rounded-[24px] shadow-[0_16px_48px_rgba(0,0,0,0.06)] p-5 opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-200 pointer-events-none group-hover:pointer-events-auto z-50">
+            <div className="px-3 mb-2">
+              <span className="text-[15.5px] font-medium text-gray-500 font-medium">
+                Businesses
+              </span>
+            </div>
+
+            <div className="flex flex-col gap-1">
+
+              <a href="#who-it-helps" className="flex items-start gap-3.5 p-2 rounded-2xl hover:bg-gray-50 transition-colors text-left group/item">
+                <div className="w-9 h-9 rounded-xl border border-gray-200/60 bg-white flex items-center justify-center text-gray-700 shrink-0 transition-colors">
+                  <Factory className="w-4.5 h-4.5 text-gray-700" />
                 </div>
-                <div>
-                  <h5 className="text-[12.5px] font-bold text-gray-900">MSME Dues Calculator</h5>
-                  <p className="text-[10.5px] text-gray-500 mt-0.5 leading-normal">Calculate legally compound interest owed under Section 16 of the MSME Act.</p>
+                <div className="flex flex-col justify-center min-w-0">
+                  <h5 className="text-[13px] font-semibold text-gray-900 group-hover/item:text-black transition-colors leading-tight">Manufacturers</h5>
+                  <p className="text-[11px] text-gray-500 mt-0.5 leading-tight truncate">Secure raw material supply chain cycles.</p>
                 </div>
               </a>
 
-              <a href="#" className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-gray-50 transition-colors text-left">
-                <div className="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600 shrink-0 shadow-sm border border-indigo-100/30">
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" />
-                  </svg>
+              <a href="#who-it-helps" className="flex items-start gap-3.5 p-2 rounded-2xl hover:bg-gray-50 transition-colors text-left group/item">
+                <div className="w-9 h-9 rounded-xl border border-gray-200/60 bg-white flex items-center justify-center text-gray-700 shrink-0 transition-colors">
+                  <Store className="w-4.5 h-4.5 text-gray-700" />
                 </div>
-                <div>
-                  <h5 className="text-[12.5px] font-bold text-gray-900">CA & Accountant Portal</h5>
-                  <p className="text-[10.5px] text-gray-500 mt-0.5 leading-normal">Export court-ready interest certificates and delayed ledger reports.</p>
+                <div className="flex flex-col justify-center min-w-0">
+                  <h5 className="text-[13px] font-semibold text-gray-900 group-hover/item:text-black transition-colors leading-tight">Wholesalers & Traders</h5>
+                  <p className="text-[11px] text-gray-500 mt-0.5 leading-tight truncate">Recover outstanding retail buyer bills.</p>
+                </div>
+              </a>
+
+              <a href="#who-it-helps" className="flex items-start gap-3.5 p-2 rounded-2xl hover:bg-gray-50 transition-colors text-left group/item">
+                <div className="w-9 h-9 rounded-xl border border-gray-200/60 bg-white flex items-center justify-center text-gray-700 shrink-0 transition-colors">
+                  <Truck className="w-4.5 h-4.5 text-gray-700" />
+                </div>
+                <div className="flex flex-col justify-center min-w-0">
+                  <h5 className="text-[13px] font-semibold text-gray-900 group-hover/item:text-black transition-colors leading-tight">Distributors</h5>
+                  <p className="text-[11px] text-gray-500 mt-0.5 leading-tight truncate">Track dealer ledger cycles and balances.</p>
+                </div>
+              </a>
+
+              <a href="#who-it-helps" className="flex items-start gap-3.5 p-2 rounded-2xl hover:bg-gray-50 transition-colors text-left group/item">
+                <div className="w-9 h-9 rounded-xl border border-gray-200/60 bg-white flex items-center justify-center text-gray-700 shrink-0 transition-colors">
+                  <Briefcase className="w-4.5 h-4.5 text-gray-700" />
+                </div>
+                <div className="flex flex-col justify-center min-w-0">
+                  <h5 className="text-[13px] font-semibold text-gray-900 group-hover/item:text-black transition-colors leading-tight">Service Firms</h5>
+                  <p className="text-[11px] text-gray-500 mt-0.5 leading-tight truncate">Collect design, agency, and retainer fees.</p>
+                </div>
+              </a>
+
+              <a href="#who-it-helps" className="flex items-start gap-3.5 p-2 rounded-2xl hover:bg-gray-50 transition-colors text-left group/item">
+                <div className="w-9 h-9 rounded-xl border border-gray-200/60 bg-white flex items-center justify-center text-gray-700 shrink-0 transition-colors">
+                  <Calculator className="w-4.5 h-4.5 text-gray-700" />
+                </div>
+                <div className="flex flex-col justify-center min-w-0">
+                  <h5 className="text-[13px] font-semibold text-gray-900 group-hover/item:text-black transition-colors leading-tight">CAs & Accountants</h5>
+                  <p className="text-[11px] text-gray-500 mt-0.5 leading-tight truncate">Monitor recoveries for all client books.</p>
                 </div>
               </a>
 
@@ -119,7 +184,76 @@ export default function Navbar() {
           </div>
         </div>
 
-        <Link href="#pricing" className="text-[13.5px] font-medium text-gray-700 hover:text-gray-950 transition-colors">
+        {/* MSME Legal Hub Dropdown */}
+        <div className="relative group py-2">
+          <span className="flex items-center gap-1 text-[14.5px] font-medium text-gray-700 hover:text-gray-950 transition-colors cursor-pointer">
+            MSME Legal Hub
+            <HugeiconsIcon 
+              icon={ArrowDown01Icon} 
+              size={11} 
+              className="text-gray-400 group-hover:text-gray-600 transition-transform group-hover:rotate-180 duration-200 translate-y-[0.5px]" 
+            />
+          </span>
+
+          {/* Premium Dropdown Card */}
+          <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[360px] bg-white border border-gray-200/60 rounded-[24px] shadow-[0_16px_48px_rgba(0,0,0,0.06)] p-5 opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-200 pointer-events-none group-hover:pointer-events-auto z-50">
+            <div className="px-3 mb-2">
+              <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider font-sans">
+                Compliance
+              </span>
+            </div>
+
+            <div className="flex flex-col gap-1">
+
+              <a href="#msme-hub" className="flex items-start gap-3.5 p-2 rounded-2xl hover:bg-gray-50 transition-colors text-left group/item">
+                <div className="w-9 h-9 rounded-xl border border-gray-200/60 bg-white flex items-center justify-center text-gray-700 shrink-0 transition-colors">
+                  <Calendar className="w-4.5 h-4.5 text-gray-700" />
+                </div>
+                <div className="flex flex-col justify-center min-w-0">
+                  <h5 className="text-[13px] font-semibold text-gray-900 group-hover/item:text-black transition-colors leading-tight">45-Day Payment Rule</h5>
+                  <p className="text-[11px] text-gray-500 mt-0.5 leading-tight truncate">Section 15 compliance rules & timelines.</p>
+                </div>
+              </a>
+
+              <a href="#pricing" className="flex items-start gap-3.5 p-2 rounded-2xl hover:bg-gray-50 transition-colors text-left group/item">
+                <div className="w-9 h-9 rounded-xl border border-gray-200/60 bg-white flex items-center justify-center text-gray-700 shrink-0 transition-colors">
+                  <Calculator className="w-4.5 h-4.5 text-gray-700" />
+                </div>
+                <div className="flex flex-col justify-center min-w-0">
+                  <h5 className="text-[13px] font-semibold text-gray-900 group-hover/item:text-black transition-colors leading-tight">Interest Calculator</h5>
+                  <p className="text-[11px] text-gray-500 mt-0.5 leading-tight truncate">Calculate compound interest under Sec 16.</p>
+                </div>
+              </a>
+
+              <a href="#pricing" className="flex items-start gap-3.5 p-2 rounded-2xl hover:bg-gray-50 transition-colors text-left group/item">
+                <div className="w-9 h-9 rounded-xl border border-gray-200/60 bg-white flex items-center justify-center text-gray-700 shrink-0 transition-colors">
+                  <FileText className="w-4.5 h-4.5 text-gray-700" />
+                </div>
+                <div className="flex flex-col justify-center min-w-0">
+                  <h5 className="text-[13px] font-semibold text-gray-900 group-hover/item:text-black transition-colors leading-tight">Legal Notice Templates</h5>
+                  <p className="text-[11px] text-gray-500 mt-0.5 leading-tight truncate">Court-ready legal notice template drafts.</p>
+                </div>
+              </a>
+
+              <a href="/msme-samadhaan" className="flex items-start gap-3.5 p-2 rounded-2xl hover:bg-gray-50 transition-colors text-left group/item">
+                <div className="w-9 h-9 rounded-xl border border-gray-200/60 bg-white flex items-center justify-center text-gray-700 shrink-0 transition-colors">
+                  <Gavel className="w-4.5 h-4.5 text-gray-700" />
+                </div>
+                <div className="flex flex-col justify-center min-w-0">
+                  <h5 className="text-[13px] font-semibold text-gray-900 group-hover/item:text-black transition-colors leading-tight">File at MSME Samadhaan</h5>
+                  <p className="text-[11px] text-gray-500 mt-0.5 leading-tight truncate">Auto-prep official delayed payment filings.</p>
+                </div>
+              </a>
+
+            </div>
+          </div>
+        </div>
+
+        <Link href="#how-it-works" className="text-sm font-medium text-gray-700 hover:text-gray-950 transition-colors">
+          How It Works
+        </Link>
+
+        <Link href="#pricing" className="text-sm font-medium text-gray-700 hover:text-gray-950 transition-colors">
           Pricing
         </Link>
 

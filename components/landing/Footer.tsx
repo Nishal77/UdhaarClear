@@ -8,7 +8,7 @@ export default function Footer() {
     <footer className="relative w-full overflow-hidden bg-white">
       
       {/* 1. CALL TO ACTION (CTA) SECTION */}
-      <div className="relative w-full bg-gradient-to-b from-[#EFF4FF] via-[#EFF4FF]/80 to-white py-24 md:py-32 flex flex-col items-center justify-center text-center overflow-hidden px-6">
+      <div className="relative w-full bg-[#212124] py-24 md:py-32 flex flex-col items-center justify-center text-center overflow-hidden px-6 rounded-t-4xl">
         
         {/* Hand-Drawn "Off-Register" Golden Sun Illustration (top-left) */}
         <div className="absolute left-[8%] md:left-[15%] top-[15%] md:top-[20%] w-14 h-14 select-none pointer-events-none z-10 animate-pulse" style={{ animationDuration: '4s' }}>
