@@ -23,7 +23,7 @@ export default function Hero() {
       <section
         className="relative bg-neutral-950 bg-cover bg-center bg-no-repeat overflow-hidden flex flex-col items-center justify-start pt-24"
         style={{
-          backgroundImage: "url('/heronew.png')"
+          backgroundImage: "url('https://i.pinimg.com/736x/d8/56/aa/d856aa37eea322cb11aa4a9815efc259.jpg')"
         }}
       >
 

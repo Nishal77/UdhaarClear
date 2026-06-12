@@ -2,206 +2,214 @@
 
 import React from "react";
 import Link from "next/link";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ArrowRight02Icon } from "@hugeicons/core-free-icons";
 
 export default function Footer() {
   return (
     <footer className="relative w-full overflow-hidden bg-[#212124]">
-      
+
       {/* 1. CALL TO ACTION (CTA) SECTION */}
-      <div className="relative w-full bg-[#212124] py-24 md:py-32 flex flex-col items-center justify-center text-center overflow-hidden px-6 rounded-t-4xl">
-        
-        {/* Hand-Drawn "Off-Register" Golden Sun Illustration (top-left) */}
-        <div className="absolute left-[8%] md:left-[15%] top-[15%] md:top-[20%] w-14 h-14 select-none pointer-events-none z-10 animate-pulse" style={{ animationDuration: '4s' }}>
-          {/* Yellow solid sun circle */}
-          <div className="absolute inset-1.5 bg-[#FBBF24] rounded-full" />
-          {/* Misaligned hand-drawn stroke circle */}
-          <svg className="absolute inset-0 w-full h-full text-white/80 rotate-12" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path 
-              d="M 24,4 C 35,4 44,13 44,24 C 44,35 35,44 24,44 C 13,44 4,35 4,24 C 4,13 13,4 24,4 Z" 
-              stroke="currentColor" 
-              strokeWidth="2" 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-            />
-          </svg>
-        </div>
+      <div className="w-full bg-[#FFFFFF] pb-8 px-4 md:px-8">
 
-        {/* Hand-Drawn Clouds Illustrations - Layered Bottom Left */}
-        <div className="absolute bottom-0 left-0 w-[45%] md:w-[30%] lg:w-[25%] opacity-15 pointer-events-none select-none z-0">
-          <svg className="w-full h-auto text-indigo-400" viewBox="0 0 300 150" fill="none" xmlns="http://www.w3.org/2000/svg">
-            {/* Primary cloud stroke and white semi-transparent fill */}
-            <path 
-              d="M 20,130 Q 10,105 25,85 Q 15,65 40,55 Q 55,20 95,30 Q 125,5 155,25 Q 185,15 205,45 Q 235,55 225,85 Q 245,105 225,130 Z" 
-              fill="currentColor" 
-              fillOpacity="0.1" 
-              stroke="currentColor" 
-              strokeWidth="1.75" 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-            />
-            {/* Soft sketchy interior details */}
-            <path d="M 45,90 Q 60,95 75,90" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-            <path d="M 110,55 Q 130,65 150,55" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-            <path d="M 175,75 Q 190,80 205,75" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-          </svg>
-        </div>
-
-        {/* Hand-Drawn Clouds Illustrations - Layered Bottom Right */}
-        <div className="absolute bottom-0 right-0 w-[45%] md:w-[30%] lg:w-[25%] opacity-15 pointer-events-none select-none z-0 scale-x-[-1]">
-          <svg className="w-full h-auto text-indigo-400" viewBox="0 0 300 150" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path 
-              d="M 20,130 Q 10,105 25,85 Q 15,65 40,55 Q 55,20 95,30 Q 125,5 155,25 Q 185,15 205,45 Q 235,55 225,85 Q 245,105 225,130 Z" 
-              fill="currentColor" 
-              fillOpacity="0.1" 
-              stroke="currentColor" 
-              strokeWidth="1.75" 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-            />
-            <path d="M 45,90 Q 60,95 75,90" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-            <path d="M 110,55 Q 130,65 150,55" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-            <path d="M 175,75 Q 190,80 205,75" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-          </svg>
-        </div>
-
-
-        {/* CTA Content Container */}
-        <div className="relative max-w-3xl mx-auto z-10 flex flex-col items-center">
+        {/* Premium CTA container card with beautiful landscape background image */}
+        <div className="relative w-full max-w-[1280px] mx-auto rounded-t-3xl overflow-hidden py-20 md:py-28 flex flex-col items-center justify-center text-center px-6 bg-white">
           
-          {/* Announcement Badge */}
-          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-2xl border border-indigo-500/30 bg-indigo-950/40 text-indigo-400 text-xs font-semibold tracking-wide uppercase font-outfit mb-6 select-none">
-            Get Started Today
+          {/* Subtle top border highlight glow */}
+          <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-[#4F46E5]/15 to-transparent pointer-events-none" />
+
+          {/* Background Image with CSS Gradient Masking */}
+          <img
+            src="/images/footer.jpeg"
+            alt="Footer landscape background"
+            className="absolute inset-0 w-full h-full object-cover select-none pointer-events-none"
+            style={{
+              maskImage: "linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 65%, rgba(0, 0, 0, 0) 100%)",
+              WebkitMaskImage: "linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 65%, rgba(0, 0, 0, 0) 100%)"
+            }}
+            draggable={false}
+          />
+
+          {/* CTA Content Container */}
+          <div className="relative max-w-3xl mx-auto z-10 flex flex-col items-center">
+
+            {/* Announcement Badge */}
+            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-2xl border border-indigo-100 bg-indigo-50/80 text-indigo-700 text-xs font-semibold tracking-wide uppercase font-outfit mb-6 select-none">
+              Ready to stop chasing?
+            </div>
+
+            {/* Main Heading */}
+            <h2 className="text-[2.75rem] md:text-[4rem] font-medium text-gray-900 tracking-tight leading-[1.1] font-outfit max-w-2xl text-center">
+              Stop being a free lender
+              to your own buyers. <br />
+
+            </h2>
+
+            {/* Subheading */}
+            <p className="text-gray-800 font-medium text-sm md:text-base mt-5 mb-10 max-w-xl mx-auto leading-relaxed">
+              Every day an invoice goes unpaid, you're handing someone an interest free loan. Under the MSME Act, they owe you, legally. We just make sure they know it.
+            </p>
+
+            {/* Action Buttons Row */}
+            <div className="flex flex-col sm:flex-row items-center gap-4">
+              <Link
+                href="/signup"
+                className="group inline-flex items-center justify-center gap-2 px-8 py-4 text-base font-medium text-white bg-[#262626] rounded-full hover:bg-[#393939] transition-all duration-200"
+              >
+                <span>Recover what’s yours</span>
+                <HugeiconsIcon icon={ArrowRight02Icon} size={18} className="transition-transform duration-200 group-hover:translate-x-1" />
+              </Link>
+            </div>
+
+            {/* Inline Value Props Note */}
+            <p className="text-gray-900 text-xs md:text-sm font-semibold mt-6 tracking-wide select-none">
+            Join 500+ manufacturers, traders and distributors who stopped chasing.
+            </p>
+
           </div>
-
-          {/* Main Heading */}
-          <h2 className="text-[2.75rem] md:text-[4rem] font-medium text-white tracking-tight leading-[1.1] font-outfit max-w-2xl text-center">
-            Stop chasing. <br />
-            <span className="text-[#4F46E5]">Start collecting.</span>
-          </h2>
-          
-          {/* Subheading */}
-          <p className="text-gray-400 font-medium text-sm md:text-base mt-5 mb-10 max-w-xl mx-auto leading-relaxed">
-            Join 2,400+ businesses that have already recovered over ₹120 crore. Your first reminder goes out in 60 seconds.
-          </p>
-
-          {/* Action Buttons Row */}
-          <div className="flex flex-col sm:flex-row items-center gap-4">
-            <Link
-              href="/signup"
-              className="inline-flex items-center justify-center px-8 py-4 text-base font-semibold text-white bg-[#4F46E5] rounded-full hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-500/25 active:scale-95 transition-all duration-200"
-            >
-              Start Free — 14 Days
-            </Link>
-            <Link
-              href="#"
-              className="inline-flex items-center justify-center px-8 py-4 text-base font-semibold text-gray-300 hover:text-white transition-colors duration-200"
-            >
-              Schedule a Demo →
-            </Link>
-          </div>
-
-          {/* Inline Value Props Note */}
-          <p className="text-gray-500 text-xs md:text-sm font-medium mt-6 tracking-wide select-none">
-            Setup in 10 minutes &middot; No credit card &middot; Cancel anytime &middot; First reminder in 60 seconds
-          </p>
 
         </div>
 
       </div>
 
-      {/* 2. REDESIGNED DIRECTORY & MAILBOX FOOTER SECTION */}
-      <div className="bg-[#212124] border-t border-gray-800/60 pt-20 pb-16 px-6 md:px-12 lg:px-16">
-        <div className="max-w-[1240px] mx-auto">
-          
+      {/* 2. REDESIGNED DIRECTORY SECTION */}
+      <div className="bg-[#FFFFFF] border-t border-slate-100 pt-20 pb-16 px-6 md:px-12 lg:px-16">
+        <div className="max-w-[1280px] mx-auto">
+
           {/* Top Row: Logo & Link Columns Grid */}
           <div className="grid grid-cols-1 md:grid-cols-12 gap-y-12 gap-x-8 pb-16 items-start">
-            
-            {/* Left Column: Logo & Tagline (spans 6 on md) */}
-            <div className="md:col-span-6 flex flex-col gap-3">
+
+            {/* Left Column: Logo, Tagline, Contact & Copyright */}
+            <div className="md:col-span-4 flex flex-col gap-4">
               <Link href="#" className="flex items-center gap-2 group select-none self-start">
-                <span className="text-3xl font-semibold tracking-tight text-white font-outfit lowercase">
+                <span className="text-3xl font-bold tracking-tight text-slate-900 font-outfit lowercase transition-colors duration-200 hover:text-[#4F46E5]">
                   udhaarclear
                 </span>
               </Link>
-              <p className="text-gray-400 text-sm md:text-base font-medium max-w-xs font-outfit">
-                Automated payment recovery for Indian businesses.
-              </p>
+              {/* Newsletter Subscription Box */}
+              <div className="flex flex-col gap-3 max-w-sm mt-2">
+                <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider font-outfit">
+                  Get recovery playbooks in your inbox
+                </p>
+                <form 
+                  onSubmit={(e) => { e.preventDefault(); alert('Subscribed!'); }}
+                  className="relative flex items-center bg-slate-50 border border-slate-200 rounded-full p-1 focus-within:ring-2 focus-within:ring-indigo-100 focus-within:border-indigo-500 transition-all duration-300"
+                >
+                  <input 
+                    type="email" 
+                    placeholder="name@company.com" 
+                    required 
+                    className="flex-1 bg-transparent px-4 py-2 text-sm text-slate-900 placeholder-slate-400 outline-none w-full font-outfit font-medium"
+                  />
+                  <button 
+                    type="submit"
+                    className="inline-flex items-center justify-center bg-slate-900 hover:bg-[#4F46E5] active:scale-95 text-white font-semibold text-xs px-4 py-2 rounded-full transition-all duration-200 cursor-pointer select-none"
+                  >
+                    Subscribe
+                  </button>
+                </form>
+              </div>
             </div>
 
-            {/* Right Columns: Links (spans 6 on md) */}
-            <div className="md:col-span-6 grid grid-cols-3 gap-6 text-left">
-              
-              {/* Column 1: Product / Process */}
+            {/* Right Columns: Links (spans 8 on md) */}
+            <div className="md:col-span-8 grid grid-cols-1 sm:grid-cols-3 gap-8 text-left">
+
+              {/* Column 1: Product */}
               <div className="flex flex-col gap-4">
-                <h4 className="text-sm font-semibold text-white font-outfit">Product</h4>
-                <ul className="flex flex-col gap-3 text-xs md:text-sm text-gray-400 font-medium">
+                <h4 className="text-sm font-semibold text-slate-900 tracking-wider uppercase font-outfit">Product</h4>
+                <ul className="flex flex-col gap-3 text-sm text-slate-500 font-medium font-outfit">
                   <li>
-                    <Link href="#how-it-works" className="hover:text-white transition-colors duration-200">
-                      Process
+                    <Link href="/collections-engine" className="hover:text-[#4F46E5] hover:translate-x-1 transition-all duration-200 inline-block">
+                      Collections Engine
                     </Link>
                   </li>
                   <li>
-                    <Link href="#features" className="hover:text-white transition-colors duration-200">
-                      Services
+                    <Link href="/legal-notice" className="hover:text-[#4F46E5] hover:translate-x-1 transition-all duration-200 inline-block">
+                      Legal Notice Generator
                     </Link>
                   </li>
                   <li>
-                    <Link href="#who-it-helps" className="hover:text-white transition-colors duration-200">
-                      Showcase
+                    <Link href="/escalations" className="hover:text-[#4F46E5] hover:translate-x-1 transition-all duration-200 inline-block">
+                      Smart Escalations
                     </Link>
                   </li>
                   <li>
-                    <Link href="#pricing" className="hover:text-white transition-colors duration-200">
+                    <Link href="/upi-pay" className="hover:text-[#4F46E5] hover:translate-x-1 transition-all duration-200 inline-block">
+                      UPI FastPay Links
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/dashboard" className="hover:text-[#4F46E5] hover:translate-x-1 transition-all duration-200 inline-block">
+                      Recovery Dashboard
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/sync" className="hover:text-[#4F46E5] hover:translate-x-1 transition-all duration-200 inline-block">
+                      Tally & Zoho Sync
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Column 2: Who It's For */}
+              <div className="flex flex-col gap-4">
+                <h4 className="text-sm font-semibold text-slate-900 tracking-wider uppercase font-outfit">Who It's For</h4>
+                <ul className="flex flex-col gap-3 text-sm text-slate-500 font-medium font-outfit">
+                  <li>
+                    <Link href="/manufacturers" className="hover:text-[#4F46E5] hover:translate-x-1 transition-all duration-200 inline-block">
+                      Manufacturers
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/wholesalers" className="hover:text-[#4F46E5] hover:translate-x-1 transition-all duration-200 inline-block">
+                      Wholesalers
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/distributors" className="hover:text-[#4F46E5] hover:translate-x-1 transition-all duration-200 inline-block">
+                      Distributors
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/services" className="hover:text-[#4F46E5] hover:translate-x-1 transition-all duration-200 inline-block">
+                      Service Businesses
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/msme" className="hover:text-[#4F46E5] hover:translate-x-1 transition-all duration-200 inline-block">
+                      MSME Hub
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Column 3: Company */}
+              <div className="flex flex-col gap-4">
+                <h4 className="text-sm font-semibold text-slate-900 tracking-wider uppercase font-outfit">Company</h4>
+                <ul className="flex flex-col gap-3 text-sm text-slate-500 font-medium font-outfit">
+                  <li>
+                    <Link href="/about" className="hover:text-[#4F46E5] hover:translate-x-1 transition-all duration-200 inline-block">
+                      About
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/pricing" className="hover:text-[#4F46E5] hover:translate-x-1 transition-all duration-200 inline-block">
                       Pricing
                     </Link>
                   </li>
-                </ul>
-              </div>
-
-              {/* Column 2: Connect */}
-              <div className="flex flex-col gap-4">
-                <h4 className="text-sm font-semibold text-white font-outfit">Connect</h4>
-                <ul className="flex flex-col gap-3 text-xs md:text-sm text-gray-400 font-medium">
                   <li>
-                    <a href="https://x.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors duration-200">
-                      X
-                    </a>
-                  </li>
-                  <li>
-                    <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors duration-200">
-                      LinkedIn
-                    </a>
-                  </li>
-                  <li>
-                    <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors duration-200">
-                      YouTube
-                    </a>
-                  </li>
-                  <li>
-                    <a href="https://dribbble.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors duration-200">
-                      Dribbble
-                    </a>
-                  </li>
-                </ul>
-              </div>
-
-              {/* Column 3: Legal */}
-              <div className="flex flex-col gap-4">
-                <h4 className="text-sm font-semibold text-white font-outfit">Legal</h4>
-                <ul className="flex flex-col gap-3 text-xs md:text-sm text-gray-400 font-medium">
-                  <li>
-                    <Link href="/terms" className="hover:text-white transition-colors duration-200">
-                      Terms & Conditions
+                    <Link href="/blog" className="hover:text-[#4F46E5] hover:translate-x-1 transition-all duration-200 inline-block">
+                      Blog
                     </Link>
                   </li>
                   <li>
-                    <Link href="/privacy" className="hover:text-white transition-colors duration-200">
-                      Privacy Policy
+                    <Link href="/careers" className="hover:text-[#4F46E5] hover:translate-x-1 transition-all duration-200 inline-block">
+                      Careers
                     </Link>
                   </li>
                   <li>
-                    <Link href="/cookies" className="hover:text-white transition-colors duration-200">
-                      Cookie Policy
+                    <Link href="/contact" className="hover:text-[#4F46E5] hover:translate-x-1 transition-all duration-200 inline-block">
+                      Contact
                     </Link>
                   </li>
                 </ul>
@@ -211,63 +219,27 @@ export default function Footer() {
 
           </div>
 
-          {/* Bottom Row: Back to Top, Mailbox, and Contact Details */}
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-y-8 gap-x-8 items-end pt-12 border-t border-gray-800/60">
+          {/* Bottom Row: Disclaimer and Back to Top button */}
+          <div className="flex flex-col sm:flex-row items-center justify-between pt-8 border-t border-slate-100 gap-6">
             
-            {/* Bottom-Left: Back to top button */}
-            <div className="md:col-span-4 flex items-center justify-start">
-              <button 
-                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                className="inline-flex items-center gap-3 bg-white hover:bg-gray-100 text-gray-900 rounded-full py-3 px-6 shadow-md transition-all duration-300 hover:scale-105 active:scale-95 group cursor-pointer border border-gray-200/50"
-              >
-                <span className="font-semibold text-sm tracking-tight font-outfit">Back to top</span>
-                <div className="w-6 h-6 rounded-full bg-gray-900 flex items-center justify-center text-white shrink-0 group-hover:-translate-y-0.5 transition-transform duration-200">
-                  <svg className="w-3 h-3 stroke-current" fill="none" strokeWidth="3" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="12" y1="19" x2="12" y2="5"></line>
-                    <polyline points="5 12 12 5 19 12"></polyline>
-                  </svg>
-                </div>
-              </button>
-            </div>
+            {/* Disclaimer */}
+            <p className="text-xs text-slate-400 font-medium font-outfit order-2 sm:order-1 text-center sm:text-left">
+              Disclaimer: UdhaarClear is a technology platform, not a legal advisory. Collection actions are managed under standard commercial credit protection frameworks.
+            </p>
 
-            {/* Bottom-Middle: Newsletter/Mailbox Box */}
-            <div className="md:col-span-5 flex flex-col gap-4 items-start w-full max-w-md">
-              <div className="text-left font-outfit">
-                <span className="block text-2xl font-bold text-white leading-tight">UdhaarClear</span>
-                <span className="block text-2xl font-medium text-gray-500 leading-tight">in your mailbox</span>
+            {/* Back to top button */}
+            <button 
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              className="inline-flex items-center gap-2.5 bg-slate-50 hover:bg-slate-100 text-slate-800 rounded-full py-2.5 px-5 shadow-sm transition-all duration-300 hover:scale-105 active:scale-95 group cursor-pointer border border-slate-200/50 order-1 sm:order-2 shrink-0"
+            >
+              <span className="font-semibold text-xs tracking-tight font-outfit">Back to top</span>
+              <div className="w-5 h-5 rounded-full bg-slate-900 flex items-center justify-center text-white shrink-0 group-hover:-translate-y-0.5 transition-transform duration-200">
+                <svg className="w-2.5 h-2.5 stroke-current" fill="none" strokeWidth="3" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="12" y1="19" x2="12" y2="5"></line>
+                  <polyline points="5 12 12 5 19 12"></polyline>
+                </svg>
               </div>
-              <form 
-                onSubmit={(e) => { e.preventDefault(); alert('Subscribed!'); }} 
-                className="w-full flex items-center bg-[#2d2d30] border border-gray-800 rounded-full p-1.5 focus-within:ring-2 focus-within:ring-white/10 focus-within:border-gray-750 transition-all duration-300"
-              >
-                <input 
-                  type="email" 
-                  placeholder="name@example.com" 
-                  required
-                  className="flex-1 bg-transparent px-4 py-2 text-sm text-white placeholder-gray-500 outline-none w-full font-outfit font-medium"
-                />
-                <button 
-                  type="submit"
-                  className="w-10 h-10 rounded-full bg-white hover:bg-gray-100 text-gray-900 flex items-center justify-center shrink-0 transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer"
-                >
-                  <svg className="w-4 h-4 stroke-current" fill="none" strokeWidth="2.5" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                    <polyline points="12 5 19 12 12 19"></polyline>
-                  </svg>
-                </button>
-              </form>
-            </div>
-
-            {/* Bottom-Right: Contact Email & Copyright details */}
-            <div className="md:col-span-3 flex flex-col items-start md:items-end text-left md:text-right gap-3 font-outfit">
-              <a href="mailto:hello@udhaarclear.in" className="text-base font-bold text-white hover:text-[#4F46E5] hover:underline">
-                hello@udhaarclear.in
-              </a>
-              <div className="flex flex-col gap-0.5 text-xs text-gray-500 font-medium">
-                <span>UdhaarClear</span>
-                <span>2026 &copy; All rights reserved</span>
-              </div>
-            </div>
+            </button>
 
           </div>
 
