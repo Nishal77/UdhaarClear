@@ -134,7 +134,7 @@ export function TopBar({ userName = 'User', businessName = 'UdhaarClear', userEm
           {/* Circle for Avatar */}
           <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#E5F7ED] border border-[#E4E4E7] overflow-hidden shrink-0">
             <img
-              src={userAvatarUrl || "https://i.pinimg.com/1200x/1a/da/b7/1adab786560aea0af24b97e07ef04e31.jpg"}
+              src={userAvatarUrl || "/profile/img1.jpeg"}
               alt="User avatar"
               className="h-full w-full object-cover"
             />
@@ -161,7 +161,7 @@ export function TopBar({ userName = 'User', businessName = 'UdhaarClear', userEm
             <div className="flex items-center gap-3 p-3 border-b border-gray-100/80 mb-2">
               <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#E5F7ED] border border-[#EBEAE6] overflow-hidden shrink-0 shadow-sm">
                 <img
-                  src={userAvatarUrl || "https://i.pinimg.com/1200x/6b/85/7e/6b857e52008fdb57dcbc0b42d5ad5211.jpg"}
+                  src={userAvatarUrl || "/profile/img1.jpeg"}
                   alt="User avatar"
                   className="h-full w-full object-cover"
                 />

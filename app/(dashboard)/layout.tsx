@@ -2,7 +2,7 @@ import { Sidebar } from '@/components/layout/Sidebar'
 import { MobileNav } from '@/components/layout/MobileNav'
 import { TopBar } from '@/components/layout/TopBar'
 import { DashboardClientShell } from '@/components/layout/DashboardClientShell'
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { prisma } from '@/lib/prisma/client'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -19,6 +19,21 @@ export default async function DashboardLayout({ children }: { children: React.Re
   if (user) {
     userEmail = user.email || 'user@example.com'
     userAvatarUrl = user.user_metadata?.avatar_url || ''
+
+    if (!userAvatarUrl) {
+      const randomImgIndex = Math.floor(Math.random() * 10) + 1
+      const defaultAvatar = `/profile/img${randomImgIndex}.jpeg`
+      try {
+        const adminClient = await createServiceClient()
+        await adminClient.auth.admin.updateUserById(user.id, {
+          user_metadata: { ...user.user_metadata, avatar_url: defaultAvatar },
+        })
+        userAvatarUrl = defaultAvatar
+      } catch (err) {
+        console.error('Failed to retroactively assign avatar:', err)
+      }
+    }
+
     const dbUser = await prisma.user.findUnique({
       where: { supabaseId: user.id },
       include: { ownedBusiness: true },

@@ -4,16 +4,16 @@ import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
-import { 
-  User as UserIcon, 
-  Laptop, 
-  Smartphone, 
-  AlertCircle, 
-  Calendar, 
-  ShieldCheck, 
-  Upload, 
-  X, 
-  Loader2 
+import {
+  User as UserIcon,
+  Laptop,
+  Smartphone,
+  AlertCircle,
+  Calendar,
+  ShieldCheck,
+  Upload,
+  X,
+  Loader2
 } from "lucide-react";
 
 // Unique icons for devices
@@ -70,12 +70,12 @@ export default function ProfileSection({
   const router = useRouter();
   const supabase = createClient();
 
-  const joinedDate = dbUser.createdAt 
+  const joinedDate = dbUser.createdAt
     ? new Date(dbUser.createdAt).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric"
-      })
+      year: "numeric",
+      month: "long",
+      day: "numeric"
+    })
     : "N/A";
 
   const [name, setName] = useState(dbUser.name);
@@ -141,7 +141,7 @@ export default function ProfileSection({
   // Profile completion calculation
   const isNameFilled = name.trim() !== "";
   const isPhoneFilled = phone.trim() !== "";
-  const isAvatarUploaded = avatarUrl !== "";
+  const isAvatarUploaded = avatarUrl !== "" && !avatarUrl.startsWith("/profile/img");
   let completionPoints = 25;
   if (isNameFilled) completionPoints += 25;
   if (isPhoneFilled) completionPoints += 25;
@@ -321,14 +321,14 @@ export default function ProfileSection({
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4.5 w-full animate-in fade-in duration-200">
       {/* Form & Sessions */}
       <div className="lg:col-span-2 space-y-4.5">
-        
+
         <div className="bg-white border border-[#EBEAE6]/60 rounded-[22px] p-5 shadow-[0_8px_30px_rgba(0,0,0,0.015)]">
           <div className="flex items-center gap-3.5 mb-5 pb-3 border-b border-gray-50">
-            <div className="w-10 h-10 rounded-2xl bg-slate-50 border border-gray-100 text-slate-700 flex items-center justify-center shadow-sm">
+            <div className="w-10 h-10 rounded-2xl bg-slate-50 border border-gray-100 text-slate-700 flex items-center justify-center ">
               <UserIcon className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-gray-900 font-outfit">Personal Information</h2>
+              <h2 className="text-base font-semibold text-gray-900 font-outfit">Personal Information</h2>
               <p className="text-xs text-gray-400 font-medium">Manage details about your personal identity logged into UdhaarClear.</p>
             </div>
           </div>
@@ -336,7 +336,7 @@ export default function ProfileSection({
           <form onSubmit={handleSaveDetails} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-[10.5px] font-bold text-gray-400 uppercase tracking-wider mb-1.5 font-outfit">
+                <label className="block text-[12.5px] font-semibold text-gray-600 tracking-tight mb-1.5 font-outfit">
                   Full Name
                 </label>
                 <input
@@ -345,12 +345,12 @@ export default function ProfileSection({
                   onChange={(e) => setName(e.target.value)}
                   required
                   placeholder="e.g. Nishal P"
-                  className="w-full bg-gray-50 border border-gray-200/80 rounded-xl px-4 py-2.5 text-sm font-semibold text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#FF6B00] focus:border-[#FF6B00] focus:bg-white transition-all shadow-none"
+                  className="w-full bg-gray-50 border border-gray-200/80 rounded-xl px-4 py-2.5 text-sm font-medium text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#FF6B00] focus:border-[#FF6B00] focus:bg-white transition-all shadow-none"
                 />
               </div>
 
               <div>
-                <label className="block text-[10.5px] font-bold text-gray-400 uppercase tracking-wider mb-1.5 font-outfit">
+                <label className="block text-[12.5px] font-semibold text-gray-600 tracking-tight mb-1.5 font-outfit">
                   Email Address (Read-only)
                 </label>
                 <input
@@ -362,7 +362,7 @@ export default function ProfileSection({
               </div>
 
               <div>
-                <label className="block text-[10.5px] font-bold text-gray-400 uppercase tracking-wider mb-1.5 font-outfit">
+                <label className="block text-[12.5px] font-semibold text-gray-600 tracking-tight mb-1.5 font-outfit">
                   Contact Phone Number
                 </label>
                 <input
@@ -375,8 +375,8 @@ export default function ProfileSection({
               </div>
 
               <div>
-                <label className="block text-[10.5px] font-bold text-gray-400 uppercase tracking-wider mb-1.5 font-outfit">
-                  Organization Workspace
+                <label className="block text-[12.5px] font-semibold text-gray-600 tracking-tight mb-1.5 font-outfit">
+                  Business Name
                 </label>
                 <input
                   type="text"
@@ -391,11 +391,10 @@ export default function ProfileSection({
               <button
                 type="submit"
                 disabled={!hasChanges || isSaving}
-                className={`text-xs font-bold px-6 py-2.5 rounded-full transition-all duration-200 cursor-pointer ${
-                  hasChanges && !isSaving
-                    ? "bg-[#FF6B00] hover:bg-[#E05B2E] text-white shadow-sm hover:shadow hover:scale-[1.01] active:scale-95"
+                className={`text-xs font-semibold px-6 py-2.5 rounded-full transition-all duration-200 cursor-pointer ${hasChanges && !isSaving
+                    ? "bg-[#FF6B00] hover:bg-[#E05B2E] text-white shadow-sm hover:shadow"
                     : "bg-gray-100 text-gray-400 cursor-not-allowed"
-                }`}
+                  }`}
               >
                 {isSaving ? (
                   <span className="flex items-center gap-1.5">
@@ -410,10 +409,10 @@ export default function ProfileSection({
         </div>
 
         {/* Linked Accounts */}
-        <div className="bg-white border border-[#EBEAE6]/60 rounded-[22px] p-5 shadow-[0_8px_30px_rgba(0,0,0,0.015)]">
+        <div className="bg-white border border-[#EBEAE6]/60 rounded-[22px] p-5">
           <div className="flex items-start justify-between mb-4">
             <div>
-              <h3 className="text-base font-bold text-gray-900 font-outfit">Linked Accounts</h3>
+              <h3 className="text-base font-semibold text-gray-900 font-outfit">Linked Accounts</h3>
               <p className="text-xs text-gray-400 font-medium mt-0.5">Connect Google OAuth accounts for secure 1-click login.</p>
             </div>
             <div className="w-10 h-10 rounded-2xl bg-indigo-50 border border-indigo-100/20 text-indigo-600 flex items-center justify-center shrink-0">
@@ -423,7 +422,7 @@ export default function ProfileSection({
 
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-2xl border border-gray-100 bg-gray-50/30">
             <div className="flex items-center gap-3.5">
-              <div className="w-10 h-10 rounded-full bg-white border border-gray-100 flex items-center justify-center shrink-0 shadow-sm">
+              <div className="w-10 h-10 rounded-full bg-white border border-gray-100 flex items-center justify-center shrink-0">
                 <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4" />
                   <path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z" fill="#34A853" />
@@ -432,7 +431,7 @@ export default function ProfileSection({
                 </svg>
               </div>
               <div>
-                <h4 className="text-sm font-bold text-gray-800 font-outfit">Google SSO Linkage</h4>
+                <h4 className="text-sm font-semibold text-gray-800 font-outfit">Google Account</h4>
                 <div className="flex items-center gap-1.5 mt-0.5">
                   <span className={`w-1.5 h-1.5 rounded-full ${isGoogleLinked ? "bg-emerald-500" : "bg-gray-300"}`} />
                   <span className="text-[11px] font-semibold text-gray-400">{isGoogleLinked ? "Connected" : "Not linked"}</span>
@@ -444,11 +443,10 @@ export default function ProfileSection({
               type="button"
               onClick={handleGoogleLink}
               disabled={isLinking}
-              className={`text-xs font-bold px-4 py-2 rounded-full border transition-all duration-200 cursor-pointer ${
-                isGoogleLinked
+              className={`text-xs font-semibold px-4 py-2 rounded-full border transition-all duration-200 cursor-pointer ${isGoogleLinked
                   ? "border-gray-200 bg-white text-gray-700 hover:bg-rose-50 hover:text-rose-600"
                   : "border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
-              } active:scale-95`}
+                } active:scale-95`}
             >
               {isLinking ? (
                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -510,11 +508,10 @@ export default function ProfileSection({
                       <td className="py-3.5 text-right">
                         <button
                           onClick={() => handleRevokeSession(session.id, session.rawDevice)}
-                          className={`text-[10.5px] font-bold px-3 py-1.5 rounded-full border transition-all duration-200 cursor-pointer ${
-                            session.isCurrent
+                          className={`text-[10.5px] font-bold px-3 py-1.5 rounded-full border transition-all duration-200 cursor-pointer ${session.isCurrent
                               ? "border-gray-200 bg-white text-gray-400 hover:bg-gray-50"
                               : "border-orange-100 bg-orange-50 text-orange-700 hover:bg-orange-100/80"
-                          }`}
+                            }`}
                         >
                           {session.isCurrent ? "Sign Out" : "Revoke Session"}
                         </button>
@@ -531,43 +528,36 @@ export default function ProfileSection({
 
       {/* Profile Avatar & Completion details card */}
       <div className="space-y-4.5">
-        <div className="bg-white border border-[#EBEAE6]/60 rounded-[22px] p-5 shadow-[0_8px_30px_rgba(0,0,0,0.015)] relative text-center">
-          <div 
+        <div className="bg-white border border-[#EBEAE6]/60 rounded-[22px] p-5 relative text-center">
+          <div
             onClick={() => fileInputRef.current?.click()}
             className="relative w-24 h-24 mx-auto mb-4 group select-none cursor-pointer rounded-full"
             title="Change Photo"
           >
-            <div className="w-full h-full rounded-full bg-emerald-50 border-2 border-emerald-100 overflow-hidden shadow-sm flex items-center justify-center transition-all group-hover:brightness-90">
-              {avatarUrl ? (
-                <img src={avatarUrl} alt="Avatar" className="h-full w-full object-cover" />
-              ) : (
-                <UserIcon className="w-9 h-9 text-emerald-500" />
-              )}
+            <div className="w-full h-full rounded-full bg-gray-50 border border-gray-100 overflow-hidden flex items-center justify-center transition-all group-hover:brightness-90">
+              <img src={avatarUrl || "/profile/img1.jpeg"} alt="Avatar" className="h-full w-full object-cover" />
             </div>
             <div className="absolute inset-0 rounded-full bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-200">
               <Upload className="w-5 h-5 text-white" />
             </div>
-            <span className="absolute bottom-0 right-0 w-6 h-6 rounded-full bg-[#10B981] border-2 border-white flex items-center justify-center shadow-sm">
-              <ShieldCheck className="w-3.5 h-3.5 text-white" />
-            </span>
           </div>
-          
+
           <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" className="hidden" />
 
-          <h3 className="text-base font-bold text-gray-900 font-outfit">{name || "User Name"}</h3>
-          <p className="text-xs text-gray-400 font-semibold">{dbUser.email}</p>
+          <h3 className="text-base font-semibold text-gray-900 font-outfit">{name || "User Name"}</h3>
+          <p className="text-xs text-gray-400 font-medium">{dbUser.email}</p>
 
           <div className="mt-4 flex flex-wrap justify-center gap-1.5">
             {renderRoleBadge()}
-            <span className="rounded-full bg-blue-50 px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-blue-600 border border-blue-100">
+            <span className="rounded-full bg-blue-50 px-2.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-blue-600 border border-blue-100">
               Pro Account
             </span>
           </div>
 
           <div className="mt-5 pt-4 border-t border-gray-50 text-left">
-            <div className="flex justify-between items-center text-[10.5px] font-bold text-gray-400 uppercase tracking-wider mb-2">
+            <div className="flex justify-between items-center text-[12.5px] font-medium text-gray-500 tracking-tight mb-2">
               <span>Profile Completion</span>
-              <span className="text-gray-900 font-extrabold">{completionPoints}%</span>
+              <span className="text-gray-900 font-semibold">{completionPoints}%</span>
             </div>
             <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden mb-3">
               <div className="bg-[#10B981] h-full rounded-full transition-all duration-500" style={{ width: `${completionPoints}%` }} />
@@ -581,7 +571,7 @@ export default function ProfileSection({
           </div>
 
           <div className="mt-4 pt-4 border-t border-gray-50 text-left flex items-center gap-2 text-xs text-gray-400 font-medium select-none">
-            <Calendar className="w-3.5 h-3.5 text-gray-300" /> Registered: {joinedDate}
+            <Calendar className="w-3.5 h-3.5 text-gray-400" /> Registered: {joinedDate}
           </div>
         </div>
       </div>
@@ -590,11 +580,11 @@ export default function ProfileSection({
       {cropModalOpen && imageSrc && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white border border-gray-100 shadow-[0_20px_50px_rgba(0,0,0,0.15)] rounded-[24px] p-6 w-full max-w-md text-center mx-4 select-none relative animate-in zoom-in-95 duration-200">
-            <button 
+            <button
               onClick={() => {
                 setCropModalOpen(false);
                 setImageSrc(null);
-              }} 
+              }}
               className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
             >
               <X className="w-5 h-5" />
@@ -602,8 +592,8 @@ export default function ProfileSection({
 
             <h3 className="text-base font-bold text-gray-900 font-outfit mb-1">Crop Profile Photo</h3>
             <p className="text-xs text-gray-400 font-medium mb-4">Drag the image inside the circular crop mask to align.</p>
-            
-            <div 
+
+            <div
               className="w-64 h-64 mx-auto rounded-full overflow-hidden border border-gray-200 bg-gray-50 flex items-center justify-center relative cursor-move select-none"
               onMouseDown={handleMouseDown}
               onMouseMove={handleMouseMove}
@@ -629,7 +619,7 @@ export default function ProfileSection({
                 <span>Zoom Scale</span>
                 <span>{Math.round(zoom * 100)}%</span>
               </div>
-              <input 
+              <input
                 type="range"
                 min="1"
                 max="3"

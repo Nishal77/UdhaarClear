@@ -52,11 +52,13 @@ export async function POST(request: Request) {
 
   // Create auth user via admin — email pre-confirmed, Supabase sends no email
   const adminClient = await createServiceClient()
+  const randomImgIndex = Math.floor(Math.random() * 10) + 1
+  const defaultAvatar = `/profile/img${randomImgIndex}.jpeg`
   const { data: authData, error: createError } = await adminClient.auth.admin.createUser({
     email: session.email,
     password: session.password,
     email_confirm: true,
-    user_metadata: { name: session.name },
+    user_metadata: { name: session.name, avatar_url: defaultAvatar },
   })
 
   if (createError || !authData.user) {
