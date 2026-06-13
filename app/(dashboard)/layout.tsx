@@ -14,9 +14,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
   let userName = 'User'
   let businessName = 'UdhaarClear'
   let userEmail = 'user@example.com'
+  let userAvatarUrl = ''
 
   if (user) {
     userEmail = user.email || 'user@example.com'
+    userAvatarUrl = user.user_metadata?.avatar_url || ''
     const dbUser = await prisma.user.findUnique({
       where: { supabaseId: user.id },
       include: { ownedBusiness: true },
@@ -36,7 +38,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
           <Sidebar userName={userName} userEmail={userEmail} businessName={businessName} />
         </div>
         <div className="flex flex-1 flex-col overflow-hidden bg-white">
-          <TopBar userName={userName} businessName={businessName} userEmail={userEmail} />
+          <TopBar userName={userName} businessName={businessName} userEmail={userEmail} userAvatarUrl={userAvatarUrl} />
           <main className="flex-1 overflow-y-auto bg-[#F5F3EF] rounded-tl-[36px] pt-8 px-6 pb-20 md:px-8 md:pb-8">
             {children}
           </main>

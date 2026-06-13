@@ -23,9 +23,10 @@ interface TopBarProps {
   userName: string
   businessName: string
   userEmail: string
+  userAvatarUrl?: string
 }
 
-export function TopBar({ userName = 'User', businessName = 'UdhaarClear', userEmail = 'user@example.com' }: TopBarProps) {
+export function TopBar({ userName = 'User', businessName = 'UdhaarClear', userEmail = 'user@example.com', userAvatarUrl }: TopBarProps) {
   const dayOfMonth = format(new Date(), 'd')
   const dayOfWeek = format(new Date(), 'EEE')
   const monthName = format(new Date(), 'MMMM')
@@ -54,13 +55,13 @@ export function TopBar({ userName = 'User', businessName = 'UdhaarClear', userEm
         {
           label: 'My Settings',
           sub: 'Profile details & preferences',
-          href: '/settings',
+          href: '/settings?tab=profile',
           icon: UserIcon
         },
         {
           label: 'Billing & Plans',
           sub: 'Manage invoices & subscription',
-          href: '/settings/billing',
+          href: '/settings?tab=billing',
           icon: CreditCardIcon
         }
       ]
@@ -71,7 +72,7 @@ export function TopBar({ userName = 'User', businessName = 'UdhaarClear', userEm
         {
           label: 'Business Profile',
           sub: 'Tax profile, GSTIN & defaults',
-          href: '/settings/profile',
+          href: '/settings?tab=company',
           icon: SchoolReportCardIcon
         }
       ]
@@ -82,13 +83,13 @@ export function TopBar({ userName = 'User', businessName = 'UdhaarClear', userEm
         {
           label: 'API & Webhooks',
           sub: 'Create API keys & register hooks',
-          href: '/settings/webhooks',
+          href: '/settings?tab=sync',
           icon: WebhookIcon
         },
         {
           label: 'Connected Apps',
           sub: 'Connect Stripe, WhatsApp & custom gateways',
-          href: '/settings/integrations',
+          href: '/settings?tab=sync',
           icon: Plug01Icon
         }
       ]
@@ -133,7 +134,7 @@ export function TopBar({ userName = 'User', businessName = 'UdhaarClear', userEm
           {/* Circle for Avatar */}
           <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#E5F7ED] border border-[#E4E4E7] overflow-hidden shrink-0">
             <img
-              src="https://i.pinimg.com/1200x/1a/da/b7/1adab786560aea0af24b97e07ef04e31.jpg"
+              src={userAvatarUrl || "https://i.pinimg.com/1200x/1a/da/b7/1adab786560aea0af24b97e07ef04e31.jpg"}
               alt="User avatar"
               className="h-full w-full object-cover"
             />
@@ -160,7 +161,7 @@ export function TopBar({ userName = 'User', businessName = 'UdhaarClear', userEm
             <div className="flex items-center gap-3 p-3 border-b border-gray-100/80 mb-2">
               <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#E5F7ED] border border-[#EBEAE6] overflow-hidden shrink-0 shadow-sm">
                 <img
-                  src="https://i.pinimg.com/1200x/6b/85/7e/6b857e52008fdb57dcbc0b42d5ad5211.jpg"
+                  src={userAvatarUrl || "https://i.pinimg.com/1200x/6b/85/7e/6b857e52008fdb57dcbc0b42d5ad5211.jpg"}
                   alt="User avatar"
                   className="h-full w-full object-cover"
                 />

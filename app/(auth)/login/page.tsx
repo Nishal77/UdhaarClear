@@ -1,44 +1,99 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
-import { AuthLogo } from '@/components/auth/AuthLogo'
 import { GoogleButton } from '@/components/auth/GoogleButton'
-import { MicrosoftButton } from '@/components/auth/MicrosoftButton'
-import { Eye, EyeOff, Mail, Lock } from 'lucide-react'
+import { Mail, ArrowLeft } from 'lucide-react'
 
 export default function LoginPage() {
   const router = useRouter()
-  const [step, setStep] = useState<'email' | 'password'>('email')
+  const [step, setStep] = useState<'login' | 'otp'>('login')
   const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  // Submit email step
-  function handleEmailSubmit(e: React.FormEvent) {
+  // OTP State
+  const [otpValues, setOtpValues] = useState<string[]>(['', '', '', '', '', ''])
+  const [timer, setTimer] = useState(30)
+  const [resending, setResending] = useState(false)
+  const otpInputRefs = useRef<(HTMLInputElement | null)[]>([])
+
+  // Resend OTP Countdown Timer
+  useEffect(() => {
+    if (step === 'otp' && timer > 0) {
+      const interval = setInterval(() => {
+        setTimer((t) => t - 1)
+      }, 1000)
+      return () => clearInterval(interval)
+    }
+  }, [step, timer])
+
+  // Reset OTP values and focus first input box when moving to the OTP step
+  useEffect(() => {
+    if (step === 'otp') {
+      setOtpValues(['', '', '', '', '', ''])
+      setTimer(30)
+      setTimeout(() => {
+        otpInputRefs.current[0]?.focus()
+      }, 100)
+    }
+  }, [step])
+
+  // Step 1: Submit email (requests OTP)
+  async function handleLoginSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
       toast.error('Please enter a valid email address')
       return
     }
-    setStep('password')
+
+    setLoading(true)
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        toast.error(data.error || 'Authentication failed')
+        setLoading(false)
+        return
+      }
+
+      toast.success('Verification code sent to your email!')
+      setStep('otp')
+    } catch (err) {
+      toast.error('An unexpected error occurred. Please try again.')
+    } finally {
+      setLoading(false)
+    }
   }
 
-  // Submit password and sign in
-  async function handlePasswordSubmit(e: React.FormEvent) {
+  // Step 2: Submit 6-digit OTP code to verify and sign in
+  async function handleOtpSubmit(e: React.FormEvent) {
     e.preventDefault()
+    const otp = otpValues.join('')
+    if (otp.length !== 6) {
+      toast.error('Please enter the 6-digit verification code')
+      return
+    }
+
     setLoading(true)
-
     try {
-      const supabase = createClient()
-      const { error } = await supabase.auth.signInWithPassword({ email, password })
+      const res = await fetch('/api/auth/login-verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, otp }),
+      })
 
-      if (error) {
-        toast.error(error.message ?? 'Sign-in failed')
+      const data = await res.json()
+
+      if (!res.ok) {
+        toast.error(data.error || 'Verification failed')
         setLoading(false)
         return
       }
@@ -47,20 +102,72 @@ export default function LoginPage() {
       router.push('/dashboard')
       router.refresh()
     } catch (err) {
-      toast.error('An error occurred. Please try again.')
+      toast.error('Failed to complete login. Please try again.')
       setLoading(false)
+    }
+  }
+
+  // Resend OTP code
+  async function handleResendOtp() {
+    if (timer > 0 || resending) return
+    setResending(true)
+    try {
+      const res = await fetch('/api/auth/verify-otp', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      })
+      const data = await res.json()
+
+      if (!res.ok) {
+        toast.error(data.error || 'Failed to resend code')
+        return
+      }
+
+      toast.success('Verification code resent successfully!')
+      setTimer(30)
+    } catch (err) {
+      toast.error('Failed to resend code. Please try again.')
+    } finally {
+      setResending(false)
+    }
+  }
+
+  // OTP Input controls
+  const handleOtpChange = (val: string, index: number) => {
+    const sanitized = val.replace(/[^0-9]/g, '').slice(-1)
+    const newValues = [...otpValues]
+    newValues[index] = sanitized
+    setOtpValues(newValues)
+
+    if (sanitized && index < 5) {
+      otpInputRefs.current[index + 1]?.focus()
+    }
+  }
+
+  const handleOtpKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
+    if (e.key === 'Backspace') {
+      if (!otpValues[index] && index > 0) {
+        const newValues = [...otpValues]
+        newValues[index - 1] = ''
+        setOtpValues(newValues)
+        otpInputRefs.current[index - 1]?.focus()
+      } else {
+        const newValues = [...otpValues]
+        newValues[index] = ''
+        setOtpValues(newValues)
+      }
     }
   }
 
   return (
     <div className="min-h-screen bg-white flex flex-col justify-between items-center py-12 px-4 select-none">
       
-
-      {/* Main Container - borderless, shadowless, flat white page layout */}
+      {/* Main Container - flat white page layout */}
       <main className="w-full max-w-[420px] my-6">
         
-        {/* STEP 1: EMAIL */}
-        {step === 'email' && (
+        {/* STEP 1: EMAIL ENTRY */}
+        {step === 'login' && (
           <div>
             <div className="mb-6 text-center">
               <h1 className="text-3xl font-medium tracking-tight text-gray-950 mb-1">Sign in to UdhaarClear</h1>
@@ -70,7 +177,6 @@ export default function LoginPage() {
             {/* OAuth Login */}
             <div className="space-y-3">
               <GoogleButton label="Sign in with Google" />
-              <MicrosoftButton label="Sign in with Microsoft" />
             </div>
 
             {/* Divider */}
@@ -83,8 +189,10 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* Form */}
-            <form onSubmit={handleEmailSubmit} className="space-y-4">
+            {/* Login Form */}
+            <form onSubmit={handleLoginSubmit} className="space-y-4">
+              
+              {/* Email Field */}
               <div>
                 <label className="mb-1.5 block text-sm font-semibold text-gray-700">Email</label>
                 <div className="relative">
@@ -102,25 +210,16 @@ export default function LoginPage() {
 
               <button
                 type="submit"
-                className="mt-2 flex w-full items-center justify-center rounded-xl py-3.5 text-sm font-bold text-white shadow-lg shadow-amber-500/15 hover:shadow-xl hover:shadow-amber-500/25 active:scale-[0.98] active:brightness-95 transition-all cursor-pointer"
+                disabled={loading}
+                className="mt-2 flex w-full items-center justify-center rounded-xl py-3.5 text-sm font-bold text-white shadow-lg shadow-amber-500/15 hover:shadow-xl hover:shadow-amber-500/25 active:scale-[0.98] active:brightness-95 transition-all disabled:opacity-55 disabled:cursor-not-allowed cursor-pointer"
                 style={{ backgroundColor: '#ECA828' }}
               >
-                Sign in with email
+                {loading ? 'Processing...' : 'Continue'}
               </button>
             </form>
 
-            {/* SSO Link */}
-            <div className="mt-5 text-center">
-              <Link
-                href="/login"
-                className="text-xs font-semibold text-gray-400 hover:text-gray-600 transition-colors"
-              >
-                Use single sign-on
-              </Link>
-            </div>
-
             {/* Create Account redirect */}
-            <div className="mt-6 pt-5 border-t border-gray-100 text-center text-xs text-gray-500">
+            <div className="mt-4 pt-3 text-center text-xs text-gray-500">
               New to UdhaarClear?{' '}
               <Link
                 href="/signup"
@@ -132,64 +231,72 @@ export default function LoginPage() {
           </div>
         )}
 
-        {/* STEP 2: PASSWORD */}
-        {step === 'password' && (
-          <div>
+        {/* STEP 2: OTP VERIFICATION CARD */}
+        {step === 'otp' && (
+          <div className="animate-in fade-in slide-in-from-bottom-3 duration-300">
             <button
-              onClick={() => setStep('email')}
-              className="mb-6 inline-flex items-center text-xs font-bold text-gray-500 hover:text-gray-950 transition-colors"
+              onClick={() => setStep('login')}
+              className="mb-6 inline-flex items-center gap-1.5 text-xs font-bold text-gray-500 hover:text-gray-900 transition-colors"
             >
-              ← Back to email
+              <ArrowLeft size={13} /> Back to login
             </button>
 
-            <div className="mb-6">
-              <h1 className="text-3xl font-extrabold tracking-tight text-gray-950 mb-1">Enter your password</h1>
-              <p className="text-sm text-gray-500 truncate max-w-sm">
-                Signing in as <span className="font-semibold text-gray-700">{email}</span>
+            <div className="mb-6 text-center">
+              <h1 className="text-3xl font-medium tracking-tight text-gray-950 mb-2">Verify your email</h1>
+              <p className="text-sm text-gray-500">
+                We sent a 6-digit code to <span className="font-semibold text-gray-700">{email}</span>
               </p>
             </div>
 
-            <form onSubmit={handlePasswordSubmit} className="space-y-4">
-              <div>
-                <label className="mb-1.5 block text-sm font-semibold text-gray-700">Password</label>
-                <div className="relative">
+            <form onSubmit={handleOtpSubmit} className="space-y-6">
+              
+              {/* 6 Digit OTP Input Grid */}
+              <div className="flex justify-between gap-2.5">
+                {otpValues.map((val, idx) => (
                   <input
-                    type={showPassword ? 'text' : 'password'}
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="minimum 8 characters"
-                    className="block w-full rounded-xl border border-gray-200 pl-10 pr-11 py-3.5 text-sm text-gray-950 placeholder-gray-400 bg-gray-50/50 focus:bg-white focus:border-[#ECA828] focus:outline-none focus:ring-4 focus:ring-amber-100/50 transition-all font-medium"
+                    key={idx}
+                    type="text"
+                    pattern="[0-9]*"
+                    inputMode="numeric"
+                    maxLength={1}
+                    value={val}
+                    onChange={(e) => handleOtpChange(e.target.value, idx)}
+                    onKeyDown={(e) => handleOtpKeyDown(e, idx)}
+                    ref={(el) => {
+                      otpInputRefs.current[idx] = el;
+                    }}
+                    id={`otp-input-${idx}`}
+                    className="w-12 h-12 md:w-14 md:h-14 border border-gray-200 focus:border-[#ECA828] rounded-xl text-center text-lg font-bold outline-none transition-all bg-gray-50/50 focus:bg-white font-outfit"
                   />
-                  <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword((v) => !v)}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
-                  >
-                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                  </button>
-                </div>
+                ))}
               </div>
 
               <button
                 type="submit"
-                disabled={loading}
-                className="mt-2 flex w-full items-center justify-center rounded-xl py-3.5 text-sm font-bold text-white shadow-lg shadow-amber-500/15 hover:shadow-xl hover:shadow-amber-500/25 active:scale-[0.98] active:brightness-95 transition-all disabled:opacity-55 disabled:cursor-not-allowed cursor-pointer"
+                disabled={loading || otpValues.some((v) => !v)}
+                className="flex w-full items-center justify-center rounded-xl py-3.5 text-sm font-bold text-white shadow-lg shadow-amber-500/15 hover:shadow-xl hover:shadow-amber-500/25 active:scale-[0.98] active:brightness-95 transition-all disabled:opacity-55 disabled:cursor-not-allowed cursor-pointer"
                 style={{ backgroundColor: '#ECA828' }}
               >
-                {loading ? 'Signing in...' : 'Sign In →'}
+                {loading ? 'Verifying...' : 'Verify & Continue →'}
               </button>
             </form>
 
-            {/* Forgot Password Link */}
-            <div className="mt-5 text-center">
-              <Link
-                href="/forgot-password"
-                className="text-xs font-semibold text-gray-500 hover:text-[#ECA828] underline underline-offset-2 transition-colors"
-              >
-                Forgot password?
-              </Link>
+            {/* Resend OTP actions */}
+            <div className="mt-6 text-center font-outfit">
+              {timer > 0 ? (
+                <span className="text-xs font-semibold text-gray-400">
+                  Resend code in <span className="text-gray-600 font-bold">{timer}s</span>
+                </span>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleResendOtp}
+                  disabled={resending}
+                  className="text-xs font-bold text-[#ECA828] hover:text-amber-600 transition-colors select-none cursor-pointer underline underline-offset-2"
+                >
+                  {resending ? 'Resending...' : 'Resend code'}
+                </button>
+              )}
             </div>
           </div>
         )}

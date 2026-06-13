@@ -66,7 +66,7 @@ export function DailyDigest() {
       id: 'task-4',
       task: 'Update business Udyam registration',
       detail: 'Keep your MSME certificate details updated to guarantee Facilitation Council filing validity.',
-      route: '/settings/profile',
+      route: '/settings?tab=company',
       routeLabel: 'Open Profile',
       category: 'Compliance',
       impact: 'Maintain legal protection',
