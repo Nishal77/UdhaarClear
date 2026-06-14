@@ -93,7 +93,7 @@ export default function CompanySection({ businessName }: CompanySectionProps) {
               <Building className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-gray-900 font-outfit">Company Profile & Legalities</h2>
+              <h2 className="text-base font-semibold text-gray-900 font-outfit">Company Profile & Legalities</h2>
               <p className="text-xs text-gray-400 font-medium">These details appear on legal notices and payment receipts sent to your customers.</p>
             </div>
           </div>
@@ -103,7 +103,7 @@ export default function CompanySection({ businessName }: CompanySectionProps) {
             <div className="bg-slate-50/50 border border-gray-200/50 rounded-2xl p-4">
               <div className="flex flex-col md:flex-row items-end gap-3">
                 <div className="flex-1 w-full text-left">
-                  <label className="block text-[10.5px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">
+                  <label className="block text-[11.5px] font-semibold text-gray-400 tracking-tight mb-1.5">
                     GSTIN
                   </label>
                   <input
@@ -114,7 +114,7 @@ export default function CompanySection({ businessName }: CompanySectionProps) {
                       setGstin(e.target.value.toUpperCase());
                       setGstStatus("idle");
                     }}
-                    className="w-full bg-white border border-gray-200/80 rounded-xl px-4 py-2.5 text-sm font-semibold text-gray-900 font-mono focus:outline-none focus:ring-1 focus:ring-[#FF6B00] uppercase"
+                    className="w-full bg-white border border-gray-200/80 rounded-xl px-4 py-2.5 text-sm font-medium text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#FF6B00] uppercase"
                   />
                 </div>
                 <button

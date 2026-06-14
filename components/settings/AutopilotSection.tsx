@@ -63,13 +63,13 @@ export default function AutopilotSection() {
   };
 
   return (
-    <div className="bg-white border border-[#EBEAE6]/60 rounded-[22px] p-5 shadow-[0_8px_30px_rgba(0,0,0,0.015)] w-full max-w-3xl text-left animate-in fade-in duration-200">
+    <div className="bg-white border border-[#EBEAE6]/60 rounded-[22px] p-5 shadow-[0_8px_30px_rgba(0,0,0,0.015)] w-full text-left animate-in fade-in duration-200">
       <div className="flex items-center gap-3.5 mb-5 pb-3 border-b border-gray-50">
-        <div className="w-10 h-10 rounded-2xl bg-orange-50 border border-orange-100/20 text-[#FF6B00] flex items-center justify-center shrink-0">
+        <div className="w-10 h-10 rounded-2xl bg-orange-50 border border-orange-100/20 text-black flex items-center justify-center shrink-0">
           <Sliders className="w-5 h-5" />
         </div>
         <div>
-          <h2 className="text-base font-bold text-gray-900 font-outfit">Reminder Rules</h2>
+          <h2 className="text-base font-semibold text-gray-900 font-outfit">Reminder Rules</h2>
           <p className="text-xs text-gray-400 font-medium">Control how and when UdhaarClear sends automated payment chasers to your customers.</p>
         </div>
       </div>
@@ -79,13 +79,13 @@ export default function AutopilotSection() {
         {/* Master switch */}
         <div className="flex items-center justify-between py-3.5">
           <div>
-            <span className="text-xs font-bold text-gray-900 font-outfit flex items-center gap-1.5">
+            <span className="text-[14.5px] font-medium text-gray-900 font-outfit flex items-center gap-1.5">
               Enable Autopilot
               {autopilotEnabled && (
                 <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-50 text-[8.5px] font-bold text-emerald-600 border border-emerald-100/30 uppercase tracking-wider">On</span>
               )}
             </span>
-            <p className="text-[10px] text-gray-400 font-medium mt-0.5">Allow the system to dispatch reminders automatically without manual approval.</p>
+            <p className="text-[11.5px] text-gray-400 font-medium mt-0.5">Allow the system to dispatch reminders automatically without manual approval.</p>
           </div>
           <Toggle checked={autopilotEnabled} onChange={setAutopilotEnabled} />
         </div>
@@ -93,8 +93,8 @@ export default function AutopilotSection() {
         {/* Send window */}
         <div className="flex items-center justify-between py-3.5">
           <div>
-            <span className="text-xs font-bold text-gray-900 font-outfit">Send Window</span>
-            <p className="text-[10px] text-gray-400 font-medium mt-0.5">Reminders only go out between these hours on business days.</p>
+            <span className="text-[14.5px] font-medium text-gray-900 font-outfit">Send Window</span>
+            <p className="text-[11.5px] text-gray-400 font-medium mt-0.5">Reminders only go out between these hours on business days.</p>
           </div>
           <div className="flex items-center gap-2 select-none">
             <select
@@ -122,8 +122,8 @@ export default function AutopilotSection() {
         {/* Weekend lock */}
         <div className="flex items-center justify-between py-3.5">
           <div>
-            <span className="text-xs font-bold text-gray-900 font-outfit">Weekend & Holiday Lock</span>
-            <p className="text-[10px] text-gray-400 font-medium mt-0.5">Block reminders on Saturday, Sunday, and national holidays.</p>
+            <span className="text-[14.5px] font-medium text-gray-900 font-outfit">Weekend & Holiday Lock</span>
+            <p className="text-[11.5px] text-gray-400 font-medium mt-0.5">Block reminders on Saturday, Sunday, and national holidays.</p>
           </div>
           <Toggle checked={weekendLock} onChange={setWeekendLock} />
         </div>
@@ -131,8 +131,8 @@ export default function AutopilotSection() {
         {/* Auto-pause on reply */}
         <div className="flex items-center justify-between py-3.5">
           <div>
-            <span className="text-xs font-bold text-gray-900 font-outfit">Auto-pause if Customer Replies</span>
-            <p className="text-[10px] text-gray-400 font-medium mt-0.5">
+            <span className="text-[14.5px] font-medium text-gray-900 font-outfit">Auto-pause if Customer Replies</span>
+            <p className="text-[11.5px] text-gray-400 font-medium mt-0.5">
               Stop sending reminders immediately when a customer replies on WhatsApp. Resumes after you close the conversation.
             </p>
           </div>
@@ -142,8 +142,8 @@ export default function AutopilotSection() {
         {/* Grace period */}
         <div className="flex items-center justify-between py-3.5">
           <div>
-            <span className="text-xs font-bold text-gray-900 font-outfit">Grace Period (days)</span>
-            <p className="text-[10px] text-gray-400 font-medium mt-0.5">Buffer days after the due date before the first chaser is sent.</p>
+            <span className="text-[14.5px] font-medium text-gray-900 font-outfit">Grace Period (days)</span>
+            <p className="text-[11.5px] text-gray-400 font-medium mt-0.5">Buffer days after the due date before the first chaser is sent.</p>
           </div>
           <input
             type="number"
@@ -158,8 +158,8 @@ export default function AutopilotSection() {
         {/* Tone profile */}
         <div className="flex items-center justify-between py-3.5">
           <div>
-            <span className="text-xs font-bold text-gray-900 font-outfit">Starting Tone</span>
-            <p className="text-[10px] text-gray-400 font-medium mt-0.5">
+            <span className="text-[14.5px] font-medium text-gray-900 font-outfit">Starting Tone</span>
+            <p className="text-[11.5px] text-gray-400 font-medium mt-0.5">
               Gentle = polite requests · Firm = assertive · Legal = pre-litigation language. Automatically escalates over time.
             </p>
           </div>
@@ -177,11 +177,11 @@ export default function AutopilotSection() {
         {/* MSME rule */}
         <div className="flex items-center justify-between py-3.5">
           <div>
-            <span className="text-xs font-bold text-gray-900 font-outfit flex items-center gap-1.5">
+            <span className="text-[14.5px] font-medium text-gray-900 font-outfit flex items-center gap-1.5">
               45-Day MSME Samadhaan Rule
               <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-orange-50 text-[8px] font-bold text-orange-600 border border-orange-100/30 uppercase">Escalating</span>
             </span>
-            <p className="text-[10px] text-gray-400 font-medium mt-0.5">
+            <p className="text-[11.5px] text-gray-400 font-medium mt-0.5">
               Trigger strict MSME Council legal notice on Day 46 of default (MSMED Act, Section 15).
             </p>
           </div>
