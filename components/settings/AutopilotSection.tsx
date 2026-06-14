@@ -2,141 +2,199 @@
 
 import React, { useState } from "react";
 import { Sliders } from "lucide-react";
+import { toast } from "sonner";
+
+function Toggle({
+  checked,
+  onChange,
+}: {
+  checked: boolean;
+  onChange: (v: boolean) => void;
+}) {
+  return (
+    <label className="relative inline-flex items-center cursor-pointer select-none">
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+        className="sr-only peer"
+      />
+      <div className="w-9 h-5 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#FF6B00]" />
+    </label>
+  );
+}
+
+// 30-min slots 07:00 – 21:00
+function buildTimeSlots() {
+  const slots: { value: string; label: string }[] = [];
+  for (let h = 7; h <= 21; h++) {
+    for (const m of [0, 30]) {
+      if (h === 21 && m === 30) break;
+      const hh = String(h).padStart(2, "0");
+      const mm = String(m).padStart(2, "0");
+      const suffix = h < 12 ? "AM" : h === 12 ? "PM" : "PM";
+      const displayH = h > 12 ? h - 12 : h;
+      slots.push({ value: `${hh}:${mm}`, label: `${displayH}:${mm} ${suffix}` });
+    }
+  }
+  return slots;
+}
+
+const TIME_SLOTS = buildTimeSlots();
 
 export default function AutopilotSection() {
   const [autopilotEnabled, setAutopilotEnabled] = useState(true);
-  const [businessHoursStart, setBusinessHoursStart] = useState("09:30");
-  const [businessHoursEnd, setBusinessHoursEnd] = useState("17:30");
+  const [windowStart, setWindowStart] = useState("09:30");
+  const [windowEnd, setWindowEnd] = useState("17:30");
   const [weekendLock, setWeekendLock] = useState(true);
+  const [autoPauseOnReply, setAutoPauseOnReply] = useState(true);
   const [gracePeriod, setGracePeriod] = useState(3);
   const [toneProfile, setToneProfile] = useState<"gentle" | "firm" | "legal">("firm");
   const [msmeRuleTrigger, setMsmeRuleTrigger] = useState(true);
   const [escalationInterval, setEscalationInterval] = useState(7);
+  const [saving, setSaving] = useState(false);
+
+  const handleSave = async () => {
+    setSaving(true);
+    // TODO: POST /api/businesses/reminder-settings
+    await new Promise((r) => setTimeout(r, 500));
+    setSaving(false);
+    toast.success("Reminder rules saved");
+  };
 
   return (
     <div className="bg-white border border-[#EBEAE6]/60 rounded-[22px] p-5 shadow-[0_8px_30px_rgba(0,0,0,0.015)] w-full max-w-3xl text-left animate-in fade-in duration-200">
       <div className="flex items-center gap-3.5 mb-5 pb-3 border-b border-gray-50">
-        <div className="w-10 h-10 rounded-2xl bg-orange-50 border border-orange-100/20 text-[#FF6B00] flex items-center justify-center shadow-sm shrink-0">
+        <div className="w-10 h-10 rounded-2xl bg-orange-50 border border-orange-100/20 text-[#FF6B00] flex items-center justify-center shrink-0">
           <Sliders className="w-5 h-5" />
         </div>
         <div>
-          <h2 className="text-base font-bold text-gray-900 font-outfit">Collection Autopilot Settings</h2>
-          <p className="text-xs text-gray-400 font-medium">Fine-tune automated messaging rules, grace periods, and escalating triggers.</p>
+          <h2 className="text-base font-bold text-gray-900 font-outfit">Reminder Rules</h2>
+          <p className="text-xs text-gray-400 font-medium">Control how and when UdhaarClear sends automated payment chasers to your customers.</p>
         </div>
       </div>
 
-      <div className="space-y-4 font-semibold text-slate-700">
-        {/* Master Autopilot Switch */}
-        <div className="flex items-center justify-between py-2.5 border-b border-gray-50">
-          <div className="flex flex-col">
-            <span className="text-xs font-bold text-gray-900 font-outfit flex items-center gap-1">
-              Autopilot Master Switch
-              <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-50 text-[8.5px] font-bold text-emerald-600 border border-emerald-100/30 uppercase tracking-wider">Active</span>
+      <div className="space-y-0 divide-y divide-gray-50">
+
+        {/* Master switch */}
+        <div className="flex items-center justify-between py-3.5">
+          <div>
+            <span className="text-xs font-bold text-gray-900 font-outfit flex items-center gap-1.5">
+              Enable Autopilot
+              {autopilotEnabled && (
+                <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-50 text-[8.5px] font-bold text-emerald-600 border border-emerald-100/30 uppercase tracking-wider">On</span>
+              )}
             </span>
-            <span className="text-[10px] text-gray-400 font-medium mt-0.5 leading-normal">Allows the system to dispatch payment links and chasers automatically without manual approvals.</span>
+            <p className="text-[10px] text-gray-400 font-medium mt-0.5">Allow the system to dispatch reminders automatically without manual approval.</p>
           </div>
-          <label className="relative inline-flex items-center cursor-pointer select-none">
-            <input type="checkbox" checked={autopilotEnabled} onChange={(e) => setAutopilotEnabled(e.target.checked)} className="sr-only peer" />
-            <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#FF6B00]"></div>
-          </label>
+          <Toggle checked={autopilotEnabled} onChange={setAutopilotEnabled} />
         </div>
 
-        {/* Active Business Hours */}
-        <div className="flex items-center justify-between py-2.5 border-b border-gray-50">
-          <div className="flex flex-col text-left">
-            <span className="text-xs font-bold text-gray-900 font-outfit">Active Reminders Window</span>
-            <span className="text-[10px] text-gray-400 font-medium mt-0.5 leading-normal">Restrict automated collections window to respect business courtesy times.</span>
+        {/* Send window */}
+        <div className="flex items-center justify-between py-3.5">
+          <div>
+            <span className="text-xs font-bold text-gray-900 font-outfit">Send Window</span>
+            <p className="text-[10px] text-gray-400 font-medium mt-0.5">Reminders only go out between these hours on business days.</p>
           </div>
           <div className="flex items-center gap-2 select-none">
-            <select 
-              value={businessHoursStart} 
-              onChange={(e) => setBusinessHoursStart(e.target.value)}
+            <select
+              value={windowStart}
+              onChange={(e) => setWindowStart(e.target.value)}
               className="bg-gray-50 border border-gray-200 rounded-xl px-2.5 py-1.5 text-xs font-bold text-gray-700 focus:outline-none"
             >
-              <option value="09:00">09:00 AM</option>
-              <option value="09:30">09:30 AM</option>
-              <option value="10:00">10:00 AM</option>
+              {TIME_SLOTS.map((s) => (
+                <option key={s.value} value={s.value}>{s.label}</option>
+              ))}
             </select>
             <span className="text-gray-400 text-xs">to</span>
-            <select 
-              value={businessHoursEnd} 
-              onChange={(e) => setBusinessHoursEnd(e.target.value)}
+            <select
+              value={windowEnd}
+              onChange={(e) => setWindowEnd(e.target.value)}
               className="bg-gray-50 border border-gray-200 rounded-xl px-2.5 py-1.5 text-xs font-bold text-gray-700 focus:outline-none"
             >
-              <option value="17:00">05:00 PM</option>
-              <option value="17:30">05:30 PM</option>
-              <option value="18:00">06:00 PM</option>
+              {TIME_SLOTS.map((s) => (
+                <option key={s.value} value={s.value}>{s.label}</option>
+              ))}
             </select>
           </div>
         </div>
 
-        {/* Weekend Lock */}
-        <div className="flex items-center justify-between py-2.5 border-b border-gray-50">
-          <div className="flex flex-col">
-            <span className="text-xs font-bold text-gray-900 font-outfit">Weekend & Public Holiday Lock</span>
-            <span className="text-[10px] text-gray-400 font-medium mt-0.5 leading-normal">Blocks reminders from dispatching on Saturday, Sunday, or official holidays.</span>
+        {/* Weekend lock */}
+        <div className="flex items-center justify-between py-3.5">
+          <div>
+            <span className="text-xs font-bold text-gray-900 font-outfit">Weekend & Holiday Lock</span>
+            <p className="text-[10px] text-gray-400 font-medium mt-0.5">Block reminders on Saturday, Sunday, and national holidays.</p>
           </div>
-          <label className="relative inline-flex items-center cursor-pointer select-none">
-            <input type="checkbox" checked={weekendLock} onChange={(e) => setWeekendLock(e.target.checked)} className="sr-only peer" />
-            <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#FF6B00]"></div>
-          </label>
+          <Toggle checked={weekendLock} onChange={setWeekendLock} />
         </div>
 
-        {/* Dues Grace Period */}
-        <div className="flex items-center justify-between py-2.5 border-b border-gray-50">
-          <div className="flex flex-col">
-            <span className="text-xs font-bold text-gray-900 font-outfit">Dues Grace Period Allowance</span>
-            <span className="text-[10px] text-gray-400 font-medium mt-0.5 leading-normal">Number of buffer days to wait after the due date before sending the first chaser.</span>
+        {/* Auto-pause on reply */}
+        <div className="flex items-center justify-between py-3.5">
+          <div>
+            <span className="text-xs font-bold text-gray-900 font-outfit">Auto-pause if Customer Replies</span>
+            <p className="text-[10px] text-gray-400 font-medium mt-0.5">
+              Stop sending reminders immediately when a customer replies on WhatsApp. Resumes after you close the conversation.
+            </p>
           </div>
-          <input 
-            type="number" 
+          <Toggle checked={autoPauseOnReply} onChange={setAutoPauseOnReply} />
+        </div>
+
+        {/* Grace period */}
+        <div className="flex items-center justify-between py-3.5">
+          <div>
+            <span className="text-xs font-bold text-gray-900 font-outfit">Grace Period (days)</span>
+            <p className="text-[10px] text-gray-400 font-medium mt-0.5">Buffer days after the due date before the first chaser is sent.</p>
+          </div>
+          <input
+            type="number"
             min="0"
             max="15"
-            value={gracePeriod} 
+            value={gracePeriod}
             onChange={(e) => setGracePeriod(parseInt(e.target.value) || 0)}
             className="w-16 bg-gray-50 border border-gray-200 rounded-xl px-2.5 py-1.5 text-xs text-center font-bold text-gray-700 focus:outline-none"
           />
         </div>
 
-        {/* Tone Profile */}
-        <div className="flex items-center justify-between py-2.5 border-b border-gray-50">
-          <div className="flex flex-col">
-            <span className="text-xs font-bold text-gray-900 font-outfit">WhatsApp Messaging Tone Profiles</span>
-            <span className="text-[10px] text-gray-400 font-medium mt-0.5 leading-normal">Tone styling: Gentle (Polite requests) / Firm (Strict) / Legal (Pre-litigation tone).</span>
+        {/* Tone profile */}
+        <div className="flex items-center justify-between py-3.5">
+          <div>
+            <span className="text-xs font-bold text-gray-900 font-outfit">Starting Tone</span>
+            <p className="text-[10px] text-gray-400 font-medium mt-0.5">
+              Gentle = polite requests · Firm = assertive · Legal = pre-litigation language. Automatically escalates over time.
+            </p>
           </div>
-          <select 
-            value={toneProfile} 
+          <select
+            value={toneProfile}
             onChange={(e) => setToneProfile(e.target.value as any)}
             className="bg-gray-50 border border-gray-200 rounded-xl px-2.5 py-1.5 text-xs font-bold text-gray-700 focus:outline-none"
           >
             <option value="gentle">Gentle</option>
             <option value="firm">Firm</option>
-            <option value="legal">Legal Pre-Warning</option>
+            <option value="legal">Legal</option>
           </select>
         </div>
 
-        {/* 45-Day MSME Rule Trigger */}
-        <div className="flex items-center justify-between py-2.5 border-b border-gray-50">
-          <div className="flex flex-col">
-            <span className="text-xs font-bold text-gray-900 font-outfit flex items-center gap-1">
-              45-Day MSME samadhaan Rule
-              <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-orange-50 text-[8px] font-bold text-orange-600 border border-orange-100/30 uppercase tracking-wider">Escalating</span>
+        {/* MSME rule */}
+        <div className="flex items-center justify-between py-3.5">
+          <div>
+            <span className="text-xs font-bold text-gray-900 font-outfit flex items-center gap-1.5">
+              45-Day MSME Samadhaan Rule
+              <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-orange-50 text-[8px] font-bold text-orange-600 border border-orange-100/30 uppercase">Escalating</span>
             </span>
-            <span className="text-[10px] text-gray-400 font-medium mt-0.5 leading-normal">Automatically triggers strict MSME Council Legal notices on Day 46 of default (as allowed by the MSMED Act).</span>
+            <p className="text-[10px] text-gray-400 font-medium mt-0.5">
+              Trigger strict MSME Council legal notice on Day 46 of default (MSMED Act, Section 15).
+            </p>
           </div>
-          <label className="relative inline-flex items-center cursor-pointer select-none">
-            <input type="checkbox" checked={msmeRuleTrigger} onChange={(e) => setMsmeRuleTrigger(e.target.checked)} className="sr-only peer" />
-            <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#FF6B00]"></div>
-          </label>
+          <Toggle checked={msmeRuleTrigger} onChange={setMsmeRuleTrigger} />
         </div>
 
-        {/* Auto-Escalation Interval */}
-        <div className="space-y-2 py-2.5">
-          <div className="flex justify-between items-center text-xs font-bold text-gray-900 font-outfit">
-            <span>Auto-Escalation Warning Interval</span>
-            <span>Every {escalationInterval} Days</span>
+        {/* Escalation interval */}
+        <div className="py-3.5 space-y-2">
+          <div className="flex justify-between items-center text-xs font-bold text-gray-900">
+            <span>Escalation Interval</span>
+            <span>Every {escalationInterval} days</span>
           </div>
-          <input 
+          <input
             type="range"
             min="3"
             max="14"
@@ -145,8 +203,23 @@ export default function AutopilotSection() {
             onChange={(e) => setEscalationInterval(parseInt(e.target.value))}
             className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#FF6B00] outline-none"
           />
-          <span className="block text-[9.5px] text-gray-400 font-semibold leading-normal font-sans">Controls how many days the system waits before escalating notice levels (gentle to firm to lawyer dispatch).</span>
+          <p className="text-[9.5px] text-gray-400 font-semibold leading-normal">
+            Days between tone escalation steps (gentle → firm → legal).
+          </p>
         </div>
+
+      </div>
+
+      {/* Save */}
+      <div className="mt-4 pt-4 border-t border-gray-50 flex justify-end">
+        <button
+          type="button"
+          onClick={handleSave}
+          disabled={saving}
+          className="px-5 py-2.5 bg-[#FF6B00] hover:bg-[#E05B2E] text-white text-xs font-bold rounded-xl transition-all cursor-pointer disabled:opacity-50 active:scale-95"
+        >
+          {saving ? "Saving..." : "Save Rules"}
+        </button>
       </div>
     </div>
   );

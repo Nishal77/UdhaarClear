@@ -4,6 +4,8 @@ import { TopBar } from '@/components/layout/TopBar'
 import { DashboardClientShell } from '@/components/layout/DashboardClientShell'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { prisma } from '@/lib/prisma/client'
+import fs from 'fs'
+import path from 'path'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
@@ -21,8 +23,21 @@ export default async function DashboardLayout({ children }: { children: React.Re
     userAvatarUrl = user.user_metadata?.avatar_url || ''
 
     if (!userAvatarUrl) {
-      const randomImgIndex = Math.floor(Math.random() * 10) + 1
-      const defaultAvatar = `/profile/img${randomImgIndex}.jpeg`
+      let defaultAvatar = '/profile/img1.jpeg'
+      try {
+        const dir = path.join(process.cwd(), 'public', 'profile')
+        if (fs.existsSync(dir)) {
+          const files = fs.readdirSync(dir)
+          const matching = files.filter(f => f.startsWith('img') && (f.endsWith('.jpeg') || f.endsWith('.jpg') || f.endsWith('.png')))
+          if (matching.length > 0) {
+            const randomIndex = Math.floor(Math.random() * matching.length)
+            defaultAvatar = `/profile/${matching[randomIndex]}`
+          }
+        }
+      } catch (err) {
+        console.error('Failed to resolve dynamic avatar in layout:', err)
+      }
+
       try {
         const adminClient = await createServiceClient()
         await adminClient.auth.admin.updateUserById(user.id, {

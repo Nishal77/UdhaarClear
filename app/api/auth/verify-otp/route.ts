@@ -6,6 +6,8 @@ import { sendEmail } from '@/lib/email/client'
 import { otpVerificationEmail } from '@/lib/email/templates/otp-verification'
 import { prisma } from '@/lib/prisma/client'
 import { cookies } from 'next/headers'
+import fs from 'fs'
+import path from 'path'
 
 const verifySchema = z.object({
   email: z.string().email(),
@@ -52,8 +54,22 @@ export async function POST(request: Request) {
 
   // Create auth user via admin — email pre-confirmed, Supabase sends no email
   const adminClient = await createServiceClient()
-  const randomImgIndex = Math.floor(Math.random() * 10) + 1
-  const defaultAvatar = `/profile/img${randomImgIndex}.jpeg`
+  
+  let defaultAvatar = '/profile/img1.jpeg'
+  try {
+    const dir = path.join(process.cwd(), 'public', 'profile')
+    if (fs.existsSync(dir)) {
+      const files = fs.readdirSync(dir)
+      const matching = files.filter(f => f.startsWith('img') && (f.endsWith('.jpeg') || f.endsWith('.jpg') || f.endsWith('.png')))
+      if (matching.length > 0) {
+        const randomIndex = Math.floor(Math.random() * matching.length)
+        defaultAvatar = `/profile/${matching[randomIndex]}`
+      }
+    }
+  } catch (err) {
+    console.error('Failed to resolve dynamic avatar:', err)
+  }
+
   const { data: authData, error: createError } = await adminClient.auth.admin.createUser({
     email: session.email,
     password: session.password,

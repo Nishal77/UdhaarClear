@@ -3,138 +3,70 @@ import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma/client'
 import { SettingsLayout } from '@/components/settings/SettingsLayout'
 import SettingsClient from './SettingsClient'
-import { User as UserIcon, Bell, Shield, Key, Laptop, Smartphone, AlertCircle, Calendar, ShieldCheck, Globe } from 'lucide-react'
-import { revalidatePath } from 'next/cache'
 import { headers } from 'next/headers'
 
-// Helper to retrieve user agent, IP, country, ISP, and detect VPN connection
-async function getSessionSecurityInfo() {
-  let ip = '127.0.0.1'
+async function getSessionInfo() {
+  let ip = '—'
   let userAgent = ''
 
   try {
-    const headersList = await headers()
-    const forwardedFor = headersList.get('x-forwarded-for')
-    const realIp = headersList.get('x-real-ip')
-    userAgent = headersList.get('user-agent') || 'Mozilla/5.0'
+    const h = await headers()
+    const forwarded = h.get('x-forwarded-for')
+    const realIp = h.get('x-real-ip')
+    userAgent = h.get('user-agent') || ''
 
-    if (forwardedFor) {
-      ip = forwardedFor.split(',')[0].trim()
-    } else if (realIp) {
-      ip = realIp
-    }
-  } catch (err) {
-    console.error('Failed to read request headers:', err)
+    if (forwarded) ip = forwarded.split(',')[0].trim()
+    else if (realIp) ip = realIp
+  } catch {
+    // non-fatal
   }
 
-  // Parse User-Agent
-  let device = 'Mac'
-  let browser = 'Chrome'
   const ua = userAgent.toLowerCase()
 
-  if (ua.includes('windows')) {
-    device = 'Windows'
-  } else if (ua.includes('macintosh') || ua.includes('mac os')) {
-    device = 'Mac'
-  } else if (ua.includes('iphone') || ua.includes('ipad')) {
-    device = 'iPhone'
-  } else if (ua.includes('android')) {
-    device = 'Android'
-  } else if (ua.includes('linux')) {
-    device = 'Linux'
-  }
+  let device = 'Desktop'
+  if (ua.includes('iphone') || ua.includes('ipad')) device = 'iPhone'
+  else if (ua.includes('android')) device = 'Android'
+  else if (ua.includes('windows')) device = 'Windows'
+  else if (ua.includes('macintosh') || ua.includes('mac os')) device = 'Mac'
+  else if (ua.includes('linux')) device = 'Linux'
 
-  if (ua.includes('firefox')) {
-    browser = 'Firefox'
-  } else if (ua.includes('chrome') && !ua.includes('chromium')) {
-    browser = 'Chrome'
-  } else if (ua.includes('safari') && !ua.includes('chrome')) {
-    browser = 'Safari'
-  } else if (ua.includes('edge') || ua.includes('edg')) {
-    browser = 'Edge'
-  }
+  let browser = 'Browser'
+  if (ua.includes('firefox')) browser = 'Firefox'
+  else if (ua.includes('edg')) browser = 'Edge'
+  else if (ua.includes('chrome') && !ua.includes('chromium')) browser = 'Chrome'
+  else if (ua.includes('safari') && !ua.includes('chrome')) browser = 'Safari'
 
-  let location = 'Local Development'
-  let resolvedIp = ip
-  let isp = 'Localhost Network'
+  let location = ''
+  let isp = ''
   let isVpn = false
 
-  try {
-    let url = `http://ip-api.com/json/${ip}`
-    // Fallback for local testing to lookup the public gateway IP details
-    if (ip === '127.0.0.1' || ip === '::1' || ip.startsWith('192.168.') || ip.startsWith('10.') || ip.startsWith('127.')) {
-      url = 'http://ip-api.com/json/'
-    }
+  const isLocal =
+    ip === '127.0.0.1' ||
+    ip === '::1' ||
+    ip.startsWith('192.168.') ||
+    ip.startsWith('10.') ||
+    ip.startsWith('172.')
 
-    const res = await fetch(url, { next: { revalidate: 60 } })
+  try {
+    const geoUrl = isLocal ? 'http://ip-api.com/json/' : `http://ip-api.com/json/${ip}`
+    const res = await fetch(geoUrl, { next: { revalidate: 60 } })
     if (res.ok) {
       const data = await res.json()
-      if (data && data.status === 'success') {
-        resolvedIp = data.query || ip
-        location = data.city && data.country 
-          ? `${data.city}, ${data.country}` 
-          : data.country || location
-        isp = data.isp || data.org || 'Local Network Provider'
-
-        const vpnKeywords = [
-          'vpn', 'proxy', 'hosting', 'datacenter', 'cloudflare', 'digitalocean', 
-          'amazon', 'aws', 'google cloud', 'gce', 'mullvad', 'nordvpn', 
-          'expressvpn', 'tor exit', 'ovh', 'linode', 'vultr', 'm247', 'security'
-        ]
-        isVpn = vpnKeywords.some(keyword => isp.toLowerCase().includes(keyword))
+      if (data?.status === 'success') {
+        ip = data.query || ip
+        location = [data.city, data.country].filter(Boolean).join(', ')
+        isp = data.isp || data.org || ''
+        const vpnSignals = ['vpn', 'proxy', 'hosting', 'datacenter', 'cloudflare',
+          'digitalocean', 'amazon', 'aws', 'google cloud', 'gce', 'mullvad',
+          'nordvpn', 'expressvpn', 'tor exit', 'ovh', 'linode', 'vultr', 'm247']
+        isVpn = vpnSignals.some(s => isp.toLowerCase().includes(s))
       }
     }
-  } catch (err) {
-    console.error('Session GeoIP/VPN check failed:', err)
+  } catch {
+    // non-fatal — GeoIP is best-effort
   }
 
-  // Derive secondary session details
-  const isLocal = resolvedIp === '127.0.0.1' || resolvedIp === '::1'
-  let country = 'India'
-  let city = 'Mumbai'
-  
-  if (location && location.includes(',')) {
-    const parts = location.split(',')
-    city = parts[0].trim()
-    country = parts[1].trim()
-  } else if (location && location !== 'Local Development') {
-    country = location
-  }
-  
-  const displayLocation = location === 'Local Development' ? 'Mumbai, India' : location
-  const iphoneLocation = location === 'Local Development' ? 'Mumbai, India' : `${city}, ${country}`
-  const windowsLocation = location === 'Local Development' ? 'New Delhi, India' : `${city}, ${country}`
-
-  let iphoneIp = '49.36.88.102'
-  let windowsIp = '182.72.198.6'
-  let iphoneIsp = 'Reliance Jio Infocomm'
-  let windowsIsp = 'Spectra Broadband'
-
-  if (country !== 'India' && location !== 'Local Development') {
-    iphoneIsp = 'Mobile Network Provider'
-    windowsIsp = 'Broadband Internet Services'
-  }
-
-  if (resolvedIp && resolvedIp.includes('.')) {
-    const parts = resolvedIp.split('.')
-    iphoneIp = `${parts[0]}.${parts[1]}.${(parseInt(parts[2]) + 5) % 254}.${(parseInt(parts[3]) + 75) % 254}`
-    windowsIp = `${parts[0]}.${parts[1]}.${(parseInt(parts[2]) + 12) % 254}.${(parseInt(parts[3]) + 143) % 254}`
-  }
-
-  return {
-    device,
-    browser,
-    ip: resolvedIp,
-    location: displayLocation,
-    isp,
-    isVpn,
-    iphoneLocation,
-    iphoneIp,
-    iphoneIsp,
-    windowsLocation,
-    windowsIp,
-    windowsIsp
-  }
+  return { device, browser, ip, location, isp, isVpn }
 }
 
 export default async function MySettingsPage({
@@ -142,8 +74,7 @@ export default async function MySettingsPage({
 }: {
   searchParams: Promise<{ tab?: string }>
 }) {
-  const resolvedSearchParams = await searchParams
-  const activeTab = resolvedSearchParams.tab || 'profile'
+  const { tab } = await searchParams
 
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -151,27 +82,19 @@ export default async function MySettingsPage({
 
   const dbUser = await prisma.user.findUnique({
     where: { supabaseId: user.id },
-    include: { 
-      ownedBusiness: true,
-      caProfile: true
-    },
+    include: { ownedBusiness: true, caProfile: true },
   })
   if (!dbUser) redirect('/login')
 
-  const businessName = dbUser.ownedBusiness?.name || 'UdhaarClear'
+  const businessName = dbUser.ownedBusiness?.name ?? 'My Business'
+  const planTier = dbUser.ownedBusiness?.planTier ?? 'FREE'
 
-  // Resolve user role
   let userRole: 'Owner' | 'CA Auditor' | 'Accounts Executive' = 'Accounts Executive'
-  if (dbUser.caProfile) {
-    userRole = 'CA Auditor'
-  } else if (dbUser.ownedBusiness) {
-    userRole = 'Owner'
-  }
+  if (dbUser.caProfile) userRole = 'CA Auditor'
+  else if (dbUser.ownedBusiness) userRole = 'Owner'
 
-  // Resolve dynamic session info
-  const currentSession = await getSessionSecurityInfo()
+  const currentSession = await getSessionInfo()
 
-  // Server Action to update user credentials
   async function updatePersonalDetailsAction(name: string, phone: string) {
     'use server'
     try {
@@ -181,25 +104,20 @@ export default async function MySettingsPage({
 
       await prisma.user.update({
         where: { supabaseId: authUser.id },
-        data: {
-          name,
-          phone: phone || null
-        }
+        data: { name, phone: phone || null },
       })
 
       return { success: true }
     } catch (err: any) {
-      console.error('Failed to update details:', err)
+      console.error('Failed to update personal details:', err)
       return { success: false, error: err.message || 'Failed to update details' }
     }
   }
 
-  const initialAvatarUrl = user.user_metadata?.avatar_url || ''
-
   return (
-    <SettingsLayout 
-      title="My Settings" 
-      description="Manage your personal preferences, login security, and system defaults."
+    <SettingsLayout
+      title="Settings"
+      description="Manage your profile, business details, reminder rules, and billing."
     >
       <SettingsClient
         dbUser={{
@@ -207,14 +125,15 @@ export default async function MySettingsPage({
           name: dbUser.name,
           email: dbUser.email,
           phone: dbUser.phone,
-          createdAt: dbUser.createdAt
+          createdAt: dbUser.createdAt,
         }}
         businessName={businessName}
+        planTier={planTier}
         userRole={userRole}
         currentSession={currentSession}
-        initialAvatarUrl={initialAvatarUrl}
-        identities={user.identities || []}
-        initialTab={activeTab}
+        initialAvatarUrl={user.user_metadata?.avatar_url ?? ''}
+        identities={user.identities ?? []}
+        initialTab={tab}
         updateAction={updatePersonalDetailsAction}
       />
     </SettingsLayout>

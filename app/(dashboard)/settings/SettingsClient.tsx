@@ -1,22 +1,22 @@
 "use client";
 
 import React, { useState } from "react";
-import { 
-  User as UserIcon, 
-  Building,
-  Sliders,
-  CreditCard,
-  Webhook,
-  Activity
+import {
+  User as UserIcon,
+  Building2,
+  Zap,
+  Wallet,
+  Bell,
+  BarChart3,
 } from "lucide-react";
 import ProfileSection from "@/components/settings/ProfileSection";
 import CompanySection from "@/components/settings/CompanySection";
 import AutopilotSection from "@/components/settings/AutopilotSection";
 import PaymentsSection from "@/components/settings/PaymentsSection";
-import SyncSection from "@/components/settings/SyncSection";
+import NotificationsSection from "@/components/settings/NotificationsSection";
 import BillingSection from "@/components/settings/BillingSection";
 
-interface UserProps {
+interface DbUser {
   id: string;
   name: string;
   email: string;
@@ -31,17 +31,12 @@ interface SessionInfo {
   location: string;
   isp: string;
   isVpn: boolean;
-  iphoneLocation: string;
-  iphoneIp: string;
-  iphoneIsp: string;
-  windowsLocation: string;
-  windowsIp: string;
-  windowsIsp: string;
 }
 
 interface SettingsClientProps {
-  dbUser: UserProps;
+  dbUser: DbUser;
   businessName: string;
+  planTier: string;
   userRole: "Owner" | "CA Auditor" | "Accounts Executive";
   currentSession: SessionInfo;
   initialAvatarUrl: string;
@@ -50,117 +45,98 @@ interface SettingsClientProps {
   updateAction: (name: string, phone: string) => Promise<{ success: boolean; error?: string }>;
 }
 
+const TABS = [
+  { id: "profile",       label: "My Profile",         icon: UserIcon,  description: "Personal info & security"    },
+  { id: "company",       label: "My Business",         icon: Building2, description: "Logo, GST & legal docs"      },
+  { id: "reminders",     label: "Reminder Rules",      icon: Zap,       description: "Auto-send schedule & tone"   },
+  { id: "payments",      label: "Payment Collection",  icon: Wallet,    description: "UPI, bank & pay settings"    },
+  { id: "notifications", label: "Notifications",       icon: Bell,      description: "When & how we alert you"     },
+  { id: "billing",       label: "Plan & Billing",      icon: BarChart3, description: "Usage, plan & receipts"      },
+] as const;
+
+type TabId = (typeof TABS)[number]["id"];
+
+const TAB_ALIAS: Record<string, TabId> = {
+  autopilot: "reminders",
+  sync: "notifications",
+  "profile-security": "profile",
+  "company-gst": "company",
+  "payment-gateway": "payments",
+  "billing-limits": "billing",
+};
+
+function resolveTab(raw: string | undefined): TabId {
+  if (!raw) return "profile";
+  if (TAB_ALIAS[raw]) return TAB_ALIAS[raw];
+  const valid = TABS.map((t) => t.id) as string[];
+  return valid.includes(raw) ? (raw as TabId) : "profile";
+}
+
 export default function SettingsClient({
   dbUser,
   businessName,
+  planTier,
   userRole,
   currentSession,
   initialAvatarUrl,
   identities,
-  initialTab = "profile",
-  updateAction
+  initialTab,
+  updateAction,
 }: SettingsClientProps) {
-  // Outer Active Tab state
-  const [activeTab, setActiveTab] = useState(initialTab);
+  const [activeTab, setActiveTab] = useState<TabId>(resolveTab(initialTab));
 
-  // Sync tab change to URL query parameter
-  const handleTabChange = (tabId: string) => {
-    setActiveTab(tabId);
+  const handleTabChange = (id: TabId) => {
+    setActiveTab(id);
     const url = new URL(window.location.href);
-    url.searchParams.set("tab", tabId);
+    url.searchParams.set("tab", id);
     window.history.pushState({}, "", url.toString());
   };
 
   return (
-    <div className="flex flex-col gap-6 w-full">
-      
-      {/* TOP TABS NAVIGATION: Unified 6-Tab horizontal selector */}
-      <div className="w-full flex items-center gap-1 rounded-[18px] bg-gray-200/50 p-1 select-none overflow-x-auto scrollbar-none shrink-0 mb-2">
-        <button
-          type="button"
-          onClick={() => handleTabChange("profile")}
-          className={`flex items-center gap-2 px-4 py-2.5 text-[12.5px] font-semibold rounded-xl transition-all border whitespace-nowrap cursor-pointer ${
-            activeTab === "profile"
-              ? "bg-white text-gray-900 border-gray-200/60 shadow-3xs"
-              : "border-transparent text-gray-500 hover:text-gray-900 hover:bg-gray-50/50"
-          }`}
-        >
-          <UserIcon className={`w-3.5 h-3.5 ${activeTab === "profile" ? "text-[#FF6B00]" : "text-gray-400"}`} />
-          <span>Profile & Security</span>
-        </button>
+    <div className="flex flex-col gap-5 w-full">
 
-        <button
-          type="button"
-          onClick={() => handleTabChange("company")}
-          className={`flex items-center gap-2 px-4 py-2.5 text-[12.5px] font-semibold rounded-xl transition-all border whitespace-nowrap cursor-pointer ${
-            activeTab === "company"
-              ? "bg-white text-gray-900 border-gray-200/60 shadow-3xs"
-              : "border-transparent text-gray-500 hover:text-gray-900 hover:bg-gray-50/50"
-          }`}
-        >
-          <Building className={`w-3.5 h-3.5 ${activeTab === "company" ? "text-[#FF6B00]" : "text-gray-400"}`} />
-          <span>Company Profile & GST</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => handleTabChange("autopilot")}
-          className={`flex items-center gap-2 px-4 py-2.5 text-[12.5px] font-semibold rounded-xl transition-all border whitespace-nowrap cursor-pointer ${
-            activeTab === "autopilot"
-              ? "bg-white text-gray-900 border-gray-200/60 shadow-3xs"
-              : "border-transparent text-gray-500 hover:text-gray-900 hover:bg-gray-50/50"
-          }`}
-        >
-          <Sliders className={`w-3.5 h-3.5 ${activeTab === "autopilot" ? "text-[#FF6B00]" : "text-gray-400"}`} />
-          <span>Collection Autopilot</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => handleTabChange("payments")}
-          className={`flex items-center gap-2 px-4 py-2.5 text-[12.5px] font-semibold rounded-xl transition-all border whitespace-nowrap cursor-pointer ${
-            activeTab === "payments"
-              ? "bg-white text-gray-900 border-gray-200/60 shadow-3xs"
-              : "border-transparent text-gray-500 hover:text-gray-900 hover:bg-gray-50/50"
-          }`}
-        >
-          <CreditCard className={`w-3.5 h-3.5 ${activeTab === "payments" ? "text-[#FF6B00]" : "text-gray-400"}`} />
-          <span>Payment Gateway</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => handleTabChange("sync")}
-          className={`flex items-center gap-2 px-4 py-2.5 text-[12.5px] font-semibold rounded-xl transition-all border whitespace-nowrap cursor-pointer ${
-            activeTab === "sync"
-              ? "bg-white text-gray-900 border-gray-200/60 shadow-3xs"
-              : "border-transparent text-gray-500 hover:text-gray-900 hover:bg-gray-50/50"
-          }`}
-        >
-          <Webhook className={`w-3.5 h-3.5 ${activeTab === "sync" ? "text-[#FF6B00]" : "text-gray-400"}`} />
-          <span>Accounting & ERP Sync</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => handleTabChange("billing")}
-          className={`flex items-center gap-2 px-4 py-2.5 text-[12.5px] font-semibold rounded-xl transition-all border whitespace-nowrap cursor-pointer ${
-            activeTab === "billing"
-              ? "bg-white text-gray-900 border-gray-200/60 shadow-3xs"
-              : "border-transparent text-gray-500 hover:text-gray-900 hover:bg-gray-50/50"
-          }`}
-        >
-          <Activity className={`w-3.5 h-3.5 ${activeTab === "billing" ? "text-[#FF6B00]" : "text-gray-400"}`} />
-          <span>Billing, Limits & Usage</span>
-        </button>
+      {/* ── Horizontal tab bar ── */}
+      <div className="overflow-x-auto scrollbar-none">
+        <nav className="flex items-center gap-1 bg-white border border-[#EBEAE6]/70 rounded-2xl p-1.5 w-max min-w-full shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+          {TABS.map((tab) => {
+            const Icon = tab.icon;
+            const active = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => handleTabChange(tab.id)}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-left transition-all cursor-pointer whitespace-nowrap group ${
+                  active
+                    ? "bg-[#FF6B00] shadow-[0_2px_8px_rgba(255,107,0,0.25)] text-white"
+                    : "text-gray-500 hover:bg-gray-50 hover:text-gray-800"
+                }`}
+              >
+                <Icon
+                  className={`w-3.5 h-3.5 shrink-0 transition-colors ${
+                    active ? "text-white" : "text-gray-400 group-hover:text-gray-600"
+                  }`}
+                />
+                <span
+                  className={`text-[12.5px] font-semibold transition-colors ${
+                    active ? "text-white" : "text-gray-600 group-hover:text-gray-800"
+                  }`}
+                >
+                  {tab.label}
+                </span>
+              </button>
+            );
+          })}
+        </nav>
       </div>
 
-      {/* CONTENT WORKSPACE: Renders the active tab parameters dynamically */}
-      <div className="w-full min-h-[500px]">
+      {/* ── Content ── */}
+      <div className="w-full">
         {activeTab === "profile" && (
           <ProfileSection
             dbUser={dbUser}
             businessName={businessName}
+            planTier={planTier}
             userRole={userRole}
             currentSession={currentSession}
             initialAvatarUrl={initialAvatarUrl}
@@ -173,20 +149,14 @@ export default function SettingsClient({
           <CompanySection businessName={businessName} />
         )}
 
-        {activeTab === "autopilot" && (
-          <AutopilotSection />
-        )}
+        {activeTab === "reminders" && <AutopilotSection />}
 
-        {activeTab === "payments" && (
-          <PaymentsSection />
-        )}
+        {activeTab === "payments" && <PaymentsSection />}
 
-        {activeTab === "sync" && (
-          <SyncSection />
-        )}
+        {activeTab === "notifications" && <NotificationsSection />}
 
         {activeTab === "billing" && (
-          <BillingSection businessName={businessName} />
+          <BillingSection businessName={businessName} currentPlanTier={planTier} />
         )}
       </div>
     </div>
