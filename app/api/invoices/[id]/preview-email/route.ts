@@ -30,10 +30,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
   const customerName = invoice.customer.contactName ?? invoice.customer.name
   const amount = formatINR(Number(invoice.amount))
 
-  let paymentLink = invoice.razorpayLinkUrl
-  if (!paymentLink) {
-    paymentLink = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/pay/${id}`
-  }
+  const paymentLink = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/pay/${id}`
 
   const emailParams = {
     reminderId: 'preview-mode-no-id',

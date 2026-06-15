@@ -2,7 +2,6 @@ import { getBusinessFromSession } from '@/lib/utils/auth'
 import { apiError, apiSuccess } from '@/lib/utils/api-error'
 import { invoiceSchema } from '@/lib/validations/invoice'
 import { checkInvoiceLimit } from '@/lib/plans'
-import { createPaymentLink } from '@/lib/razorpay/payment-link'
 import { prisma } from '@/lib/prisma/client'
 
 function generateInvoiceNumber(count: number): string {
@@ -60,25 +59,6 @@ export async function POST(request: Request) {
   const count = await prisma.invoice.count({ where: { businessId: session.businessId } })
   const invoiceNumber = parsed.data.invoiceNumber || generateInvoiceNumber(count)
 
-  let razorpayLinkId: string | null = null
-  let razorpayLinkUrl: string | null = null
-
-  try {
-    const link = await createPaymentLink({
-      invoiceId: 'pending',
-      businessId: session.businessId,
-      invoiceNumber,
-      amount: parsed.data.amount,
-      customerName: customer.contactName ?? customer.name,
-      customerPhone: customer.phone,
-      customerEmail: customer.email,
-    })
-    razorpayLinkId = link.id
-    razorpayLinkUrl = link.short_url
-  } catch {
-    // Continue without payment link — can be created later
-  }
-
   const invoice = await prisma.invoice.create({
     data: {
       businessId: session.businessId,
@@ -91,17 +71,8 @@ export async function POST(request: Request) {
       creditDays: parsed.data.creditDays,
       reminderTone: parsed.data.reminderTone,
       autoReminder: parsed.data.autoReminder,
-      razorpayLinkId,
-      razorpayLinkUrl,
     },
   })
-
-  if (razorpayLinkId) {
-    await prisma.invoice.update({
-      where: { id: invoice.id },
-      data: { razorpayLinkId, razorpayLinkUrl },
-    })
-  }
 
   return apiSuccess({ invoice }, 201)
 }

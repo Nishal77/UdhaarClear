@@ -47,6 +47,12 @@ export default function Problem() {
 
       <div className="relative max-w-[1340px] mx-auto px-6 md:px-8 z-10 text-left">
         
+        {/* Section Badge */}
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-2xl border border-red-200/60 bg-red-50/40 text-red-600 text-sm font-medium tracking-tight font-outfit mb-6 select-none">
+          <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
+          The Late Payment Problem
+        </div>
+
         {/* Title */}
         <h2 className="text-[2.75rem] md:text-[3.25rem] font-medium text-gray-900 tracking-tight leading-[1.15] font-outfit max-w-4xl">
           Chasing Payments Shouldn’t Be the Hardest Part of Business.
@@ -54,7 +60,7 @@ export default function Problem() {
 
         {/* Subheading */}
         <p className="text-gray-600 text-lg md:text-xl leading-relaxed max-w-3xl mt-6 font-normal">
-          You delivered the work. You sent the invoice. But now your money is stuck — and you are forced to remind, call, wait, and follow up again.
+          You delivered the work. You sent the invoice. But now your money is stuck and you are forced to remind, call, wait, and follow up again.
         </p>
 
         {/* Pain Cards Asymmetric Grid */}
@@ -70,38 +76,22 @@ export default function Problem() {
             return (
               <div 
                 key={index} 
-                className={`${colSpan} relative bg-white border border-gray-200/50 rounded-[2rem] p-5 md:p-6 shadow-[0_8px_30px_rgba(0,0,0,0.01)] flex flex-col`}
+                className={`${colSpan} relative bg-white border border-gray-200/50 rounded-[2rem] p-5 md:p-6 shadow-[0_8px_30px_rgba(0,0,0,0.01)] flex flex-col justify-between`}
               >
-                {index === 1 ? (
-                  // Card 2: illustration top, text pinned to bottom
-                  <>
-                    <div className="w-full flex-1 flex">
-                      <BalanceSpectrumVisual />
-                    </div>
-                    <div className="mt-5">
-                      <h3 className="text-xl font-semibold text-gray-900 tracking-tight font-outfit leading-snug">
-                        {point.title}
-                      </h3>
-                      <p className="text-gray-500 text-sm md:text-base leading-relaxed mt-2 font-normal">
-                        {point.description}
-                      </p>
-                    </div>
-                  </>
-                ) : (
-                  <div>
-                    {index === 0 && (
-                      <div className="mb-4 w-full">
-                        <TaskBoardVisual />
-                      </div>
-                    )}
-                    <h3 className="text-xl font-bold text-gray-900 tracking-tight font-outfit leading-snug">
-                      {point.title}
-                    </h3>
-                    <p className="text-gray-500 text-sm md:text-base leading-relaxed mt-2 font-normal">
-                      {point.description}
-                    </p>
-                  </div>
-                )}
+                <div className="w-full mb-5 flex items-center justify-center">
+                  {index === 0 && <TaskBoardVisual />}
+                  {index === 1 && <BalanceSpectrumVisual />}
+                  {index === 2 && <CashFlowVisual />}
+                  {index === 3 && <ManualRemindersVisual />}
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900 tracking-tight font-outfit leading-snug">
+                    {point.title}
+                  </h3>
+                  <p className="text-gray-500 text-sm md:text-base leading-relaxed mt-2 font-normal">
+                    {point.description}
+                  </p>
+                </div>
               </div>
             );
           })}
@@ -124,11 +114,11 @@ export default function Problem() {
 function BalanceSpectrumVisual() {
   return (
     <div
-      className="relative rounded-[1.5rem] overflow-hidden select-none pointer-events-none w-full flex-1 flex flex-col justify-center bg-[#FAFAFA] border border-gray-200/60 shadow-[0_4px_20px_rgba(0,0,0,0.015)]"
-      style={{ padding: "28px 20px 28px" }}
+      className="relative rounded-[1.5rem] overflow-hidden select-none pointer-events-none w-full h-[220px] flex flex-col justify-center bg-[#FAFAFA] border border-gray-200/60 shadow-[0_4px_20px_rgba(0,0,0,0.015)]"
+      style={{ padding: "20px" }}
     >
       {/* Flow diagram — Flex Container for perfect automatic alignment */}
-      <div className="flex items-center justify-between w-full relative" style={{ height: 168 }}>
+      <div className="flex items-center justify-between w-full relative" style={{ height: 178 }}>
 
         {/* LEFT — Trigger pill */}
         <div className="flex-shrink-0 z-10">
@@ -244,7 +234,7 @@ function BalanceSpectrumVisual() {
 
 function TaskBoardVisual() {
   return (
-    <div className="bg-[#FAFAFA] border border-gray-200/60 rounded-[1.5rem] p-4 shadow-[0_4px_20px_rgba(0,0,0,0.015)] space-y-3.5 select-none pointer-events-none">
+    <div className="w-full h-[220px] bg-[#FAFAFA] border border-gray-200/60 rounded-[1.5rem] p-4 shadow-[0_4px_20px_rgba(0,0,0,0.015)] space-y-3 select-none pointer-events-none overflow-hidden flex flex-col justify-between">
       {/* Column Header */}
       <div className="flex items-center justify-between px-0.5">
         <div className="flex items-center gap-2">
@@ -309,6 +299,79 @@ function TaskBoardVisual() {
         </div>
 
 
+      </div>
+    </div>
+  );
+}
+
+function CashFlowVisual() {
+  return (
+    <div className="relative w-full h-[220px] bg-[#FAFAFA] border border-gray-200/60 rounded-[1.5rem] p-5 shadow-[0_4px_20px_rgba(0,0,0,0.015)] select-none pointer-events-none flex flex-col justify-between">
+      {/* Header */}
+      <div className="flex justify-between items-center">
+        <span className="font-semibold text-gray-900 text-[13px] font-outfit">Working Capital Status</span>
+        <span className="text-[10px] text-red-500 font-bold bg-red-50 border border-red-100 px-2 py-0.5 rounded-full uppercase tracking-wider">Gap Detected</span>
+      </div>
+
+      {/* Expected vs Actual */}
+      <div className="grid grid-cols-2 gap-4 my-auto">
+        <div className="bg-white border border-gray-100 rounded-xl p-3 shadow-[0_2px_8px_rgba(0,0,0,0.015)]">
+          <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Expected</span>
+          <span className="text-base font-bold text-gray-900 font-outfit mt-1 block">₹4,50,000</span>
+          <div className="h-1 bg-green-500 rounded-full w-full mt-2.5 opacity-80" />
+        </div>
+        <div className="bg-white border border-gray-100 rounded-xl p-3 shadow-[0_2px_8px_rgba(0,0,0,0.015)] relative overflow-hidden">
+          <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Actual Received</span>
+          <span className="text-base font-bold text-red-600 font-outfit mt-1 block">₹1,80,000</span>
+          <div className="h-1 bg-gray-200 rounded-full w-full mt-2.5 relative">
+            <div className="absolute left-0 top-0 bottom-0 bg-red-500 rounded-full w-[40%]" />
+          </div>
+        </div>
+      </div>
+
+      {/* Warning message */}
+      <div className="bg-amber-50/70 border border-amber-100 rounded-xl p-2 flex items-center gap-2">
+        <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
+        <span className="text-[10.5px] text-amber-800 font-medium leading-tight">
+          ₹2,70,000 stuck in 3 overdue invoices (Salaries pending)
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function ManualRemindersVisual() {
+  return (
+    <div className="relative w-full h-[220px] bg-[#FAFAFA] border border-gray-200/60 rounded-[1.5rem] p-4.5 shadow-[0_4px_20px_rgba(0,0,0,0.015)] select-none pointer-events-none flex flex-col justify-between overflow-hidden">
+      {/* Header */}
+      <div className="flex justify-between items-center">
+        <span className="font-semibold text-gray-900 text-[13px] font-outfit">Follow-up Log (Spreadsheet)</span>
+        <span className="text-[10px] text-gray-400 font-semibold font-mono">Row 48 of 120</span>
+      </div>
+
+      {/* Messy logs */}
+      <div className="space-y-2.5 my-auto relative">
+        <div className="bg-white border border-gray-100 rounded-xl p-2.5 shadow-[0_2px_8px_rgba(0,0,0,0.015)] max-w-[85%] self-start flex flex-col gap-0.5">
+          <div className="flex items-center gap-1.5">
+            <span className="text-[9px] font-bold text-green-600 bg-green-50 px-1.5 py-0.5 rounded">WhatsApp</span>
+            <span className="text-[8px] text-gray-400">Yesterday, 4:30 PM</span>
+          </div>
+          <p className="text-[10px] text-gray-600 leading-snug">
+            "Hey, just following up on the invoice..." <span className="text-blue-500 font-bold">✓✓</span>
+          </p>
+        </div>
+
+        <div className="bg-white border border-gray-100 rounded-xl p-2.5 shadow-[0_2px_8px_rgba(0,0,0,0.015)] max-w-[85%] ml-auto flex items-center justify-between gap-3 border-l-2 border-red-500">
+          <div className="flex flex-col gap-0.5">
+            <span className="text-[9px] font-bold text-red-600">Call Rejected</span>
+            <span className="text-[8px] text-gray-400">Today, 11:20 AM</span>
+          </div>
+          <span className="text-[9.5px] font-medium text-gray-700 font-outfit">Client: "Busy"</span>
+        </div>
+
+        <div className="bg-[#FFFBEB] border border-amber-200/50 rounded-xl p-2.5 shadow-[0_2px_8px_rgba(0,0,0,0.015)] text-[9.5px] text-amber-800 leading-relaxed font-mono">
+          <span className="font-bold">Excel:</span> "Called again. Client said accounts manager is on leave. Call next Friday."
+        </div>
       </div>
     </div>
   );

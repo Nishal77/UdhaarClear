@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { Check } from "lucide-react";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { ShoppingCart02Icon } from "@hugeicons/core-free-icons";
+import { ShoppingCart02Icon, ArrowRight02Icon } from "@hugeicons/core-free-icons";
 
 
 
@@ -137,93 +137,133 @@ export default function Pricing() {
     },
   ];
 
+  const comparePlans = [
+    {
+      name: "Free",
+      key: "free",
+      monthlyPrice: 0,
+      yearlyPrice: 0,
+      periodLabel: {
+        monthly: "/month",
+        yearly: "/mo",
+      },
+      isHighlighted: false,
+    },
+    {
+      name: "Starter",
+      key: "starter",
+      monthlyPrice: 999,
+      yearlyPrice: 799,
+      periodLabel: {
+        monthly: "/month",
+        yearly: "/mo",
+      },
+      isHighlighted: false,
+    },
+    {
+      name: "Growth",
+      key: "growth",
+      monthlyPrice: 2499,
+      yearlyPrice: 1999,
+      periodLabel: {
+        monthly: "/month",
+        yearly: "/mo",
+      },
+      isHighlighted: true,
+    },
+    {
+      name: "Professional",
+      key: "professional",
+      monthlyPrice: 6999,
+      yearlyPrice: 5599,
+      periodLabel: {
+        monthly: "/month",
+        yearly: "/mo",
+      },
+      isHighlighted: false,
+    },
+    {
+      name: "Enterprise",
+      key: "enterprise",
+      monthlyPrice: "Custom",
+      yearlyPrice: "Custom",
+      periodLabel: {
+        monthly: "",
+        yearly: "",
+      },
+      isHighlighted: false,
+    },
+  ];
+
   const categories = [
     {
       name: "Invoices & Customers",
       features: [
-        { name: "Active invoices", starter: "Up to 3", growth: "Up to 25", scale: "Up to 100", ca: "Up to 500" },
-        { name: "Customer profiles", starter: "Yes", growth: "Yes", scale: "Yes", ca: "Yes" },
-        { name: "Customer health scores", starter: "Basic", growth: "Basic", scale: "Full (AI)", ca: "Full + AI Insights" },
-        { name: "Excel / CSV import", starter: "Yes", growth: "Yes", scale: "Yes", ca: "Yes" },
-        { name: "Tally & Zoho Sync", starter: "No", growth: "Yes", scale: "Yes", ca: "Yes" },
+        { name: "Active invoices", free: "Up to 3", starter: "Up to 25", growth: "Up to 100", professional: "Up to 500", enterprise: "Unlimited" },
+        { name: "Customer profiles", free: "Yes", starter: "Yes", growth: "Yes", professional: "Yes", enterprise: "Yes" },
+        { name: "Customer health scores", free: "Basic", starter: "Basic", growth: "Full (AI)", professional: "Full + AI Insights", enterprise: "Custom + Predictive" },
+        { name: "Excel / CSV import", free: "Yes", starter: "Yes", growth: "Yes", professional: "Yes", enterprise: "Yes" },
+        { name: "Tally & Zoho Sync", free: "No", starter: "Yes", growth: "Yes", professional: "Yes", enterprise: "Yes" },
       ],
     },
     {
       name: "WhatsApp Reminders",
       features: [
-        { name: "WhatsApp reminders (Meta API)", starter: "No", growth: "Unlimited", scale: "Unlimited", ca: "Unlimited" },
-        { name: "Razorpay UPI in every message", starter: "Yes", growth: "Yes", scale: "Yes", ca: "Yes" },
-        { name: "AI Tone Engine (3 phases)", starter: "No", growth: "Basic AI", scale: "Full AI (Auto)", ca: "Full + Custom Tuning" },
-        { name: "Custom message templates", starter: "No", growth: "No", scale: "Yes", ca: "Yes" },
-        { name: "Read receipt tracking", starter: "Yes", growth: "Yes", scale: "Yes", ca: "Yes" },
-        { name: "UPI link tap tracking", starter: "Yes", growth: "Yes", scale: "Yes", ca: "Yes" },
-        { name: "Scheduled reminder timing", starter: "Default only", growth: "Default only", scale: "Custom", ca: "Custom" },
+        { name: "WhatsApp reminders (Meta API)", free: "No", starter: "1,000/mo", growth: "5,000/mo", professional: "25,000/mo", enterprise: "Unlimited" },
+        { name: "Razorpay UPI in every message", free: "Yes", starter: "Yes", growth: "Yes", professional: "Yes", enterprise: "Yes" },
+        { name: "AI Tone Engine (3 phases)", free: "No", starter: "Basic AI", growth: "Full AI (Auto)", professional: "Full + Custom Tuning", enterprise: "Fully Customized" },
+        { name: "Custom message templates", free: "No", starter: "No", growth: "Yes", professional: "Yes", enterprise: "Yes" },
+        { name: "Read receipt tracking", free: "Yes", starter: "Yes", growth: "Yes", professional: "Yes", enterprise: "Yes" },
+        { name: "UPI link tap tracking", free: "Yes", starter: "Yes", growth: "Yes", professional: "Yes", enterprise: "Yes" },
+        { name: "Scheduled reminder timing", free: "Default only", starter: "Default only", growth: "Custom", professional: "Custom", enterprise: "Advanced Queue" },
       ],
     },
     {
       name: "Legal & MSME (Exclusive)",
       features: [
-        { name: "Legal notice (MSME Act 2006)", starter: "No", growth: "No", scale: "Yes — Auto Draft", ca: "Yes — Auto Draft" },
-        { name: "MSME Samadhaan filing doc", starter: "No", growth: "No", scale: "Yes (1-Click)", ca: "Yes (1-Click)" },
-        { name: "Compound interest calculation", starter: "Yes (Standard)", growth: "Yes (MSME Sec 16)", scale: "Yes (MSME Sec 16)", ca: "Yes (MSME Sec 16)" },
+        { name: "Legal notice (MSME Act 2006)", free: "No", starter: "No", growth: "Yes — Auto Draft", professional: "Yes — Auto Draft", enterprise: "Advocate Drafted & Sent" },
+        { name: "MSME Samadhaan filing doc", free: "No", starter: "No", growth: "Yes (1-Click)", professional: "Yes (1-Click)", enterprise: "Full Portal Service" },
+        { name: "Compound interest calculation", free: "Yes (Standard)", starter: "Yes (MSME Sec 16)", growth: "Yes (MSME Sec 16)", professional: "Yes (MSME Sec 16)", enterprise: "Yes (Custom Terms)" },
       ],
     },
     {
       name: "Dashboard & Analytics",
       features: [
-        { name: "Live recovery dashboard", starter: "Yes", growth: "Yes", scale: "Yes", ca: "Yes" },
-        { name: "Recovery analytics & reports", starter: "Basic", growth: "Basic", scale: "Full", ca: "Full + Export" },
-        { name: "AI predictive insights", starter: "No", growth: "No", scale: "Daily insights", ca: "Cash flow predictions" },
-        { name: "Invoice aging heatmap", starter: "Yes", growth: "Yes", scale: "Yes", ca: "Yes" },
-        { name: "Daily email / WhatsApp summary", starter: "No", growth: "No", scale: "Yes", ca: "Yes" },
+        { name: "Live recovery dashboard", free: "Yes", starter: "Yes", growth: "Yes", professional: "Yes", enterprise: "Yes" },
+        { name: "Recovery analytics & reports", free: "Basic", starter: "Basic", growth: "Full", professional: "Full + Export", enterprise: "Custom Analytics" },
+        { name: "AI predictive insights", free: "No", starter: "No", growth: "Daily insights", professional: "Cash flow predictions", enterprise: "Full ML Forecast" },
+        { name: "Invoice aging heatmap", free: "Yes", starter: "Yes", growth: "Yes", professional: "Yes", enterprise: "Yes" },
+        { name: "Daily email / WhatsApp summary", free: "No", starter: "No", growth: "Yes", professional: "Yes", enterprise: "Yes" },
       ],
     },
     {
       name: "Team & Access",
       features: [
-        { name: "Team members / users", starter: "1 user", growth: "1 user", scale: "Unlimited", ca: "Unlimited" },
-        { name: "Role-based permissions", starter: "No", growth: "No", scale: "No", ca: "Yes" },
-        { name: "Multi-business accounts", starter: "No", growth: "No", scale: "No", ca: "Up to 5 clients" },
-        { name: "White-label branding", starter: "No", growth: "No", scale: "No", ca: "Yes — Included" },
+        { name: "Team members / users", free: "1 user", starter: "1 user", growth: "Unlimited", professional: "Unlimited", enterprise: "Unlimited" },
+        { name: "Role-based permissions", free: "No", starter: "No", growth: "No", professional: "Yes", enterprise: "Yes" },
+        { name: "Multi-business accounts", free: "No", starter: "No", growth: "No", professional: "Up to 5 clients", enterprise: "Unlimited clients" },
+        { name: "White-label branding", free: "No", starter: "No", growth: "No", professional: "Yes — Included", enterprise: "Yes — Included" },
       ],
     },
     {
       name: "Support",
       features: [
-        { name: "Customer support", starter: "Email only", growth: "Chat support", scale: "Priority Support", ca: "Dedicated manager" },
-        { name: "Setup assistance", starter: "Self-service", growth: "Self-service", scale: "Guided setup call", ca: "Full onboarding" },
+        { name: "Customer support", free: "Email only", starter: "Chat support", growth: "Priority Support", professional: "Dedicated manager", enterprise: "24/7 Phone + Slack" },
+        { name: "Setup assistance", free: "Self-service", starter: "Self-service", growth: "Guided setup call", professional: "Full onboarding", enterprise: "White-glove migration" },
       ],
     },
     {
       name: "API & Reliability",
       features: [
-        { name: "API access + webhooks", starter: "No", growth: "No", scale: "No", ca: "Yes" },
-        { name: "SLA-backed uptime", starter: "No", growth: "No", scale: "No", ca: "99.9% SLA" },
-        { name: "Free trial", starter: "No", growth: "7 days free", scale: "7 days free", ca: "7 days free" },
+        { name: "API access + webhooks", free: "No", starter: "No", growth: "No", professional: "Yes", enterprise: "Yes" },
+        { name: "SLA-backed uptime", free: "No", starter: "No", growth: "No", professional: "99.9% SLA", enterprise: "99.99% SLA" },
+        { name: "Free trial", free: "No", starter: "7 days free", growth: "7 days free", professional: "7 days free", enterprise: "Custom PoC" },
       ],
     },
   ];
 
-  const renderValue = (val: string, colName: string, isHighlighted: boolean) => {
+  const renderValue = (val: string, colKey: string) => {
     if (val === "Yes") {
-      if (colName === "scale") {
-        return (
-          <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#4F46E5] text-white shadow-sm">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
-          </span>
-        );
-      }
-      if (colName === "ca") {
-        return (
-          <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#8B5CF6] text-white shadow-sm">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
-          </span>
-        );
-      }
       return (
         <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-gray-800 text-white shadow-sm">
           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round">
@@ -243,22 +283,7 @@ export default function Pricing() {
       );
     }
 
-    // Purple highlights for Professional Plan (ca)
-    const isPurpleHighlight = colName === "ca" && (
-      val.includes("500") ||
-      val.includes("Yes — Included") ||
-      val.includes("Dedicated manager") ||
-      val.includes("7 days free") ||
-      val.includes("predictions") ||
-      val.includes("Custom Tuning")
-    );
-
-    if (isPurpleHighlight) {
-      return <span className="text-[#8B5CF6] font-bold text-sm md:text-base">{val}</span>;
-    }
-
-    // Bold highlights for Growth (scale)
-    const isBoldHighlight = colName === "scale" && (
+    const isScale = colKey === "growth" && (
       val.includes("100") ||
       val.includes("Full") ||
       val.includes("Auto Draft") ||
@@ -267,13 +292,8 @@ export default function Pricing() {
       val.includes("Daily insights")
     );
 
-    if (isBoldHighlight) {
-      return <span className="text-gray-900 font-bold text-sm md:text-base">{val}</span>;
-    }
-
     return (
-      <span className={`text-sm md:text-base font-medium ${isHighlighted ? "text-gray-900" : "text-gray-600"
-        }`}>
+      <span className={`text-xs md:text-sm font-medium ${isScale ? "text-gray-900 font-bold" : "text-gray-600"}`}>
         {val}
       </span>
     );
@@ -281,7 +301,6 @@ export default function Pricing() {
 
   return (
     <section id="pricing" className="relative w-full bg-[#FFFFFF] py-20 md:py-28 lg:py-32">
-      {/* Decorative background grid and lights */}
       <div
         className="absolute inset-0 opacity-10 pointer-events-none"
         style={{
@@ -293,19 +312,12 @@ export default function Pricing() {
       />
 
       <div className="relative max-w-[1340px] mx-auto px-6 md:px-8 z-10 text-center">
-
-        {/* Pricing tag badge */}
-        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-2xl border border-blue-200/60 bg-blue-50/40 text-[#0047FF] text-sm font-medium tracking-tight font-outfit  mb-6">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-2xl border border-blue-200/60 bg-blue-50/40 text-[#0047FF] text-sm font-medium tracking-tight font-outfit mb-6">
           <HugeiconsIcon icon={ShoppingCart02Icon} size={14} color="#0047FF" />
           Pricing
         </div>
 
-        {/* Recover dues faster, from day one */}
-        {/* Simple, transparent pricing for every stage of your business. Start free — no credit card required. */}
-
-        {/* Heading */}
         <h2 className="text-[2.75rem] md:text-[3.25rem] font-medium text-gray-900 tracking-tight leading-[1.15] font-outfit max-w-5xl mx-auto">
-          {/* Recover dues faster, from day one -  Start Small, Recover More, and Pay Only for the Follow-Up System Your Business Actually Needs. */}
           One Recovered Invoice Can Pay for Your Plan Many Times Over.
         </h2>
 
@@ -313,8 +325,7 @@ export default function Pricing() {
           Choose the plan that fits your business and let UdhaarClear follow up, collect, and keep your cash flow moving.
         </h3>
 
-        {/* Pricing Toggle */}
-        <div className="flex items-center justify-center gap-4 mt-10 mb-16">
+        <div className="flex items-center justify-center gap-4 mt-10 mb-8">
           <div className="relative flex bg-gray-100/80 p-1 rounded-full border border-gray-200/50">
             <button
               onClick={() => setBillingPeriod("monthly")}
@@ -337,7 +348,6 @@ export default function Pricing() {
           </div>
         </div>
 
-        {/* Pricing Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-[1280px] mx-auto text-left items-stretch">
           {plans.map((plan, index) => {
             const price = billingPeriod === "monthly" ? plan.monthlyPrice : plan.yearlyPrice;
@@ -349,7 +359,6 @@ export default function Pricing() {
                 key={index}
                 className={`relative flex flex-col rounded-[2.2rem] overflow-hidden p-7 md:p-8 ${plan.bgColor} ${plan.textColor} shadow-sm`}
               >
-                {/* Header: Title + Badge & Description */}
                 <div className="relative z-10 flex flex-col mb-4 md:min-h-[110px]">
                   <div className="flex items-center justify-between gap-2 mb-1.5">
                     <h3 className="text-xl md:text-2xl font-medium font-outfit tracking-tight">
@@ -366,9 +375,8 @@ export default function Pricing() {
                   </p>
                 </div>
 
-                {/* Price block & Billing subtext */}
-                <div className="relative z-10 flex flex-col justify-end mb-6 md:min-h-[90px]">
-                  <div className="flex items-baseline gap-0.5 mb-1">
+                <div className="relative z-10 flex flex-col justify-end mb-6">
+                  <div className="flex items-baseline gap-0.5">
                     <span className="text-4xl md:text-5xl font-medium tracking-tight font-outfit">
                       ₹{price.toLocaleString("en-IN")}
                     </span>
@@ -376,19 +384,14 @@ export default function Pricing() {
                       {periodLabel}
                     </span>
                   </div>
-                  <p className={`text-[10px] md:text-xs font-semibold ${plan.descColor} opacity-75`}>
-                    {billingLabel}
-                  </p>
                 </div>
 
-                {/* Pill CTA button placed right under price */}
                 <button
                   className="relative z-10 w-full py-3.5 bg-[#000] text-white font-medium rounded-full text-center text-xs md:text-sm transition-all hover:bg-white/95 active:scale-95 duration-200 mb-8"
                 >
                   Start 7-Days Free Trial
                 </button>
 
-                {/* Feature List below the button */}
                 <ul className="relative z-10 space-y-4">
                   {plan.features.map((feature, idx) => (
                     <li key={idx} className="flex items-start gap-3 text-xs md:text-sm font-medium opacity-90 leading-tight">
@@ -404,7 +407,6 @@ export default function Pricing() {
           })}
         </div>
 
-        {/* Enterprise Solutions Banner */}
         <div className="mt-20 max-w-[1280px] mx-auto bg-[#EDEDED] border border-gray-200/40 rounded-[2.2rem] p-8 md:p-12 flex flex-col md:flex-row justify-between items-center gap-8 text-left">
           <div className="flex flex-col max-w-2xl">
             <span className="text-xs font-bold text-[#4F46E5] uppercase tracking-widest font-outfit mb-2 block">
@@ -431,138 +433,145 @@ export default function Pricing() {
           </div>
         </div>
 
-        <div className="mt-24 md:mt-32 max-w-[1280px] mx-auto text-left">
+        <div className="max-w-[1280px] mx-auto text-left mt-28">
           <div className="w-full overflow-x-auto lg:overflow-visible bg-transparent">
-            <table className="w-full border-separate border-spacing-0 text-left min-w-[900px]">
-              <thead>
-                <tr>
-                  {/* Left-hand column header showing table title/description */}
-                  <th className="py-8 pr-6 bg-white border-b border-gray-200 w-[30%] sticky top-[70px] md:top-[96px] z-30 text-left">
-                    <div className="flex flex-col gap-2 h-full justify-end pb-3">
-                      <h4 className="text-xl md:text-2xl lg:text-3xl font-semibold text-gray-900 font-outfit tracking-tight leading-tight">
-                        Compare plans
-                      </h4>
-                      <p className="text-xs md:text-sm text-gray-500 font-medium leading-relaxed">
-                        Compare detailed features across all plans.
-                      </p>
-                    </div>
-                  </th>
-                  {/* Cards for each plan */}
-                  {plans.map((plan, idx) => {
-                    const price = billingPeriod === "monthly" ? plan.monthlyPrice : plan.yearlyPrice;
-                    const isGrowth = plan.name === "Growth";
-                    return (
-                      <th
-                        key={idx}
-                        className="py-8 px-4 bg-white border-b border-gray-200 w-[17.5%] align-top text-center sticky top-[70px] md:top-[96px] z-30 border-l border-gray-200/50"
-                      >
-                        <div className="flex flex-col items-center w-full">
-                          <span className="text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-widest font-outfit">
-                            {plan.name === "Professional" ? "PROFESSIONAL PLAN" : `${plan.name.toUpperCase()} PLAN`}
-                          </span>
+            <div className="border border-gray-200/80 rounded-t-[22px] lg:overflow-visible bg-white shadow-xs min-w-[950px]">
+              <table className="w-full border-separate border-spacing-0 text-left">
+                <thead>
+                  <tr>
+                    <th className="bg-[#F9FAFB] border-b border-gray-200 w-[25%] sticky top-[70px] md:top-[96px] z-30 text-left rounded-tl-[22px] p-5 pr-4 align-middle">
+                      <div className="flex flex-col gap-1 justify-center h-full">
+                        <h4 className="text-xl md:text-2xl font-bold text-gray-900 font-outfit tracking-tight leading-tight">
+                          Compare plans
+                        </h4>
+                        <p className="text-xs md:text-sm text-gray-500 font-medium leading-relaxed mt-0.5">
+                          Compare detailed features across all plans.
+                        </p>
+                      </div>
+                    </th>
 
-                          <div className="mt-2 flex items-baseline justify-center gap-0.5">
-                            <span className="text-2xl md:text-3xl lg:text-4xl font-semibold text-gray-900 tracking-tight font-outfit">
-                              ₹{price.toLocaleString("en-IN")}
+                    {comparePlans.map((plan, idx) => {
+                      const price = billingPeriod === "monthly" ? plan.monthlyPrice : plan.yearlyPrice;
+                      const priceDisplay = typeof price === "number" ? `₹${price.toLocaleString("en-IN")}` : "ON DEMAND";
+                      const isHighlighted = plan.isHighlighted;
+                      const buttonText = plan.key === "enterprise" ? "Contact Us" : plan.key === "professional" ? "Get Started" : "Start Trial";
+                      const billingSubtext = billingPeriod === "monthly" ? "Billed monthly" : "Billed annually";
+                      const annualTotal = typeof plan.yearlyPrice === "number" && plan.yearlyPrice > 0
+                        ? `₹${(plan.yearlyPrice * 12).toLocaleString("en-IN")}/yr`
+                        : null;
+
+                      return (
+                        <th
+                          key={idx}
+                          className={`py-5 px-4 border-b border-gray-200 w-[15%] align-top text-center sticky top-[70px] md:top-[96px] z-30 border-l border-gray-200/50 ${isHighlighted ? "bg-[#F8FAFC]" : "bg-white"} ${idx === comparePlans.length - 1 ? "rounded-tr-[22px]" : ""}`}
+                        >
+                          <div className="flex flex-col items-center text-center w-full select-none gap-0.5">
+                            {/* "FREE PLAN" label */}
+                            <span className="text-[10px] md:text-[11px] font-bold text-gray-400 uppercase tracking-[0.12em] font-outfit">
+                              {plan.name} PLAN
                             </span>
-                            <span className="text-xs md:text-sm font-semibold text-gray-500">
-                              {plan.periodLabel[billingPeriod]}
-                            </span>
-                          </div>
 
-                          <span className="mt-1 text-[10px] md:text-xs text-gray-500 font-medium">
-                            {billingPeriod === "monthly"
-                              ? "Billed monthly"
-                              : `₹${(price * 12).toLocaleString("en-IN")} billed annually`
-                            }
-                          </span>
+                            {/* Price */}
+                            <div className="flex items-baseline justify-center gap-0.5 mt-1">
+                              {typeof price === "number" ? (
+                                <>
+                                  <span className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight font-outfit">
+                                    {priceDisplay}
+                                  </span>
+                                  {plan.periodLabel[billingPeriod] && (
+                                    <span className="text-xs md:text-sm font-semibold text-gray-500 ml-0.5">
+                                      {plan.periodLabel[billingPeriod]}
+                                    </span>
+                                  )}
+                                </>
+                              ) : (
+                                <span className="text-xl md:text-2xl font-bold text-gray-900 tracking-tight font-outfit">
+                                  Custom
+                                </span>
+                              )}
+                            </div>
 
-                          <button
-                            className={`mt-4 px-6 py-2 rounded-full text-xs font-semibold transition-all duration-150 cursor-pointer ${isGrowth
-                                ? "bg-[#4F46E5] text-white hover:bg-[#4338CA] active:scale-95 shadow-sm"
-                                : "bg-gray-100 text-gray-750 hover:bg-gray-200 active:scale-95"
+                            {/* Billing subtext */}
+                            <div className="flex flex-col items-center mb-3">
+                              <span className="text-[10px] md:text-xs text-gray-400 font-medium">
+                                {plan.key === "enterprise" ? "Custom pricing" : billingSubtext}
+                              </span>
+                              {billingPeriod === "yearly" && annualTotal && plan.key !== "enterprise" && (
+                                <span className="text-[10px] md:text-xs text-emerald-600 font-semibold mt-0.5">
+                                  {annualTotal}
+                                </span>
+                              )}
+                            </div>
+
+                            {/* CTA Button */}
+                            <button
+                              className={`px-5 py-2 rounded-full text-xs font-semibold transition-all duration-150 cursor-pointer w-full max-w-[120px] active:scale-95 border ${
+                                isHighlighted
+                                  ? "bg-[#4F46E5] hover:bg-[#4338CA] text-white border-[#4F46E5]"
+                                  : "bg-white hover:bg-gray-50 text-gray-700 border-gray-300"
                               }`}
-                          >
-                            {plan.name === "Professional" ? "Get Started" : "Start Trial"}
-                          </button>
-                        </div>
-                      </th>
-                    );
-                  })}
-                </tr>
-              </thead>
-              <tbody>
-                {categories.map((category, catIdx) => {
-                  const isCollapsed = !!collapsedCategories[catIdx];
-                  return (
+                            >
+                              {buttonText}
+                            </button>
+                          </div>
+                        </th>
+                      );
+                    })}
+                  </tr>
+                </thead>
+                <tbody>
+                  {categories.map((category, catIdx) => (
                     <React.Fragment key={catIdx}>
-                      {/* Category Header Row (Collapsible) */}
-                      <tr
-                        className="cursor-pointer select-none"
-                        onClick={() => toggleCategory(catIdx)}
-                      >
-                        <td colSpan={5} className="pt-8 pb-3 bg-white border-b border-gray-100">
-                          <div className="flex items-center justify-between px-5 py-3 rounded-xl bg-gray-50 text-gray-800 hover:bg-gray-100/70 transition-all duration-200 font-bold text-xs md:text-sm font-outfit uppercase tracking-wider">
-                            <span>{category.name}</span>
-                            <span className={`transform transition-transform duration-200 ${isCollapsed ? "" : "rotate-180"}`}>
-                              <svg
-                                width="16"
-                                height="16"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="3"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              >
-                                <path d="m6 9 6 6 6-6" />
-                              </svg>
-                            </span>
+                      <tr>
+                        <td colSpan={6} className="py-3 px-6 bg-gray-50/45 border-b border-gray-200/80 border-t border-gray-100/20 font-bold text-[11px] uppercase tracking-wider text-gray-500 font-outfit select-none">
+                          <div className="flex items-center gap-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#0047FF]/60" />
+                            {category.name}
                           </div>
                         </td>
                       </tr>
 
-                      {/* Feature Rows (Rendered only if not collapsed) */}
-                      {!isCollapsed &&
-                        category.features.map((feature, featIdx) => (
-                          <tr
-                            key={featIdx}
-                            className="hover:bg-gray-50/40 transition-colors duration-150"
-                          >
-                            <td className="py-4 pl-6 pr-6 text-xs md:text-sm font-medium text-gray-700 w-[30%] border-b border-gray-100 bg-white">
-                              <div className="flex items-center gap-1.5">
-                                <span>{feature.name}</span>
-                                <span className="text-gray-300 hover:text-gray-500 cursor-pointer transition-colors duration-150">
-                                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                    <circle cx="12" cy="12" r="10" />
-                                    <path d="M12 16v-4" />
-                                    <path d="M12 8h.01" />
-                                  </svg>
-                                </span>
-                              </div>
-                            </td>
-                            <td className="py-4 px-2 text-center w-[17.5%] border-b border-gray-100 border-l border-gray-200/30 bg-white">
-                              {renderValue(feature.starter, "starter", false)}
-                            </td>
-                            <td className="py-4 px-2 text-center w-[17.5%] border-b border-gray-100 border-l border-gray-200/30 bg-white">
-                              {renderValue(feature.growth, "growth", false)}
-                            </td>
-                            <td className="py-4 px-2 text-center w-[17.5%] bg-[#4F46E5]/[0.015] border-b border-gray-100 border-l border-gray-200/30">
-                              {renderValue(feature.scale, "scale", true)}
-                            </td>
-                            <td className="py-4 pl-2 pr-6 text-center w-[17.5%] border-b border-gray-100 border-l border-gray-200/30 bg-white">
-                              {renderValue(feature.ca, "ca", false)}
-                            </td>
-                          </tr>
-                        ))}
+                      {category.features.map((feature: any, featIdx) => (
+                        <tr
+                          key={featIdx}
+                          className="hover:bg-gray-50/10 transition-colors duration-150"
+                        >
+                          <td className="py-3.5 px-6 text-xs md:text-sm font-medium text-gray-700 w-[25%] border-b border-gray-200/40 bg-white">
+                            <div className="flex items-center gap-1.5">
+                              <span>{feature.name}</span>
+                              <span className="text-gray-300 hover:text-gray-500 cursor-pointer transition-colors duration-150">
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                  <circle cx="12" cy="12" r="10" />
+                                  <path d="M12 16v-4" />
+                                  <path d="M12 8h.01" />
+                                </svg>
+                              </span>
+                            </div>
+                          </td>
+                          <td className="py-3.5 px-2 text-center w-[15%] border-b border-gray-200/40 border-l border-gray-200/30 bg-white">
+                            {renderValue(feature.free, "free")}
+                          </td>
+                          <td className="py-3.5 px-2 text-center w-[15%] border-b border-gray-200/40 border-l border-gray-200/30 bg-white">
+                            {renderValue(feature.starter, "starter")}
+                          </td>
+                          <td className="py-3.5 px-2 text-center w-[15%] border-b border-gray-200/40 border-l border-gray-200/30 bg-[#F8FAFC]/50">
+                            {renderValue(feature.growth, "growth")}
+                          </td>
+                          <td className="py-3.5 px-2 text-center w-[15%] border-b border-gray-200/40 border-l border-gray-200/30 bg-white">
+                            {renderValue(feature.professional, "professional")}
+                          </td>
+                          <td className="py-3.5 px-2 text-center w-[15%] border-b border-gray-200/40 border-l border-gray-200/30 bg-white">
+                            {renderValue(feature.enterprise, "enterprise")}
+                          </td>
+                        </tr>
+                      ))}
                     </React.Fragment>
-                  );
-                })}
-              </tbody>
-            </table>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
-
       </div>
     </section>
   );

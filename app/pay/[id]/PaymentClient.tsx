@@ -272,6 +272,20 @@ export default function PaymentClient({
                   </svg>
                   Open any UPI app → Scan or paste UPI ID → Enter ₹{amount.toLocaleString('en-IN')} → Pay
                 </div>
+
+                {/* After paying via UPI — let customer confirm */}
+                <div className="rounded-xl bg-[#FAFAF8] border border-[#EBEAE6] p-4">
+                  <p className="text-[12.5px] font-semibold text-gray-700 mb-1">Already paid?</p>
+                  <p className="text-[12px] text-gray-500 mb-3 leading-relaxed">
+                    Share your UPI transaction ID so {businessName} can confirm instantly — no follow-up calls needed.
+                  </p>
+                  <button
+                    onClick={() => setShowVerify(true)}
+                    className="w-full h-11 rounded-xl border border-[#FF6A39] text-[13.5px] font-semibold text-[#FF6A39] hover:bg-[#FFF4F0] transition-all"
+                  >
+                    I've paid — enter transaction ID
+                  </button>
+                </div>
               </>
             )}
 

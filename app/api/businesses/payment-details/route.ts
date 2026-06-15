@@ -10,6 +10,18 @@ const paymentDetailsSchema = z.object({
   bankAccountName: z.string().optional(),
 })
 
+export async function GET() {
+  const session = await getBusinessFromSession()
+  if (!session) return apiError('UNAUTHORIZED', 'Not authenticated', 401)
+
+  const business = await prisma.business.findUnique({
+    where: { id: session.businessId },
+    select: { upiId: true, bankAccountNo: true, bankIfsc: true, bankAccountName: true },
+  })
+
+  return apiSuccess({ business })
+}
+
 export async function PATCH(request: Request) {
   const session = await getBusinessFromSession()
   if (!session) return apiError('UNAUTHORIZED', 'Not authenticated', 401)

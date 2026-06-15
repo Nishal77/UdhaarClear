@@ -11,7 +11,6 @@ import {
 } from '@/lib/whatsapp/templates'
 import { buildReminderEmail } from '@/lib/email/templates/payment-reminder'
 import { sendEmail } from '@/lib/email/client'
-import { createPaymentLink } from '@/lib/razorpay/payment-link'
 import { formatINR } from '@/lib/utils/currency'
 import { formatDate, daysOverdue } from '@/lib/utils/date'
 import { ReminderTone, ReminderChannel, TriggerSource } from '@prisma/client'
@@ -58,38 +57,22 @@ export class ReminderService {
     const customerName = invoice.customer.contactName ?? invoice.customer.name
     const amount = formatINR(Number(invoice.amount))
 
-    // 1. Resolve or create Razorpay payment link
-    let paymentLink = invoice.razorpayLinkUrl
-    if (!paymentLink) {
-      try {
-        const link = await createPaymentLink({
-          invoiceId,
-          businessId: invoice.businessId,
-          invoiceNumber: invoice.invoiceNumber,
-          amount: Number(invoice.amount),
-          customerName,
-          customerPhone: invoice.customer.phone,
-          customerEmail: invoice.customer.email,
-        })
-        paymentLink = link.short_url
-        await prisma.invoice.update({
-          where: { id: invoiceId },
-          data: { razorpayLinkId: link.id, razorpayLinkUrl: link.short_url },
-        })
-      } catch (err) {
-        // Fallback to local payment view if Razorpay fails
-        paymentLink = `${process.env.NEXT_PUBLIC_APP_URL}/pay/${invoiceId}`
-      }
-    }
+    // Payment link: always use our hosted pay page — no Razorpay dependency
+    const paymentLink = `${process.env.NEXT_PUBLIC_APP_URL}/pay/${invoiceId}`
 
     let whatsappMessageId: string | undefined
     let emailSent = false
     let whatsappError: string | undefined
     let emailError: string | undefined
 
-    // Temporarily disabled WhatsApp sending and routed notifications to Email until WABA is configured
-    const shouldSendWhatsApp = false
-    const shouldSendEmail = (channel === 'EMAIL' || channel === 'BOTH' || channel === 'WHATSAPP') && !!invoice.customer.email
+    const shouldSendWhatsApp =
+      invoice.business.waConnected === true &&
+      (channel === 'WHATSAPP' || channel === 'BOTH')
+    // Fall back to email when WhatsApp is requested but WABA not yet connected
+    const shouldSendEmail =
+      (channel === 'EMAIL' || channel === 'BOTH' ||
+        (channel === 'WHATSAPP' && !invoice.business.waConnected)) &&
+      !!invoice.customer.email
 
     const legalRef = `UC-${new Date().getFullYear()}-${invoice.invoiceNumber.replace(/[^A-Z0-9]/gi, '').toUpperCase()}`
 

@@ -17,6 +17,14 @@ export default function HowItWorks() {
       />
 
       <div className="relative max-w-[1340px] mx-auto px-6 md:px-8 z-10 text-center">
+        {/* Badge */}
+        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-2xl border border-blue-200/60 bg-blue-50/40 text-[#0047FF] text-sm font-medium tracking-tight font-outfit mb-6 select-none">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-[#0047FF]">
+            <path d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+          How It Works
+        </div>
+
         {/* Heading */}
         <h2 className="text-[2.75rem] md:text-[3.25rem] font-medium text-gray-900 tracking-tight leading-[1.15] font-outfit max-w-4xl mx-auto">
           Add the Invoice. We Follow Up. You Track the Payment.

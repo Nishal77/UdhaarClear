@@ -21,10 +21,10 @@ export function MicrosoftButton({ label = 'Continue with Microsoft' }: Microsoft
     <button
       type="button"
       onClick={handleClick}
-      className="flex w-full items-center justify-center gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 active:bg-gray-100 transition-colors select-none"
+      className="flex w-full items-center justify-center gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 active:bg-gray-100 transition-colors"
     >
       <MicrosoftIcon />
-      <span className="font-semibold text-gray-800">{label}</span>
+      {label}
     </button>
   )
 }

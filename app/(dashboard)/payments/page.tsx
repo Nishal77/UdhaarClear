@@ -47,8 +47,8 @@ export default async function PaymentsPage() {
   const totalCollected = allInvoices.reduce((sum, inv) => sum + Number(inv.paidAmount ?? 0), 0)
 
   // 2. Gateway Configuration
-  const gatewayName = business.wabaId || business.waConnected ? 'Razorpay' : 'UPI Link'
-  const gatewayDesc = business.wabaId || business.waConnected ? 'Smart Collect VA' : 'Direct Settlement'
+  const gatewayName = business.upiId ? 'UPI' : business.bankAccountNo ? 'Bank Transfer' : 'Not set up'
+  const gatewayDesc = business.upiId ? 'Direct, zero-fee settlement' : 'NEFT / RTGS'
 
   // 3. Settled Invoices log
   const settledInvoices = await prisma.invoice.findMany({

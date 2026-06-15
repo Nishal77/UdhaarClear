@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { toast } from 'sonner'
 import { GoogleButton } from '@/components/auth/GoogleButton'
+import { MicrosoftButton } from '@/components/auth/MicrosoftButton'
 import { Mail, ArrowLeft } from 'lucide-react'
 
 export default function LoginPage() {
@@ -177,6 +178,7 @@ export default function LoginPage() {
             {/* OAuth Login */}
             <div className="space-y-3">
               <GoogleButton label="Sign in with Google" />
+              <MicrosoftButton label="Sign in with Microsoft" />
             </div>
 
             {/* Divider */}
@@ -185,7 +187,7 @@ export default function LoginPage() {
                 <div className="w-full border-t border-gray-100" />
               </div>
               <div className="relative flex justify-center">
-                <span className="bg-white px-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Or</span>
+                <span className="bg-white px-3 text-[11px] font-medium text-gray-500 uppercase tracking-wider">Or</span>
               </div>
             </div>
 
@@ -202,7 +204,7 @@ export default function LoginPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="business@mail.com"
-                    className="block w-full rounded-xl border border-gray-200 pl-10 pr-4 py-3.5 text-sm text-gray-950 placeholder-gray-400 bg-gray-50/50 focus:bg-white focus:border-[#ECA828] focus:outline-none transition-all font-medium"
+                    className="block w-full rounded-xl border border-gray-200 pl-10 pr-4 py-3.5 text-sm text-gray-950 placeholder-gray-400 bg-gray-50/50 focus:bg-white focus:outline-none transition-all font-normal"
                   />
                   <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
                 </div>
@@ -211,19 +213,19 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="mt-2 flex w-full items-center justify-center rounded-xl py-3.5 text-sm font-bold text-white shadow-lg shadow-amber-500/15 hover:shadow-xl hover:shadow-amber-500/25 active:scale-[0.98] active:brightness-95 transition-all disabled:opacity-55 disabled:cursor-not-allowed cursor-pointer"
-                style={{ backgroundColor: '#ECA828' }}
+                className="mt-2 flex w-full items-center justify-center rounded-xl py-3.5 text-sm font-medium text-white transition-all disabled:opacity-55 disabled:cursor-not-allowed cursor-pointer"
+                style={{ backgroundColor: '#262624' }}
               >
                 {loading ? 'Processing...' : 'Continue'}
               </button>
             </form>
 
             {/* Create Account redirect */}
-            <div className="mt-4 pt-3 text-center text-xs text-gray-500">
+            <div className="mt-4 text-center text-sm text-gray-500">
               New to UdhaarClear?{' '}
               <Link
                 href="/signup"
-                className="font-bold text-gray-950 underline underline-offset-2 hover:text-[#ECA828] transition-colors"
+                className="font-semibold text-gray-900  hover:text-black transition-colors"
               >
                 Create account
               </Link>
@@ -266,7 +268,7 @@ export default function LoginPage() {
                       otpInputRefs.current[idx] = el;
                     }}
                     id={`otp-input-${idx}`}
-                    className="w-12 h-12 md:w-14 md:h-14 border border-gray-200 focus:border-[#ECA828] rounded-xl text-center text-lg font-bold outline-none transition-all bg-gray-50/50 focus:bg-white font-outfit"
+                    className="w-12 h-12 md:w-14 md:h-14 border border-gray-200 focus:border-[#ECA828] rounded-xl text-center text-lg font-semibold outline-none transition-all bg-gray-50/50 focus:bg-white font-outfit"
                   />
                 ))}
               </div>
@@ -274,8 +276,8 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={loading || otpValues.some((v) => !v)}
-                className="flex w-full items-center justify-center rounded-xl py-3.5 text-sm font-bold text-white shadow-lg shadow-amber-500/15 hover:shadow-xl hover:shadow-amber-500/25 active:scale-[0.98] active:brightness-95 transition-all disabled:opacity-55 disabled:cursor-not-allowed cursor-pointer"
-                style={{ backgroundColor: '#ECA828' }}
+                className="flex w-full items-center justify-center rounded-xl py-3.5 text-sm font-medium text-white transition-all disabled:opacity-55 disabled:cursor-not-allowed cursor-pointer"
+                style={{ backgroundColor: '#262624' }}
               >
                 {loading ? 'Verifying...' : 'Verify & Continue →'}
               </button>
@@ -292,7 +294,7 @@ export default function LoginPage() {
                   type="button"
                   onClick={handleResendOtp}
                   disabled={resending}
-                  className="text-xs font-bold text-[#ECA828] hover:text-amber-600 transition-colors select-none cursor-pointer underline underline-offset-2"
+                  className="text-sm font-semibold text-gray-700 hover:text-gray-900 transition-colors select-none cursor-pointer underline underline-offset-2"
                 >
                   {resending ? 'Resending...' : 'Resend code'}
                 </button>
@@ -305,23 +307,12 @@ export default function LoginPage() {
 
       {/* Footer copyright and links */}
       <footer className="w-full max-w-[420px] text-center shrink-0">
-        <p className="text-center text-xs text-gray-400 leading-relaxed mb-6 px-6">
+        <p className="text-center text-xs text-gray-500 leading-relaxed mb-6 px-6">
           By using UdhaarClear, you are agreeing to our{' '}
-          <Link href="/privacy" className="underline hover:text-gray-700 transition-colors font-medium">Privacy Policy</Link>{' '}
+          <Link href="/privacy" className="text-gray-700 hover:text-gray-900 transition-colors font-medium">Privacy Policy</Link>{' '}
           and{' '}
-          <Link href="/terms" className="underline hover:text-gray-700 transition-colors font-medium">Terms</Link>.
+          <Link href="/terms" className="text-gray-700 hover:text-gray-900 transition-colors font-medium">Terms</Link>.
         </p>
-        <div className="flex items-center justify-between w-full border-t border-gray-100/60 pt-5">
-          <span className="text-[10px] text-gray-400 font-medium">© 2026 UdhaarClear</span>
-          <div className="flex gap-4">
-            <Link href="/privacy" className="text-[10px] text-gray-400 hover:text-gray-600 transition-colors font-medium">
-              Privacy Policy
-            </Link>
-            <Link href="/support" className="text-[10px] text-gray-400 hover:text-gray-600 transition-colors font-medium">
-              Support
-            </Link>
-          </div>
-        </div>
       </footer>
 
     </div>

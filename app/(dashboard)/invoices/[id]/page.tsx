@@ -350,19 +350,17 @@ export default function InvoiceDetailPage() {
               <RecoverySchedule dueDate={new Date(invoice.dueDate)} daysOverdueCount={days} />
             )}
             
-            {invoice.razorpayLinkUrl && (
-              <div className="mt-3.5 rounded-xl bg-gray-50 p-4 border border-[#EBEAE6]/50">
-                <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-1">Payment Link</p>
-                <a
-                  href={invoice.razorpayLinkUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-xs text-[#FF6A39] hover:text-[#E05B2E] underline font-medium break-all"
-                >
-                  {invoice.razorpayLinkUrl}
-                </a>
-              </div>
-            )}
+            <div className="mt-3.5 rounded-xl bg-gray-50 p-4 border border-[#EBEAE6]/50">
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-1">Payment Link</p>
+              <a
+                href={`${process.env.NEXT_PUBLIC_APP_URL}/pay/${invoice.id}`}
+                target="_blank"
+                rel="noreferrer"
+                className="text-xs text-[#FF6A39] hover:text-[#E05B2E] underline font-medium break-all"
+              >
+                {`${process.env.NEXT_PUBLIC_APP_URL}/pay/${invoice.id}`}
+              </a>
+            </div>
             
             {invoice.description && (
               <div className="mt-3.5 rounded-xl bg-gray-50 p-4 border border-[#EBEAE6]/50">
