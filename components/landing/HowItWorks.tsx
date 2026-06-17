@@ -1,20 +1,9 @@
 "use client";
 
 import React from "react";
-import { Check, UploadCloud, MessageSquare, CreditCard, ShieldCheck, Mail, FileText, Gavel, Zap } from "lucide-react";
+import { Check, UploadCloud, MessageSquare, CreditCard, Mail, Gavel, Zap } from "lucide-react";
 
 export default function HowItWorks() {
-  const pills = [
-    "MSME Samadhaan",
-    "WhatsApp API",
-    "Tally Sync",
-    "Zoho Books API",
-    "Razorpay API",
-    "Auto-Reconcile",
-    "Smart Escalation",
-    "UPI Autopay"
-  ];
-
   return (
     <section id="how-it-works" className="relative w-full bg-[#FFFFFF] py-20 md:py-28 lg:py-32 overflow-hidden scroll-mt-24">
       {/* Decorative ambient background glows */}
@@ -36,11 +25,11 @@ export default function HowItWorks() {
 
           {/* Heading */}
           <h2 className="text-4xl md:text-5xl lg:text-[3.55rem] font-normal text-gray-950 tracking-tight leading-[1.15] font-outfit">
-          What Happens Between An Unpaid Invoice And Money In Your Bank? UdhaarClear Handles Everything In Between.
+            What Happens Between An Unpaid Invoice And Money In Your Bank? UdhaarClear Handles Everything In Between.
           </h2>
           {/* Subheading */}
           <p className="text-gray-500 font-normal text-sm md:text-base mt-4 leading-relaxed max-w-xl">
-           Upload an invoice once and let UdhaarClear manage reminders, collections, and escalation until payment arrives.
+            Upload an invoice once and let UdhaarClear manage reminders, collections, and escalation until payment arrives.
           </p>
         </div>
 
@@ -48,7 +37,7 @@ export default function HowItWorks() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch mb-2 text-left">
           
           {/* Card 1: Invoice Upload */}
-          <div className="bg-white border border-gray-150/70 rounded-[32px] p-6 shadow-md shadow-gray-150/25 flex flex-col justify-between hover:shadow-lg transition-shadow duration-300">
+          <div className="bg-[#F5F3EB] rounded-[32px] p-6 flex flex-col justify-between">
             <div>
               <h3 className="text-[20px] font-bold text-gray-900 tracking-tight font-outfit mb-1">
                 Invoice Upload
@@ -95,7 +84,7 @@ export default function HowItWorks() {
           </div>
 
           {/* Card 2: Automated Reminders */}
-          <div className="bg-white border border-gray-150/70 rounded-[32px] p-6 shadow-md shadow-gray-150/25 flex flex-col justify-between hover:shadow-lg transition-shadow duration-300">
+          <div className="bg-[#F5F3EB] rounded-[32px] p-6 flex flex-col justify-between">
             <div>
               <h3 className="text-[20px] font-bold text-gray-900 tracking-tight font-outfit mb-1">
                 Automated Reminders
@@ -141,7 +130,7 @@ export default function HowItWorks() {
           </div>
 
           {/* Card 3: One-Click Pay */}
-          <div className="bg-white border border-gray-150/70 rounded-[32px] p-6 shadow-md shadow-gray-150/25 flex flex-col justify-between hover:shadow-lg transition-shadow duration-300">
+          <div className="bg-[#F5F3EB] rounded-[32px] p-6 flex flex-col justify-between">
             <div>
               <h3 className="text-[20px] font-bold text-gray-900 tracking-tight font-outfit mb-1">
                 One-Click Pay
@@ -201,7 +190,7 @@ export default function HowItWorks() {
           </div>
 
           {/* Card 4: Legal Escalation */}
-          <div className="bg-white border border-gray-150/70 rounded-[32px] p-6 shadow-md shadow-gray-150/25 flex flex-col justify-between hover:shadow-lg transition-shadow duration-300">
+          <div className="bg-[#F5F3EB] rounded-[32px] p-6 flex flex-col justify-between">
             <div>
               <h3 className="text-[20px] font-bold text-gray-900 tracking-tight font-outfit mb-1">
                 Legal Escalation
@@ -259,75 +248,202 @@ export default function HowItWorks() {
 
         </div>
 
-        {/* Tree Connection Line Diagram (Desktop Only) */}
-        <div className="w-full max-w-[1340px] mx-auto select-none mt-2 relative z-0">
-          <svg className="w-full h-16 text-gray-200/90 hidden lg:block" viewBox="0 0 1200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-            {/* 4 Vertical inputs matching Card Centers (150, 450, 750, 1050) */}
-            <path d="M 150 0 L 150 25 M 450 0 L 450 25 M 750 0 L 750 25 M 1050 0 L 1050 25" stroke="currentColor" strokeWidth="1.2" />
-            {/* Horizontal Bridge Line */}
-            <path d="M 150 25 L 1050 25" stroke="currentColor" strokeWidth="1.2" />
-            {/* 8 downward branching paths matching Pill Centers (75, 225, 375, 525, 675, 825, 975, 1125) */}
-            <path d="M 75 25 L 75 60 
-                     M 225 25 L 225 60 
-                     M 375 25 L 375 60 
-                     M 525 25 L 525 60 
-                     M 675 25 L 675 60 
-                     M 825 25 L 825 60 
-                     M 975 25 L 975 60 
-                     M 1125 25 L 1125 60" stroke="currentColor" strokeWidth="1.2" />
-          </svg>
-        </div>
-
-        {/* Core Engine Pills (Bottom row) */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 max-w-[1340px] mx-auto mt-4 px-4 select-none relative z-10">
-          {pills.map((pill, idx) => (
-            <div 
-              key={idx} 
-              className="bg-gray-50 border border-gray-200/60 text-gray-800 text-[12px] font-semibold font-outfit py-2.5 px-2 rounded-2xl text-center shadow-[0_2px_6px_rgba(0,0,0,0.01)] hover:bg-gray-100 hover:border-gray-300 transition-all duration-200 shrink-0"
-            >
-              {pill}
+        {/* Dynamic Branching Flowchart (Replaces Old Pills & Tree Diagram) */}
+        {/* Reduced top spacing gap to mt-10 */}
+        <div className="mt-10 flex flex-col items-center w-full relative">
+          
+          {/* Centered Unpaid Invoice Card */}
+          <div className="relative z-10 w-full max-w-[280px] bg-[#F5F3EB] rounded-[32px] p-6 select-none">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest font-outfit">
+                Invoice Status
+              </span>
+              <span className="text-[9px] font-bold text-gray-400 bg-white/60 px-2 py-0.5 rounded-md">
+                #INV-48000
+              </span>
             </div>
-          ))}
-        </div>
+            
+            <div className="mb-4">
+              <span className="text-[10px] font-bold text-rose-500 uppercase tracking-wider block mb-1">
+                Unpaid Invoice
+              </span>
+              <div className="text-4xl font-extrabold text-gray-950 font-outfit tracking-tight leading-none">
+                ₹48,000
+              </div>
+            </div>
 
-        {/* Symmetrical Convergence Line Diagram (Desktop Only) */}
-        <div className="w-full max-w-[1340px] mx-auto select-none relative z-0">
-          <svg className="w-full h-20 text-gray-200/90 hidden lg:block" viewBox="0 0 1200 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-            {/* 8 curved lines converging to center (600, 75) */}
-            <path d="M 75 0 C 75 40, 600 30, 600 75" stroke="currentColor" strokeWidth="1.2" />
-            <path d="M 225 0 C 225 40, 600 30, 600 75" stroke="currentColor" strokeWidth="1.2" />
-            <path d="M 375 0 C 375 40, 600 30, 600 75" stroke="currentColor" strokeWidth="1.2" />
-            <path d="M 525 0 C 525 40, 600 30, 600 75" stroke="currentColor" strokeWidth="1.2" />
-            <path d="M 675 0 C 675 40, 600 30, 600 75" stroke="currentColor" strokeWidth="1.2" />
-            <path d="M 825 0 C 825 40, 600 30, 600 75" stroke="currentColor" strokeWidth="1.2" />
-            <path d="M 975 0 C 975 40, 600 30, 600 75" stroke="currentColor" strokeWidth="1.2" />
-            <path d="M 1125 0 C 1125 40, 600 30, 600 75" stroke="currentColor" strokeWidth="1.2" />
-          </svg>
-        </div>
+            <div className="flex items-center justify-between pt-4">
+              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-semibold bg-rose-50 text-rose-600">
+                <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
+                Overdue
+              </span>
+              <span className="text-[10px] font-medium text-gray-450">
+                Action Required
+              </span>
+            </div>
+          </div>
 
-        {/* Central Brand Mark Circle Icon */}
-        <div className="flex justify-center items-center -mt-1.5 relative z-10">
-          <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-lime-300 via-emerald-400 to-cyan-400 flex items-center justify-center shadow-lg shadow-emerald-500/25 border border-white/40 select-none animate-pulse">
-            <svg className="w-7 h-7 text-zinc-950" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 5 L12 19 M8 9 L16 15 M8 15 L16 9" />
-              <circle cx="12" cy="5" r="2" fill="currentColor" />
-              <circle cx="12" cy="19" r="2" fill="currentColor" />
-              <circle cx="8" cy="9" r="1.5" fill="currentColor" />
-              <circle cx="16" cy="15" r="1.5" fill="currentColor" />
-              <circle cx="8" cy="15" r="1.5" fill="currentColor" />
-              <circle cx="16" cy="9" r="1.5" fill="currentColor" />
+          {/* Dotted Arrow Down to UdhaarClear Badge */}
+          <div className="flex flex-col items-center">
+            <svg className="w-6 h-16 text-gray-300" viewBox="0 0 24 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 0V60" stroke="currentColor" strokeWidth="2" strokeDasharray="3 3" />
+              <path d="M8 54L12 60L16 54" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
-        </div>
 
-        {/* Bottom Heading and Subheading */}
-        <div className="mt-8 text-center max-w-2xl mx-auto">
-          <h3 className="text-3xl md:text-[2.25rem] font-semibold text-gray-950 tracking-tight font-outfit mb-3">
-            Built on a Unified Platform
-          </h3>
-          <p className="text-gray-500 font-medium text-sm md:text-base leading-relaxed">
-            Most recovery systems are fragmented. UdhaarClear was built as one unified engine.
-          </p>
+          {/* UdhaarClear Brand Mark Engine Box */}
+          <div className="relative z-10 flex flex-col items-center -mt-1">
+            {/* Soft Ambient Glow */}
+            <div className="absolute inset-0 bg-[#FFC72C]/10 rounded-2xl blur-xl filter pointer-events-none scale-150" />
+            
+            <div className="relative flex items-center gap-3 bg-zinc-950 text-white px-6 py-4 rounded-2xl select-none">
+              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-zinc-900 shrink-0">
+                <span className="text-[#FFC72C] font-black text-lg tracking-tight">U</span>
+              </div>
+              <div className="flex flex-col text-left">
+                <span className="text-[15px] font-bold tracking-tight leading-none text-white font-outfit">UdhaarClear</span>
+                <span className="text-[9.5px] font-semibold text-emerald-400 tracking-wider uppercase mt-1">Smart Engine</span>
+              </div>
+            </div>
+          </div>
+
+          {/* 4 Premium Branching Curved Connectors (Desktop Only) */}
+          <div className="w-full max-w-[1240px] mx-auto select-none relative z-0 h-20 hidden lg:block">
+            <svg className="w-full h-full text-gray-300" viewBox="0 0 1200 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="glow-grad" x1="600" y1="0" x2="600" y2="80" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stopColor="#FFC72C" />
+                  <stop offset="30%" stopColor="#10B981" />
+                  <stop offset="100%" stopColor="#D1D5DB" />
+                </linearGradient>
+              </defs>
+              
+              {/* Primary Source Drop */}
+              <path d="M 600 0 L 600 20" stroke="url(#glow-grad)" strokeWidth="2" strokeDasharray="3 3" />
+              
+              {/* Curved Branch to Card 1 (Email @ 150px) */}
+              <path d="M 600 20 C 600 45, 150 25, 150 55 L 150 80" stroke="currentColor" strokeWidth="1.5" strokeDasharray="3 3" />
+              <path d="M 146 74 L 150 80 L 154 74" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              
+              {/* Curved Branch to Card 2 (WhatsApp @ 450px) */}
+              <path d="M 600 20 C 600 45, 450 25, 450 55 L 450 80" stroke="currentColor" strokeWidth="1.5" strokeDasharray="3 3" />
+              <path d="M 446 74 L 450 80 L 454 74" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              
+              {/* Curved Branch to Card 3 (Link @ 750px) */}
+              <path d="M 600 20 C 600 45, 750 25, 750 55 L 750 80" stroke="currentColor" strokeWidth="1.5" strokeDasharray="3 3" />
+              <path d="M 746 74 L 750 80 L 754 74" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              
+              {/* Curved Branch to Card 4 (Legal @ 1050px) */}
+              <path d="M 600 20 C 600 45, 1050 25, 1050 55 L 1050 80" stroke="currentColor" strokeWidth="1.5" strokeDasharray="3 3" />
+              <path d="M 1046 74 L 1050 80 L 1054 74" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
+          
+          {/* Mobile/Tablet Vertical Divider Spacing */}
+          <div className="w-px h-12 bg-gradient-to-b from-gray-300 via-gray-200 to-transparent block lg:hidden my-6" />
+
+          {/* 4 Connected Target Cards Grid */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-[1240px] mx-auto select-none mt-2 relative z-10 px-4 lg:px-0">
+            
+            {/* Card 1: Email */}
+            <div className="bg-[#F5F3EB] rounded-[32px] px-6 py-6 flex items-center justify-center gap-3.5 min-h-[100px]">
+              <svg className="w-10 h-10 text-[#EA4335] shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+              </svg>
+              <span className="text-xl md:text-2xl font-bold text-gray-900 font-outfit">
+                Email
+              </span>
+            </div>
+
+            {/* Card 2: WhatsApp */}
+            <div className="bg-[#F5F3EB] rounded-[32px] px-6 py-6 flex items-center justify-center gap-3.5 min-h-[100px]">
+              <svg className="w-10 h-10 text-[#25D366] shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.513 2.262 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.458L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.725 1.451 5.437 0 9.862-4.409 9.866-9.83.002-2.628-1.02-5.1-2.878-6.964-1.859-1.863-4.33-2.887-6.953-2.889-5.441 0-9.87 4.411-9.874 9.83-.001 1.764.469 3.486 1.36 5.048L1.763 22.25l6.084-1.596z"/>
+              </svg>
+              <span className="text-xl md:text-2xl font-bold text-gray-900 font-outfit">
+                WhatsApp
+              </span>
+            </div>
+
+            {/* Card 3: Link */}
+            <div className="bg-[#F5F3EB] rounded-[32px] px-6 py-6 flex items-center justify-center gap-3.5 min-h-[100px]">
+              <svg className="w-10 h-10 text-[#0047FF] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+              </svg>
+              <span className="text-xl md:text-2xl font-bold text-gray-900 font-outfit">
+                Link
+              </span>
+            </div>
+
+            {/* Card 4: Legal */}
+            <div className="bg-[#F5F3EB] rounded-[32px] px-6 py-6 flex items-center justify-center gap-3.5 min-h-[100px]">
+              <svg className="w-10 h-10 text-[#EF4444] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M14.5 17.5L3 6" />
+                <path d="M13 3.5a2.5 2.5 0 0 1 5 0V6a2.5 2.5 0 0 1-5 0V3.5z" />
+                <path d="M19 12.5a2.5 2.5 0 0 1 5 0V15a2.5 2.5 0 0 1-5 0v-2.5z" />
+                <path d="M2.5 17.5h15" />
+                <path d="M8.5 21.5h3" />
+              </svg>
+              <span className="text-xl md:text-2xl font-bold text-gray-900 font-outfit">
+                Legal
+              </span>
+            </div>
+
+          </div>
+
+          {/* Convergence of 4 Options to "Customer Pays" (Desktop Only) */}
+          <div className="w-full max-w-[1240px] mx-auto select-none relative z-0 h-16 hidden lg:block">
+            <svg className="w-full h-full text-gray-300" viewBox="0 0 1200 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              {/* Curve from Email @ 150px to Center 600px */}
+              <path d="M 150 0 L 150 15 C 150 40, 600 25, 600 50" stroke="currentColor" strokeWidth="1.5" strokeDasharray="3 3" />
+              {/* Curve from WhatsApp @ 450px to Center 600px */}
+              <path d="M 450 0 L 450 15 C 450 40, 600 25, 600 50" stroke="currentColor" strokeWidth="1.5" strokeDasharray="3 3" />
+              {/* Curve from Link @ 750px to Center 600px */}
+              <path d="M 750 0 L 750 15 C 750 40, 600 25, 600 50" stroke="currentColor" strokeWidth="1.5" strokeDasharray="3 3" />
+              {/* Curve from Legal @ 1050px to Center 600px */}
+              <path d="M 1050 0 L 1050 15 C 1050 40, 600 25, 600 50" stroke="currentColor" strokeWidth="1.5" strokeDasharray="3 3" />
+              {/* Final segment leading to target */}
+              <path d="M 600 50 L 600 64" stroke="currentColor" strokeWidth="1.5" strokeDasharray="3 3" />
+              <path d="M 596 58 L 600 64 L 604 58" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
+          
+          {/* Mobile/Tablet Vertical Divider Spacing */}
+          <div className="w-px h-12 bg-gradient-to-b from-gray-300 via-gray-200 to-transparent block lg:hidden my-6" />
+
+          {/* Centered Customer Pays Card */}
+          <div className="bg-[#F5F3EB] rounded-[32px] px-8 py-6 flex items-center justify-center gap-3.5 min-h-[100px] w-full max-w-[280px] select-none z-10 relative">
+            <div className="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-600 shrink-0">
+              <svg className="w-6 h-6 stroke-[3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <span className="text-xl md:text-2xl font-bold text-gray-900 font-outfit whitespace-nowrap">
+              Customer Pays
+            </span>
+          </div>
+
+          {/* Dotted Arrow Down to Money In Bank */}
+          <div className="flex flex-col items-center">
+            <svg className="w-6 h-16 text-gray-300" viewBox="0 0 24 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 0V60" stroke="currentColor" strokeWidth="2" strokeDasharray="3 3" />
+              <path d="M8 54L12 60L16 54" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
+
+          {/* Centered Money In Bank Card */}
+          <div className="bg-[#F5F3EB] rounded-[32px] px-8 py-6 flex items-center justify-center gap-3.5 min-h-[100px] w-full max-w-[280px] select-none z-10 relative">
+            <div className="w-10 h-10 rounded-full bg-yellow-500/10 flex items-center justify-center text-yellow-600 shrink-0">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <span className="text-xl md:text-2xl font-bold text-gray-900 font-outfit whitespace-nowrap">
+              Money In Bank
+            </span>
+          </div>
+
         </div>
 
       </div>
