@@ -11,6 +11,8 @@ import {
   Receipt
 } from "lucide-react";
 import DotField from "../ui/DotField";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { PlayIcon } from "@hugeicons/core-free-icons";
 
 
 export default function Hero() {
@@ -99,7 +101,7 @@ export default function Hero() {
           {/* Top Text Block (Left-Aligned) */}
           <div className="flex flex-col items-start text-left space-y-8 max-w-3xl pt-8">
             {/* Main Heading */}
-            <h1 className="text-4xl md:text-5xl lg:text-[3.25rem] font-medium text-gray-950 tracking-tight leading-[1.12] md:leading-[1.08] max-w-2xl">
+            <h1 className="text-4xl md:text-5xl lg:text-[3.55rem] font-normal text-gray-950 tracking-tight leading-[1.12] md:leading-[1.08] max-w-3xl">
               Customers Not Paying? <br />
               <span className="bg-gradient-to-r from-gray-950 via-slate-800 to-gray-900 bg-clip-text text-transparent">We Follow Up Until They Do.</span>
             </h1>
@@ -113,46 +115,43 @@ export default function Hero() {
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-start gap-4 w-full sm:w-auto">
               <Link
                 href="/signup"
-                className="inline-flex items-center justify-center bg-gray-950 hover:bg-gray-900 active:scale-95 text-white font-semibold px-8 py-4 rounded-full shadow-lg shadow-black/5 transition-all duration-200 text-sm md:text-base select-none text-center"
+                className="btn-premium-green inline-flex items-center justify-center px-6.5 py-3 text-[14px] md:text-[15px] font-semibold text-white rounded-2xl shrink-0 select-none text-center"
               >
                 Start Recovering
               </Link>
               <Link
                 href="#demo"
-                className="inline-flex items-center justify-center gap-2 border border-black/[0.08] bg-white/50 hover:bg-white/80 active:scale-95 text-gray-700 hover:text-gray-950 font-semibold px-6 py-4 rounded-full transition-all duration-200 text-sm md:text-base select-none text-center"
+                className="inline-flex items-center justify-center gap-2 border border-black/[0.08] bg-white/50 hover:bg-white/80 active:scale-95 text-gray-700 hover:text-gray-950 font-semibold px-5.5 py-3 rounded-2xl transition-all duration-200 text-[14px] md:text-[15px] select-none text-center"
               >
-                <svg className="w-4 h-4 fill-current text-gray-400" viewBox="0 0 24 24">
-                  <path d="M8 5v14l11-7z" />
-                </svg>
+                <HugeiconsIcon icon={PlayIcon} />
                 Watch demo
               </Link>
             </div>
           </div>
+        </div>
 
-          {/* Bottom Large Mockup Box Container (Wider) */}
-          <div className="w-full bg-[#FAF9F6] border border-black/[0.06] rounded-[32px] shadow-[0_24px_60px_rgba(0,0,0,0.03)] overflow-hidden flex flex-col z-10 relative">
-            
-            {/* Dotted Grid Pattern */}
-            <div 
-              className="absolute inset-0 opacity-[0.45] pointer-events-none z-0" 
-              style={{
-                backgroundImage: "radial-gradient(#C5C2B9 1.2px, transparent 1.2px)",
-                backgroundSize: "20px 20px"
-              }}
-            />
-            
-            {/* Ambient Lighting Glows */}
-            <div className="absolute top-1/4 left-1/4 w-[300px] h-[300px] rounded-full bg-blue-100/10 blur-[100px] z-0 pointer-events-none" />
-            <div className="absolute bottom-1/4 right-1/4 w-[300px] h-[300px] rounded-full bg-emerald-100/10 blur-[100px] z-0 pointer-events-none" />
+        {/* Bottom Large Mockup Box Container (Wider) - Full Width of Device */}
+        <div className="w-full bg-[#FAF9F6] border-y border-black/[0.06] shadow-[0_24px_60px_rgba(0,0,0,0.03)] overflow-hidden flex flex-col z-10 relative mt-16">
+          
+          {/* Dotted Grid Pattern */}
+          <div 
+            className="absolute inset-0 opacity-[0.45] pointer-events-none z-0" 
+            style={{
+              backgroundImage: "radial-gradient(#C5C2B9 1.2px, transparent 1.2px)",
+              backgroundSize: "20px 20px"
+            }}
+          />
+          
+          {/* Ambient Lighting Glows */}
+          <div className="absolute top-1/4 left-1/4 w-[300px] h-[300px] rounded-full bg-blue-100/10 blur-[100px] z-0 pointer-events-none" />
+          <div className="absolute bottom-1/4 right-1/4 w-[300px] h-[300px] rounded-full bg-emerald-100/10 blur-[100px] z-0 pointer-events-none" />
 
-            {/* Inner Content canvas */}
-            <div className="w-full px-4 py-12 flex items-center justify-center relative z-10 h-[560px] sm:h-[620px] md:h-[680px]">
-              <div className="scale-[0.76] sm:scale-[0.86] md:scale-95 lg:scale-100 origin-center transition-all duration-300">
-                <InteractiveMockup />
-              </div>
+          {/* Inner Content canvas */}
+          <div className="w-full px-4 py-12 flex items-center justify-center relative z-10 h-[560px] sm:h-[620px] md:h-[680px]">
+            <div className="scale-[0.76] sm:scale-[0.86] md:scale-95 lg:scale-100 origin-center transition-all duration-300">
+              <InteractiveMockup />
             </div>
           </div>
-
         </div>
       </section>
     </>

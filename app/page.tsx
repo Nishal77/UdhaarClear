@@ -1,7 +1,9 @@
 import Navbar from "@/components/landing/Navbar";
 import Hero from "@/components/landing/Hero";
-import Problem from "@/components/landing/Problem";
 import HowItWorks from "@/components/landing/HowItWorks";
+import ToolsIntegration from "@/components/landing/ToolsIntegration";
+import Comparison from "@/components/landing/Comparison";
+import Workflow from "@/components/landing/Workflow";
 import Features from "@/components/landing/Features";
 import Integrations from "@/components/landing/Integrations";
 import Solution from "@/components/landing/Solution";
@@ -17,8 +19,10 @@ export default function LandingPage() {
       <Navbar />
       <main>
         <Hero />
-        <Problem />
         <HowItWorks />
+        <ToolsIntegration />
+        <Comparison />
+        <Workflow />
         <Features />
         <Integrations />
         <Solution />
