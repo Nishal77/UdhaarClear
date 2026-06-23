@@ -21,13 +21,15 @@ export async function runReminderEngine(): Promise<ReminderEngineResult> {
 
   const result: ReminderEngineResult = { sent: 0, skipped: 0, failed: 0, errors: [] }
 
+  const isGlobalWhatsAppEnabled = !!process.env.WHATSAPP_ACCESS_TOKEN && !!process.env.WHATSAPP_PHONE_NUMBER_ID
+
   const invoices = await prisma.invoice.findMany({
     where: {
       status: { in: ['PENDING', 'DUE', 'OVERDUE', 'PARTIALLY_PAID'] },
       autoReminder: true,
       remindersPaused: false,
       customer: { isBlocked: false },
-      business: { waConnected: true },
+      ...(isGlobalWhatsAppEnabled ? {} : { business: { waConnected: true } }),
     },
     include: {
       customer: true,

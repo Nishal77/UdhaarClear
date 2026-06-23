@@ -65,13 +65,16 @@ export class ReminderService {
     let whatsappError: string | undefined
     let emailError: string | undefined
 
+    const useBusinessWhatsApp = invoice.business.waConnected && !!invoice.business.waPhoneId
+    const isWhatsAppConfigured = useBusinessWhatsApp || (!!process.env.WHATSAPP_ACCESS_TOKEN && !!process.env.WHATSAPP_PHONE_NUMBER_ID)
+
     const shouldSendWhatsApp =
-      invoice.business.waConnected === true &&
+      isWhatsAppConfigured &&
       (channel === 'WHATSAPP' || channel === 'BOTH')
-    // Fall back to email when WhatsApp is requested but WABA not yet connected
+    // Fall back to email when WhatsApp is requested but not configured
     const shouldSendEmail =
       (channel === 'EMAIL' || channel === 'BOTH' ||
-        (channel === 'WHATSAPP' && !invoice.business.waConnected)) &&
+        (channel === 'WHATSAPP' && !isWhatsAppConfigured)) &&
       !!invoice.customer.email
 
     const legalRef = `UC-${new Date().getFullYear()}-${invoice.invoiceNumber.replace(/[^A-Z0-9]/gi, '').toUpperCase()}`
@@ -147,20 +150,18 @@ export class ReminderService {
 
     // 2. Dispatch WhatsApp Template message
     if (shouldSendWhatsApp) {
-      if (invoice.business.waConnected) {
-        try {
-          const waResponse = await sendTemplateMessage({
-            to: invoice.customer.phone,
-            templateName,
-            languageCode: 'hi',
-            components,
-          })
-          whatsappMessageId = waResponse.messages?.[0]?.id
-        } catch (err: any) {
-          whatsappError = err.message || String(err)
-        }
-      } else {
-        whatsappError = 'WhatsApp account not connected for business'
+      try {
+        const formattedPhone = formatPhoneForWhatsApp(invoice.customer.phone)
+        const waResponse = await sendTemplateMessage({
+          to: formattedPhone,
+          templateName,
+          languageCode: 'en_US',
+          components,
+          phoneNumberId: useBusinessWhatsApp ? invoice.business.waPhoneId || undefined : undefined,
+        })
+        whatsappMessageId = waResponse.messages?.[0]?.id
+      } catch (err: any) {
+        whatsappError = err.message || String(err)
       }
     }
 
@@ -278,3 +279,18 @@ export class ReminderService {
     }
   }
 }
+
+/**
+ * Cleans and formats phone numbers for the WhatsApp Cloud API.
+ * Strips all non-digit characters and prefixes 10-digit Indian numbers with the '91' country code.
+ */
+export function formatPhoneForWhatsApp(phone: string): string {
+  let cleaned = phone.replace(/\D/g, '')
+
+  if (cleaned.length === 10 && /^[6-9]/.test(cleaned)) {
+    cleaned = '91' + cleaned
+  }
+
+  return cleaned
+}
+

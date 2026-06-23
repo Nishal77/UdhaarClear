@@ -1,5 +1,5 @@
 export const TEMPLATE_NAMES = {
-  GENTLE:           'payment_reminder_gentle',
+  GENTLE:           'invoice_update_alert',
   FIRM:             'payment_reminder_firm',
   LEGAL_28:         'payment_reminder_legal_28',   // 7-day window — formal demand
   LEGAL_35:         'payment_reminder_legal_35',   // 48-hour ultimatum
@@ -10,7 +10,9 @@ export const TEMPLATE_NAMES = {
 export type TemplateName = (typeof TEMPLATE_NAMES)[keyof typeof TEMPLATE_NAMES]
 
 export interface TemplateComponent {
-  type: 'body'
+  type: 'body' | 'button'
+  sub_type?: 'url'
+  index?: number
   parameters: Array<{ type: 'text'; text: string }>
 }
 
@@ -22,9 +24,11 @@ export function getLegalTemplateName(daysOverdue: number): string {
 }
 
 // ─── GENTLE ─────────────────────────────────────────────────────────────────
-// Template body (pre-approved by Meta):
-// Hi {{1}}, your invoice {{2}} from {{3}} for {{4}} is due on {{5}}.
-// Pay here: {{6}}
+// Template: invoice_update_alert (registered under MARKETING category)
+// Body: Hi {{customer_name}}, this is a payment notification from {{business_name}} regarding invoice #{{invoice_number}}.
+//       Amount Due: {{amount}}
+//       Due Date: {{due_date}}
+// Button: dynamic Pay Now CTA linking to https://udhaarclear.in/pay/{{invoice_id}}
 
 export function buildGentleComponents(params: {
   customerName: string
@@ -33,18 +37,25 @@ export function buildGentleComponents(params: {
   invoiceDate: string
   amount: string
   dueDate: string
-  paymentLink: string
+  invoiceId: string
 }): TemplateComponent[] {
   return [
     {
       type: 'body',
       parameters: [
         { type: 'text', text: params.customerName },
-        { type: 'text', text: params.invoiceNumber },
         { type: 'text', text: params.businessName },
+        { type: 'text', text: params.invoiceNumber },
         { type: 'text', text: params.amount },
         { type: 'text', text: params.dueDate },
-        { type: 'text', text: params.paymentLink },
+      ],
+    },
+    {
+      type: 'button',
+      sub_type: 'url',
+      index: 0,
+      parameters: [
+        { type: 'text', text: params.invoiceId },
       ],
     },
   ]

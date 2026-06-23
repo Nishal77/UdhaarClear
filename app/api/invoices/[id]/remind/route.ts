@@ -12,7 +12,20 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   const { id } = await params
 
   const body = await request.json().catch(() => ({}))
-  const channel: 'whatsapp' | 'email' | 'both' = body.channel ?? 'both'
+  
+  // Normalize channel
+  const rawChannel = String(body.channel || '').toUpperCase()
+  const channel: 'WHATSAPP' | 'EMAIL' | 'BOTH' = 
+    rawChannel === 'WHATSAPP' || rawChannel === 'EMAIL' || rawChannel === 'BOTH'
+      ? rawChannel
+      : 'BOTH'
+
+  // Normalize tone
+  const rawTone = String(body.tone || '').toUpperCase()
+  const tone: 'GENTLE' | 'FIRM' | 'LEGAL' | undefined =
+    rawTone === 'GENTLE' || rawTone === 'FIRM' || rawTone === 'LEGAL'
+      ? rawTone
+      : undefined
 
   const invoice = await prisma.invoice.findFirst({
     where: { id, businessId: session.businessId },
@@ -21,8 +34,8 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   if (!invoice) return apiError('NOT_FOUND', 'Invoice not found', 404)
 
   // Validation: Check customer email address if email is requested
-  if ((channel === 'email' || channel === 'both') && !invoice.customer.email) {
-    if (channel === 'email') {
+  if ((channel === 'EMAIL' || channel === 'BOTH') && !invoice.customer.email) {
+    if (channel === 'EMAIL') {
       return apiError('NO_EMAIL', 'This customer has no email address on file', 422)
     }
   }
@@ -39,17 +52,10 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   }
 
   try {
-    const channelMap = {
-      whatsapp: 'WHATSAPP',
-      email: 'EMAIL',
-      both: 'BOTH',
-    } as const
-
-    const mappedChannel = channelMap[channel] ?? 'BOTH'
-
     const results = await ReminderService.sendReminder({
       invoiceId: id,
-      channel: mappedChannel,
+      channel,
+      tone,
       triggeredBy: 'MANUAL',
     })
 

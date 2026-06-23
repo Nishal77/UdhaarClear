@@ -80,7 +80,6 @@ export async function POST(request: Request) {
     const token = await signOtpSession({
       name: user.name,
       email,
-      password: '',
       otp,
     })
 

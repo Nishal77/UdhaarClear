@@ -7,20 +7,31 @@ export interface SendTemplateParams {
   templateName: string
   languageCode?: string
   components: TemplateComponent[]
+  phoneNumberId?: string
+  accessToken?: string
 }
 
 export async function sendTemplateMessage({
   to,
   templateName,
-  languageCode = 'hi',
+  languageCode = 'en_US',
   components,
+  phoneNumberId,
+  accessToken,
 }: SendTemplateParams): Promise<{ messages: Array<{ id: string }> }> {
+  const activePhoneId = phoneNumberId || process.env.WHATSAPP_PHONE_NUMBER_ID
+  const activeToken = accessToken || process.env.WHATSAPP_ACCESS_TOKEN
+
+  if (!activePhoneId || !activeToken) {
+    throw new Error('WhatsApp API credentials are not configured')
+  }
+
   const response = await fetch(
-    `${WHATSAPP_API_BASE}/${process.env.WHATSAPP_PHONE_NUMBER_ID}/messages`,
+    `${WHATSAPP_API_BASE}/${activePhoneId}/messages`,
     {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${process.env.WHATSAPP_ACCESS_TOKEN}`,
+        Authorization: `Bearer ${activeToken}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({

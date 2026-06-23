@@ -32,40 +32,63 @@ export default function InvoiceDetailPage() {
   const [markingPaid, setMarkingPaid] = useState(false)
   const [rejecting, setRejecting] = useState(false)
 
-  useEffect(() => {
+  // Reminder Modal States
+  const [showReminderModal, setShowReminderModal] = useState(false)
+  const [selectedChannel, setSelectedChannel] = useState<'WHATSAPP' | 'EMAIL' | 'BOTH'>('BOTH')
+  const [selectedTone, setSelectedTone] = useState<'AUTO' | 'GENTLE' | 'FIRM' | 'LEGAL'>('AUTO')
+
+  const loadInvoice = (isInitial = false) => {
     fetch(`/api/invoices/${id}`)
       .then((r) => r.json())
       .then((d) => {
         setInvoice(d.invoice)
         if (d.invoice) {
-          triggerActivityToast({
-            type: 'opened',
-            customerName: d.invoice.customer.name,
-            detail: `Invoice #${d.invoice.invoiceNumber} opened`
-          })
+          // If customer has no email, force default to WhatsApp
+          if (!d.invoice.customer.email) {
+            setSelectedChannel('WHATSAPP')
+          }
+          if (isInitial) {
+            triggerActivityToast({
+              type: 'opened',
+              customerName: d.invoice.customer.name,
+              detail: `Invoice #${d.invoice.invoiceNumber} opened`
+            })
+          }
         }
       })
       .finally(() => setLoading(false))
+  }
+
+  useEffect(() => {
+    loadInvoice(true)
   }, [id])
 
-  async function sendReminder() {
+  async function sendReminder(channel: 'WHATSAPP' | 'EMAIL' | 'BOTH', tone: 'AUTO' | 'GENTLE' | 'FIRM' | 'LEGAL') {
     setSending(true)
     try {
-      const res = await fetch(`/api/invoices/${id}/remind`, { method: 'POST' })
+      const res = await fetch(`/api/invoices/${id}/remind`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          channel,
+          tone: tone === 'AUTO' ? undefined : tone,
+        }),
+      })
       if (!res.ok) {
         const err = await res.json()
-        toast.error(err.message)
+        toast.error(err.message || 'Failed to send reminder')
         return
       }
-      toast.success('Reminder sent via WhatsApp & Email')
+      toast.success(`Reminder sent via ${channel === 'BOTH' ? 'WhatsApp & Email' : channel}`)
       if (invoice) {
         triggerActivityToast({
           type: 'reminder',
           customerName: invoice.customer.name,
-          detail: 'WhatsApp & Email reminder sent'
+          detail: `${channel === 'BOTH' ? 'WhatsApp & Email' : channel} reminder sent`
         })
       }
-      router.refresh()
+      setShowReminderModal(false)
+      loadInvoice()
     } finally {
       setSending(false)
     }
@@ -124,6 +147,16 @@ export default function InvoiceDetailPage() {
 
   const days = daysOverdue(invoice.dueDate)
   const isPaid = ['PAID', 'WRITTEN_OFF'].includes(invoice.status)
+
+  // Tone calculations for custom modal preview
+  const autoTone = invoice.reminderTone === 'LEGAL'
+    ? 'LEGAL'
+    : days <= 7
+    ? 'GENTLE'
+    : days <= 27
+    ? 'FIRM'
+    : 'LEGAL'
+  const currentTone = selectedTone === 'AUTO' ? autoTone : selectedTone
 
   return (
     <div className="space-y-4 w-full">
@@ -219,9 +252,8 @@ export default function InvoiceDetailPage() {
             {!isPaid && (
               <>
                 <button
-                  onClick={sendReminder}
-                  disabled={sending}
-                  className="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-[#FF6A39] to-[#FF845A] hover:from-[#E05B2E] hover:to-[#FF6A39] active:from-[#C7481E] active:to-[#E05B2E] px-4 py-2.5 text-[13px] font-semibold text-white transition-all duration-200 disabled:opacity-50 disabled:pointer-events-none cursor-pointer select-none"
+                  onClick={() => setShowReminderModal(true)}
+                  className="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-[#FF6A39] to-[#FF845A] hover:from-[#E05B2E] hover:to-[#FF6A39] active:from-[#C7481E] active:to-[#E05B2E] px-4 py-2.5 text-[13px] font-semibold text-white transition-all duration-200 cursor-pointer select-none"
                 >
                   <div className="flex items-center -space-x-2.5">
                     <WhatsAppIconCustom className="w-6 h-6 shrink-0 relative z-10" />
@@ -230,7 +262,7 @@ export default function InvoiceDetailPage() {
                     </div>
                   </div>
                   <span className="tracking-wide">
-                    {sending ? 'Sending...' : 'Send Reminder'}
+                    Send Reminder
                   </span>
                 </button>
                 <div className="flex items-center gap-1.5 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 px-3.5 py-2.5 text-[13px] font-semibold text-gray-700 transition-all select-none cursor-pointer">
@@ -421,6 +453,147 @@ export default function InvoiceDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* --- RENDER REMINDER MODAL --- */}
+      {showReminderModal && invoice && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 z-50 select-none animate-in fade-in duration-200">
+          <div className="bg-white rounded-3xl border border-gray-100 shadow-2xl max-w-md w-full overflow-hidden flex flex-col transform transition-all duration-300 scale-100">
+            {/* Modal Header */}
+            <div className="px-6 pt-6 pb-4 flex items-start justify-between border-b border-gray-50">
+              <div>
+                <h3 className="text-lg font-bold text-gray-900">Send Payment Reminder</h3>
+                <p className="text-xs text-gray-555 mt-1 font-medium">Configure channels and message tone for this notification.</p>
+              </div>
+              <button 
+                onClick={() => setShowReminderModal(false)}
+                className="text-gray-400 hover:text-gray-600 transition-colors p-1 rounded-lg hover:bg-gray-55 cursor-pointer text-xl font-bold leading-none"
+              >
+                &times;
+              </button>
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-6 space-y-5">
+              {/* Channel Selection */}
+              <div>
+                <label className="text-[10px] font-bold text-gray-400 tracking-wider uppercase block mb-2">Delivery Channels</label>
+                <div className="grid grid-cols-3 gap-2.5">
+                  {/* WhatsApp */}
+                  <button
+                    type="button"
+                    onClick={() => setSelectedChannel('WHATSAPP')}
+                    className={`flex flex-col items-center justify-center p-3 rounded-2xl border-2 transition-all cursor-pointer ${
+                      selectedChannel === 'WHATSAPP'
+                        ? 'border-emerald-500 bg-emerald-50/20 text-emerald-700 font-bold'
+                        : 'border-gray-100 hover:border-gray-200 text-gray-600 bg-white'
+                    }`}
+                  >
+                    <WhatsAppIconCustom className="w-6 h-6 mb-1.5" />
+                    <span className="text-xs">WhatsApp</span>
+                  </button>
+
+                  {/* Email */}
+                  <button
+                    type="button"
+                    disabled={!invoice.customer.email}
+                    onClick={() => setSelectedChannel('EMAIL')}
+                    className={`flex flex-col items-center justify-center p-3 rounded-2xl border-2 transition-all cursor-pointer disabled:opacity-40 disabled:pointer-events-none ${
+                      selectedChannel === 'EMAIL'
+                        ? 'border-indigo-500 bg-indigo-50/20 text-indigo-700 font-bold'
+                        : 'border-gray-100 hover:border-gray-200 text-gray-600 bg-white'
+                    }`}
+                  >
+                    <div className="h-6 w-6 flex items-center justify-center mb-1.5">
+                      <GmailIconCustom className="w-[18px] h-[14px]" />
+                    </div>
+                    <span className="text-xs">Email</span>
+                  </button>
+
+                  {/* Both */}
+                  <button
+                    type="button"
+                    disabled={!invoice.customer.email}
+                    onClick={() => setSelectedChannel('BOTH')}
+                    className={`flex flex-col items-center justify-center p-3 rounded-2xl border-2 transition-all cursor-pointer disabled:opacity-40 disabled:pointer-events-none ${
+                      selectedChannel === 'BOTH'
+                        ? 'border-[#FF6A39] bg-[#FF6A39]/5 text-[#FF6A39] font-bold'
+                        : 'border-gray-100 hover:border-gray-200 text-gray-600 bg-white'
+                    }`}
+                  >
+                    <div className="flex items-center -space-x-1.5 mb-1.5">
+                      <WhatsAppIconCustom className="w-5 h-5 shrink-0" />
+                      <div className="h-5 w-5 rounded-full bg-white flex items-center justify-center shadow-xs border border-gray-100">
+                        <GmailIconCustom className="w-[12px] h-[9px]" />
+                      </div>
+                    </div>
+                    <span className="text-xs">Both Channels</span>
+                  </button>
+                </div>
+                {!invoice.customer.email && (
+                  <p className="text-[11px] text-amber-600 font-medium mt-2">
+                    ⚠️ Customer has no email address on file. Channel limited to WhatsApp.
+                  </p>
+                )}
+              </div>
+
+              {/* Tone Selection */}
+              <div>
+                <label className="text-[10px] font-bold text-gray-400 tracking-wider uppercase block mb-2">Reminder Tone</label>
+                <div className="grid grid-cols-4 gap-1.5">
+                  {[
+                    { value: 'AUTO', label: `Auto: ${autoTone}` },
+                    { value: 'GENTLE', label: 'Gentle' },
+                    { value: 'FIRM', label: 'Firm' },
+                    { value: 'LEGAL', label: 'Legal' },
+                  ].map((t) => (
+                    <button
+                      key={t.value}
+                      type="button"
+                      onClick={() => setSelectedTone(t.value as any)}
+                      className={`py-2 px-1 text-center rounded-xl text-xs font-bold transition-all cursor-pointer border ${
+                        selectedTone === t.value
+                          ? 'bg-gray-900 border-gray-900 text-white shadow-xs'
+                          : 'bg-gray-50 border-gray-200 hover:bg-gray-100 text-gray-650'
+                      }`}
+                    >
+                      {t.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Dynamic Preview Snippet */}
+              <div className="bg-gray-50 rounded-2xl border border-gray-100 p-4">
+                <span className="text-[10px] font-bold text-gray-400 tracking-wider uppercase block mb-1">Message Preview</span>
+                <p className="text-xs text-gray-600 leading-relaxed font-semibold">
+                  {currentTone === 'GENTLE' && `Hi ${invoice.customer.contactName || invoice.customer.name}, invoice ${invoice.invoiceNumber} from ${invoice.business.name} for ${formatINRCompact(Number(invoice.amount))} is due on ${formatDate(invoice.dueDate)}. Pay: ${window.location.origin}/pay/${invoice.id}`}
+                  {currentTone === 'FIRM' && `Dear ${invoice.customer.contactName || invoice.customer.name}, invoice ${invoice.invoiceNumber} from ${invoice.business.name} for ${formatINRCompact(Number(invoice.amount))} is ${days > 0 ? `${days} days overdue` : 'due soon'}. Please pay by next week: ${window.location.origin}/pay/${invoice.id}`}
+                  {currentTone === 'LEGAL' && `⚠️ Dear ${invoice.customer.contactName || invoice.customer.name}, formal legal notice has been sent. Invoice ${invoice.invoiceNumber} for ${formatINRCompact(Number(invoice.amount))} is overdue. Pay immediately.`}
+                </p>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-end gap-2.5">
+              <button
+                type="button"
+                onClick={() => setShowReminderModal(false)}
+                className="px-4 py-2.5 rounded-xl border border-gray-200 bg-white text-gray-700 font-semibold text-xs transition-all hover:bg-gray-50 cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => sendReminder(selectedChannel, selectedTone)}
+                disabled={sending}
+                className="px-5 py-2.5 rounded-xl bg-[#FF6A39] hover:bg-[#E05B2E] text-white font-semibold text-xs transition-all shadow-sm flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+              >
+                {sending ? 'Sending...' : 'Confirm & Send'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
