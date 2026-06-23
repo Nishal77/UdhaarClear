@@ -4,6 +4,7 @@ import { generateOtp, signOtpSession, COOKIE_NAME } from '@/lib/auth/otp-cookie'
 import { sendEmail } from '@/lib/email/client'
 import { otpVerificationEmail } from '@/lib/email/templates/otp-verification'
 import { prisma } from '@/lib/prisma/client'
+import { getClientIp, checkRateLimit } from '@/lib/auth/rate-limit'
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email'),
@@ -20,7 +21,27 @@ export async function POST(request: Request) {
 
     const { email } = parsed.data
 
-    // 1. Verify user exists in the database
+    const ip = await getClientIp()
+
+    // 1. Enforce IP-based rate limiting (max 10 requests per 10 minutes)
+    const ipLimit = await checkRateLimit(`rate_limit:login:ip:${ip}`, 10, 10 * 60 * 1000)
+    if (!ipLimit.ok) {
+      return NextResponse.json(
+        { error: 'Too many requests from this device. Please try again in 10 minutes.' },
+        { status: 429 }
+      )
+    }
+
+    // 2. Enforce email-based rate limiting (max 5 requests per 10 minutes)
+    const emailLimit = await checkRateLimit(`rate_limit:login:email:${email}`, 5, 10 * 60 * 1000)
+    if (!emailLimit.ok) {
+      return NextResponse.json(
+        { error: 'Too many verification code requests for this email. Please try again in 10 minutes.' },
+        { status: 429 }
+      )
+    }
+
+    // 3. Verify user exists in the database
     const user = await prisma.user.findUnique({
       where: { email },
     })
@@ -32,10 +53,15 @@ export async function POST(request: Request) {
       )
     }
 
-    // 2. Generate custom 6-digit OTP
+    // 4. Invalidate/delete any previous active OTP sessions for this email to prevent reuse
+    await prisma.otpSession.deleteMany({
+      where: { email },
+    })
+
+    // 5. Generate custom 6-digit OTP
     const otp = generateOtp()
 
-    // 3. Send branded email using Resend
+    // 6. Send branded email using Resend
     try {
       await sendEmail({
         to: email,
@@ -50,12 +76,11 @@ export async function POST(request: Request) {
       )
     }
 
-    // 4. Create and set OTP session cookie
-    // Since we generate the link on verify, we don't need a tokenHash here yet
-    const token = signOtpSession({
+    // 7. Create and set OTP session cookie
+    const token = await signOtpSession({
       name: user.name,
       email,
-      password: '', // tokenHash will be generated on login-verify
+      password: '',
       otp,
     })
 
@@ -70,10 +95,10 @@ export async function POST(request: Request) {
     })
 
     return response
-  } catch (error) {
+  } catch (error: any) {
     console.error('Login error:', error)
     return NextResponse.json(
-      { error: 'An unexpected error occurred. Please try again.' },
+      { error: error?.message || 'An unexpected error occurred. Please try again.' },
       { status: 500 }
     )
   }

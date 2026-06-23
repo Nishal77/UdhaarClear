@@ -20,8 +20,8 @@ export default function LandingPage() {
       <main>
         <Hero />
         <HowItWorks />
-        <ToolsIntegration />
         <Comparison />
+        <ToolsIntegration />
         <Workflow />
         <Features />
         <Integrations />
