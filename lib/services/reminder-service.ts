@@ -98,7 +98,7 @@ export class ReminderService {
         invoiceDate: formatDate(invoice.invoiceDate),
         amount,
         dueDate: formatDate(invoice.dueDate),
-        paymentLink: paymentLink ?? '',
+        invoiceId: invoice.id,
       })
       messageBody = `Hi ${customerName}, invoice ${invoice.invoiceNumber} from ${invoice.business.name} for ${amount} is ${days <= 0 ? `due on ${formatDate(invoice.dueDate)}` : `${days} days overdue`}. Pay: ${paymentLink}`
     } else if (tone === 'FIRM') {

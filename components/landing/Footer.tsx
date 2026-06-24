@@ -22,11 +22,11 @@ export default function Footer() {
 
           {/* Left Text Column */}
           <div className="flex flex-col items-start gap-4 max-w-3xl text-left">
-            <span className="font-mono text-[10.5px] font-extrabold tracking-[0.22em] text-[#CCFC7D] uppercase">
+            {/* <span className="font-mono text-[10.5px] font-extrabold tracking-[0.22em] text-[#CCFC7D] uppercase">
               TAKE CONTROL OF YOUR CASH FLOW
-            </span>
+            </span> */}
             <h2 className="text-3xl md:text-5xl lg:text-[2.85rem] font-bold tracking-tight leading-[1.12] font-outfit text-white">
-              The Work Is Done.
+              The Work Is Done. <br />
               Now Let's Get You Paid.
             </h2>
           </div>
@@ -35,19 +35,19 @@ export default function Footer() {
           <div className="flex flex-row flex-wrap items-center gap-4.5 shrink-0">
             <Link
               href="/signup"
-              className="inline-flex items-center justify-center gap-2 bg-white text-gray-950 px-7 py-4 rounded-full font-bold hover:bg-gray-50 active:scale-95 transition-all duration-200 text-[14.5px] font-sans shadow-[0_4px_20px_rgba(0,0,0,0.08)]"
+              className="inline-flex items-center justify-center gap-2 bg-white text-gray-950 px-7 py-4 rounded-full font-medium hover:bg-gray-50 active:scale-95 transition-all duration-200 text-[14.5px] font-sans shadow-[0_4px_20px_rgba(0,0,0,0.08)]"
             >
               <span>Start recovering</span>
-              <svg className="w-4 h-4 text-gray-950" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+              <svg className="w-4 h-4 text-gray-950" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M9 5l7 7-7 7" />
               </svg>
             </Link>
             <Link
               href="/signup"
-              className="inline-flex items-center justify-center gap-2 bg-gray-950 text-white px-7 py-4 rounded-full font-bold hover:bg-zinc-900 active:scale-95 transition-all duration-200 text-[14.5px] font-sans shadow-[0_4px_20px_rgba(0,0,0,0.15)] border border-white/5"
+              className="inline-flex items-center justify-center gap-2 bg-gray-950 text-white px-7 py-4 rounded-full font-medium hover:bg-zinc-900 active:scale-95 transition-all duration-200 text-[14.5px] font-sans shadow-[0_4px_20px_rgba(0,0,0,0.15)] border border-white/5"
             >
               <span>Contact sales</span>
-              <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+              <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M9 5l7 7-7 7" />
               </svg>
             </Link>

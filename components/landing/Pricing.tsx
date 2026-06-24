@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import { Check } from "lucide-react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ShoppingCart02Icon, ArrowRight02Icon } from "@hugeicons/core-free-icons";
@@ -11,12 +12,6 @@ export default function Pricing() {
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "yearly">("monthly");
   const [collapsedCategories, setCollapsedCategories] = useState<Record<number, boolean>>({});
 
-  const toggleCategory = (idx: number) => {
-    setCollapsedCategories((prev) => ({
-      ...prev,
-      [idx]: !prev[idx],
-    }));
-  };
 
   const plans = [
     {
@@ -26,56 +21,35 @@ export default function Pricing() {
       yearlyPrice: 0,
       periodLabel: {
         monthly: "/month",
-        yearly: "/mo",
-      },
-      billingLabel: {
-        monthly: "Billed Per Month",
-        yearly: "Free Forever",
+        yearly: "/month",
       },
       badge: null,
       isHighlighted: false,
-      bgColor: "bg-[#EDEDED]",
-      textColor: "text-gray-900",
-      descColor: "text-gray-500",
-      priceColor: "text-gray-900",
       features: [
-        "3 Active Invoices /month",
-        "Manual Ledger Uploads",
-        "Standard Email Reminders",
-        "Basic MSME Dues Calculator",
-        "UPI Payout Checkout",
-        "Unlimited View Seats",
+        "Up to 15 active customers",
+        "30 automated PDF invoices/mo",
+        "Smart WhatsApp alerts (standard)",
+        "UPI & bank payment collection",
       ],
-      checkBg: "border-gray-400 text-gray-700",
     },
     {
       name: "Starter",
-      description: "Small traders and retail merchants establishing recovery sequences.",
-      monthlyPrice: 999,
-      yearlyPrice: 799,
+      description: "Small traders and retail merchants establishing automated recovery sequences.",
+      monthlyPrice: 799,
+      yearlyPrice: 599,
       periodLabel: {
         monthly: "/month",
-        yearly: "/mo",
-      },
-      billingLabel: {
-        monthly: "Billed Per Month",
-        yearly: "billed annually — save ₹2,400",
+        yearly: "/month",
       },
       badge: null,
       isHighlighted: false,
-      bgColor: "bg-[#EDEDED]",
-      textColor: "text-gray-900",
-      descColor: "text-gray-500",
-      priceColor: "text-gray-900",
       features: [
-        "25 Active Invoices /month",
-        "Automated WhatsApp Alerts",
-        "Tally & Zoho Utility Sync",
-        "Basic AI Tone Engine (Reminders)",
-        "Court-Ready MSME Interest Logs",
-        "Standard Chat Support",
+        "Up to 50 active customers",
+        "150 automated PDF invoices/mo",
+        "Tone-escalation reminder engine",
+        "Custom reminder schedules",
+        "Daily morning email digest",
       ],
-      checkBg: "border-gray-400 text-gray-700",
     },
     {
       name: "Growth",
@@ -84,216 +58,106 @@ export default function Pricing() {
       yearlyPrice: 1999,
       periodLabel: {
         monthly: "/month",
-        yearly: "/mo",
+        yearly: "/month",
       },
-      billingLabel: {
-        monthly: "Billed Per Month",
-        yearly: "billed annually — save ₹6,000",
-      },
-      badge: "POPULAR",
+      badge: "Most popular",
       isHighlighted: true,
-      bgColor: "bg-[#4F46E5]",
-      textColor: "text-white",
-      descColor: "text-indigo-200",
-      priceColor: "text-white",
       features: [
-        "100 Active Invoices /month",
-        "Auto-Draft MSME Legal Notices",
-        "1-Click MSME Samadhaan Docs",
-        "Full AI Tone Engine (Escalation)",
-        "Daily AI Recovery Insights",
-        "Priority Support",
+        "Up to 250 active customers",
+        "Unlimited invoices & templates",
+        "15 advocate legal notices/mo",
+        "Tally Prime & Zoho Books sync",
+        "Aging heatmap & AI projections",
       ],
-      checkBg: "border-white/40 text-white",
     },
     {
-      name: "Professional",
+      name: "CA Pro",
       description: "Large manufacturers and CA Agencies managing multiple ledger networks.",
-      monthlyPrice: 6999,
-      yearlyPrice: 5599,
+      monthlyPrice: 4999,
+      yearlyPrice: 3999,
       periodLabel: {
         monthly: "/month",
-        yearly: "/mo",
-      },
-      billingLabel: {
-        monthly: "Billed Per Month",
-        yearly: "billed annually — save ₹16,800",
+        yearly: "/month",
       },
       badge: null,
       isHighlighted: false,
-      bgColor: "bg-[#EDEDED]",
-      textColor: "text-gray-900",
-      descColor: "text-gray-500",
-      priceColor: "text-gray-900",
       features: [
-        "500 Active Invoices /month",
-        "Dedicated WABA Connection",
-        "AI Cash Flow & Forecast Reports",
-        "Custom API & ERP Integrations",
-        "Multi-tenant CA/Agency Console",
-        "Dedicated Account Manager",
-      ],
-      checkBg: "border-gray-400 text-gray-700",
-    },
-  ];
-
-  const comparePlans = [
-    {
-      name: "Free",
-      key: "free",
-      monthlyPrice: 0,
-      yearlyPrice: 0,
-      periodLabel: {
-        monthly: "/month",
-        yearly: "/mo",
-      },
-      isHighlighted: false,
-    },
-    {
-      name: "Starter",
-      key: "starter",
-      monthlyPrice: 999,
-      yearlyPrice: 799,
-      periodLabel: {
-        monthly: "/month",
-        yearly: "/mo",
-      },
-      isHighlighted: false,
-    },
-    {
-      name: "Growth",
-      key: "growth",
-      monthlyPrice: 2499,
-      yearlyPrice: 1999,
-      periodLabel: {
-        monthly: "/month",
-        yearly: "/mo",
-      },
-      isHighlighted: true,
-    },
-    {
-      name: "Professional",
-      key: "professional",
-      monthlyPrice: 6999,
-      yearlyPrice: 5599,
-      periodLabel: {
-        monthly: "/month",
-        yearly: "/mo",
-      },
-      isHighlighted: false,
-    },
-    {
-      name: "Enterprise",
-      key: "enterprise",
-      monthlyPrice: "Custom",
-      yearlyPrice: "Custom",
-      periodLabel: {
-        monthly: "",
-        yearly: "",
-      },
-      isHighlighted: false,
-    },
-  ];
-
-  const categories = [
-    {
-      name: "Invoices & Customers",
-      features: [
-        { name: "Active invoices", free: "Up to 3", starter: "Up to 25", growth: "Up to 100", professional: "Up to 500", enterprise: "Unlimited" },
-        { name: "Customer profiles", free: "Yes", starter: "Yes", growth: "Yes", professional: "Yes", enterprise: "Yes" },
-        { name: "Customer health scores", free: "Basic", starter: "Basic", growth: "Full (AI)", professional: "Full + AI Insights", enterprise: "Custom + Predictive" },
-        { name: "Excel / CSV import", free: "Yes", starter: "Yes", growth: "Yes", professional: "Yes", enterprise: "Yes" },
-        { name: "Tally & Zoho Sync", free: "No", starter: "Yes", growth: "Yes", professional: "Yes", enterprise: "Yes" },
-      ],
-    },
-    {
-      name: "WhatsApp Reminders",
-      features: [
-        { name: "WhatsApp reminders (Meta API)", free: "No", starter: "1,000/mo", growth: "5,000/mo", professional: "25,000/mo", enterprise: "Unlimited" },
-        { name: "Razorpay UPI in every message", free: "Yes", starter: "Yes", growth: "Yes", professional: "Yes", enterprise: "Yes" },
-        { name: "AI Tone Engine (3 phases)", free: "No", starter: "Basic AI", growth: "Full AI (Auto)", professional: "Full + Custom Tuning", enterprise: "Fully Customized" },
-        { name: "Custom message templates", free: "No", starter: "No", growth: "Yes", professional: "Yes", enterprise: "Yes" },
-        { name: "Read receipt tracking", free: "Yes", starter: "Yes", growth: "Yes", professional: "Yes", enterprise: "Yes" },
-        { name: "UPI link tap tracking", free: "Yes", starter: "Yes", growth: "Yes", professional: "Yes", enterprise: "Yes" },
-        { name: "Scheduled reminder timing", free: "Default only", starter: "Default only", growth: "Custom", professional: "Custom", enterprise: "Advanced Queue" },
-      ],
-    },
-    {
-      name: "Legal & MSME (Exclusive)",
-      features: [
-        { name: "Legal notice (MSME Act 2006)", free: "No", starter: "No", growth: "Yes — Auto Draft", professional: "Yes — Auto Draft", enterprise: "Advocate Drafted & Sent" },
-        { name: "MSME Samadhaan filing doc", free: "No", starter: "No", growth: "Yes (1-Click)", professional: "Yes (1-Click)", enterprise: "Full Portal Service" },
-        { name: "Compound interest calculation", free: "Yes (Standard)", starter: "Yes (MSME Sec 16)", growth: "Yes (MSME Sec 16)", professional: "Yes (MSME Sec 16)", enterprise: "Yes (Custom Terms)" },
-      ],
-    },
-    {
-      name: "Dashboard & Analytics",
-      features: [
-        { name: "Live recovery dashboard", free: "Yes", starter: "Yes", growth: "Yes", professional: "Yes", enterprise: "Yes" },
-        { name: "Recovery analytics & reports", free: "Basic", starter: "Basic", growth: "Full", professional: "Full + Export", enterprise: "Custom Analytics" },
-        { name: "AI predictive insights", free: "No", starter: "No", growth: "Daily insights", professional: "Cash flow predictions", enterprise: "Full ML Forecast" },
-        { name: "Invoice aging heatmap", free: "Yes", starter: "Yes", growth: "Yes", professional: "Yes", enterprise: "Yes" },
-        { name: "Daily email / WhatsApp summary", free: "No", starter: "No", growth: "Yes", professional: "Yes", enterprise: "Yes" },
-      ],
-    },
-    {
-      name: "Team & Access",
-      features: [
-        { name: "Team members / users", free: "1 user", starter: "1 user", growth: "Unlimited", professional: "Unlimited", enterprise: "Unlimited" },
-        { name: "Role-based permissions", free: "No", starter: "No", growth: "No", professional: "Yes", enterprise: "Yes" },
-        { name: "Multi-business accounts", free: "No", starter: "No", growth: "No", professional: "Up to 5 clients", enterprise: "Unlimited clients" },
-        { name: "White-label branding", free: "No", starter: "No", growth: "No", professional: "Yes — Included", enterprise: "Yes — Included" },
-      ],
-    },
-    {
-      name: "Support",
-      features: [
-        { name: "Customer support", free: "Email only", starter: "Chat support", growth: "Priority Support", professional: "Dedicated manager", enterprise: "24/7 Phone + Slack" },
-        { name: "Setup assistance", free: "Self-service", starter: "Self-service", growth: "Guided setup call", professional: "Full onboarding", enterprise: "White-glove migration" },
-      ],
-    },
-    {
-      name: "API & Reliability",
-      features: [
-        { name: "API access + webhooks", free: "No", starter: "No", growth: "No", professional: "Yes", enterprise: "Yes" },
-        { name: "SLA-backed uptime", free: "No", starter: "No", growth: "No", professional: "99.9% SLA", enterprise: "99.99% SLA" },
-        { name: "Free trial", free: "No", starter: "7 days free", growth: "7 days free", professional: "7 days free", enterprise: "Custom PoC" },
+        "Unlimited active customers",
+        "Manage up to 20 client consoles",
+        "Unlimited advocate legal notices",
+        "MSME Samadhaan filing helper",
+        "White-label client audit reports",
       ],
     },
   ];
 
-  const renderValue = (val: string, colKey: string) => {
+  const comparisonCategories = [
+    {
+      name: "Summary Overview",
+      features: [
+        { name: "Active Customers Limit", free: "15", starter: "50", growth: "250", capro: "Unlimited", enterprise: "Unlimited" },
+        { name: "Monthly Invoices", free: "30", starter: "150", growth: "Unlimited", capro: "Unlimited", enterprise: "Unlimited" },
+        { name: "Client Consoles (Entities)", free: "1", starter: "1", growth: "1", capro: "Up to 20", enterprise: "Custom / Unlimited" },
+        { name: "Staff User Seats", free: "1 (Owner)", starter: "2", growth: "5 (Role-based)", capro: "Unlimited", enterprise: "Unlimited" },
+        { name: "Standard Support", free: "Yes", starter: "Yes", growth: "Yes", capro: "Yes", enterprise: "Yes" },
+        { name: "24/7 Priority Support & SLA", free: "No", starter: "No", growth: "No", capro: "No", enterprise: "Yes" },
+      ]
+    },
+    {
+      name: "Feature Availability Comparison",
+      features: [
+        { name: "Manual Ledger / Bookkeeping", free: "Yes", starter: "Yes", growth: "Yes", capro: "Yes", enterprise: "Yes" },
+        { name: "Manual PDF Invoice Generation", free: "Yes", starter: "Yes", growth: "Yes", capro: "Yes", enterprise: "Yes" },
+        { name: "Manual Payment Collection Links", free: "Yes", starter: "Yes", growth: "Yes", capro: "Yes", enterprise: "Yes" },
+        { name: "Email Overdue Reminders", free: "Yes", starter: "Yes", growth: "Yes", capro: "Yes", enterprise: "Yes" },
+        { name: "Shared System WhatsApp Channel", free: "Yes", starter: "Yes", growth: "Yes", capro: "Yes", enterprise: "No" },
+        { name: "Daily Morning Email Digest", free: "No", starter: "Yes", growth: "Yes", capro: "Yes", enterprise: "Yes" },
+        { name: "Automatic Tone Escalation Engine", free: "No", starter: "Standard", growth: "Advanced", capro: "Advanced", enterprise: "Advanced" },
+        { name: "Custom Reminder Schedules", free: "No", starter: "Yes", growth: "Yes", capro: "Yes", enterprise: "Yes" },
+        { name: "Custom Invoice & Portal Branding", free: "No", starter: "Yes", growth: "Yes", capro: "Yes", enterprise: "Yes" },
+        { name: "Partial Payments Collection", free: "No", starter: "No", growth: "Yes", capro: "Yes", enterprise: "Yes" },
+        { name: "Aging Heatmap Analytics", free: "No", starter: "No", growth: "Yes", capro: "Yes", enterprise: "Yes" },
+        { name: "ML Cashflow Collection Forecast", free: "No", starter: "No", growth: "Yes", capro: "Yes", enterprise: "Yes" },
+        { name: "Pre-Litigation Advocate Notices", free: "No", starter: "No", growth: "Limit: 15/mo", capro: "Unlimited", enterprise: "Custom" },
+        { name: "Multi-Tenant CA Admin Dashboard", free: "No", starter: "No", growth: "No", capro: "Yes", enterprise: "Yes" },
+        { name: "MSME Samadhaan Filing Helper", free: "No", starter: "No", growth: "No", capro: "Yes", enterprise: "Yes" },
+        { name: "White-Label Client Audits/Reports", free: "No", starter: "No", growth: "No", capro: "Yes", enterprise: "Yes" },
+        { name: "Dedicated Account Success Manager", free: "No", starter: "No", growth: "No", capro: "No", enterprise: "Yes" },
+        { name: "Custom Corporate Legal Workflows", free: "No", starter: "No", growth: "No", capro: "No", enterprise: "Yes" },
+      ]
+    },
+    {
+      name: "Integrations & Deliverability Matrix",
+      features: [
+        { name: "Excel / CSV Data Import", free: "Yes", starter: "Yes", growth: "Yes", capro: "Yes", enterprise: "Yes" },
+        { name: "Direct UPI / Bank Transfer Page", free: "Yes", starter: "Yes", growth: "Yes", capro: "Yes", enterprise: "Yes" },
+        { name: "Cloud Storage Fetch (G-Drive/Box)", free: "No", starter: "Yes", growth: "Yes", capro: "Yes", enterprise: "Yes" },
+        { name: "Payment Gateway Links (Razorpay)", free: "No", starter: "No", growth: "Yes", capro: "Yes", enterprise: "Yes" },
+        { name: "Zoho Books Native Integration", free: "No", starter: "No", growth: "Yes", capro: "Yes", enterprise: "Yes" },
+        { name: "Tally Prime Local Sync Agent", free: "No", starter: "No", growth: "Yes", capro: "Yes", enterprise: "Yes" },
+        { name: "Vyapar & Khatabook Exports", free: "No", starter: "No", growth: "Yes", capro: "Yes", enterprise: "Yes" },
+        { name: "Custom REST API Access", free: "No", starter: "No", growth: "No", capro: "No", enterprise: "Yes" },
+        { name: "Custom Webhooks for Events", free: "No", starter: "No", growth: "No", capro: "No", enterprise: "Yes" },
+        { name: "Client Verified WhatsApp API (WABA)", free: "No", starter: "No", growth: "No", capro: "No", enterprise: "Yes" },
+        { name: "Custom Subdomains / Domains", free: "No", starter: "No", growth: "No", capro: "No", enterprise: "Yes" },
+        { name: "Enterprise ERP Sync (SAP, Oracle)", free: "No", starter: "No", growth: "No", capro: "No", enterprise: "Yes" },
+      ]
+    }
+  ];
+
+  const renderTableValue = (val: string) => {
     if (val === "Yes") {
       return (
-        <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-gray-800 text-white shadow-sm">
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="20 6 9 17 4 12" />
-          </svg>
-        </span>
+        <span className="text-[#0D8A4F] text-[15px] font-bold select-none">✓</span>
       );
     }
     if (val === "No") {
       return (
-        <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-gray-100 text-gray-400">
-          <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18" />
-            <line x1="6" y1="6" x2="18" y2="18" />
-          </svg>
-        </span>
+        <span className="text-gray-300 text-[15px] font-semibold select-none">✕</span>
       );
     }
-
-    const isScale = colKey === "growth" && (
-      val.includes("100") ||
-      val.includes("Full") ||
-      val.includes("Auto Draft") ||
-      val.includes("1-Click") ||
-      val.includes("Priority Support") ||
-      val.includes("Daily insights")
-    );
-
     return (
-      <span className={`text-xs md:text-sm font-medium ${isScale ? "text-gray-900 font-bold" : "text-gray-600"}`}>
+      <span className="text-gray-600 font-medium text-[13px] md:text-sm">
         {val}
       </span>
     );
@@ -311,97 +175,158 @@ export default function Pricing() {
         }}
       />
 
-      <div className="relative max-w-[1340px] mx-auto px-6 md:px-8 z-10 text-center">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-2xl border border-blue-200/60 bg-blue-50/40 text-[#0047FF] text-sm font-medium tracking-tight font-outfit mb-6">
-          <HugeiconsIcon icon={ShoppingCart02Icon} size={14} color="#0047FF" />
-          Pricing
-        </div>
+      <div className="relative max-w-[1340px] mx-auto px-6 md:px-8 z-10 text-left">
+        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 mb-12">
+          <div className="max-w-3xl">
+            <h1 className="text-4xl md:text-[3.5rem] font-normal text-gray-900 tracking-tight leading-[1.1] font-outfit">
+               One Recovered Invoice Can Pay for Your Plan Many Times Over.
+           
+            </h1>
+            <p className="text-base md:text-lg text-gray-500 font-normal mt-4">
+             Choose the plan that fits your business and let UdhaarClear follow up, collect, and keep your cash flow moving.
+            </p>
+          </div>
 
-        <h2 className="text-[2.75rem] md:text-[3.25rem] font-medium text-gray-900 tracking-tight leading-[1.15] font-outfit max-w-5xl mx-auto">
-          One Recovered Invoice Can Pay for Your Plan Many Times Over.
-        </h2>
-
-        <h3 className="text-[18px] md:text-lg font-medium mt-3 text-gray-600 tracking-tight leading-[1.15] font-outfit max-w-3xl mx-auto">
-          Choose the plan that fits your business and let UdhaarClear follow up, collect, and keep your cash flow moving.
-        </h3>
-
-        <div className="flex items-center justify-center gap-4 mt-10 mb-8">
-          <div className="relative flex bg-gray-100/80 p-1 rounded-full border border-gray-200/50">
-            <button
-              onClick={() => setBillingPeriod("monthly")}
-              className={`relative px-6 py-2 text-xs md:text-sm font-semibold rounded-full transition-all duration-300 ${billingPeriod === "monthly"
-                ? "bg-white text-gray-900"
-                : "text-gray-500 hover:text-gray-800"
-                }`}
+          <div className="flex flex-row items-center gap-3.5 shrink-0">
+            <Link
+              href="/signup"
+              className="px-6 py-3 bg-gray-950 hover:bg-zinc-900 text-white font-medium rounded-xl text-sm transition-all duration-200 active:scale-95 shadow-sm whitespace-nowrap cursor-pointer"
             >
-              Pay Monthly
-            </button>
+              Start for free
+            </Link>
             <button
-              onClick={() => setBillingPeriod("yearly")}
-              className={`relative px-6 py-2 text-xs md:text-sm font-semibold rounded-full transition-all duration-300 ${billingPeriod === "yearly"
-                ? "bg-white text-gray-900"
-                : "text-gray-500 hover:text-gray-800"
-                }`}
+              onClick={() => {
+                document.getElementById('compare-table')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="px-6 py-3 bg-white hover:bg-gray-50 border border-gray-200/80 text-gray-800 font-medium rounded-xl text-sm transition-all duration-200 active:scale-95 shadow-2xs flex items-center gap-2 whitespace-nowrap cursor-pointer"
             >
-              Pay Yearly & Save 20%
+              <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" />
+              </svg>
+              Compare plans
             </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-[1280px] mx-auto text-left items-stretch">
+        {/* Social Proof Bar */}
+        <div className="mb-20 w-full select-none border-t border-b border-gray-200/40 py-5">
+          <p className="text-sm md:text-base font-semibold text-gray-500 tracking-tight flex items-center justify-center gap-2">
+            <span className="inline-flex items-center justify-center w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            1,200+ Indian wholesalers and CAs trust UdhaarClear to protect their cash flow
+          </p>
+        </div>
+
+        {/* Centered Billing Selector */}
+        <div className="flex items-center justify-center gap-4 mt-10 mb-8">
+          <div className="relative flex bg-gray-100/80 p-1 rounded-2xl border border-gray-200/50">
+            <button
+              onClick={() => setBillingPeriod("monthly")}
+              className={`relative px-6 py-2 text-xs md:text-sm font-semibold rounded-xl transition-all duration-300 ${billingPeriod === "monthly"
+                ? "bg-white text-gray-900 shadow-3xs"
+                : "text-gray-500 hover:text-gray-800"
+                }`}
+            >
+              Monthly
+            </button>
+            <button
+              onClick={() => setBillingPeriod("yearly")}
+              className={`relative px-6 py-2 text-xs md:text-sm font-semibold rounded-xl transition-all duration-300 flex items-center gap-2 ${billingPeriod === "yearly"
+                ? "bg-white text-gray-900 shadow-3xs"
+                : "text-gray-500 hover:text-gray-800"
+                }`}
+            >
+              <span>Yearly</span>
+              <span className="bg-[#DFF7C7] text-gray-950 font-semibold px-2.5 py-0.5 rounded-full text-[10px] md:text-xs tracking-tight">
+                Save 20%
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-[1280px] mx-auto text-left items-stretch mt-10 lg:pt-[50px] lg:pb-6">
           {plans.map((plan, index) => {
             const price = billingPeriod === "monthly" ? plan.monthlyPrice : plan.yearlyPrice;
-            const periodLabel = plan.periodLabel[billingPeriod];
-            const billingLabel = plan.billingLabel[billingPeriod];
+            const isGrowth = plan.isHighlighted;
+
+            // Resolve dynamic buttons
+            let buttonBg = "bg-gray-950 text-white hover:bg-zinc-900";
+            let buttonText = "Start 7-day free trial";
+            let targetUrl = `/signup?plan=${plan.name.toLowerCase().replace(" ", "_")}`;
+
+            if (plan.name === "Free") {
+              buttonBg = "bg-white text-gray-900 border border-gray-200 shadow-2xs hover:bg-gray-50";
+              buttonText = "Get started";
+              targetUrl = "/signup";
+            } else if (isGrowth) {
+              buttonBg = "btn-premium-green text-white shadow-md hover:shadow-lg hover:brightness-110";
+            }
 
             return (
               <div
                 key={index}
-                className={`relative flex flex-col rounded-[2.2rem] overflow-hidden p-7 md:p-8 ${plan.bgColor} ${plan.textColor} shadow-sm`}
+                className={`flex flex-col rounded-[2rem] overflow-hidden transition-all duration-300 ${
+                  isGrowth 
+                    ? "bg-white border-2 border-[#0D8A4F]/80 lg:-mt-[37px] lg:z-10 shadow-[0_16px_48px_-4px_rgba(13,138,79,0.12)]" 
+                    : plan.name === "Free"
+                      ? "bg-[#EAE9E5] border border-transparent"
+                      : "bg-white border border-gray-200"
+                }`}
               >
-                <div className="relative z-10 flex flex-col mb-4 md:min-h-[110px]">
-                  <div className="flex items-center justify-between gap-2 mb-1.5">
-                    <h3 className="text-xl md:text-2xl font-medium font-outfit tracking-tight">
+                {/* Most Popular Header Bar */}
+                {isGrowth && (
+                  <div className="w-full btn-premium-green text-white text-center py-3 text-xs font-bold uppercase tracking-[0.15em] select-none border-b border-[#0D8A4F]/20 shadow-xs relative z-10">
+                    Most popular
+                  </div>
+                )}
+
+                <div className="p-7 flex flex-col justify-between flex-1">
+                  <div className="flex flex-col">
+                    {/* Top Badge */}
+                    <span className="px-3 py-1 rounded-full border border-gray-200/60 text-[11px] font-bold text-gray-500 bg-white w-fit mb-5  select-none">
                       {plan.name}
-                    </h3>
-                    {plan.badge && (
-                      <span className="bg-[#FF6B00] text-white text-[9px] font-bold px-2.5 py-0.5 rounded-full tracking-wider">
-                        {plan.badge}
-                      </span>
-                    )}
-                  </div>
-                  <p className={`text-xs md:text-sm font-medium ${plan.descColor} leading-relaxed`}>
-                    {plan.description}
-                  </p>
-                </div>
-
-                <div className="relative z-10 flex flex-col justify-end mb-6">
-                  <div className="flex items-baseline gap-0.5">
-                    <span className="text-4xl md:text-5xl font-medium tracking-tight font-outfit">
-                      ₹{price.toLocaleString("en-IN")}
                     </span>
-                    <span className="text-xs md:text-sm font-bold opacity-85">
-                      {periodLabel}
-                    </span>
+
+                    {/* Description */}
+                    <p className="text-[14px] text-gray-800 font-normal leading-relaxed mb-6 h-[48px] overflow-hidden">
+                      {plan.description}
+                    </p>
+
+                    {/* Price */}
+                    <div className="mb-6 flex flex-col">
+                      <div className="flex items-baseline gap-1 select-none font-outfit">
+                        <span className="text-4xl md:text-[2.75rem] font-medium tracking-tight text-gray-950">
+                          ₹{price.toLocaleString("en-IN")}
+                        </span>
+                        <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider ml-1">
+                          INR
+                        </span>
+                      </div>
+                      <span className="text-xs text-gray-400 font-semibold mt-2 block">
+                        {plan.name === "Free" ? "/forever" : "/month"}
+                      </span>
+                    </div>
+
+                    {/* CTA Button */}
+                    <Link
+                      href={targetUrl}
+                      className={`w-full py-3.5 ${buttonBg} font-semibold rounded-xl text-center text-xs md:text-sm transition-all duration-250 active:scale-97 mb-8 block`}
+                    >
+                      {buttonText}
+                    </Link>
+
+                    {/* Features Checklist */}
+                    <ul className="space-y-3.5 pt-6 border-t border-gray-200/40">
+                      {plan.features.map((feature, idx) => (
+                        <li key={idx} className="flex items-start gap-2.5 text-xs md:text-sm font-medium text-gray-700 leading-normal">
+                          <svg className={`w-4 h-4 shrink-0 mt-0.5 ${isGrowth ? "text-[#0D8A4F]" : "text-gray-900"}`} fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                          </svg>
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 </div>
-
-                <button
-                  className="relative z-10 w-full py-3.5 bg-[#000] text-white font-medium rounded-full text-center text-xs md:text-sm transition-all hover:bg-white/95 active:scale-95 duration-200 mb-8"
-                >
-                  Start 7-Days Free Trial
-                </button>
-
-                <ul className="relative z-10 space-y-4">
-                  {plan.features.map((feature, idx) => (
-                    <li key={idx} className="flex items-start gap-3 text-xs md:text-sm font-medium opacity-90 leading-tight">
-                      <span className={`flex-shrink-0 w-4 h-4 rounded-full border flex items-center justify-center mt-0.5 ${plan.checkBg}`}>
-                        <Check className="w-2.5 h-2.5" strokeWidth={3} />
-                      </span>
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
               </div>
             );
           })}
@@ -433,143 +358,188 @@ export default function Pricing() {
           </div>
         </div>
 
-        <div className="max-w-[1280px] mx-auto text-left mt-28">
+        <div id="compare-table" className="max-w-[1280px] mx-auto text-left mt-28">
+          <div className="flex flex-col mb-10 select-none">
+            <h3 className="text-2xl md:text-3xl font-semibold text-gray-900 font-outfit tracking-tight">
+              Full Comparison
+            </h3>
+            <p className="text-sm text-gray-500 font-normal mt-1">
+              Deep dive into limits, automation modules, legal frameworks, and ERP sync support.
+            </p>
+          </div>
           <div className="w-full overflow-x-auto lg:overflow-visible bg-transparent">
-            <div className="border border-gray-200/80 rounded-t-[22px] lg:overflow-visible bg-white shadow-xs min-w-[950px]">
-              <table className="w-full border-separate border-spacing-0 text-left">
-                <thead>
-                  <tr>
-                    <th className="bg-[#F9FAFB] border-b border-gray-200 w-[25%] sticky top-[70px] md:top-[96px] z-30 text-left rounded-tl-[22px] p-5 pr-4 align-middle">
-                      <div className="flex flex-col gap-1 justify-center h-full">
-                        <h4 className="text-xl md:text-2xl font-bold text-gray-900 font-outfit tracking-tight leading-tight">
-                          Compare plans
-                        </h4>
-                        <p className="text-xs md:text-sm text-gray-500 font-medium leading-relaxed mt-0.5">
-                          Compare detailed features across all plans.
-                        </p>
-                      </div>
-                    </th>
-
-                    {comparePlans.map((plan, idx) => {
-                      const price = billingPeriod === "monthly" ? plan.monthlyPrice : plan.yearlyPrice;
-                      const priceDisplay = typeof price === "number" ? `₹${price.toLocaleString("en-IN")}` : "ON DEMAND";
-                      const isHighlighted = plan.isHighlighted;
-                      const buttonText = plan.key === "enterprise" ? "Contact Us" : plan.key === "professional" ? "Get Started" : "Start Trial";
-                      const billingSubtext = billingPeriod === "monthly" ? "Billed monthly" : "Billed annually";
-                      const annualTotal = typeof plan.yearlyPrice === "number" && plan.yearlyPrice > 0
-                        ? `₹${(plan.yearlyPrice * 12).toLocaleString("en-IN")}/yr`
-                        : null;
-
-                      return (
-                        <th
-                          key={idx}
-                          className={`py-5 px-4 border-b border-gray-200 w-[15%] align-top text-center sticky top-[70px] md:top-[96px] z-30 border-l border-gray-200/50 ${isHighlighted ? "bg-[#F8FAFC]" : "bg-white"} ${idx === comparePlans.length - 1 ? "rounded-tr-[22px]" : ""}`}
+            <table className="w-full text-left border-separate border-spacing-0 min-w-[1000px] mb-12">
+              <thead className="sticky top-16 z-30 bg-white">
+                <tr className="bg-white">
+                  {/* Left Column: Billing Toggle */}
+                  <th className="py-6 px-4 bg-white align-middle w-[25%] shadow-[0_1px_0_0_#E2E8F0]">
+                    <div className="flex flex-col gap-2 select-none text-left">
+                      <span className="text-base font-medium text-gray-900 tracking-tight block font-outfit">
+                        Billing frequency
+                      </span>
+                      <div className="relative inline-flex bg-gray-100 p-1 rounded-xl border border-gray-200/50 w-fit">
+                        <button
+                          onClick={() => setBillingPeriod("yearly")}
+                          className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-200 cursor-pointer ${
+                            billingPeriod === "yearly"
+                              ? "bg-[#0D8A4F] text-white shadow-xs"
+                              : "text-gray-500 hover:text-gray-800"
+                          }`}
                         >
-                          <div className="flex flex-col items-center text-center w-full select-none gap-0.5">
-                            {/* "FREE PLAN" label */}
-                            <span className="text-[10px] md:text-[11px] font-bold text-gray-400 uppercase tracking-[0.12em] font-outfit">
-                              {plan.name} PLAN
-                            </span>
+                          Bill annually
+                        </button>
+                        <button
+                          onClick={() => setBillingPeriod("monthly")}
+                          className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-200 cursor-pointer ${
+                            billingPeriod === "monthly"
+                              ? "bg-[#0D8A4F] text-white shadow-xs"
+                              : "text-gray-500 hover:text-gray-800"
+                          }`}
+                        >
+                          Bill monthly
+                        </button>
+                      </div>
+                    </div>
+                  </th>
 
-                            {/* Price */}
-                            <div className="flex items-baseline justify-center gap-0.5 mt-1">
-                              {typeof price === "number" ? (
-                                <>
-                                  <span className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight font-outfit">
-                                    {priceDisplay}
-                                  </span>
-                                  {plan.periodLabel[billingPeriod] && (
-                                    <span className="text-xs md:text-sm font-semibold text-gray-500 ml-0.5">
-                                      {plan.periodLabel[billingPeriod]}
-                                    </span>
-                                  )}
-                                </>
-                              ) : (
-                                <span className="text-xl md:text-2xl font-bold text-gray-900 tracking-tight font-outfit">
-                                  Custom
-                                </span>
-                              )}
-                            </div>
+                  {/* Free Plan Card */}
+                  <th className="py-4 px-2 bg-white shadow-[0_1px_0_0_#E2E8F0] align-top w-[15%]">
+                    <div className="bg-white border border-gray-200/80 rounded-2xl p-5 text-left flex flex-col justify-between h-[155px] font-normal">
+                      <div>
+                        <span className="text-lg font-medium text-black block font-outfit">Free</span>
+                        <span className="text-[11px] text-gray-500 font-medium mt-1.5 block tracking-tight leading-tight">
+                          {billingPeriod === "yearly" ? "₹0 user/mo billed annually" : "₹0 user/mo billed monthly"}
+                        </span>
+                      </div>
+                      <Link
+                        href="/signup"
+                        className="mt-4 w-full py-2.5 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-50 text-xs font-semibold transition-all duration-150 active:scale-97 block text-center"
+                      >
+                        Get started
+                      </Link>
+                    </div>
+                  </th>
 
-                            {/* Billing subtext */}
-                            <div className="flex flex-col items-center mb-3">
-                              <span className="text-[10px] md:text-xs text-gray-400 font-medium">
-                                {plan.key === "enterprise" ? "Custom pricing" : billingSubtext}
-                              </span>
-                              {billingPeriod === "yearly" && annualTotal && plan.key !== "enterprise" && (
-                                <span className="text-[10px] md:text-xs text-emerald-600 font-semibold mt-0.5">
-                                  {annualTotal}
-                                </span>
-                              )}
-                            </div>
+                  {/* Starter Plan Card */}
+                  <th className="py-4 px-2 bg-white shadow-[0_1px_0_0_#E2E8F0] align-top w-[15%]">
+                    <div className="bg-white border border-gray-200/80 rounded-2xl p-5 text-left flex flex-col justify-between h-[155px] font-normal">
+                      <div>
+                        <span className="text-lg font-medium text-black block font-outfit">Starter</span>
+                        <span className="text-[11px] text-gray-500 font-medium mt-1.5 block tracking-tight leading-tight">
+                          {billingPeriod === "yearly" ? "₹599 user/mo billed annually" : "₹799 user/mo billed monthly"}
+                        </span>
+                      </div>
+                      <Link
+                        href="/signup?plan=starter"
+                        className="mt-4 w-full py-2.5 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-50 text-xs font-medium transition-all duration-150 active:scale-97 block text-center"
+                      >
+                        Get started
+                      </Link>
+                    </div>
+                  </th>
 
-                            {/* CTA Button */}
-                            <button
-                              className={`px-5 py-2 rounded-full text-xs font-semibold transition-all duration-150 cursor-pointer w-full max-w-[120px] active:scale-95 border ${
-                                isHighlighted
-                                  ? "bg-[#4F46E5] hover:bg-[#4338CA] text-white border-[#4F46E5]"
-                                  : "bg-white hover:bg-gray-50 text-gray-700 border-gray-300"
-                              }`}
-                            >
-                              {buttonText}
-                            </button>
-                          </div>
-                        </th>
-                      );
-                    })}
-                  </tr>
-                </thead>
-                <tbody>
-                  {categories.map((category, catIdx) => (
-                    <React.Fragment key={catIdx}>
+                  {/* Growth Plan Card (Highlighted) */}
+                  <th className="py-4 px-2 bg-white shadow-[0_1px_0_0_#E2E8F0] align-top w-[15%]">
+                    <div className="bg-white border border-gray-200/80 rounded-2xl p-5 text-left flex flex-col justify-between h-[155px] font-normal">
+                      <div>
+                        <span className="text-lg font-medium text-black block font-outfit">Growth</span>
+                        <span className="text-[11px] text-gray-500 font-medium mt-1.5 block tracking-tight leading-tight">
+                          {billingPeriod === "yearly" ? "₹1,999 user/mo billed annually" : "₹2,499 user/mo billed monthly"}
+                        </span>
+                      </div>
+                      <Link
+                        href="/signup?plan=growth"
+                        className="mt-4 w-full py-2.5 rounded-xl btn-premium-green text-white text-xs font-medium transition-all duration-150 active:scale-97 block text-center "
+                      >
+                        Get started
+                      </Link>
+                    </div>
+                  </th>
+
+                  {/* CA Pro Plan Card */}
+                  <th className="py-4 px-2 bg-white shadow-[0_1px_0_0_#E2E8F0] align-top w-[15%]">
+                    <div className="bg-white border border-gray-200/80 rounded-2xl p-5 text-left flex flex-col justify-between h-[155px] font-normal">
+                      <div>
+                        <span className="text-lg font-medium text-black block font-outfit">CA Pro</span>
+                        <span className="text-[11px] text-gray-500 font-medium mt-1.5 block tracking-tight leading-tight">
+                          {billingPeriod === "yearly" ? "₹3,999 user/mo billed annually" : "₹4,999 user/mo billed monthly"}
+                        </span>
+                      </div>
+                      <Link
+                        href="/signup?plan=ca_pro"
+                        className="mt-4 w-full py-2.5 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-50 text-xs font-semibold transition-all duration-150 active:scale-97 block text-center"
+                      >
+                        Get started
+                      </Link>
+                    </div>
+                  </th>
+
+                  {/* Enterprise Plan Card */}
+                  <th className="py-4 px-2 bg-white shadow-[0_1px_0_0_#E2E8F0] align-top w-[15%]">
+                    <div className="bg-white border border-gray-200/80 rounded-2xl p-5 text-left flex flex-col justify-between h-[155px] font-normal">
+                      <div>
+                        <span className="text-lg font-medium text-black block font-outfit">Enterprise</span>
+                        <span className="text-[11px] text-gray-500 font-medium mt-1.5 block tracking-tight leading-tight">
+                          Custom volume pricing
+                        </span>
+                      </div>
+                      <a
+                        href="mailto:sales@udhaarclear.com?subject=UdhaarClear%20Enterprise%20Inquiry"
+                        className="mt-4 w-full py-2.5 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-50 text-xs font-semibold transition-all duration-150 active:scale-97 block text-center"
+                      >
+                        Talk to sales
+                      </a>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {comparisonCategories.map((category, catIdx) => (
+                  <React.Fragment key={catIdx}>
+                    {/* Spacer Row between categories (not first) */}
+                    {catIdx > 0 && (
                       <tr>
-                        <td colSpan={6} className="py-3 px-6 bg-gray-50/45 border-b border-gray-200/80 border-t border-gray-100/20 font-bold text-[11px] uppercase tracking-wider text-gray-500 font-outfit select-none">
-                          <div className="flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 rounded-full bg-[#0047FF]/60" />
-                            {category.name}
-                          </div>
+                        <td colSpan={6} className="h-14 bg-transparent border-none"></td>
+                      </tr>
+                    )}
+
+                    {/* Category Header Row */}
+                    <tr className="border-t border-b border-gray-200 bg-gray-50/50">
+                      <td colSpan={6} className="py-4 px-4 text-sm md:text-base font-medium tracking-tight text-black font-outfit">
+                        {category.name}
+                      </td>
+                    </tr>
+
+                    {/* Feature Rows */}
+                    {category.features.map((feature, featIdx) => (
+                      <tr
+                        key={featIdx}
+                        className="border-b border-gray-100 hover:bg-gray-50/30 transition-colors duration-150"
+                      >
+                        <td className="py-4 px-4 text-xs md:text-[14px] font-medium text-gray-700 w-[25%]">
+                          {feature.name}
+                        </td>
+                        <td className="py-4 px-2 text-center w-[15%]">
+                          {renderTableValue(feature.free)}
+                        </td>
+                        <td className="py-4 px-2 text-center w-[15%]">
+                          {renderTableValue(feature.starter)}
+                        </td>
+                        <td className="py-4 px-2 text-center w-[15%]">
+                          {renderTableValue(feature.growth)}
+                        </td>
+                        <td className="py-4 px-2 text-center w-[15%]">
+                          {renderTableValue(feature.capro)}
+                        </td>
+                        <td className="py-4 px-2 text-center w-[15%]">
+                          {renderTableValue(feature.enterprise)}
                         </td>
                       </tr>
-
-                      {category.features.map((feature: any, featIdx) => (
-                        <tr
-                          key={featIdx}
-                          className="hover:bg-gray-50/10 transition-colors duration-150"
-                        >
-                          <td className="py-3.5 px-6 text-xs md:text-sm font-medium text-gray-700 w-[25%] border-b border-gray-200/40 bg-white">
-                            <div className="flex items-center gap-1.5">
-                              <span>{feature.name}</span>
-                              <span className="text-gray-300 hover:text-gray-500 cursor-pointer transition-colors duration-150">
-                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                  <circle cx="12" cy="12" r="10" />
-                                  <path d="M12 16v-4" />
-                                  <path d="M12 8h.01" />
-                                </svg>
-                              </span>
-                            </div>
-                          </td>
-                          <td className="py-3.5 px-2 text-center w-[15%] border-b border-gray-200/40 border-l border-gray-200/30 bg-white">
-                            {renderValue(feature.free, "free")}
-                          </td>
-                          <td className="py-3.5 px-2 text-center w-[15%] border-b border-gray-200/40 border-l border-gray-200/30 bg-white">
-                            {renderValue(feature.starter, "starter")}
-                          </td>
-                          <td className="py-3.5 px-2 text-center w-[15%] border-b border-gray-200/40 border-l border-gray-200/30 bg-[#F8FAFC]/50">
-                            {renderValue(feature.growth, "growth")}
-                          </td>
-                          <td className="py-3.5 px-2 text-center w-[15%] border-b border-gray-200/40 border-l border-gray-200/30 bg-white">
-                            {renderValue(feature.professional, "professional")}
-                          </td>
-                          <td className="py-3.5 px-2 text-center w-[15%] border-b border-gray-200/40 border-l border-gray-200/30 bg-white">
-                            {renderValue(feature.enterprise, "enterprise")}
-                          </td>
-                        </tr>
-                      ))}
-                    </React.Fragment>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                    ))}
+                  </React.Fragment>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

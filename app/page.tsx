@@ -7,7 +7,6 @@ import Workflow from "@/components/landing/Workflow";
 import Features from "@/components/landing/Features";
 import Integrations from "@/components/landing/Integrations";
 import Solution from "@/components/landing/Solution";
-import Pricing from "@/components/landing/Pricing";
 import FAQ from "@/components/landing/FAQ";
 import Footer from "@/components/landing/Footer";
 import ChatWidget from "@/components/landing/ChatWidget";
@@ -26,7 +25,6 @@ export default function LandingPage() {
         <Features />
         <Integrations />
         <Solution />
-        <Pricing />
         <FAQ />
         <Footer />
       </main>

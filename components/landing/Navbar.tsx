@@ -55,7 +55,7 @@ export default function Navbar() {
           
           <div className="flex items-center gap-10">
             {/* Logo */}
-            <Link href="#" className="flex items-center gap-2.5 group">
+            <Link href="/" className="flex items-center gap-2.5 group">
               <div className="flex items-center justify-center w-7.5 h-7.5 rounded-lg bg-gray-900 shrink-0">
                 <span className="text-[#FFC72C] font-black text-[15.5px] tracking-tight">U</span>
               </div>
@@ -64,10 +64,10 @@ export default function Navbar() {
 
             {/* Navigation Links */}
             <div className="hidden md:flex items-center gap-7">
-              <Link href="#how-it-works" className="text-[14.5px] font-medium text-gray-700 hover:text-gray-950 transition-colors">
+              <Link href="/#how-it-works" className="text-[14.5px] font-medium text-gray-700 hover:text-gray-950 transition-colors">
                 How It Works
               </Link>
-              <Link href="#pricing" className="text-[14.5px] font-medium text-gray-700 hover:text-gray-950 transition-colors">
+              <Link href="/pricing" className="text-[14.5px] font-medium text-gray-700 hover:text-gray-950 transition-colors">
                 Pricing
               </Link>
               <Link href="/msme-samadhaan" className="text-[14.5px] font-medium text-gray-700 hover:text-gray-950 transition-colors">

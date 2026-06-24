@@ -86,15 +86,7 @@ export default function Hero() {
           </div>
 
           {/* Autoplay Video Container (Constrained Width - Removed mt-8 space gap) */}
-          <div className="w-full bg-[#FAF9F6] rounded-[32px] border border-black/[0.05] shadow-[0_24px_60px_rgba(0,0,0,0.02)] overflow-hidden relative mt-0 select-none">
-            {/* Dotted Grid Pattern Overlay */}
-            <div 
-              className="absolute inset-0 opacity-[0.2] pointer-events-none z-10" 
-              style={{
-                backgroundImage: "radial-gradient(#C5C2B9 1px, transparent 1px)",
-                backgroundSize: "24px 24px"
-              }}
-            />
+          <div className="w-full bg-[#FAF9F6] rounded-[32px] border border-black/[0.05] shadow-[0_24px_60px_rgba(0,0,0,0.02)] overflow-hidden relative mt-0 select-none">          
             <video 
               src="/videos/video.mp4" 
               autoPlay 
