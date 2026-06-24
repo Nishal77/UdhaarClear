@@ -83,7 +83,7 @@ export default function Navbar() {
             </Link>
             <Link
               href="/signup"
-              className="btn-premium-green inline-flex items-center justify-center px-5.5 py-2.5 text-[13.5px] font-medium text-white rounded-2xl shrink-0 select-none"
+              className="bg-[#B5F670] inline-flex items-center justify-center px-5.5 py-2.5 text-[13.5px] font-medium text-black rounded-2xl shrink-0 select-none"
             >
              Create account
             </Link>

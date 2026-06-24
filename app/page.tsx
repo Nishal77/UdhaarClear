@@ -1,5 +1,6 @@
 import Navbar from "@/components/landing/Navbar";
 import Hero from "@/components/landing/Hero";
+import SocialProofStats from "@/components/landing/SocialProofStats";
 import HowItWorks from "@/components/landing/HowItWorks";
 import ToolsIntegration from "@/components/landing/ToolsIntegration";
 import Comparison from "@/components/landing/Comparison";
@@ -18,6 +19,7 @@ export default function LandingPage() {
       <Navbar />
       <main>
         <Hero />
+        <SocialProofStats />
         <HowItWorks />
         <Comparison />
         <ToolsIntegration />
