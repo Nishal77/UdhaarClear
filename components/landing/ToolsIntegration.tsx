@@ -129,7 +129,7 @@ export default function ToolsIntegration() {
   ];
 
   return (
-    <section id="tools-integration" className="relative w-full bg-[#FFFFFF] py-20 md:py-28 lg:py-32 overflow-hidden border-b border-gray-150/50">
+    <section id="tools-integration" className="relative w-full bg-[#FFFFFF] py-20 md:py-28 lg:py-32 overflow-hidden">
       {/* Soft atmospheric background lights */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
         <div className="absolute top-1/3 left-10 w-[300px] h-[300px] rounded-full bg-blue-50/40 blur-[80px]" />

@@ -45,3 +45,5 @@ next-env.d.ts
 # agent memory / logs
 /CLAUDE-FABLE-5.md
 
+# IDE / Agent caches
+/graphify-out/

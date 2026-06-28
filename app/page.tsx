@@ -23,9 +23,9 @@ export default function LandingPage() {
         <HowItWorks />
         <Comparison />
         <ToolsIntegration />
-        <Workflow />
+        {/* <Workflow /> */}
         <Features />
-        <Integrations />
+        {/* <Integrations /> */}
         <Testimonials />
         <FAQ />
         <Footer />

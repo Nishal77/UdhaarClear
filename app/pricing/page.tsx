@@ -1,5 +1,6 @@
 import Navbar from "@/components/landing/Navbar";
 import Pricing from "@/components/landing/Pricing";
+import PricingFAQ from "@/components/landing/PricingFAQ";
 import Footer from "@/components/landing/Footer";
 
 export const metadata = {
@@ -13,6 +14,7 @@ export default function PricingPage() {
       <Navbar />
       <main className="pt-16">
         <Pricing />
+        <PricingFAQ />
       </main>
       <Footer />
     </div>
