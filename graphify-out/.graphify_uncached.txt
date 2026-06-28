@@ -36,6 +36,7 @@
 /Users/nishalpoojary/Projects/Saas/UdhaarClear/public/images/footer.jpeg
 /Users/nishalpoojary/Projects/Saas/UdhaarClear/public/images/hero.png
 /Users/nishalpoojary/Projects/Saas/UdhaarClear/public/images/image1.jpeg
+/Users/nishalpoojary/Projects/Saas/UdhaarClear/public/images/image1.png
 /Users/nishalpoojary/Projects/Saas/UdhaarClear/public/images/image2.jpeg
 /Users/nishalpoojary/Projects/Saas/UdhaarClear/public/images/image3.jpeg
 /Users/nishalpoojary/Projects/Saas/UdhaarClear/public/images/image4.jpeg

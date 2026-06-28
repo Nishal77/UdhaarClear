@@ -191,7 +191,7 @@ export default function Pricing() {
     
     if (cleanVal === "Yes" || cleanVal === "✓") {
       return (
-        <span className="inline-flex items-center justify-center w-5 h-5 rounded bg-emerald-50 text-emerald-600 select-none">
+        <span className="inline-flex items-center justify-center w-5 h-5 text-emerald-600 select-none">
           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
           </svg>
@@ -210,7 +210,7 @@ export default function Pricing() {
     if (cleanVal.startsWith("✓")) {
       const text = cleanVal.replace("✓", "").trim();
       return (
-        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 text-[#0D8A4F] text-[11.5px] font-bold tracking-tight select-none">
+        <span className="inline-flex items-center gap-1 px-2.5 py-1 text-[#0D8A4F] text-[12.5px] font-semibold tracking-tight select-none">
           <svg className="w-3.5 h-3.5 text-[#0D8A4F] shrink-0" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
           </svg>
@@ -222,7 +222,7 @@ export default function Pricing() {
     // Numbers or blue phrases
     if (/^\d+/.test(cleanVal) || cleanVal === "1" || cleanVal.includes("phases") || cleanVal.includes("extra")) {
       return (
-        <span className="text-[#0047FF] text-[13px] md:text-sm font-semibold">
+        <span className="text-[#000] text-[13px] md:text-sm font-semibold">
           {cleanVal}
         </span>
       );
@@ -647,13 +647,13 @@ export default function Pricing() {
 
                 {/* Bottom Action Row (Visual CTA Buttons) */}
                 <tr className="bg-gray-50/20">
-                  <td className="py-6 px-4 text-xs md:text-[14px] font-bold text-gray-900 w-[25%] border-r border-t border-b border-gray-200">
+                  <td className="py-6 px-4 text-xs md:text-[14px] font-semibold text-gray-900 w-[25%] border-r border-t border-b border-gray-200 tracking-tight">
                     Get started
                   </td>
                   <td className="py-4 px-2 text-center w-[15%] border-r border-t border-b border-gray-200">
                     <Link
                       href="/signup"
-                      className="px-5 py-2.5 bg-black hover:bg-zinc-900 text-white rounded-full text-xs font-semibold block w-fit mx-auto transition-all active:scale-95 whitespace-nowrap font-sans"
+                      className="w-full max-w-[140px] py-2.5 bg-black hover:bg-zinc-900 text-white rounded-xl text-xs font-semibold block mx-auto transition-all active:scale-95 whitespace-nowrap font-sans"
                     >
                       Free
                     </Link>
@@ -661,15 +661,15 @@ export default function Pricing() {
                   <td className="py-4 px-2 text-center w-[15%] border-r border-t border-b border-gray-200">
                     <Link
                       href="/signup?plan=chota_vyaapar"
-                      className="px-5 py-2.5 bg-black hover:bg-zinc-900 text-white rounded-full text-xs font-semibold block w-fit mx-auto transition-all active:scale-95 whitespace-nowrap font-sans"
+                      className="w-full max-w-[140px] py-2.5 bg-black hover:bg-zinc-900 text-white rounded-xl text-xs font-semibold block mx-auto transition-all active:scale-95 whitespace-nowrap font-sans"
                     >
-                      ₹399/mo
+                      7-day trial
                     </Link>
                   </td>
                   <td className="py-4 px-2 text-center w-[15%] border-r border-t border-b border-gray-200">
                     <Link
                       href="/signup?plan=vyaapar_pro"
-                      className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-full text-xs font-semibold block w-fit mx-auto transition-all active:scale-95 whitespace-nowrap font-sans"
+                      className="w-full max-w-[140px] py-2.5 bg-[#B5F670] hover:bg-[#B5F670]/90 text-black rounded-xl text-xs font-semibold block mx-auto transition-all active:scale-95 whitespace-nowrap font-sans"
                     >
                       14-day trial
                     </Link>
@@ -677,7 +677,7 @@ export default function Pricing() {
                   <td className="py-4 px-2 text-center w-[15%] border-r border-t border-b border-gray-200">
                     <Link
                       href="/signup?plan=udyog"
-                      className="px-5 py-2.5 bg-black hover:bg-zinc-900 text-white rounded-full text-xs font-semibold block w-fit mx-auto transition-all active:scale-95 whitespace-nowrap font-sans"
+                      className="w-full max-w-[140px] py-2.5 bg-black hover:bg-zinc-900 text-white rounded-xl text-xs font-semibold block mx-auto transition-all active:scale-95 whitespace-nowrap font-sans"
                     >
                       Talk to us
                     </Link>
@@ -685,7 +685,7 @@ export default function Pricing() {
                   <td className="py-4 px-2 text-center w-[15%] border-t border-b border-gray-200">
                     <Link
                       href="/signup?ref=ca_partner"
-                      className="px-5 py-2.5 bg-[#FFC700] hover:bg-[#E6B200] text-black rounded-full text-xs font-semibold block w-fit mx-auto transition-all active:scale-95 whitespace-nowrap flex items-center gap-1 font-sans justify-center"
+                      className="w-full max-w-[140px] py-2.5 bg-[#FFC700] hover:bg-[#E6B200] text-black rounded-xl text-xs font-semibold block mx-auto transition-all active:scale-95 whitespace-nowrap flex items-center gap-1 font-sans justify-center"
                     >
                       Join free →
                     </Link>
