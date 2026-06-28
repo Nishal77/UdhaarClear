@@ -7,7 +7,7 @@ import Comparison from "@/components/landing/Comparison";
 import Workflow from "@/components/landing/Workflow";
 import Features from "@/components/landing/Features";
 import Integrations from "@/components/landing/Integrations";
-import Solution from "@/components/landing/Solution";
+import Testimonials from "@/components/landing/Testimonials";
 import FAQ from "@/components/landing/FAQ";
 import Footer from "@/components/landing/Footer";
 import ChatWidget from "@/components/landing/ChatWidget";
@@ -26,7 +26,7 @@ export default function LandingPage() {
         <Workflow />
         <Features />
         <Integrations />
-        <Solution />
+        <Testimonials />
         <FAQ />
         <Footer />
       </main>

@@ -40,10 +40,7 @@ export default function Footer() {
   ];
 
   const resourceLinks = [
-    { label: "LinkedIn", href: "https://linkedin.com" },
     { label: "Twitter", href: "https://x.com" },
-    { label: "YouTube", href: "https://youtube.com" },
-    { label: "Discord", href: "https://discord.com" },
     { label: "Terms of Service", href: "#" },
     { label: "Privacy Policy", href: "#" },
     { label: "Data Agreement (DPA)", href: "#" },
@@ -76,8 +73,46 @@ export default function Footer() {
             </p>
             <Link
               href="/signup"
-              className="mt-8 px-7 py-3.5 bg-black hover:bg-zinc-900 text-white font-medium rounded-2xl text-sm transition-all duration-200 active:scale-95 flex items-center gap-2 cursor-pointer"
+              className="mt-8 p-1.5 pr-7 bg-black hover:bg-zinc-900 text-white font-medium rounded-full text-sm transition-all duration-200 active:scale-95 flex items-center gap-3.5 cursor-pointer"
             >
+              <div className="flex-shrink-0 w-9 h-9 bg-[#FFC700] rounded-full flex items-center justify-center">
+                <div className="grid grid-cols-5 gap-[2px]">
+                  {/* Row 0 */}
+                  <span className="w-[3px] h-[3px] rounded-full bg-white/35" />
+                  <span className="w-[3px] h-[3px] rounded-full bg-white/35" />
+                  <span className="w-[3px] h-[3px] rounded-full bg-white" />
+                  <span className="w-[3px] h-[3px] rounded-full bg-white/35" />
+                  <span className="w-[3px] h-[3px] rounded-full bg-white/35" />
+
+                  {/* Row 1 */}
+                  <span className="w-[3px] h-[3px] rounded-full bg-white/35" />
+                  <span className="w-[3px] h-[3px] rounded-full bg-white/35" />
+                  <span className="w-[3px] h-[3px] rounded-full bg-white/35" />
+                  <span className="w-[3px] h-[3px] rounded-full bg-white" />
+                  <span className="w-[3px] h-[3px] rounded-full bg-white/35" />
+
+                  {/* Row 2 */}
+                  <span className="w-[3px] h-[3px] rounded-full bg-white" />
+                  <span className="w-[3px] h-[3px] rounded-full bg-white" />
+                  <span className="w-[3px] h-[3px] rounded-full bg-white" />
+                  <span className="w-[3px] h-[3px] rounded-full bg-white" />
+                  <span className="w-[3px] h-[3px] rounded-full bg-white" />
+
+                  {/* Row 3 */}
+                  <span className="w-[3px] h-[3px] rounded-full bg-white/35" />
+                  <span className="w-[3px] h-[3px] rounded-full bg-white/35" />
+                  <span className="w-[3px] h-[3px] rounded-full bg-white/35" />
+                  <span className="w-[3px] h-[3px] rounded-full bg-white" />
+                  <span className="w-[3px] h-[3px] rounded-full bg-white/35" />
+
+                  {/* Row 4 */}
+                  <span className="w-[3px] h-[3px] rounded-full bg-white/35" />
+                  <span className="w-[3px] h-[3px] rounded-full bg-white/35" />
+                  <span className="w-[3px] h-[3px] rounded-full bg-white" />
+                  <span className="w-[3px] h-[3px] rounded-full bg-white/35" />
+                  <span className="w-[3px] h-[3px] rounded-full bg-white/35" />
+                </div>
+              </div>
               Get started for free
             </Link>
           </div>
@@ -176,14 +211,14 @@ export default function Footer() {
                       key={idx}
                       src={url}
                       alt={`Community member ${idx + 1}`}
-                      className="w-9 h-9 rounded-full border border-black object-cover shrink-0 shadow-sm"
+                      className="w-9 h-9 rounded-xl border border-black object-cover shrink-0 shadow-sm"
                     />
                   ))}
                 </div>
                 <div className="flex flex-col text-left">
-                  <span className="text-[14px] font-semibold text-zinc-400">Join the network of</span>
+                  <span className="text-[14px] font-semibold text-white">Join <span className="text-[#ACF56C]">8,200+</span> Indian businesses </span>
                   <span className="text-[14px] font-medium text-white">
-                    <span className="text-[#ACF56C]">1,200+</span> high-growth businesses.
+                    recovering money they were owed.
                   </span>
 
                 </div>
@@ -202,9 +237,8 @@ export default function Footer() {
 
           {/* Bottom Copyright & Legal Links */}
           <div className="border-t border-zinc-900 mt-6 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 w-full">
-            <div className="flex items-center gap-6 text-xs font-medium text-zinc-500 font-sans">
-              <Link href="#" className="hover:text-zinc-300 transition-colors">Privacy Policy</Link>
-              <Link href="#" className="hover:text-zinc-300 transition-colors">Terms</Link>
+            <div className="text-xs font-medium text-zinc-500 font-sans">
+              Made with ❤️ for Indian businesses
             </div>
             <div className="text-xs font-medium text-zinc-500 font-sans">
               © {new Date().getFullYear()} UdhaarClear. All rights reserved.

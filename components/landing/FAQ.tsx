@@ -70,26 +70,6 @@ export default function FAQ() {
                 Frequently Asked <br className="hidden md:inline" /> Questions!
               </h2>
             </div>
-
-            {/* "Still have questions?" Card */}
-            <div className="bg-slate-50/50 border border-slate-100 rounded-3xl p-3 md:py-8 md:px-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-              <div className="space-y-2 font-outfit max-w-sm">
-                <h3 className="text-xl md:text-2xl font-medium tracking-tight text-slate-900">Still have questions?</h3>
-                <p className="text-slate-500 text-sm leading-relaxed">
-                  Can't find what you're looking for? Chat with our team - we're here to help.
-                </p>
-              </div>
-              
-              <Link
-                href="/contact"
-                className="inline-flex items-center gap-3 bg-white border border-slate-200/80 hover:border-slate-300 rounded-2xl py-2 pl-4 pr-2.5 shadow-sm hover:shadow-md transition-all duration-200 group shrink-0"
-              >
-                <span className="text-sm font-semibold text-slate-800 font-outfit">Talk to Us</span>
-                <div className="w-8 h-8 rounded-xl bg-[#FF5722] flex items-center justify-center text-white transition-colors duration-200 group-hover:bg-[#E64A19]">
-                  <HugeiconsIcon icon={ArrowRight02Icon} size={16} className="transition-transform duration-200 group-hover:translate-x-0.5" />
-                </div>
-              </Link>
-            </div>
           </div>
 
           {/* Right Column: FAQ List Container */}
@@ -103,8 +83,8 @@ export default function FAQ() {
                       onClick={() => toggleFAQ(idx)}
                       className="w-full flex items-center justify-between py-6 text-left cursor-pointer group"
                     >
-                      <span className="text-base md:text-lg font-semibold text-slate-900 group-hover:text-[#4F46E5] transition-colors duration-200 pr-6 font-outfit">
-                        <span className="text-slate-400 mr-2.5 font-medium">{idx + 1}.</span>
+                      <span className="text-base md:text-lg font-medium text-black pr-6 font-outfit">
+                        <span className="text-gray-600 mr-2.5 font-medium">{idx + 1}.</span>
                         {faq.question}
                       </span>
                       
@@ -120,7 +100,7 @@ export default function FAQ() {
                         isOpen ? "max-h-[500px] opacity-100 pb-6" : "max-h-0 opacity-0 pointer-events-none"
                       }`}
                     >
-                      <p className="text-sm md:text-base text-slate-500 leading-relaxed font-outfit pl-7">
+                      <p className="text-sm md:text-base text-black/70 leading-relaxed font-outfit pl-7">
                         {faq.answer}
                       </p>
                     </div>

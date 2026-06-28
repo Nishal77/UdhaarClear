@@ -71,7 +71,7 @@ export default function Navbar() {
                 Pricing
               </Link>
               <Link href="/msme-samadhaan" className="text-[14.5px] font-medium text-gray-700 hover:text-gray-950 transition-colors">
-                MSME Guide
+                For CAs
               </Link>
             </div>
           </div>
