@@ -3,6 +3,8 @@ import { isReminderDay, shouldAutoPause } from '@/lib/whatsapp/tone-engine'
 import { daysOverdue, isSunday } from '@/lib/utils/date'
 import { InvoiceStatus } from '@prisma/client'
 import { ReminderService } from '@/lib/services/reminder-service'
+import { sendTextMessage } from '@/lib/whatsapp/client'
+import { formatINR } from '@/lib/utils/currency'
 
 export interface ReminderEngineResult {
   sent: number
@@ -40,6 +42,32 @@ export async function runReminderEngine(): Promise<ReminderEngineResult> {
   for (const invoice of invoices) {
     try {
       const days = daysOverdue(invoice.dueDate)
+
+      // Day 28 Human Gate Interception:
+      // If it reaches Day 28 and has NOT been approved yet (legalNoticeSentAt is null),
+      // we must pause reminders and alert the business owner.
+      if (days === 28 && !invoice.legalNoticeSentAt) {
+        await prisma.invoice.update({
+          where: { id: invoice.id },
+          data: { remindersPaused: true },
+        })
+
+        // Notify business owner
+        const ownerPhone = invoice.business.phone
+        if (ownerPhone) {
+          try {
+            const amountStr = formatINR(Number(invoice.amount))
+            await sendTextMessage({
+              to: ownerPhone,
+              body: `⚠️ Human Gate Approval Required:\nInvoice ${invoice.invoiceNumber} for ${invoice.customer.name} (${amountStr}) is 28 days overdue.\n\nAutomated legal warning sequence is paused.\n\nReply:\n👉 "Yes ${invoice.customer.name}" to approve & send notice\n👉 "No ${invoice.customer.name}" to dismiss\n👉 "Pause ${invoice.customer.name}" to keep reminders paused`,
+            })
+          } catch (err) {
+            console.error('Failed to send Day 28 Human Gate notification:', err)
+          }
+        }
+        result.skipped++
+        continue
+      }
 
       if (shouldAutoPause(days)) {
         await prisma.invoice.update({

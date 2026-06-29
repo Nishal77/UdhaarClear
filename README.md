@@ -1,89 +1,36 @@
-# UdhaarClear — India's MSME Payment Recovery Platform
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-UdhaarClear automates the entire debt collection lifecycle for Indian MSMEs, transitioning recovery from uncomfortable manual chasing to a polite, automated 5-phase WhatsApp and email sequence with integrated payment links.
+## Getting Started
 
----
+First, run the development server:
 
-## 🏗️ System Architecture
-
-The diagram below outlines the core payment recovery flow, data loops, and third-party integrations:
-
-```mermaid
-graph TD
-    %% Actors
-    Seller["Seller / CA Firm"]
-    Buyer["Buyer / Debtor"]
-
-    %% Next.js Application Layer
-    subgraph NextJS ["Next.js App Router (Vercel)"]
-        UI["Seller Dashboard (React/TS)"]
-        PayPage["Buyer Payment Page (/pay)"]
-        CronEngine["Automated Cron Engine (/api/cron)"]
-        RazorpayHook["Razorpay Webhook Handler"]
-        WhatsAppHook["WhatsApp Status Webhook"]
-    end
-
-    %% Database & Persistence
-    subgraph Data ["Supabase Cloud Database"]
-        DB[("PostgreSQL Database")]
-        Prisma["Prisma Client ORM"]
-    end
-
-    %% External Services
-    subgraph Services ["External Integration Channels"]
-        WABA["Meta WhatsApp Business API"]
-        ResendAPI["Resend Email Service"]
-        RazorpayAPI["Razorpay Payments Link API"]
-    end
-
-    %% Flow Connections
-    Seller -->|Manages Invoices / Views Analytics| UI
-    UI -->|Queries & Updates| Prisma
-    Prisma -->|Reads & Writes| DB
-
-    CronEngine -->|1. Polls Overdue Invoices| Prisma
-    CronEngine -->|2. Selects Tone & Triggers Reminders| WABA
-    CronEngine -->|3. Dispatches Fallback Emails| ResendAPI
-
-    WABA -->|4. Delivers Reminders with Pay Link| Buyer
-    Buyer -->|5. Opens Pay Link & Pays Invoice| PayPage
-    PayPage -->|6. Generates Checkout Session| RazorpayAPI
-    
-    RazorpayAPI -->|7. Dispatches Payment Success Hook| RazorpayHook
-    RazorpayHook -->|8. Updates Invoice to PAID| Prisma
-    
-    WABA -->|9. Returns Message Statuses| WhatsAppHook
-    WhatsAppHook -->|10. Updates Delivery Logs (Read/Delivered)| Prisma
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
----
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## 🛠️ Technology Stack
-*   **Frontend**: Next.js 16 (App Router) + Tailwind CSS + TypeScript
-*   **Database**: Supabase PostgreSQL with Prisma ORM
-*   **Channels**: Meta WhatsApp Business API (WABA) + Resend Email Delivery
-*   **Payments**: Razorpay Links & Direct UPI Gateway routing
-*   **Verification**: ICAI/COP membership registry audits
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
----
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## 🚀 Getting Started
+## Learn More
 
-1. **Clone the repository and install dependencies**:
-   ```bash
-   pnpm install
-   ```
+To learn more about Next.js, take a look at the following resources:
 
-2. **Configure environment variables**:
-   Create a `.env.local` file based on `.env.example` with your database connections, WhatsApp API keys, and Razorpay secrets.
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-3. **Start the local development server**:
-   ```bash
-   pnpm dev
-   ```
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-4. **Verify TypeScript compilation**:
-   ```bash
-   pnpm type-check
-   ```
+## Deploy on Vercel
 
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

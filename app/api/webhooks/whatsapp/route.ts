@@ -1,5 +1,5 @@
 import crypto from 'crypto'
-import { handleStatusUpdate } from '@/lib/whatsapp/webhook'
+import { handleStatusUpdate, handleInboundMessage } from '@/lib/whatsapp/webhook'
 import type { WhatsAppWebhookPayload } from '@/types/whatsapp'
 
 export async function GET(request: Request) {
@@ -32,8 +32,14 @@ export async function POST(request: Request) {
 
   for (const entry of payload.entry ?? []) {
     for (const change of entry.changes ?? []) {
+      // 1. Process status updates
       for (const status of change.value.statuses ?? []) {
         await handleStatusUpdate(status)
+      }
+
+      // 2. Process inbound messages
+      for (const message of change.value.messages ?? []) {
+        await handleInboundMessage(message)
       }
     }
   }

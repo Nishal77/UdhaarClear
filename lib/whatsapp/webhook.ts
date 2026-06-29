@@ -83,3 +83,5 @@ export async function handleStatusUpdate(update: WhatsAppStatusUpdate) {
     })
   }
 }
+
+export { handleInboundMessage } from './bot'

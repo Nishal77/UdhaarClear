@@ -12,6 +12,7 @@ import { HugeiconsIcon } from '@hugeicons/react'
 import { SentIcon, Share03Icon } from '@hugeicons/core-free-icons'
 import { Dot } from 'lucide-react'
 import { IncomingPayments } from '@/components/dashboard/IncomingPayments'
+import { ShareStatCardButton } from '@/components/dashboard/ShareStatCardButton'
 
 async function getDashboardData(businessId: string) {
   const now = new Date()
@@ -533,10 +534,13 @@ export default async function DashboardPage() {
             Communication Logs
           </Link>
 
-          {/* Share Button Mockup */}
-          <button className="flex h-10 w-10 items-center justify-center rounded-full bg-white border border-[#EBEAE6]/60  hover:bg-gray-50 active:scale-95 transition-all cursor-pointer">
-            <HugeiconsIcon icon={Share03Icon} />
-          </button>
+          {/* Share Button (PNG download and WhatsApp share card) */}
+          <ShareStatCardButton
+            businessName={dbUser.ownedBusiness.name}
+            collectedThisMonth={stats.collectedThisMonth}
+            outstandingCount={stats.outstandingCount}
+            totalOutstanding={stats.totalOutstanding}
+          />
         </div>
       </div>
 
