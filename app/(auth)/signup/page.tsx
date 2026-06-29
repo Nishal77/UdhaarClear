@@ -157,12 +157,12 @@ export default function SignupPage() {
             {step === 'email' && (
               <div>
                 <div className="mb-6">
-                  <h1 className="text-3xl font-extrabold tracking-tight text-gray-900 mb-1">Create your account</h1>
+                  <h1 className="text-3xl font-semibold tracking-tight text-gray-900 mb-1">Create your account</h1>
                   <p className="text-sm text-gray-500">
                     Already have an account?{' '}
                     <Link
                       href="/login"
-                      className="font-bold text-gray-900 underline underline-offset-2 hover:text-[#ECA828] transition-colors"
+                      className="font-semibold text-gray-900 hover:text-[#ECA828] transition-colors"
                     >
                       Sign in
                     </Link>
@@ -188,7 +188,7 @@ export default function SignupPage() {
                 {/* Form */}
                 <form onSubmit={handleEmailSubmit} className="space-y-4">
                   <div>
-                    <label className="mb-1.5 block text-sm font-semibold text-gray-700">Email</label>
+                    <label className="mb-1.5 block text-sm font-medium tracking-tight text-gray-700">Email</label>
                     <div className="relative">
                       <input
                         type="email"
@@ -196,7 +196,7 @@ export default function SignupPage() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="business@mail.com"
-                        className="block w-full rounded-xl border border-gray-200 pl-10 pr-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:border-[#ECA828] focus:outline-none focus:ring-2 focus:ring-amber-100 transition-all font-medium"
+                        className="block w-full rounded-xl border border-gray-200 pl-10 pr-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:border-gray-600 focus:outline-none font-normal"
                       />
                       <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
                     </div>
@@ -204,8 +204,8 @@ export default function SignupPage() {
 
                   <button
                     type="submit"
-                    className="mt-2 flex w-full items-center justify-center rounded-xl py-3.5 text-sm font-bold text-white shadow-md shadow-amber-500/10 hover:shadow-lg active:scale-[0.98] transition-all"
-                    style={{ backgroundColor: '#ECA828' }}
+                    className="mt-2 flex w-full items-center justify-center rounded-xl py-3.5 text-sm font-medium text-white shadow-md shadow-amber-500/10 hover:shadow-lg active:scale-[0.98] transition-all"
+                    style={{ backgroundColor: '#262624' }}
                   >
                     Continue with email
                   </button>
