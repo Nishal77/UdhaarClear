@@ -71,7 +71,7 @@ async function getDashboardData(businessId: string) {
       }),
     ])
 
-  const customerIds = topDefaultersRaw.map((d) => d.customerId)
+  const customerIds = (topDefaultersRaw as any[]).map((d: any) => d.customerId)
   const [customers, lastReminders] = await Promise.all([
     prisma.customer.findMany({ where: { id: { in: customerIds } } }),
     prisma.reminder.findMany({
@@ -82,9 +82,9 @@ async function getDashboardData(businessId: string) {
     }),
   ])
 
-  const topDefaulters = topDefaultersRaw.map((d) => {
-    const customer = customers.find((c) => c.id === d.customerId)!
-    const lastReminder = lastReminders.find((r) => r.invoice.customerId === d.customerId)
+  const topDefaulters = (topDefaultersRaw as any[]).map((d: any) => {
+    const customer = (customers as any[]).find((c: any) => c.id === d.customerId)!
+    const lastReminder = (lastReminders as any[]).find((r: any) => r.invoice.customerId === d.customerId)
     return {
       customerId: d.customerId,
       customerName: customer?.name ?? 'Unknown',
@@ -96,7 +96,7 @@ async function getDashboardData(businessId: string) {
     }
   })
 
-  const overdueInvoices = overdueInvoicesRaw.map((inv) => {
+  const overdueInvoices = (overdueInvoicesRaw as any[]).map((inv: any) => {
     let tone: 'GENTLE' | 'FIRM' | 'LEGAL' = 'GENTLE'
     if (inv.reminderTone === 'LEGAL') tone = 'LEGAL'
     else if (inv.reminderTone === 'FIRM') tone = 'FIRM'
@@ -114,14 +114,14 @@ async function getDashboardData(businessId: string) {
   })
 
   const activities = [
-    ...recentReminders.map((r) => ({
+    ...(recentReminders as any[]).map((r: any) => ({
       id: r.id,
       type: 'reminder_sent' as const,
       customerName: r.invoice.customer.name,
       amount: Number(r.invoice.amount),
       createdAt: r.createdAt,
     })),
-    ...recentPaid.map((inv) => ({
+    ...(recentPaid as any[]).map((inv: any) => ({
       id: inv.id,
       type: 'payment_received' as const,
       customerName: inv.customer.name,
@@ -129,11 +129,11 @@ async function getDashboardData(businessId: string) {
       createdAt: inv.paidAt ?? inv.updatedAt,
     })),
   ]
-    .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+    .sort((a: any, b: any) => b.createdAt.getTime() - a.createdAt.getTime())
     .slice(0, 5)
 
   const chartData = await Promise.all(
-    Array.from({ length: 6 }, async (_, i) => {
+    Array.from({ length: 6 }, async (_, i: number) => {
       const monthDate = subMonths(now, 5 - i)
       const start = startOfMonth(monthDate)
       const end = endOfMonth(monthDate)
@@ -155,7 +155,7 @@ async function getDashboardData(businessId: string) {
     })
   )
 
-  const pendingConfirmations = pendingConfirmationsRaw.map((inv) => ({
+  const pendingConfirmations = (pendingConfirmationsRaw as any[]).map((inv: any) => ({
     id: inv.id,
     invoiceNumber: inv.invoiceNumber,
     customerName: inv.customer.name,
@@ -222,7 +222,7 @@ export default async function DashboardPage() {
     return format(date, "d MMM")
   }
 
-  const formattedDbActivities = activities.map((act) => {
+  const formattedDbActivities = (activities as any[]).map((act: any) => {
     const isReminder = act.type === 'reminder_sent'
     const status = isReminder ? 'Sent' : 'Paid'
     const actionText = isReminder ? 'reminder sent' : `paid ${formatINRCompact(act.amount)}`
@@ -665,7 +665,7 @@ export default async function DashboardPage() {
                       </td>
                     </tr>
                   ) : (
-                    displayActivities.map((act) => {
+                    (displayActivities as any[]).map((act: any) => {
                       let badgeColor = ''
 
                       if (act.type === 'payment_received') {
