@@ -25,23 +25,23 @@ export default async function CustomersPage() {
     orderBy: { createdAt: 'desc' },
   })
 
-  const customersWithSummary = customers.map((c) => {
-    const totalOutstanding = c.invoices
-      .filter((i) => ['PENDING', 'DUE', 'OVERDUE', 'PENDING_CONFIRMATION', 'PARTIALLY_PAID'].includes(i.status))
-      .reduce((sum, i) => sum + Number(i.amount), 0)
-    const overdueInvoices = c.invoices.filter((i) => i.status === 'OVERDUE')
-    const activeInvoices = c.invoices.filter((i) => ['PENDING', 'DUE', 'OVERDUE', 'PENDING_CONFIRMATION', 'PARTIALLY_PAID'].includes(i.status))
+  const customersWithSummary = (customers as any[]).map((c: any) => {
+    const totalOutstanding = (c.invoices as any[])
+      .filter((i: any) => ['PENDING', 'DUE', 'OVERDUE', 'PENDING_CONFIRMATION', 'PARTIALLY_PAID'].includes(i.status))
+      .reduce((sum: number, i: any) => sum + Number(i.amount), 0)
+    const overdueInvoices = (c.invoices as any[]).filter((i: any) => i.status === 'OVERDUE')
+    const activeInvoices = (c.invoices as any[]).filter((i: any) => ['PENDING', 'DUE', 'OVERDUE', 'PENDING_CONFIRMATION', 'PARTIALLY_PAID'].includes(i.status))
 
     let nextDueDate: Date | null = null
     if (overdueInvoices.length > 0) {
-      const dates = overdueInvoices.map((i) => new Date(i.dueDate)).filter((d) => !isNaN(d.getTime()))
+      const dates = overdueInvoices.map((i: any) => new Date(i.dueDate)).filter((d: Date) => !isNaN(d.getTime()))
       if (dates.length > 0) {
-        nextDueDate = new Date(Math.min(...dates.map((d) => d.getTime())))
+        nextDueDate = new Date(Math.min(...dates.map((d: Date) => d.getTime())))
       }
     } else if (activeInvoices.length > 0) {
-      const dates = activeInvoices.map((i) => new Date(i.dueDate)).filter((d) => !isNaN(d.getTime()))
+      const dates = activeInvoices.map((i: any) => new Date(i.dueDate)).filter((d: Date) => !isNaN(d.getTime()))
       if (dates.length > 0) {
-        nextDueDate = new Date(Math.min(...dates.map((d) => d.getTime())))
+        nextDueDate = new Date(Math.min(...dates.map((d: Date) => d.getTime())))
       }
     }
 
@@ -49,15 +49,15 @@ export default async function CustomersPage() {
       ...c,
       invoices: undefined as never,
       totalOutstanding,
-      totalOverdue: overdueInvoices.reduce((s, i) => s + Number(i.amount), 0),
+      totalOverdue: overdueInvoices.reduce((s: number, i: any) => s + Number(i.amount), 0),
       overdueCount: overdueInvoices.length,
       nextDueDate,
       invoiceCount: c.invoices.length,
     }
   })
 
-  const totalOutstanding = customersWithSummary.reduce((s, c) => s + c.totalOutstanding, 0)
-  const totalOverdue = customersWithSummary.reduce((s, c) => s + c.totalOverdue, 0)
+  const totalOutstanding = customersWithSummary.reduce((s: number, c: any) => s + c.totalOutstanding, 0)
+  const totalOverdue = customersWithSummary.reduce((s: number, c: any) => s + c.totalOverdue, 0)
   const overdueCustomers = customersWithSummary.filter((c) => c.totalOverdue > 0).length
 
   return (
