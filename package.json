@@ -67,9 +67,11 @@
     "vitest-mock-extended": "^4.0.0"
   },
   "pnpm": {
-    "ignoredBuiltDependencies": [
-      "sharp",
-      "unrs-resolver"
+    "onlyBuiltDependencies": [
+      "@prisma/engines",
+      "prisma",
+      "msw",
+      "sharp"
     ]
   }
 }
