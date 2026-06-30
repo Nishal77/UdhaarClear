@@ -35,7 +35,7 @@ export default async function CustomerDetailPage({
   // Normalize Prisma Decimal → number for the component
   const normalized = {
     ...customer,
-    invoices: customer.invoices.map((inv) => ({
+    invoices: (customer.invoices as any[]).map((inv: any) => ({
       ...inv,
       amount: Number(inv.amount),
       paidAmount: inv.paidAmount !== null ? Number(inv.paidAmount) : null,
