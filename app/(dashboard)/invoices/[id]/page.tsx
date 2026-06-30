@@ -105,7 +105,7 @@ export default function InvoiceDetailPage() {
       if (!res.ok) { toast.error('Failed to mark as paid'); return }
       toast.success('Invoice marked as paid')
       const d = await res.json()
-      setInvoice((prev) => prev ? { ...prev, ...d.invoice } : null)
+      setInvoice((prev: any) => prev ? { ...prev, ...d.invoice } : null)
       if (invoice) {
         triggerActivityToast({
           type: 'payment',
@@ -136,7 +136,7 @@ export default function InvoiceDetailPage() {
       if (!res.ok) { toast.error('Failed to reject verification'); return }
       toast.success('UTR verification rejected. Reminders resumed.')
       const d = await res.json()
-      setInvoice((prev) => prev ? { ...prev, ...d.invoice } : null)
+      setInvoice((prev: any) => prev ? { ...prev, ...d.invoice } : null)
     } finally {
       setRejecting(false)
     }
