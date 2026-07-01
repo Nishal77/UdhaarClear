@@ -8,8 +8,6 @@ import { Mail01Icon, WhatsappIcon, Invoice03Icon, Legal01Icon, Comment01Icon, Us
 export default function HowItWorks() {
   return (
     <section id="how-it-works" className="relative w-full bg-[#FFFFFF] py-20 md:py-28 lg:py-32 overflow-hidden scroll-mt-24">
-      {/* Top full-width horizontal divider with soft gradient fade */}
-      <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-gray-200 to-transparent z-10" />
       
       {/* Bottom full-width horizontal divider with soft gradient fade */}
       <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-gray-200 to-transparent z-10" />
