@@ -82,7 +82,7 @@ export default function SocialProofStats() {
               <div className="relative mt-2 pl-6">
                 {/* Big decorative quotes icon */}
                 <span className="absolute left-0 -top-1.5 text-zinc-300 text-5xl font-serif select-none pointer-events-none leading-none">“</span>
-                <p className="text-zinc-600 font-sans italic text-[16px] md:text-[17px] font-semibold leading-relaxed relative z-10">
+                <p className="text-zinc-600 font-sans  text-[16px] md:text-[17px] font-medium leading-relaxed relative z-10">
                   {card.quote}”
                 </p>
               </div>

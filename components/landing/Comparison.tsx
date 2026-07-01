@@ -60,15 +60,22 @@ export default function Comparison() {
     <section id="comparison" className="relative w-full bg-white py-20 md:py-28 lg:py-32 overflow-hidden select-none">
       <div className="relative max-w-[1600px] mx-auto px-4 md:px-6 z-10 text-center">
 
+        {/* Badge */}
+        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-2xl border border-[#B5F670]/40 bg-[#B5F670]/40 text-black text-sm font-medium tracking-tight font-outfit mb-6 select-none">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-[#B5F670]">
+            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+          </svg>
+          AI-Powered Collections. Zero Headaches
+        </div>
+
         {/* Heading */}
-        <h2 className="text-[2.75rem] md:text-[3.5rem] font-bold text-gray-900 tracking-tight leading-[1.1] font-outfit max-w-4xl mx-auto mb-4">
-          Old School vs. UdhaarClear AI
+        <h2 className="text-4xl md:text-5xl lg:text-[3.55rem] font-normal text-gray-950 tracking-tight leading-[1.12] md:leading-[1.08] mx-auto mb-4">
+         From Manual Headaches To <br/> Automated <span className="bg-gradient-to-r from-black to-[#B5F670] bg-clip-text text-transparent font-normal"> Happiness</span> 
         </h2>
         
         {/* Subheading */}
-        <p className="text-sm md:text-base text-zinc-500 max-w-2xl mx-auto mb-16 font-sans font-medium leading-relaxed">
-          Why stick with outdated, manual collection methods when you can breeze through your business cash flows with AI? 
-          See how our smart automation leaves the old way in the dust.
+        <p className="text-sm md:text-base text-zinc-500 max-w-2xl mx-auto mb-16 font-sans font-normal leading-relaxed">
+         UdhaarClear AI handles the follow-ups, reminder and paper work. So you can focus on growing business.
         </p>
 
         {/* Outer Container for Cards */}
@@ -78,9 +85,12 @@ export default function Comparison() {
           <div className="w-full md:w-1/2 flex-1 bg-[#F8F9FA]/80 border border-zinc-100 rounded-[2.5rem] p-8 md:p-10 lg:p-12 flex flex-col justify-between gap-6 transition-all duration-300">
             <div>
               {/* Header */}
-              <h3 className="text-2xl md:text-3xl font-bold tracking-tight text-zinc-900 font-outfit text-center mb-8">
-                Traditional
+              <h3 className="text-2xl md:text-3xl font-medium tracking-tight text-zinc-900 font-outfit text-center mb-2">
+                The Old Way
               </h3>
+              <p className="text-sm md:text-base text-zinc-500 max-w-2xl mx-auto mb-8 font-sans font-normal leading-relaxed text-center">
+                Time consuming. Stressful. Inefficient.
+              </p>
 
               {/* Checkpoints */}
               <div className="flex flex-col gap-3.5">
@@ -104,9 +114,12 @@ export default function Comparison() {
             <div className="flex-1 flex flex-col justify-between">
               <div>
                 {/* Brand Header */}
-                <h3 className="text-2xl md:text-3xl font-bold tracking-tight text-white font-outfit text-center mb-8">
-                  UdhaarClear AI
+                <h3 className="text-2xl md:text-3xl font-medium tracking-tight text-white font-outfit text-center mb-2">
+                 The <span className="text-[#B5F670]">UdhaarClear AI</span> Way
                 </h3>
+                <p className="text-sm md:text-base text-zinc-400 max-w-2xl mx-auto mb-8 font-sans font-normal leading-relaxed text-center">
+                 Smart. Fast. Automated. Results.
+                </p>
 
                 {/* Checkpoints */}
                 <div className="flex flex-col gap-3.5">

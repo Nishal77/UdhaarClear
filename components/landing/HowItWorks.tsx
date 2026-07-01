@@ -9,9 +9,7 @@ export default function HowItWorks() {
   return (
     <section id="how-it-works" className="relative w-full bg-[#FFFFFF] py-20 md:py-28 lg:py-32 overflow-hidden scroll-mt-24">
       
-      {/* Bottom full-width horizontal divider with soft gradient fade */}
-      <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-gray-200 to-transparent z-10" />
-      
+
       {/* Decorative ambient background glows */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
         <div className="absolute top-0 left-1/4 w-[300px] h-[300px] rounded-full bg-blue-50/20 blur-[80px]" />
@@ -39,219 +37,99 @@ export default function HowItWorks() {
           </p>
         </div>
 
-        {/* The 4 Grid Cards Container */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch mb-2 text-left">
+        {/* The 3 Grid Cards Container */}
+        <div className="relative w-full">
+          {/* Curved Arrow 1: Between Card 1 and Card 2 (Desktop Only - Above Cards) */}
+          <div className="hidden lg:block absolute -top-14 left-[29%] w-[11%] h-12 text-[#10B981] z-20 pointer-events-none select-none">
+            <svg viewBox="0 0 100 30" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
+              <path d="M5 24 Q 45 4, 88 12" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+              <path d="M76 8 C 81 10, 85 11, 88 12 C 86 16, 82 20, 79 24" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
           
-          {/* Card 1: Invoice Upload */}
-          <div className="bg-[#F5F3EB] rounded-[32px] p-6 flex flex-col justify-between">
-            <div>
-              <h3 className="text-[20px] font-bold text-gray-900 tracking-tight font-outfit mb-1">
-                Invoice Upload
-              </h3>
-              <p className="text-gray-500 text-xs md:text-sm leading-relaxed mb-6 font-medium">
-                Sync with accounting systems or upload PDF/Excel invoices in seconds
-              </p>
-            </div>
-
-            {/* Gradient Green-Blue Visual Card Mockup with Chip & Contactless */}
-            <div className="bg-gradient-to-tr from-emerald-300 via-teal-400 to-cyan-400 rounded-3xl h-[240px] relative overflow-hidden flex flex-col justify-end p-6 select-none shadow-inner">
-              
-              {/* Floating Chip */}
-              <div className="absolute top-[35%] left-[55%] -translate-x-1/2 -translate-y-1/2 w-11 h-9 bg-amber-100/90 border border-amber-200 rounded-lg p-1.5 flex flex-col justify-between shadow-inner">
-                <div className="flex gap-1">
-                  <div className="w-2.5 h-1.5 bg-amber-800/10 rounded-sm" />
-                  <div className="w-2.5 h-1.5 bg-amber-800/10 rounded-sm" />
-                </div>
-                <div className="w-6 h-1 bg-amber-800/15 rounded-sm" />
-                <div className="flex gap-1">
-                  <div className="w-2.5 h-1.5 bg-amber-800/10 rounded-sm" />
-                  <div className="w-2.5 h-1.5 bg-amber-800/10 rounded-sm" />
-                </div>
-              </div>
-
-              {/* Contactless waves symbol */}
-              <svg className="absolute top-[35%] left-[73%] w-7 h-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                <path d="M5 12a7 7 0 0 1 7-7" />
-                <path d="M5 12a11 11 0 0 1 11-11" />
-                <path d="M5 12a3 3 0 0 1 3-3" />
-              </svg>
-
-              {/* Upload Cloud overlay inside gradient */}
-              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-3 w-full">
-                <div className="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center text-white shrink-0">
-                  <UploadCloud className="w-5 h-5" />
-                </div>
-                <div className="leading-tight text-white">
-                  <span className="text-[10px] font-bold block uppercase tracking-wider">Sync Active</span>
-                  <span className="text-[9px] font-medium opacity-80 block">PDF / Excel / Accounting</span>
-                </div>
-              </div>
-            </div>
+          {/* Curved Arrow 2: Between Card 2 and Card 3 (Desktop Only - Above Cards) */}
+          <div className="hidden lg:block absolute -top-14 left-[62.5%] w-[11%] h-12 text-[#10B981] z-20 pointer-events-none select-none">
+            <svg viewBox="0 0 100 30" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
+              <path d="M5 24 Q 45 4, 88 12" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+              <path d="M76 8 C 81 10, 85 11, 88 12 C 86 16, 82 20, 79 24" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
           </div>
 
-          {/* Card 2: Automated Reminders */}
-          <div className="bg-[#F5F3EB] rounded-[32px] p-6 flex flex-col justify-between">
-            <div>
-              <h3 className="text-[20px] font-bold text-gray-900 tracking-tight font-outfit mb-1">
-                Automated Reminders
-              </h3>
-              <p className="text-gray-500 text-xs md:text-sm leading-relaxed mb-6 font-medium">
-                Polite follow-ups sent automatically via WhatsApp, SMS, and Email
-              </p>
-            </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-10 items-stretch mb-2 text-left relative z-10">
+            
+            {/* Card 1: Add your customer's invoice */}
+            <div className="bg-[#F5F3EB] rounded-[32px] p-5 flex flex-col justify-between">
+              <div>
+                <span className="inline-flex items-center text-sm tracking-tight font-medium px-3 py-1 bg-white border border-black/[0.04] text-zinc-600 rounded-full w-fit select-none">
+                  Step 1
+                </span>
+                <h3 className="text-[21px] font-medium text-black tracking-tight leading-snug font-outfit mb-2.5 mt-2">
+                  Add your customer's invoice
+                </h3>
+                <p className="text-gray-600 text-[13.5px] md:text-sm leading-relaxed mb-6 font-normal">
+                  Enter customer name, phone number, invoice amount and due date. Takes 30 seconds. You can also import directly from Tally or Zoho — zero re-entry.
+                </p>
+              </div>
 
-            {/* Gradient Pink-Orange Background with Payment form overlay */}
-            <div className="bg-gradient-to-tr from-[#FF6E7F] via-[#FF8095] to-[#BFE9FF] rounded-3xl h-[240px] relative overflow-hidden flex items-center justify-center shadow-inner">
-              
-              {/* Payment Checkout Mockup Form */}
-              <div className="relative z-10 bg-white border border-gray-150/80 rounded-2xl p-4 shadow-xl w-[88%] flex flex-col gap-2 select-none">
-                <div className="flex justify-between items-center pb-1 border-b border-gray-100 text-[10px] font-bold text-gray-400">
-                  <span>RECOVERY SEQUENCE</span>
-                  <span className="text-emerald-500 flex items-center gap-0.5">
-                    <span className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
-                    LIVE
-                  </span>
-                </div>
-
-                <div className="flex justify-between items-baseline my-0.5">
-                  <span className="text-base font-extrabold text-gray-950 font-outfit">₹78,500</span>
-                  <span className="text-[9px] text-gray-400 font-bold uppercase">#INV-9824</span>
-                </div>
-
-                {/* Subtitle / channel info */}
-                <div className="bg-gray-50 border border-gray-100 rounded-xl px-2.5 py-1.5 flex items-center justify-between text-[9px] font-bold text-gray-600">
-                  <span className="flex items-center gap-1">
-                    <MessageSquare className="w-3.5 h-3.5 text-[#25D366] shrink-0" />
-                    WhatsApp
-                  </span>
-                  <span>SENDING IN 1d</span>
-                </div>
-
-                {/* Confirm Action Button */}
-                <button className="w-full bg-zinc-950 text-white font-bold text-[9.5px] py-2 rounded-xl text-center shadow-sm select-none mt-1 cursor-pointer">
-                  Activate Follow-up
-                </button>
+              {/* Image mockup */}
+              <div className="w-full h-[240px] rounded-3xl overflow-hidden select-none">
+                <img 
+                  src="https://i.pinimg.com/736x/80/6d/e4/806de48c7808cebfa530f65980ebec1a.jpg"
+                  alt="Invoice Upload Interface Mockup"
+                  className="w-full h-full object-cover block"
+                />
               </div>
             </div>
+
+            {/* Card 2: UdhaarClear chases them — so you don't have to */}
+            <div className="bg-[#F5F3EB] rounded-[32px] p-5 flex flex-col justify-between">
+              <div>
+                <span className="inline-flex items-center text-sm tracking-tight font-medium px-3 py-1 bg-white border border-black/[0.04] text-zinc-600 rounded-full w-fit select-none">
+                  Step 2
+                </span>
+                <h3 className="text-[21px] font-medium text-black tracking-tight leading-snug font-outfit mb-2.5 mt-2">
+                  UdhaarClear chases them — so you don't have to
+                </h3>
+                <p className="text-gray-600 text-[13.5px] md:text-sm leading-relaxed mb-6 font-normal">
+                  Automatic WhatsApp reminders go from polite to firm over 28 days. Hindi, Marathi, Gujarati — in the language your customer understands. Nothing fires without you approving it first.
+                </p>
+              </div>
+
+              {/* Image mockup */}
+              <div className="w-full h-[240px] rounded-3xl overflow-hidden select-none">
+                <img 
+                  src="https://i.pinimg.com/736x/80/6d/e4/806de48c7808cebfa530f65980ebec1a.jpg"
+                  alt="UdhaarClear Automated Reminders Mockup"
+                  className="w-full h-full object-cover block"
+                />
+              </div>
+            </div>
+
+            {/* Card 3: Buyer pays. Money lands. You relax. */}
+            <div className="bg-[#F5F3EB] rounded-[32px] p-5 flex flex-col justify-between">
+              <div>
+                <span className="inline-flex items-center text-sm tracking-tight font-medium px-3 py-1 bg-white border border-black/[0.04] text-zinc-600 rounded-full w-fit select-none">
+                  Step 3
+                </span>
+                <h3 className="text-[21px] font-medium text-black tracking-tight leading-snug font-outfit mb-2.5 mt-2">
+                  Buyer pays. Money lands. You relax.
+                </h3>
+                <p className="text-gray-600 text-[13.5px] md:text-sm leading-relaxed mb-6 font-normal">
+                  Buyer clicks the payment link, pays via UPI or NEFT, and the invoice closes automatically. You get a WhatsApp confirmation the moment money hits. No chasing. No awkwardness. No calls.
+                </p>
+              </div>
+
+              {/* Image mockup */}
+              <div className="w-full h-[240px] rounded-3xl overflow-hidden select-none">
+                <img 
+                  src="https://i.pinimg.com/736x/80/6d/e4/806de48c7808cebfa530f65980ebec1a.jpg"
+                  alt="Settled Invoice Payment Mockup"
+                  className="w-full h-full object-cover block"
+                />
+              </div>
+            </div>
+
           </div>
-
-          {/* Card 3: One-Click Pay */}
-          <div className="bg-[#F5F3EB] rounded-[32px] p-6 flex flex-col justify-between">
-            <div>
-              <h3 className="text-[20px] font-bold text-gray-900 tracking-tight font-outfit mb-1">
-                One-Click Pay
-              </h3>
-              <p className="text-gray-500 text-xs md:text-sm leading-relaxed mb-6 font-medium">
-                Direct UPI & bank settlement links embedded in every reminder
-              </p>
-            </div>
-
-            {/* Orange-Yellow Gradient background with Approval card and card chip details */}
-            <div className="bg-gradient-to-tr from-amber-400 via-orange-400 to-[#FFF3B0] rounded-3xl h-[240px] relative overflow-hidden p-4 select-none flex flex-col justify-between shadow-inner">
-              
-              {/* Overlapping Credit Approval Mockup Card */}
-              <div className="relative z-10 bg-white border border-gray-150/80 rounded-2xl p-4 shadow-xl w-[92%] mx-auto flex flex-col gap-2.5">
-                <div className="flex items-center gap-2">
-                  <div className="w-5 h-5 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-500 shrink-0">
-                    <Check className="w-3.5 h-3.5 stroke-[3.5]" />
-                  </div>
-                  <div className="leading-tight text-left">
-                    <span className="text-[10px] font-bold text-gray-900 block leading-none">Invoice Settled!</span>
-                    <span className="text-[7.5px] text-gray-400 font-bold block mt-0.5">Cleared via UPI</span>
-                  </div>
-                </div>
-
-                {/* Substats */}
-                <div className="grid grid-cols-3 gap-1 divide-x divide-gray-100 text-left">
-                  <div className="pl-1">
-                    <span className="text-[7.5px] text-gray-400 font-bold block">RECOVERED</span>
-                    <span className="text-[10px] font-bold text-gray-950 block">₹78,500</span>
-                  </div>
-                  <div className="pl-1.5">
-                    <span className="text-[7.5px] text-gray-400 font-bold block">RATE</span>
-                    <span className="text-[10px] font-bold text-emerald-600 block">100%</span>
-                  </div>
-                  <div className="pl-1.5">
-                    <span className="text-[7.5px] text-gray-400 font-bold block">TALLY SYNC</span>
-                    <span className="text-[10px] font-bold text-[#0047FF] block">Active</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Bottom Orange Card overlay element */}
-              <div className="relative w-full flex justify-end pr-2 pb-1 opacity-90">
-                <div className="w-14 h-9 bg-white/20 border border-white/20 rounded-lg p-1.5 flex flex-col justify-between">
-                  <div className="flex gap-0.5">
-                    <div className="w-2 h-1 bg-white/40 rounded-sm" />
-                    <div className="w-2 h-1 bg-white/40 rounded-sm" />
-                  </div>
-                  <div className="w-5 h-0.5 bg-white/40 rounded-sm" />
-                  <div className="flex gap-0.5">
-                    <div className="w-2 h-1 bg-white/40 rounded-sm" />
-                    <div className="w-2 h-1 bg-white/40 rounded-sm" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Card 4: Legal Escalation */}
-          <div className="bg-[#F5F3EB] rounded-[32px] p-6 flex flex-col justify-between">
-            <div>
-              <h3 className="text-[20px] font-bold text-gray-900 tracking-tight font-outfit mb-1">
-                Legal Escalation
-              </h3>
-              <p className="text-gray-500 text-xs md:text-sm leading-relaxed mb-6 font-medium">
-                Auto-drafted MSME notice and professional legal follow-ups when needed
-              </p>
-            </div>
-
-            {/* Gradient Cyan-Emerald Card stack listing Rails */}
-            <div className="bg-gradient-to-tr from-emerald-300 via-teal-300 to-cyan-300 rounded-3xl h-[240px] relative overflow-hidden p-4 select-none flex flex-col justify-between shadow-inner">
-              
-              {/* Floating Rails List Mockup */}
-              <div className="w-full space-y-2 relative z-10">
-                
-                {/* Rail Item 1 */}
-                <div className="bg-white border border-gray-100 rounded-xl px-3 py-2 flex items-center justify-between text-[9.5px] font-bold text-gray-800 shadow-sm w-full">
-                  <div className="flex items-center gap-1.5">
-                    <Zap className="w-3.5 h-3.5 text-blue-500 shrink-0" />
-                    <span>UPI Pay-links</span>
-                  </div>
-                  <span className="text-gray-400 text-[8px] tracking-wider font-extrabold uppercase">Fast</span>
-                </div>
-
-                {/* Rail Item 2 */}
-                <div className="bg-white border border-gray-100 rounded-xl px-3 py-2 flex items-center justify-between text-[9.5px] font-bold text-gray-800 shadow-sm w-full">
-                  <div className="flex items-center gap-1.5">
-                    <MessageSquare className="w-3.5 h-3.5 text-[#25D366] shrink-0" />
-                    <span>WhatsApp Follow-up</span>
-                  </div>
-                  <span className="text-emerald-500 text-[8px] tracking-wider font-extrabold uppercase">Direct</span>
-                </div>
-
-                {/* Rail Item 3 */}
-                <div className="bg-white border border-gray-100 rounded-xl px-3 py-2 flex items-center justify-between text-[9.5px] font-bold text-gray-800 shadow-sm w-full">
-                  <div className="flex items-center gap-1.5">
-                    <Mail className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
-                    <span>Email Reminder</span>
-                  </div>
-                  <span className="text-gray-400 text-[8px] tracking-wider font-extrabold uppercase">Draft</span>
-                </div>
-
-                {/* Rail Item 4 */}
-                <div className="bg-white border border-gray-100 rounded-xl px-3 py-2 flex items-center justify-between text-[9.5px] font-bold text-gray-800 shadow-sm w-full">
-                  <div className="flex items-center gap-1.5">
-                    <Gavel className="w-3.5 h-3.5 text-rose-500 shrink-0" />
-                    <span>MSME notice draft</span>
-                  </div>
-                  <span className="text-rose-500 text-[8px] tracking-wider font-extrabold uppercase">Legal</span>
-                </div>
-
-              </div>
-            </div>
-          </div>
-
         </div>
 
         {/* Dynamic Branching Flowchart (Replaces Old Pills & Tree Diagram) */}
