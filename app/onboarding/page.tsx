@@ -544,11 +544,12 @@ export default function OnboardingPage() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('Not authenticated')
 
+      // Note: identity is derived server-side from the session cookie, not
+      // from anything sent here — the server never trusts a client-supplied user id.
       const res = await fetch('/api/onboarding', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          supabaseId: user.id,
           name: form.name.trim(),
           email: form.email,
           businessName: form.businessName.trim(),

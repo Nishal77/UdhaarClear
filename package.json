@@ -22,6 +22,7 @@
     "@radix-ui/react-hover-card": "^1.1.15",
     "@react-pdf/renderer": "^4.5.1",
     "@remixicon/react": "^4.9.0",
+    "@sentry/nextjs": "^10.63.0",
     "@supabase/ssr": "^0.10.3",
     "@supabase/supabase-js": "^2.106.2",
     "@tabler/icons-react": "^3.44.0",
@@ -70,6 +71,7 @@
   "pnpm": {
     "onlyBuiltDependencies": [
       "@prisma/engines",
+      "@sentry/cli",
       "prisma",
       "msw",
       "sharp"

@@ -20,6 +20,20 @@ export async function POST(request: Request) {
     const { invoiceId } = event.payload.payment_link.entity.notes
     const payment = event.payload.payment.entity
 
+    // Idempotency guard: Razorpay retries webhooks on any network hiccup,
+    // and payment.entity.id is unique per payment, so it doubles as the
+    // natural dedupe key. The unique constraint on the insert is what
+    // actually blocks a duplicate — if another request already inserted
+    // this event id, this insert throws and we stop here.
+    try {
+      await prisma.webhookEvent.create({
+        data: { provider: 'razorpay', eventId: payment.id, eventType: event.event },
+      })
+    } catch {
+      // Already processed this exact payment — acknowledge and exit.
+      return new Response('OK', { status: 200 })
+    }
+
     const invoice = await prisma.invoice.findUnique({
       where: { id: invoiceId },
       include: { customer: true, business: { include: { owner: true } } },

@@ -1,12 +1,13 @@
 import { prisma } from '@/lib/prisma/client'
 import { normalizeIndianPhone } from '@/lib/utils/phone'
 import { apiError, apiSuccess } from '@/lib/utils/api-error'
-import { createClient } from '@/lib/supabase/server'
+import { getSessionUser } from '@/lib/utils/auth'
 import { z } from 'zod'
 
-// Schema for checking / creating onboarding flow details
+// Schema for checking / creating onboarding flow details.
+// supabaseId is NEVER read from here — it always comes from the verified
+// session (see getSessionUser below), never from client input.
 const onboardingSchema = z.object({
-  supabaseId: z.string(),
   name: z.string().min(1),
   email: z.string().email().optional(),
   businessName: z.string().optional(),
@@ -18,9 +19,7 @@ const onboardingSchema = z.object({
 
 export async function GET(request: Request) {
   try {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    
+    const user = await getSessionUser()
     if (!user) {
       return apiError('UNAUTHORIZED', 'Not authenticated', 401)
     }
@@ -42,20 +41,28 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
+    // Identity comes ONLY from the verified session — a client can never
+    // pass someone else's supabaseId and edit their business.
+    const sessionUser = await getSessionUser()
+    if (!sessionUser) {
+      return apiError('UNAUTHORIZED', 'Not authenticated', 401)
+    }
+    const supabaseId = sessionUser.id
+
     const body = await request.json()
     const parsed = onboardingSchema.safeParse(body)
     if (!parsed.success) {
       return apiError('VALIDATION_ERROR', 'Invalid input', 400)
     }
 
-    const { supabaseId, name, businessName, phone, bizPhone, city, gstin, email } = parsed.data
+    const { name, businessName, phone, bizPhone, city, gstin, email } = parsed.data
 
     // Idempotent — check if user already exists
     const existing = await prisma.user.findUnique({
       where: { supabaseId },
       include: { ownedBusiness: true },
     })
-    
+
     if (existing) {
       // If user already exists, update business details if they were passed
       const updatedUser = await prisma.user.update({

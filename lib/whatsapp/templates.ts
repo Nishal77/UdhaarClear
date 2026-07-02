@@ -24,11 +24,19 @@ export function getLegalTemplateName(daysOverdue: number): string {
 }
 
 // ─── GENTLE ─────────────────────────────────────────────────────────────────
-// Template: invoice_update_alert (registered under MARKETING category)
-// Body: Hi {{customer_name}}, this is a payment notification from {{business_name}} regarding invoice #{{invoice_number}}.
-//       Amount Due: {{amount}}
-//       Due Date: {{due_date}}
-// Button: dynamic Pay Now CTA linking to https://udhaarclear.in/pay/{{invoice_id}}
+// Template: invoice_update_alert (register under UTILITY category — this is
+// a transactional payment notice, not marketing; see docs/waba-template-submission.md)
+//
+// Body must use NUMBERED placeholders ({{1}}, {{2}}...), matching the plain
+// positional params this function sends — named placeholders like
+// {{customer_name}} require a `parameter_name` field per param that this
+// code does not send, and Meta will reject the message if the registered
+// template expects named params.
+//
+// Body: Hi {{1}}, this is a payment notification from {{2}} regarding invoice #{{3}}.
+//       Amount Due: {{4}}
+//       Due Date: {{5}}
+// Button: dynamic Pay Now CTA linking to https://udhaarclear.in/pay/{{1}} (button param)
 
 export function buildGentleComponents(params: {
   customerName: string

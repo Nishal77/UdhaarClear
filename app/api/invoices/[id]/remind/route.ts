@@ -47,8 +47,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     where: { invoiceId: id, triggeredBy: 'MANUAL', createdAt: { gte: today } },
   })
   if (manualCount >= MAX_MANUAL_PER_DAY) {
-    // Temporarily commented out for testing so the user can send test reminders to check rendering on mobile.
-    // return apiError('RATE_LIMIT', 'Maximum 3 manual reminders per invoice per day', 429)
+    return apiError('RATE_LIMIT', 'Maximum 3 manual reminders per invoice per day', 429)
   }
 
   try {

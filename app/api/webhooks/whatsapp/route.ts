@@ -19,12 +19,23 @@ export async function POST(request: Request) {
   const body = await request.text()
   const signature = request.headers.get('x-hub-signature-256') ?? ''
 
+  // Meta signs webhook payloads with the App Secret (from the Meta App
+  // dashboard), not the WhatsApp access token — using the wrong key here
+  // means every real webhook gets silently rejected.
   const expectedSig = `sha256=${crypto
-    .createHmac('sha256', process.env.WHATSAPP_ACCESS_TOKEN ?? '')
+    .createHmac('sha256', process.env.WHATSAPP_APP_SECRET ?? '')
     .update(body)
     .digest('hex')}`
 
-  if (!crypto.timingSafeEqual(Buffer.from(expectedSig), Buffer.from(signature))) {
+  const expectedBuf = Buffer.from(expectedSig)
+  const receivedBuf = Buffer.from(signature)
+
+  // timingSafeEqual throws if buffer lengths differ, so check that first —
+  // a malformed/missing header should fail closed, not crash the route.
+  const isValid = expectedBuf.length === receivedBuf.length &&
+    crypto.timingSafeEqual(expectedBuf, receivedBuf)
+
+  if (!isValid) {
     return new Response('Forbidden', { status: 403 })
   }
 

@@ -312,4 +312,24 @@ model RateLimit {
   @@map("rate_limits")
 }
 
+// ─────────────────────────────────────────────
+// WEBHOOK IDEMPOTENCY
+// ─────────────────────────────────────────────
+
+// Records every processed webhook event so retries (which payment
+// providers send on any network hiccup) never get applied twice.
+// Insert happens BEFORE processing — the unique constraint on
+// (provider, eventId) is what actually blocks the duplicate; if the
+// insert fails, we know this exact event already ran.
+model WebhookEvent {
+  id        String   @id @default(cuid())
+  provider  String // e.g. "razorpay", "whatsapp"
+  eventId   String // provider's unique id for this event (e.g. Razorpay payment id)
+  eventType String // e.g. "payment_link.paid"
+  createdAt DateTime @default(now())
+
+  @@unique([provider, eventId])
+  @@map("webhook_events")
+}
+
 
