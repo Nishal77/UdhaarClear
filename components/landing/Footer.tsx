@@ -5,6 +5,8 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowRight01Icon } from "@hugeicons/core-free-icons";
+import DotField from "../ui/DotField";
+
 
 export default function Footer() {
   const [email, setEmail] = useState("");
@@ -62,7 +64,21 @@ export default function Footer() {
         {/* 1. SaaSleek-style CTA Card Section (Top Half) */}
         <div className="relative overflow-hidden bg-gradient-to-br from-[#B5F670] via-[#A3E635] to-[#82D42D] rounded-t-2xl p-8 md:p-14 lg:p-16 text-black flex flex-col md:flex-row items-center justify-between gap-10 border border-[#B5F670]/20 z-10">
 
-          {/* Subtle dot grid overlay */}
+          {/* Absolute Background Interactive DotField with Right-to-Left CSS Masking Fade */}
+          <DotField 
+            className="absolute right-0 top-0 bottom-0 w-full md:w-[55%] pointer-events-none select-none z-0 overflow-hidden"
+            style={{
+              maskImage: 'radial-gradient(circle at 100% 50%, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 75%)',
+              WebkitMaskImage: 'radial-gradient(circle at 100% 50%, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 75%)'
+            }}
+            dotRadius={1.5}
+            dotSpacing={14}
+            gradientFrom="rgba(0, 0, 0, 0.38)"
+            gradientTo="rgba(0, 0, 0, 0.38)"
+            cursorRadius={180}
+            bulgeStrength={45}
+            bulgeOnly={true}
+          />
 
           <div className="relative z-10 flex-1 text-left flex flex-col items-start">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight leading-[1.1] font-outfit text-black max-w-2xl">
@@ -115,15 +131,6 @@ export default function Footer() {
               </div>
               Get started for free
             </Link>
-          </div>
-
-          {/* Right Image: Cute Assistant Robot inside framed rounded card */}
-          <div className="relative z-10 w-full md:w-auto shrink-0 flex justify-center md:justify-end items-end h-[240px] md:h-[280px]">
-            <img
-              src="/helper_robot.png"
-              alt="UdhaarClear Assistant Robot"
-              className="w-auto h-full max-h-[240px] md:max-h-[280px] object-contain rounded-2xl select-none pointer-events-none drop-shadow-xl hover:scale-105 transition-transform duration-300"
-            />
           </div>
 
         </div>
