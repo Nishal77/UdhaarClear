@@ -19,19 +19,19 @@ const checkoutSchema = z.object({
  * app/api/webhooks/razorpay/route.ts), same pattern as invoice payments.
  */
 export async function POST(request: Request) {
-  const session = await getBusinessFromSession()
-  if (!session) return apiError('UNAUTHORIZED', 'Not authenticated', 401)
-
-  const body = await request.json()
-  const parsed = checkoutSchema.safeParse(body)
-  if (!parsed.success) return apiError('VALIDATION_ERROR', 'Invalid plan selected', 400)
-
-  const planTier = parsed.data.planTier as PlanTier
-  if (!isPaidPlanTier(planTier)) {
-    return apiError('VALIDATION_ERROR', 'Not a paid plan', 400)
-  }
-
   try {
+    const session = await getBusinessFromSession()
+    if (!session) return apiError('UNAUTHORIZED', 'Not authenticated', 401)
+
+    const body = await request.json()
+    const parsed = checkoutSchema.safeParse(body)
+    if (!parsed.success) return apiError('VALIDATION_ERROR', 'Invalid plan selected', 400)
+
+    const planTier = parsed.data.planTier as PlanTier
+    if (!isPaidPlanTier(planTier)) {
+      return apiError('VALIDATION_ERROR', 'Not a paid plan', 400)
+    }
+
     const planId = await getOrCreateMonthlyPlanId(planTier)
     const razorpay = getRazorpay()
 
@@ -53,6 +53,7 @@ export async function POST(request: Request) {
       razorpayKeyId: process.env.RAZORPAY_KEY_ID,
     })
   } catch (err) {
+    console.error('Subscription checkout error:', err)
     return apiError('CHECKOUT_FAILED', err instanceof Error ? err.message : 'Failed to start checkout', 500)
   }
 }

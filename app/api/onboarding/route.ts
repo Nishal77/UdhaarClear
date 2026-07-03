@@ -58,34 +58,6 @@ export async function POST(request: Request) {
     }
 
     const { name, businessName, phone, bizPhone, city, gstin, email } = parsed.data
-
-    // Idempotent — check if user already exists
-    const existing = await prisma.user.findUnique({
-      where: { supabaseId },
-      include: { ownedBusiness: true },
-    })
-
-    if (existing) {
-      // If user already exists, update business details if they were passed
-      const updatedUser = await prisma.user.update({
-        where: { supabaseId },
-        data: {
-          name,
-          phone: phone ? normalizeIndianPhone(phone) : existing.phone,
-          ownedBusiness: {
-            update: {
-              name: businessName ?? existing.ownedBusiness?.name ?? name,
-              phone: bizPhone ? normalizeIndianPhone(bizPhone) : (phone ? normalizeIndianPhone(phone) : (existing.ownedBusiness?.phone ?? '')),
-              city: city ?? existing.ownedBusiness?.city ?? null,
-              gstin: gstin ?? existing.ownedBusiness?.gstin ?? null,
-            }
-          }
-        },
-        include: { ownedBusiness: true }
-      })
-      return apiSuccess({ user: updatedUser })
-    }
-
     const normalizedPersonalPhone = phone ? normalizeIndianPhone(phone) : null
     const normalizedBizPhone = bizPhone ? normalizeIndianPhone(bizPhone) : (phone ? normalizeIndianPhone(phone) : '')
 
@@ -98,6 +70,50 @@ export async function POST(request: Request) {
     const referringCA = referralCode
       ? await prisma.cAProfile.findUnique({ where: { referralCode }, select: { id: true } })
       : null
+
+    // The User row is created up front at signup (see
+    // app/api/auth/verify-otp/route.ts) WITHOUT a business — that only
+    // happens here, the first time someone actually completes this wizard.
+    // So `existing` is the common case; `!existing` only covers signup
+    // paths that don't pre-create a bare user row (e.g. some OAuth flows).
+    const existing = await prisma.user.findUnique({
+      where: { supabaseId },
+      include: { ownedBusiness: true },
+    })
+
+    if (existing) {
+      const updatedUser = await prisma.user.update({
+        where: { supabaseId },
+        data: {
+          name,
+          phone: normalizedPersonalPhone ?? existing.phone,
+          ownedBusiness: existing.ownedBusiness
+            ? {
+                // Business already exists (e.g. re-submitting this wizard) — update it in place.
+                update: {
+                  name: businessName ?? existing.ownedBusiness.name,
+                  phone: normalizedBizPhone || existing.ownedBusiness.phone,
+                  city: city ?? existing.ownedBusiness.city,
+                  gstin: gstin ?? existing.ownedBusiness.gstin,
+                },
+              }
+            : {
+                // First time this user completes the business wizard —
+                // create it now, attributing the referral if one is pending.
+                create: {
+                  name: businessName ?? name,
+                  phone: normalizedBizPhone,
+                  email,
+                  city: city ?? null,
+                  gstin: gstin ?? null,
+                  caId: referringCA?.id ?? null,
+                },
+              },
+        },
+        include: { ownedBusiness: true },
+      })
+      return apiSuccess({ user: updatedUser })
+    }
 
     const user = await prisma.user.create({
       data: {

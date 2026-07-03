@@ -23,65 +23,74 @@ const registerSchema = z.object({
  * (just re-sends the OTP rather than erroring).
  */
 export async function POST(request: Request) {
-  const sessionUser = await getSessionUser()
-  if (!sessionUser) return apiError('UNAUTHORIZED', 'Not authenticated', 401)
-
-  const body = await request.json()
-  const parsed = registerSchema.safeParse(body)
-  if (!parsed.success) {
-    return apiError('VALIDATION_ERROR', 'Invalid input', 400, parsed.error.flatten())
-  }
-
-  const { firmName, icaiMembershipNumber } = parsed.data
-  const copNumber = parsed.data.copNumber?.trim() || null
-
-  if (!isValidIndianPhone(parsed.data.phone)) {
-    return apiError('VALIDATION_ERROR', 'Enter a valid 10-digit Indian mobile number', 400)
-  }
-  const phone = normalizeIndianPhone(parsed.data.phone)
-
-  const dbUser = await prisma.user.findUnique({
-    where: { supabaseId: sessionUser.id },
-    include: { ownedBusiness: true, caProfile: true },
-  })
-  if (!dbUser) return apiError('NOT_FOUND', 'User record not found', 404)
-
-  if (dbUser.ownedBusiness) {
-    return apiError('INVALID', 'This account is already registered as a business — a CA partner account must be separate', 400)
-  }
-
-  let caProfile = dbUser.caProfile
-
-  if (!caProfile) {
-    try {
-      caProfile = await prisma.cAProfile.create({
-        data: {
-          userId: dbUser.id,
-          firmName,
-          phone,
-          icaiMembershipNumber,
-          copNumber,
-          referralCode: generateReferralCode(),
-        },
-      })
-    } catch (err: unknown) {
-      if (isUniqueConstraintError(err, 'phone')) {
-        return apiError('DUPLICATE', 'This phone number is already registered to another CA partner', 409)
-      }
-      if (isUniqueConstraintError(err, 'icaiMembershipNumber')) {
-        return apiError('DUPLICATE', 'This ICAI membership number is already registered', 409)
-      }
-      throw err
-    }
-  }
-
   try {
-    await sendCAOtp(caProfile.id, phone)
-  } catch (err) {
-    return apiError('SEND_FAILED', err instanceof Error ? err.message : 'Failed to send verification code', 500)
-  }
+    const sessionUser = await getSessionUser()
+    if (!sessionUser) return apiError('UNAUTHORIZED', 'Not authenticated', 401)
 
-  return apiSuccess({ caProfileId: caProfile.id }, 201)
+    const body = await request.json()
+    const parsed = registerSchema.safeParse(body)
+    if (!parsed.success) {
+      return apiError('VALIDATION_ERROR', 'Invalid input', 400, parsed.error.flatten())
+    }
+
+    const { firmName, icaiMembershipNumber } = parsed.data
+    const copNumber = parsed.data.copNumber?.trim() || null
+
+    if (!isValidIndianPhone(parsed.data.phone)) {
+      return apiError('VALIDATION_ERROR', 'Enter a valid 10-digit Indian mobile number', 400)
+    }
+    const phone = normalizeIndianPhone(parsed.data.phone)
+
+    const dbUser = await prisma.user.findUnique({
+      where: { supabaseId: sessionUser.id },
+      include: { ownedBusiness: true, caProfile: true },
+    })
+    if (!dbUser) return apiError('NOT_FOUND', 'User record not found', 404)
+
+    if (dbUser.ownedBusiness) {
+      return apiError('INVALID', 'This account is already registered as a business — a CA partner account must be separate', 400)
+    }
+
+    let caProfile = dbUser.caProfile
+
+    if (!caProfile) {
+      try {
+        caProfile = await prisma.cAProfile.create({
+          data: {
+            userId: dbUser.id,
+            firmName,
+            phone,
+            icaiMembershipNumber,
+            copNumber,
+            referralCode: generateReferralCode(),
+          },
+        })
+      } catch (err: unknown) {
+        if (isUniqueConstraintError(err, 'phone')) {
+          return apiError('DUPLICATE', 'This phone number is already registered to another CA partner', 409)
+        }
+        if (isUniqueConstraintError(err, 'icaiMembershipNumber')) {
+          return apiError('DUPLICATE', 'This ICAI membership number is already registered', 409)
+        }
+        throw err
+      }
+    }
+
+    try {
+      await sendCAOtp(caProfile.id, phone)
+    } catch (err) {
+      return apiError('SEND_FAILED', err instanceof Error ? err.message : 'Failed to send verification code', 500)
+    }
+
+    return apiSuccess({ caProfileId: caProfile.id }, 201)
+  } catch (err) {
+    // Catch-all: any unexpected error (e.g. a DB/migration issue) must still
+    // come back as JSON — otherwise Next.js's plain-text 500 page breaks the
+    // frontend's `res.json()` call with a confusing "not valid JSON" error
+    // that hides the real problem.
+    console.error('CA registration error:', err)
+    return apiError('INTERNAL_SERVER_ERROR', err instanceof Error ? err.message : 'Something went wrong', 500)
+  }
 }
 
 function isUniqueConstraintError(err: unknown, field: string): boolean {

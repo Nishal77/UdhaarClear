@@ -119,7 +119,15 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Account profile not found. Please sign up again.' }, { status: 400 })
     }
 
-    // 5. Create DB user + default business record in Prisma (if not already existing)
+    // 5. Create the bare DB user record (if not already existing).
+    // IMPORTANT: no ownedBusiness is created here. Account creation happens
+    // before the person has said whether they're a business owner or a CA
+    // partner (that choice happens on /onboarding, which links to
+    // /ca/onboarding) — auto-creating a Business at this point used to lock
+    // every new signup into "business owner" and block CA registration with
+    // a false "already registered as a business" error. The actual profile
+    // (Business or CAProfile) is created lazily by whichever onboarding
+    // flow the user actually completes.
     try {
       const existing = await prisma.user.findUnique({ where: { supabaseId: supabaseUser.id } })
       if (!existing) {
@@ -128,13 +136,6 @@ export async function POST(request: Request) {
             supabaseId: supabaseUser.id,
             email: session.email,
             name: session.name,
-            ownedBusiness: {
-              create: {
-                name: session.name,
-                phone: '',
-                email: session.email,
-              },
-            },
           },
         })
       }

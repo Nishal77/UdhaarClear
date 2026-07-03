@@ -13,6 +13,13 @@ function generateOtpCode(): string {
 /**
  * Generates a fresh OTP for a CA, stores it on their profile, and sends it
  * via WhatsApp. Used both for the initial registration and for "resend".
+ *
+ * In development, a failed WhatsApp send (missing/invalid credentials, the
+ * `ca_partner_otp` template not yet approved by Meta, etc.) doesn't block
+ * the flow — the code is logged to the server console instead, so the rest
+ * of registration can be tested locally without live WABA access. In
+ * production the same failure still throws, since silently hiding a real
+ * delivery failure from a real CA would be wrong.
  */
 export async function sendCAOtp(caProfileId: string, phone: string): Promise<void> {
   const otp = generateOtpCode()
@@ -23,11 +30,22 @@ export async function sendCAOtp(caProfileId: string, phone: string): Promise<voi
     data: { otpCode: otp, otpExpiresAt: expiresAt, otpAttempts: 0, verificationStatus: 'OTP_SENT' },
   })
 
-  await sendTemplateMessage({
-    to: phone,
-    templateName: TEMPLATE_NAMES.CA_OTP,
-    components: buildCAOtpComponents(otp),
-  })
+  try {
+    await sendTemplateMessage({
+      to: phone,
+      templateName: TEMPLATE_NAMES.CA_OTP,
+      components: buildCAOtpComponents(otp),
+    })
+  } catch (err) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn(
+        `[DEV] WhatsApp send failed (${err instanceof Error ? err.message : String(err)}). ` +
+          `CA OTP for ${phone}: ${otp}`
+      )
+      return
+    }
+    throw err
+  }
 }
 
 export type VerifyCAOtpResult = { ok: true } | { ok: false; reason: string }

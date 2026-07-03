@@ -16,35 +16,47 @@ const verifySchema = z.object({ otp: z.string().length(6) })
 
 /** POST /api/ca/verify-otp — confirms the code sent during registration. */
 export async function POST(request: Request) {
-  const sessionUser = await getSessionUser()
-  if (!sessionUser) return apiError('UNAUTHORIZED', 'Not authenticated', 401)
+  try {
+    const sessionUser = await getSessionUser()
+    if (!sessionUser) return apiError('UNAUTHORIZED', 'Not authenticated', 401)
 
-  const body = await request.json()
-  const parsed = verifySchema.safeParse(body)
-  if (!parsed.success) return apiError('VALIDATION_ERROR', 'Enter the 6-digit code', 400)
+    const body = await request.json()
+    const parsed = verifySchema.safeParse(body)
+    if (!parsed.success) return apiError('VALIDATION_ERROR', 'Enter the 6-digit code', 400)
 
-  const caProfile = await getOwnCAProfile(sessionUser.id)
-  if (!caProfile) return apiError('NOT_FOUND', 'No CA registration found for this account', 404)
+    const caProfile = await getOwnCAProfile(sessionUser.id)
+    if (!caProfile) return apiError('NOT_FOUND', 'No CA registration found for this account', 404)
 
-  const result = await verifyCAOtp(caProfile.id, parsed.data.otp)
-  if (!result.ok) return apiError('VERIFICATION_FAILED', result.reason, 400)
+    const result = await verifyCAOtp(caProfile.id, parsed.data.otp)
+    if (!result.ok) return apiError('VERIFICATION_FAILED', result.reason, 400)
 
-  return apiSuccess({ ok: true })
+    return apiSuccess({ ok: true })
+  } catch (err) {
+    // Same catch-all reasoning as /api/ca/register — never let a raw
+    // non-JSON error response reach the frontend's res.json() call.
+    console.error('CA OTP verification error:', err)
+    return apiError('INTERNAL_SERVER_ERROR', err instanceof Error ? err.message : 'Something went wrong', 500)
+  }
 }
 
 /** PUT /api/ca/verify-otp — resend a fresh code. */
 export async function PUT() {
-  const sessionUser = await getSessionUser()
-  if (!sessionUser) return apiError('UNAUTHORIZED', 'Not authenticated', 401)
-
-  const caProfile = await getOwnCAProfile(sessionUser.id)
-  if (!caProfile) return apiError('NOT_FOUND', 'No CA registration found for this account', 404)
-
   try {
-    await sendCAOtp(caProfile.id, caProfile.phone)
-  } catch (err) {
-    return apiError('SEND_FAILED', err instanceof Error ? err.message : 'Failed to resend code', 500)
-  }
+    const sessionUser = await getSessionUser()
+    if (!sessionUser) return apiError('UNAUTHORIZED', 'Not authenticated', 401)
 
-  return apiSuccess({ ok: true })
+    const caProfile = await getOwnCAProfile(sessionUser.id)
+    if (!caProfile) return apiError('NOT_FOUND', 'No CA registration found for this account', 404)
+
+    try {
+      await sendCAOtp(caProfile.id, caProfile.phone)
+    } catch (err) {
+      return apiError('SEND_FAILED', err instanceof Error ? err.message : 'Failed to resend code', 500)
+    }
+
+    return apiSuccess({ ok: true })
+  } catch (err) {
+    console.error('CA OTP resend error:', err)
+    return apiError('INTERNAL_SERVER_ERROR', err instanceof Error ? err.message : 'Something went wrong', 500)
+  }
 }

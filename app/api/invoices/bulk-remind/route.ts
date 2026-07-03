@@ -25,52 +25,57 @@ export interface BulkRemindResult {
  * of scope here; see the Month 3-6 roadmap for BullMQ/Upstash.
  */
 export async function POST() {
-  const session = await getBusinessFromSession()
-  if (!session) return apiError('UNAUTHORIZED', 'Not authenticated', 401)
+  try {
+    const session = await getBusinessFromSession()
+    if (!session) return apiError('UNAUTHORIZED', 'Not authenticated', 401)
 
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
 
-  const overdueInvoices = await prisma.invoice.findMany({
-    where: {
-      businessId: session.businessId,
-      status: 'OVERDUE',
-      remindersPaused: false,
-      customer: { isBlocked: false },
-    },
-    include: {
-      _count: {
-        select: {
-          reminders: {
-            where: { triggeredBy: 'MANUAL', createdAt: { gte: today } },
+    const overdueInvoices = await prisma.invoice.findMany({
+      where: {
+        businessId: session.businessId,
+        status: 'OVERDUE',
+        remindersPaused: false,
+        customer: { isBlocked: false },
+      },
+      include: {
+        _count: {
+          select: {
+            reminders: {
+              where: { triggeredBy: 'MANUAL', createdAt: { gte: today } },
+            },
           },
         },
       },
-    },
-  })
+    })
 
-  const result: BulkRemindResult = { sent: 0, skipped: 0, failed: 0 }
+    const result: BulkRemindResult = { sent: 0, skipped: 0, failed: 0 }
 
-  for (const invoice of overdueInvoices) {
-    const alreadyRemindedToday = invoice._count.reminders >= MAX_MANUAL_PER_DAY
-    if (alreadyRemindedToday) {
-      result.skipped++
-      continue
+    for (const invoice of overdueInvoices) {
+      const alreadyRemindedToday = invoice._count.reminders >= MAX_MANUAL_PER_DAY
+      if (alreadyRemindedToday) {
+        result.skipped++
+        continue
+      }
+
+      try {
+        await ReminderService.sendReminder({
+          invoiceId: invoice.id,
+          channel: 'BOTH',
+          triggeredBy: 'MANUAL',
+        })
+        result.sent++
+      } catch {
+        // ReminderService already logs a FAILED Reminder row internally —
+        // just keep going so one bad invoice doesn't block the rest.
+        result.failed++
+      }
     }
 
-    try {
-      await ReminderService.sendReminder({
-        invoiceId: invoice.id,
-        channel: 'BOTH',
-        triggeredBy: 'MANUAL',
-      })
-      result.sent++
-    } catch {
-      // ReminderService already logs a FAILED Reminder row internally —
-      // just keep going so one bad invoice doesn't block the rest.
-      result.failed++
-    }
+    return apiSuccess(result)
+  } catch (err) {
+    console.error('Bulk remind error:', err)
+    return apiError('INTERNAL_SERVER_ERROR', err instanceof Error ? err.message : 'Something went wrong', 500)
   }
-
-  return apiSuccess(result)
 }
