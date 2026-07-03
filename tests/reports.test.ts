@@ -44,9 +44,18 @@ describe('PDF Auditor Report Generation', () => {
       },
     ]
 
+    const mockAgeing = {
+      current: { count: 1, amount: 30000 },
+      '0-30': { count: 0, amount: 0 },
+      '31-60': { count: 0, amount: 0 },
+      '61-90': { count: 0, amount: 0 },
+      '90+': { count: 0, amount: 0 },
+    }
+
     const element = createElement(AuditorReport as any, {
       business: mockBusiness,
       stats: mockStats,
+      ageing: mockAgeing,
       invoices: mockInvoices,
     })
 

@@ -55,7 +55,22 @@ export class ReminderService {
     const days = daysOverdue(invoice.dueDate)
     const tone = customTone ?? selectTone(days, invoice.reminderTone)
     const customerName = invoice.customer.contactName ?? invoice.customer.name
-    const amount = formatINR(Number(invoice.amount))
+
+    // A customer who has already paid part of the invoice should only ever
+    // be asked for what's left — never the original full amount again.
+    const paidSoFar = Number(invoice.paidAmount ?? 0)
+    const remainingBalance = Number(invoice.amount) - paidSoFar
+    const isPartiallyPaid = paidSoFar > 0 && invoice.status === 'PARTIALLY_PAID'
+    const amount = formatINR(remainingBalance)
+
+    // WhatsApp templates are pre-approved by Meta with a single fixed
+    // {{amount}} placeholder (see docs/waba-template-submission.md) — there's
+    // no separate slot for "amount already paid". So for a partial payment,
+    // that context is folded into the same string instead of requiring a new
+    // template and another 3-7 day review.
+    const waAmountText = isPartiallyPaid
+      ? `${amount} (${formatINR(paidSoFar)} already paid of ${formatINR(Number(invoice.amount))})`
+      : amount
 
     // Payment link: always use our hosted pay page — no Razorpay dependency
     const paymentLink = `${process.env.NEXT_PUBLIC_APP_URL}/pay/${invoiceId}`
@@ -86,6 +101,13 @@ export class ReminderService {
         ? 'payment_reminder_firm'
         : 'payment_reminder_gentle'
 
+    // Plain-language clause appended to the internal log + as a fallback —
+    // makes the partial-payment state explicit rather than just showing a
+    // smaller number with no explanation of why it changed.
+    const partialPaymentNote = isPartiallyPaid
+      ? ` (${formatINR(paidSoFar)} paid, ${amount} pending)`
+      : ''
+
     let messageBody = ''
 
     // Build WABA components and a plain-text fallback for the DB log
@@ -96,11 +118,11 @@ export class ReminderService {
         businessName: invoice.business.name,
         invoiceNumber: invoice.invoiceNumber,
         invoiceDate: formatDate(invoice.invoiceDate),
-        amount,
+        amount: waAmountText,
         dueDate: formatDate(invoice.dueDate),
         invoiceId: invoice.id,
       })
-      messageBody = `Hi ${customerName}, invoice ${invoice.invoiceNumber} from ${invoice.business.name} for ${amount} is ${days <= 0 ? `due on ${formatDate(invoice.dueDate)}` : `${days} days overdue`}. Pay: ${paymentLink}`
+      messageBody = `Hi ${customerName}, invoice ${invoice.invoiceNumber} from ${invoice.business.name} for ${amount}${partialPaymentNote} is ${days <= 0 ? `due on ${formatDate(invoice.dueDate)}` : `${days} days overdue`}. Pay: ${paymentLink}`
     } else if (tone === 'FIRM') {
       const deadlineDate = new Date()
       deadlineDate.setDate(deadlineDate.getDate() + 5)
@@ -108,44 +130,44 @@ export class ReminderService {
       components = buildFirmComponents({
         customerName,
         invoiceNumber: invoice.invoiceNumber,
-        amount,
+        amount: waAmountText,
         daysOverdue: String(days),
         deadlineDate: deadlineStr,
         paymentLink: paymentLink ?? '',
         businessPhone: invoice.business.phone,
         businessName: invoice.business.name,
       })
-      messageBody = `Dear ${customerName}, invoice ${invoice.invoiceNumber} for ${amount} is ${days} days overdue. Pay by ${deadlineStr}: ${paymentLink}`
+      messageBody = `Dear ${customerName}, invoice ${invoice.invoiceNumber} for ${amount}${partialPaymentNote} is ${days} days overdue. Pay by ${deadlineStr}: ${paymentLink}`
     } else if (days < 35) {
       // LEGAL day +28 — formal demand, 7-day window
       components = buildLegal28Components({
         customerName,
         invoiceNumber: invoice.invoiceNumber,
         businessName: invoice.business.name,
-        amount,
+        amount: waAmountText,
         paymentLink: paymentLink ?? '',
         legalRefNo: legalRef,
       })
-      messageBody = `⚠️ Dear ${customerName}, a formal legal demand notice has been sent to your email. Invoice ${invoice.invoiceNumber} for ${amount} is 28 days overdue. Pay within 7 days to avoid MSME Facilitation Council filing: ${paymentLink} — Ref: ${legalRef}`
+      messageBody = `⚠️ Dear ${customerName}, a formal legal demand notice has been sent to your email. Invoice ${invoice.invoiceNumber} for ${amount}${partialPaymentNote} is 28 days overdue. Pay within 7 days to avoid MSME Facilitation Council filing: ${paymentLink} — Ref: ${legalRef}`
     } else if (days < 42) {
       // LEGAL day +35 — 48-hour ultimatum
       components = buildLegal35Components({
         customerName,
         invoiceNumber: invoice.invoiceNumber,
-        amount,
+        amount: waAmountText,
         paymentLink: paymentLink ?? '',
       })
-      messageBody = `🚨 Dear ${customerName}, 48-hour window running. Invoice ${invoice.invoiceNumber} for ${amount} is 35 days overdue. Filing with MSME Facilitation Council cannot be reversed once initiated. Pay immediately: ${paymentLink}`
+      messageBody = `🚨 Dear ${customerName}, 48-hour window running. Invoice ${invoice.invoiceNumber} for ${amount}${partialPaymentNote} is 35 days overdue. Filing with MSME Facilitation Council cannot be reversed once initiated. Pay immediately: ${paymentLink}`
     } else {
       // LEGAL day +42 — proceedings initiated
       components = buildLegal42Components({
         customerName,
-        amount,
+        amount: waAmountText,
         invoiceNumber: invoice.invoiceNumber,
         businessPhone: invoice.business.phone,
         legalRefNo: legalRef,
       })
-      messageBody = `🔴 Dear ${customerName}, formal legal proceedings have been initiated for non-payment of ${amount} (Invoice ${invoice.invoiceNumber}, Ref: ${legalRef}). Pay immediately and share UTR with ${invoice.business.phone} to halt proceedings.`
+      messageBody = `🔴 Dear ${customerName}, formal legal proceedings have been initiated for non-payment of ${amount}${partialPaymentNote} (Invoice ${invoice.invoiceNumber}, Ref: ${legalRef}). Pay immediately and share UTR with ${invoice.business.phone} to halt proceedings.`
     }
 
     // 2. Dispatch WhatsApp Template message
@@ -179,6 +201,7 @@ export class ReminderService {
           invoiceDate: formatDate(invoice.invoiceDate),
           dueDate: formatDate(invoice.dueDate),
           amount,
+          paidSoFarText: isPartiallyPaid ? `${formatINR(paidSoFar)} already paid` : undefined,
           daysOverdue: days,
           paymentLink: paymentLink ?? `${process.env.NEXT_PUBLIC_APP_URL}/pay/${invoiceId}`,
           bankAccountNo: invoice.business.bankAccountNo,

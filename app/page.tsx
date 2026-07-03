@@ -2,6 +2,7 @@ import Navbar from "@/components/landing/Navbar";
 import Hero from "@/components/landing/Hero";
 import SocialProofStats from "@/components/landing/SocialProofStats";
 import HowItWorks from "@/components/landing/HowItWorks";
+import TonalLadder from "@/components/landing/TonalLadder";
 import ToolsIntegration from "@/components/landing/ToolsIntegration";
 import Comparison from "@/components/landing/Comparison";
 import Workflow from "@/components/landing/Workflow";
@@ -21,6 +22,7 @@ export default function LandingPage() {
         <Hero />
         <SocialProofStats />
         <HowItWorks />
+        <TonalLadder />
         <Comparison />
         <ToolsIntegration />
         {/* <Workflow /> */}

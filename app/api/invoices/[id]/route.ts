@@ -9,6 +9,10 @@ const patchSchema = z.object({
   reminderTone: z.enum(['GENTLE', 'FIRM', 'LEGAL']).optional(),
   autoReminder: z.boolean().optional(),
   remindersPaused: z.boolean().optional(),
+  // ISO date string, or null to clear an existing snooze (pause forever /
+  // resume now, depending on remindersPaused). See lib/cron/reminder-engine.ts
+  // for how the cron job auto-resumes once this date passes.
+  remindersPausedUntil: z.string().nullable().optional(),
   status: z.enum([
     'PENDING',
     'DUE',
@@ -59,6 +63,11 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
 
   const updateData: Record<string, unknown> = { ...parsed.data }
   if (parsed.data.dueDate) updateData.dueDate = new Date(parsed.data.dueDate)
+  if (parsed.data.remindersPausedUntil !== undefined) {
+    updateData.remindersPausedUntil = parsed.data.remindersPausedUntil
+      ? new Date(parsed.data.remindersPausedUntil)
+      : null
+  }
   if (parsed.data.status === 'PAID') {
     updateData.paidAt = new Date()
     updateData.autoReminder = false

@@ -1,6 +1,10 @@
 import { getBusinessFromSession } from '@/lib/utils/auth'
 import { apiError, apiSuccess } from '@/lib/utils/api-error'
 import { prisma } from '@/lib/prisma/client'
+import { daysOverdue } from '@/lib/utils/date'
+import { buildAgeingBreakdown } from '@/lib/utils/ageing'
+
+const OUTSTANDING_STATUSES = ['PENDING', 'DUE', 'OVERDUE', 'PENDING_CONFIRMATION', 'PARTIALLY_PAID'] as const
 
 export async function GET() {
   const session = await getBusinessFromSession()
@@ -12,9 +16,9 @@ export async function GET() {
   const today = new Date(now)
   today.setHours(0, 0, 0, 0)
 
-  const [outstandingResult, overdueResult, collectedResult, reminderCount] = await Promise.all([
+  const [outstandingResult, overdueResult, collectedResult, reminderCount, outstandingInvoices] = await Promise.all([
     prisma.invoice.aggregate({
-      where: { businessId, status: { in: ['PENDING', 'DUE', 'OVERDUE', 'PENDING_CONFIRMATION', 'PARTIALLY_PAID'] } },
+      where: { businessId, status: { in: [...OUTSTANDING_STATUSES] } },
       _sum: { amount: true },
     }),
     prisma.invoice.aggregate({
@@ -29,7 +33,23 @@ export async function GET() {
     prisma.reminder.count({
       where: { businessId, createdAt: { gte: today } },
     }),
+    // Fetched separately (not aggregated) because ageing buckets need each
+    // invoice's own days-overdue value — Prisma can't bucket-and-sum in one
+    // query, so we do it in JS via buildAgeingBreakdown().
+    prisma.invoice.findMany({
+      where: { businessId, status: { in: [...OUTSTANDING_STATUSES] } },
+      select: { dueDate: true, amount: true, paidAmount: true },
+    }),
   ])
+
+  const ageingBuckets = buildAgeingBreakdown(
+    outstandingInvoices.map((inv) => ({
+      dueDate: inv.dueDate,
+      amount: Number(inv.amount),
+      paidAmount: inv.paidAmount ? Number(inv.paidAmount) : null,
+    })),
+    daysOverdue
+  )
 
   return apiSuccess({
     totalOutstanding: Number(outstandingResult._sum.amount ?? 0),
@@ -37,5 +57,6 @@ export async function GET() {
     overdueCount: overdueResult._count,
     collectedThisMonth: Number(collectedResult._sum.paidAmount ?? 0),
     remindersSentToday: reminderCount,
+    ageingBuckets,
   })
 }

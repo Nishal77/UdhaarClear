@@ -3,12 +3,14 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
+import { toast } from 'sonner'
 import { InvoiceWithCustomer } from '@/types/database'
 import { InvoiceStatusBadge } from './InvoiceStatusBadge'
 import { formatINRCompact } from '@/lib/utils/currency'
 import { formatDate, daysOverdue } from '@/lib/utils/date'
 import { HugeiconsIcon } from '@hugeicons/react'
-import { ArrowRight02Icon, Search01Icon } from '@hugeicons/core-free-icons'
+import { ArrowRight02Icon, Search01Icon, Notification03Icon } from '@hugeicons/core-free-icons'
+import type { BulkRemindResult } from '@/app/api/invoices/bulk-remind/route'
 
 export type ClientInvoice = Omit<InvoiceWithCustomer, 'amount' | 'paidAmount'> & {
   amount: number
@@ -108,6 +110,33 @@ export function InvoiceTable({
   const searchParams = useSearchParams()
 
   const [searchQuery, setSearchQuery] = useState('')
+  const [isRemindingAll, setIsRemindingAll] = useState(false)
+  const overdueCount = counts.OVERDUE ?? 0
+
+  async function handleRemindAllOverdue() {
+    setIsRemindingAll(true)
+    try {
+      const res = await fetch('/api/invoices/bulk-remind', { method: 'POST' })
+      const json = await res.json()
+      if (!res.ok) throw new Error(json.message ?? 'Failed to send reminders')
+
+      const { sent, skipped, failed }: BulkRemindResult = json
+      const parts = [`Sent ${sent} reminder${sent === 1 ? '' : 's'}`]
+      if (skipped > 0) parts.push(`${skipped} skipped (already reminded today)`)
+      if (failed > 0) parts.push(`${failed} failed`)
+
+      if (sent > 0) {
+        toast.success(parts.join(' · '))
+      } else {
+        toast.info(parts.join(' · '))
+      }
+      router.refresh()
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Something went wrong')
+    } finally {
+      setIsRemindingAll(false)
+    }
+  }
 
   const placeholders = [
     "Search by invoice number, name...",
@@ -246,6 +275,22 @@ export function InvoiceTable({
         </div>
 
       </div>
+
+      {overdueCount > 0 && (
+        <div className="border-b border-gray-100 px-6 py-3 flex items-center justify-between bg-[#FFF8F5]">
+          <span className="text-[12.5px] text-gray-600">
+            {overdueCount} overdue {overdueCount === 1 ? 'invoice needs' : 'invoices need'} a nudge
+          </span>
+          <button
+            onClick={handleRemindAllOverdue}
+            disabled={isRemindingAll}
+            className="inline-flex items-center gap-1.5 rounded-lg bg-[#FF6A39] px-3.5 py-2 text-[12.5px] font-semibold text-white hover:bg-[#E05B2E] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <HugeiconsIcon icon={Notification03Icon} size={14} />
+            {isRemindingAll ? 'Sending…' : `Remind all overdue (${overdueCount})`}
+          </button>
+        </div>
+      )}
 
       <div className="overflow-x-auto">
         <table className="w-full">

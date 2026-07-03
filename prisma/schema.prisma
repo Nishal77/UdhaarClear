@@ -145,6 +145,13 @@ model Invoice {
   autoReminder    Boolean      @default(true)
   remindersPaused Boolean      @default(false)
 
+  // Set when a seller snoozes reminders for a fixed window (e.g. "buyer
+  // promised payment in 7 days") instead of pausing indefinitely. The cron
+  // reminder engine auto-clears remindersPaused once this date passes — see
+  // autoExpireSnoozedInvoices() in lib/cron/reminder-engine.ts. Null means
+  // either "not paused" or "paused indefinitely" (no auto-resume).
+  remindersPausedUntil DateTime?
+
   razorpayLinkId  String?
   razorpayLinkUrl String?
 

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import DotField from "../ui/DotField";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { PlayIcon } from "@hugeicons/core-free-icons";
+import { PlayIcon, WorkUpdateIcon } from "@hugeicons/core-free-icons";
 
 export default function Hero() {
   return (
@@ -55,11 +55,11 @@ export default function Hero() {
         <div className="relative max-w-[1340px] mx-auto px-6 md:px-8 z-10 w-full flex flex-col items-start space-y-10">
           
           {/* Top Text Block (Left-Aligned) */}
-          <div className="flex flex-col items-start text-left space-y-8 max-w-3xl pt-8">
+          <div className="flex flex-col items-start text-left space-y-8 max-w-5xl pt-8">
             {/* Main Heading */}
-            <h1 className="text-4xl md:text-5xl lg:text-[3.55rem] font-normal text-gray-950 tracking-tight leading-[1.12] md:leading-[1.08] max-w-3xl">
-              Customers Not Paying? <br />
-              <span className="bg-gradient-to-r from-gray-950 via-slate-800 to-gray-900 bg-clip-text text-transparent">We Follow Up Until They Do.</span>
+            <h1 className="text-4xl md:text-5xl lg:text-[3.55rem] font-normal text-gray-950 tracking-tight leading-[1.12] md:leading-[1.08] max-w-5xl">
+             India's MSME Payment Recovery Platform <br />
+              <span className="bg-gradient-to-r from-gray-950 via-slate-800 to-gray-900 bg-clip-text text-transparent">Recover Stuck Invoices Automatically.</span>
             </h1>
 
             {/* Paragraph Description */}
@@ -71,7 +71,7 @@ export default function Hero() {
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-start gap-4 w-full sm:w-auto">
               <Link
                 href="/signup"
-                className="btn-premium-green inline-flex items-center justify-center px-6.5 py-3 text-[14px] md:text-[15px] font-semibold text-white rounded-2xl shrink-0 select-none text-center"
+                className="bg-[#B5F670] inline-flex items-center justify-center px-6.5 py-3 text-[14px] md:text-[15px] font-semibold text-black rounded-2xl shrink-0 select-none text-center"
               >
                Start Free 14 Days
               </Link>
@@ -79,8 +79,8 @@ export default function Hero() {
                 href="#demo"
                 className="inline-flex items-center justify-center gap-2 border border-black/[0.08] bg-white/50 hover:bg-white/80 active:scale-95 text-gray-700 hover:text-gray-950 font-semibold px-5.5 py-3 rounded-2xl transition-all duration-200 text-[14px] md:text-[15px] select-none text-center"
               >
-                <HugeiconsIcon icon={PlayIcon} />
-                Watch demo
+                <HugeiconsIcon icon={WorkUpdateIcon} />
+                How it works
               </Link>
             </div>
           </div>

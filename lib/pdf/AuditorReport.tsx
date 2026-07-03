@@ -1,6 +1,7 @@
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer'
 import { formatINR } from '@/lib/utils/currency'
 import { formatDate } from '@/lib/utils/date'
+import { AGEING_BUCKET_LABELS, type AgeingBreakdown } from '@/lib/utils/ageing'
 
 const styles = StyleSheet.create({
   page: { fontFamily: 'Helvetica', fontSize: 10, padding: 40, color: '#1F2937' },
@@ -38,6 +39,7 @@ interface AuditorReportProps {
     collectionRate: number
     avgDsoValue: number
   }
+  ageing: AgeingBreakdown
   invoices: Array<{
     invoiceNumber: string
     customer: { name: string }
@@ -49,8 +51,9 @@ interface AuditorReportProps {
   }>
 }
 
-export function AuditorReport({ business, stats, invoices }: AuditorReportProps) {
+export function AuditorReport({ business, stats, ageing, invoices }: AuditorReportProps) {
   const today = new Date()
+  const ageingBuckets: Array<keyof AgeingBreakdown> = ['0-30', '31-60', '61-90', '90+']
 
   return (
     <Document>
@@ -102,7 +105,26 @@ export function AuditorReport({ business, stats, invoices }: AuditorReportProps)
           </View>
         </View>
 
-        {/* Section 3: Ledger Table */}
+        {/* Section 3: Ageing Summary */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>OUTSTANDING AGEING SUMMARY</Text>
+          <View style={styles.table}>
+            <View style={styles.tableHeader}>
+              <Text style={styles.th}>Bucket</Text>
+              <Text style={styles.thRight}>Invoices</Text>
+              <Text style={styles.thRight}>Outstanding Amount</Text>
+            </View>
+            {ageingBuckets.map((bucket) => (
+              <View key={bucket} style={styles.tableRow}>
+                <Text style={styles.td}>{AGEING_BUCKET_LABELS[bucket]}</Text>
+                <Text style={styles.tdRight}>{ageing[bucket].count}</Text>
+                <Text style={styles.tdRight}>{formatINR(ageing[bucket].amount)}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
+
+        {/* Section 4: Ledger Table */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>OUTSTANDING & SETTLEMENTS LEDGER</Text>
           <View style={styles.table}>
@@ -128,7 +150,7 @@ export function AuditorReport({ business, stats, invoices }: AuditorReportProps)
           </View>
         </View>
 
-        {/* Section 4: Signatures */}
+        {/* Section 5: Signatures */}
         <View style={styles.footer}>
           <Text style={styles.signatureTitle}>AUDITOR VERIFICATION SIGN-OFF</Text>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>

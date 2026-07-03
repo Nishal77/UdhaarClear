@@ -13,6 +13,24 @@ export interface ReminderEngineResult {
   errors: string[]
 }
 
+/**
+ * Resumes reminders for any invoice whose snooze window ("pause for N days")
+ * has passed. Runs before the main send loop so a just-expired snooze can
+ * still get today's reminder if today happens to land on a scheduled day.
+ */
+async function autoExpireSnoozedInvoices(now: Date): Promise<void> {
+  await prisma.invoice.updateMany({
+    where: {
+      remindersPaused: true,
+      remindersPausedUntil: { lte: now },
+    },
+    data: {
+      remindersPaused: false,
+      remindersPausedUntil: null,
+    },
+  })
+}
+
 export async function runReminderEngine(): Promise<ReminderEngineResult> {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
@@ -20,6 +38,8 @@ export async function runReminderEngine(): Promise<ReminderEngineResult> {
   if (isSunday(today)) {
     return { sent: 0, skipped: 0, failed: 0, errors: ['Skipped: Sunday'] }
   }
+
+  await autoExpireSnoozedInvoices(today)
 
   const result: ReminderEngineResult = { sent: 0, skipped: 0, failed: 0, errors: [] }
 

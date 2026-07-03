@@ -126,7 +126,82 @@ describe('WhatsApp Bot Inbound Command Processor', () => {
       )
     })
 
-    it('processes "Pause [Name]" command to halt recovery cadence', async () => {
+    it('processes "[Name] paid Rs [Amount]" for a full payment', async () => {
+      const mockCustomer = { id: 'cust-1', name: 'Jethalal' }
+      const mockInvoice = {
+        id: 'inv-1',
+        invoiceNumber: 'INV-101',
+        amount: 15000,
+        paidAmount: 0,
+        dueDate: new Date(),
+      }
+      vi.mocked(prisma.customer.findFirst).mockResolvedValue(mockCustomer as any)
+      vi.mocked(prisma.invoice.findFirst).mockResolvedValue(mockInvoice as any)
+
+      await handleInboundMessage({
+        id: 'msg-1',
+        from: mockIncomingPhone,
+        timestamp: '1234567890',
+        type: 'text',
+        text: { body: 'Jethalal paid Rs 15000' },
+      })
+
+      expect(prisma.invoice.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: 'inv-1' },
+          data: expect.objectContaining({
+            status: 'PAID',
+            paidAmount: 15000,
+            autoReminder: false,
+          }),
+        })
+      )
+      expect(client.sendTextMessage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: mockIncomingPhone,
+          body: expect.stringContaining('fully cleared'),
+        })
+      )
+    })
+
+    it('processes "[Name] paid Rs [Amount]" for a partial payment', async () => {
+      const mockCustomer = { id: 'cust-1', name: 'Jethalal' }
+      const mockInvoice = {
+        id: 'inv-1',
+        invoiceNumber: 'INV-101',
+        amount: 15000,
+        paidAmount: 0,
+        dueDate: new Date(),
+      }
+      vi.mocked(prisma.customer.findFirst).mockResolvedValue(mockCustomer as any)
+      vi.mocked(prisma.invoice.findFirst).mockResolvedValue(mockInvoice as any)
+
+      await handleInboundMessage({
+        id: 'msg-1',
+        from: mockIncomingPhone,
+        timestamp: '1234567890',
+        type: 'text',
+        text: { body: 'Jethalal paid Rs 5000' },
+      })
+
+      expect(prisma.invoice.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: 'inv-1' },
+          data: expect.objectContaining({
+            status: 'PARTIALLY_PAID',
+            paidAmount: 5000,
+          }),
+        })
+      )
+      expect(client.sendTextMessage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: mockIncomingPhone,
+          body: expect.stringContaining('Partial payment logged'),
+        })
+      )
+    })
+
+    it('processes "Pause [Name]" command to halt recovery cadence indefinitely', async () => {
       const mockCustomer = { id: 'cust-1', name: 'Jethalal' }
       vi.mocked(prisma.customer.findFirst).mockResolvedValue(mockCustomer as any)
 
@@ -146,13 +221,44 @@ describe('WhatsApp Bot Inbound Command Processor', () => {
       expect(prisma.invoice.updateMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({ customerId: 'cust-1', businessId: 'b-1' }),
-          data: { remindersPaused: true },
+          data: { remindersPaused: true, remindersPausedUntil: null },
         })
       )
       expect(client.sendTextMessage).toHaveBeenCalledWith(
         expect.objectContaining({
           to: mockIncomingPhone,
           body: expect.stringContaining('Paused automated reminders for Jethalal'),
+        })
+      )
+    })
+
+    it('processes "Pause [Name] [N] days" command with a time-boxed snooze', async () => {
+      const mockCustomer = { id: 'cust-1', name: 'Jethalal' }
+      vi.mocked(prisma.customer.findFirst).mockResolvedValue(mockCustomer as any)
+
+      await handleInboundMessage({
+        id: 'msg-1',
+        from: mockIncomingPhone,
+        timestamp: '1234567890',
+        type: 'text',
+        text: { body: 'Pause Jethalal 7 days' },
+      })
+
+      expect(prisma.customer.findFirst).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({ name: { equals: 'Jethalal', mode: 'insensitive' } }),
+        })
+      )
+      expect(prisma.invoice.updateMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({ customerId: 'cust-1', businessId: 'b-1' }),
+          data: { remindersPaused: true, remindersPausedUntil: expect.any(Date) },
+        })
+      )
+      expect(client.sendTextMessage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: mockIncomingPhone,
+          body: expect.stringContaining('for 7 days'),
         })
       )
     })

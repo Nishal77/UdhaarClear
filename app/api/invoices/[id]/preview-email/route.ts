@@ -28,7 +28,13 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
   const days = searchParams.get('day') ? parseInt(searchParams.get('day')!) : daysOverdue(invoice.dueDate)
   const tone = toneQuery || selectTone(days, invoice.reminderTone)
   const customerName = invoice.customer.contactName ?? invoice.customer.name
-  const amount = formatINR(Number(invoice.amount))
+
+  // Same rule as the real send path (lib/services/reminder-service.ts):
+  // always show what's still owed, never the original full invoice amount.
+  const paidSoFar = Number(invoice.paidAmount ?? 0)
+  const remainingBalance = Number(invoice.amount) - paidSoFar
+  const isPartiallyPaid = paidSoFar > 0 && invoice.status === 'PARTIALLY_PAID'
+  const amount = formatINR(remainingBalance)
 
   const paymentLink = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/pay/${id}`
 
@@ -43,6 +49,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     invoiceDate: formatDate(invoice.invoiceDate),
     dueDate: formatDate(invoice.dueDate),
     amount,
+    paidSoFarText: isPartiallyPaid ? `${formatINR(paidSoFar)} already paid` : undefined,
     daysOverdue: days,
     paymentLink,
     bankAccountNo: invoice.business.bankAccountNo,

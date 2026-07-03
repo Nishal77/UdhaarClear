@@ -16,7 +16,8 @@ export interface ReminderEmailParams {
   invoiceNumber: string
   invoiceDate: string
   dueDate: string
-  amount: string           // pre-formatted e.g. "₹45,000"
+  amount: string           // pre-formatted e.g. "₹45,000" — the REMAINING balance, never the original invoice total
+  paidSoFarText?: string   // e.g. "₹7,500 already paid" — set only when a partial payment has been recorded
   daysOverdue: number
   paymentLink: string
   bankAccountNo?: string | null
@@ -260,6 +261,10 @@ function shell(opts: ShellOptions): string {
               <span style="font-size: 12.5px; font-weight: 600; color: ${days > 0 ? '#EF4444' : '#10B981'}; display: block; margin-top: 6px;">
                 ${days > 0 ? `⚠️ Overdue by ${days} days (Due Date: ${params.dueDate})` : `⏰ Due on ${params.dueDate}`}
               </span>
+              ${params.paidSoFarText ? `
+              <span style="font-size: 12px; font-weight: 600; color: #0F766E; display: block; margin-top: 4px;">
+                ✓ ${params.paidSoFarText} — amount above is what's still pending
+              </span>` : ''}
             </td>
           </tr>
           <tr style="background-color: #ffffff;">

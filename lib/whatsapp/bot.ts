@@ -306,13 +306,18 @@ export async function handleInboundMessage(message: WhatsAppMessage): Promise<vo
       return
     }
 
-    // Command 5: "Pause [Name]"
-    // Pause recovery sequences for customer
-    const pauseRegex = /^pause\s+(.+)$/i
+    // Command 5: "Pause [Name]" or "Pause [Name] [N] days"
+    // Pause recovery sequences for a customer — either indefinitely (no
+    // duration given, resumed only by the owner), or for a fixed window
+    // (e.g. "Pause Ramesh 7 days" when the buyer promises to pay soon).
+    // A time-boxed pause auto-resumes via autoExpireSnoozedInvoices() in
+    // lib/cron/reminder-engine.ts once the window passes.
+    const pauseRegex = /^pause\s+(.+?)(?:\s+(\d+)\s*days?)?$/i
     const pauseMatch = body.match(pauseRegex)
 
     if (pauseMatch) {
-      const [_, customerName] = pauseMatch
+      const [_, customerName, daysStr] = pauseMatch
+      const snoozeDays = daysStr ? parseInt(daysStr, 10) : null
 
       const customer = await prisma.customer.findFirst({
         where: {
@@ -329,6 +334,8 @@ export async function handleInboundMessage(message: WhatsAppMessage): Promise<vo
         return
       }
 
+      const remindersPausedUntil = snoozeDays ? addDays(new Date(), snoozeDays) : null
+
       await prisma.invoice.updateMany({
         where: {
           customerId: customer.id,
@@ -337,12 +344,17 @@ export async function handleInboundMessage(message: WhatsAppMessage): Promise<vo
         },
         data: {
           remindersPaused: true,
+          remindersPausedUntil,
         },
       })
 
+      const confirmation = remindersPausedUntil
+        ? `⏸️ Paused automated reminders for ${customer.name} for ${snoozeDays} day${snoozeDays === 1 ? '' : 's'}. They'll resume automatically on ${formatDate(remindersPausedUntil)} unless you resume sooner from the dashboard.`
+        : `⏸️ Paused automated reminders for ${customer.name}. You can resume them anytime from the web dashboard.`
+
       await sendTextMessage({
         to: incomingPhone,
-        body: `⏸️ Paused automated reminders for ${customer.name}. You can resume them anytime from the web dashboard.`,
+        body: confirmation,
       })
       return
     }
@@ -535,7 +547,7 @@ export async function handleInboundMessage(message: WhatsAppMessage): Promise<vo
     // Fallback: Default instructions if command not recognized
     await sendTextMessage({
       to: incomingPhone,
-      body: `❓ Command not recognized.\n\nHere are the commands you can use:\n\n1️⃣ Create Invoice:\n👉 "New invoice [Name] [Amount] [Phone] [Due Date]"\n\n2️⃣ Get Status:\n👉 "Status"\n\n3️⃣ Record Payment:\n👉 "[Name] paid Rs [Amount]"\n\n4️⃣ Pause Recovery:\n👉 "Pause [Name]"\n\n5️⃣ Get Monthly Report:\n👉 "Report"\n\n6️⃣ Human Gate (Day 28 approval):\n👉 "Yes [Name]" (Approve & send legal notice)\n👉 "No [Name]" (Keep paused)\n👉 "Snooze [Name]" (Snooze 7 days)`,
+      body: `❓ Command not recognized.\n\nHere are the commands you can use:\n\n1️⃣ Create Invoice:\n👉 "New invoice [Name] [Amount] [Phone] [Due Date]"\n\n2️⃣ Get Status:\n👉 "Status"\n\n3️⃣ Record Payment:\n👉 "[Name] paid Rs [Amount]"\n\n4️⃣ Pause Recovery:\n👉 "Pause [Name]" (indefinitely)\n👉 "Pause [Name] [N] days" (auto-resumes, e.g. "Pause Ramesh 7 days")\n\n5️⃣ Get Monthly Report:\n👉 "Report"\n\n6️⃣ Human Gate (Day 28 approval):\n👉 "Yes [Name]" (Approve & send legal notice)\n👉 "No [Name]" (Keep paused)\n👉 "Snooze [Name]" (Snooze 7 days)`,
     })
   } catch (err) {
     console.error('Error handling WhatsApp Bot command:', err)
