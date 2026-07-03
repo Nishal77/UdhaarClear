@@ -108,7 +108,9 @@ export default function CAOnboardingPage() {
 
             <form onSubmit={handleRegisterSubmit} className="space-y-4">
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-gray-700">Firm name</label>
+                <label className="mb-1.5 block text-sm font-medium text-gray-700">
+                  Firm name <span className="text-red-500">*</span>
+                </label>
                 <input
                   type="text"
                   required
@@ -120,21 +122,35 @@ export default function CAOnboardingPage() {
               </div>
 
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-gray-700">Mobile number</label>
-                <input
-                  type="tel"
-                  required
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="9876543210"
-                  className="block w-full rounded-xl border border-gray-200 px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:border-gray-600 focus:outline-none"
-                />
-                <p className="mt-1 text-xs text-gray-400">We'll send a verification code here via WhatsApp</p>
+                <label className="mb-1.5 block text-sm font-medium text-gray-700">
+                  Mobile number <span className="text-red-500">*</span>
+                </label>
+                <div className="relative flex items-center rounded-xl border border-gray-200 focus-within:border-gray-600 transition-colors bg-white">
+                  <div className="flex items-center gap-1.5 pl-3.5 pr-2.5 py-3 border-r border-gray-200 select-none shrink-0 text-sm font-medium text-gray-500">
+                    <span className="text-[15px] filter saturate-[0.85]">🇮🇳</span>
+                    <span>+91</span>
+                  </div>
+                  <input
+                    type="tel"
+                    required
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="9876543210"
+                    className="block w-full bg-transparent px-3 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none rounded-r-xl"
+                  />
+                </div>
+                <p className="mt-1.5 text-xs text-gray-400 flex items-center gap-1.5 font-normal">
+                  <svg className="w-3.5 h-3.5 text-emerald-500 fill-current shrink-0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.504-5.718-1.463L0 24zm6.59-4.846c1.6.95 3.16 1.449 4.805 1.451 5.432.003 9.85-4.412 9.852-9.845.002-2.63-1.023-5.101-2.887-6.968C16.552 1.905 14.083.882 11.455.882 6.023.882 1.605 5.298 1.603 10.732c-.001 1.676.439 3.313 1.272 4.767L1.87 21.053l5.777-1.517v.001zm10.777-7.455c-.29-.145-1.72-.848-1.986-.944-.267-.097-.46-.145-.654.145-.193.291-.748.944-.919 1.138-.17.194-.34.219-.63.073-.29-.145-1.229-.453-2.34-1.444-.863-.77-1.446-1.72-1.615-2.012-.17-.291-.018-.448.127-.592.13-.13.29-.34.436-.509.145-.17.194-.291.291-.485.097-.194.049-.364-.025-.509-.073-.146-.654-1.576-.897-2.158-.236-.569-.475-.492-.654-.501-.17-.008-.364-.01-.557-.01-.194 0-.509.073-.776.364-.267.29-1.02 1.02-1.02 2.487 0 1.467 1.067 2.885 1.213 3.079.145.194 2.1 3.206 5.088 4.496.71.307 1.264.49 1.696.629.713.227 1.36.195 1.871.118.571-.085 1.72-.704 1.962-1.383.243-.679.243-1.261.17-1.383-.074-.122-.267-.195-.557-.34z"/>
+                  </svg>
+                  <span>We'll send a verification code here via WhatsApp</span>
+                </p>
               </div>
-
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-gray-700">ICAI membership no.</label>
+                  <label className="mb-1.5 block text-sm font-medium text-gray-700">
+                    ICAI membership no <span className="text-red-500">*</span>
+                  </label>
                   <input
                     type="text"
                     required
@@ -158,8 +174,8 @@ export default function CAOnboardingPage() {
                 </div>
               </div>
 
-              <div className="rounded-xl bg-gray-50 border border-gray-100 px-4 py-3 text-xs text-gray-500 leading-relaxed">
-                Your membership number is checked against the ICAI directory. Most registrations activate immediately; a small number get a manual review from our team first.
+              <div className="rounded-xl bg-gray-50 border border-gray-100 px-4 py-3 text-xs text-gray-600 tracking-tight leading-relaxed">
+               Note: Your membership number is checked against the ICAI directory. Most registrations activate immediately; a small number get a manual review from our team first.
               </div>
 
               <button
@@ -172,7 +188,7 @@ export default function CAOnboardingPage() {
               </button>
             </form>
 
-            <p className="mt-6 text-center text-xs text-gray-400">
+            <p className="mt-6 text-center text-xs text-gray-400 tracking-tight">
               Registering a business instead?{' '}
               <Link href="/onboarding" className="font-semibold text-gray-700 hover:text-gray-900">
                 Go to business onboarding

@@ -12,6 +12,16 @@ import { Eye, EyeOff, Mail, Lock } from 'lucide-react'
 
 const RESEND_COOLDOWN = 60
 
+function maskEmail(email: string): string {
+  if (!email || !email.includes('@')) return email
+  const [local, domain] = email.split('@')
+  if (!domain) return email
+  if (local.length <= 4) {
+    return `${local[0]}${'*'.repeat(local.length - 1)}@${domain}`
+  }
+  return `${local.slice(0, 3)}***${local.slice(-2)}@${domain}`
+}
+
 export default function SignupPage() {
   const router = useRouter()
   const [step, setStep] = useState<'email' | 'password' | 'otp'>('email')
@@ -225,15 +235,15 @@ export default function SignupPage() {
               <div>
                 <button
                   onClick={() => setStep('email')}
-                  className="mb-6 inline-flex items-center text-xs font-bold text-gray-500 hover:text-gray-900 transition-colors"
+                  className="mb-6 inline-flex items-center text-xs font-semibold text-gray-600 hover:text-gray-900 transition-colors"
                 >
                   ← Change email
                 </button>
 
                 <div className="mb-6">
-                  <h1 className="text-3xl font-extrabold tracking-tight text-gray-900 mb-1">Choose your password</h1>
+                  <h1 className="text-3xl font-semibold tracking-tight text-gray-900 mb-1">Choose your password</h1>
                   <p className="text-sm text-gray-500 truncate max-w-sm">
-                    Setting up credentials for <span className="font-semibold text-gray-700">{email}</span>
+                    Setting up credentials for <span className="font-semibold text-gray-700">{maskEmail(email)}</span>
                   </p>
                 </div>
 
@@ -248,7 +258,7 @@ export default function SignupPage() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="minimum 8 characters"
-                        className="block w-full rounded-xl border border-gray-200 pl-10 pr-11 py-3 text-sm text-gray-900 placeholder-gray-400 focus:border-[#ECA828] focus:outline-none focus:ring-2 focus:ring-amber-100 transition-all font-medium"
+                        className="block w-full rounded-xl border border-gray-200 pl-10 pr-11 py-3 text-sm text-gray-900 placeholder-gray-400 focus:border-gray-600 focus:outline-none  font-medium"
                       />
                       <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
                       <button
@@ -264,8 +274,8 @@ export default function SignupPage() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="mt-2 flex w-full items-center justify-center rounded-xl py-3.5 text-sm font-bold text-white shadow-md shadow-amber-500/10 hover:shadow-lg active:scale-[0.98] transition-all disabled:opacity-55 disabled:cursor-not-allowed"
-                    style={{ backgroundColor: '#ECA828' }}
+                    className="mt-2 flex w-full items-center justify-center rounded-xl py-3.5 text-sm font-medium text-white shadow-md shadow-amber-500/10 hover:shadow-lg active:scale-[0.98] transition-all disabled:opacity-55 disabled:cursor-not-allowed"
+                    style={{ backgroundColor: '#262624' }}
                   >
                     {loading ? 'Submitting...' : 'Create account →'}
                   </button>
@@ -278,7 +288,7 @@ export default function SignupPage() {
               <div className="text-center">
                 <button
                   onClick={() => setStep('email')}
-                  className="mb-6 inline-flex items-center text-xs font-bold text-gray-500 hover:text-gray-900 transition-colors self-start"
+                  className="mb-6 inline-flex items-center text-xs font-semibold text-gray-600 hover:text-gray-900 transition-colors self-start"
                 >
                   ← Go back
                 </button>
@@ -296,15 +306,15 @@ export default function SignupPage() {
                   </svg>
                 </div>
 
-                <h1 className="text-3xl font-extrabold tracking-tight text-gray-900 mb-1">Check your email</h1>
+                <h1 className="text-3xl font-semibold tracking-tight text-gray-900 mb-1">Check your email</h1>
                 <p className="text-sm text-gray-500">We sent a 6-digit confirmation code to</p>
-                <p className="mt-1 text-sm font-bold text-gray-800 break-all">{email}</p>
+                <p className="mt-1 text-sm font-medium text-gray-800 break-all">{maskEmail(email)}</p>
 
                 <div className="mt-8 flex justify-center">
                   <OtpInput onComplete={handleOtpComplete} disabled={loading} />
                 </div>
 
-                {loading && <p className="mt-5 text-xs text-amber-500 font-bold animate-pulse">Verifying code...</p>}
+                {loading && <p className="mt-5 text-xs text-amber-500 font-semibold">Verifying code...</p>}
 
                 <div className="mt-8 text-xs select-none">
                   {canResend ? (

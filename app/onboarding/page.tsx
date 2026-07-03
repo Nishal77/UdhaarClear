@@ -103,13 +103,19 @@ function StepPersonal({ form, onChange }: { form: FormState; onChange: (k: keyof
           <label className="text-[12px] font-bold text-gray-600 flex items-center">
             Mobile number <span className="text-red-500 ml-0.5">*</span>
           </label>
-          <input
-            type="tel"
-            value={form.phone}
-            onChange={(e) => onChange('phone', e.target.value)}
-            placeholder="e.g. +91 98765 43210"
-            className="h-11 rounded-xl border border-gray-200 bg-white px-4 text-[14px] text-gray-900 placeholder-gray-400 focus:border-[#FF6A39] focus:outline-none focus:ring-2 focus:ring-[#FF6A39]/10 transition-all"
-          />
+          <div className="relative flex items-center h-11 rounded-xl border border-gray-200 bg-white focus-within:border-[#FF6A39] focus-within:ring-2 focus-within:ring-[#FF6A39]/10 transition-all">
+            <div className="flex items-center gap-1.5 pl-3.5 pr-2.5 h-full border-r border-gray-200 select-none shrink-0 text-sm font-medium text-gray-500 bg-gray-50/50 rounded-l-xl">
+              <span className="text-[15px] filter saturate-[0.85]">🇮🇳</span>
+              <span>+91</span>
+            </div>
+            <input
+              type="tel"
+              value={form.phone}
+              onChange={(e) => onChange('phone', e.target.value)}
+              placeholder="98765 43210"
+              className="block w-full bg-transparent px-3 text-[14px] text-gray-900 placeholder-gray-400 focus:outline-none rounded-r-xl"
+            />
+          </div>
         </div>
       </div>
       <div className="flex flex-col gap-1.5">
