@@ -1,26 +1,61 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import Script from "next/script";
 import { toast } from "sonner";
-import { 
-  Activity, 
-  FileDown, 
-  Trash2, 
-  Check, 
-  Sparkles, 
-  ShieldCheck, 
-  Loader2, 
-  HelpCircle, 
-  CreditCard, 
-  Wallet, 
-  Building, 
-  ArrowLeft, 
-  CheckCircle2 
+import {
+  Activity,
+  Trash2,
+  Check,
+  Sparkles,
+  ShieldCheck,
+  Loader2,
+  CreditCard,
+  Wallet,
+  Building,
+  CheckCircle2
 } from "lucide-react";
+import { CancelSubscriptionButton } from "./CancelSubscriptionButton";
+
+// Minimal shape of the Razorpay Checkout.js constructor this component uses —
+// the actual global is loaded at runtime via the <Script> tag below.
+interface RazorpayCheckoutOptions {
+  key: string;
+  subscription_id: string;
+  name: string;
+  description: string;
+  theme: { color: string };
+  handler: (response: { razorpay_payment_id: string }) => void;
+  modal: { ondismiss: () => void };
+}
+declare global {
+  interface Window {
+    Razorpay?: new (options: RazorpayCheckoutOptions) => { open: () => void };
+  }
+}
+
+interface UsageSummary {
+  customerCount: number;
+  customerLimit: number;
+  invoiceCount: number;
+  invoiceLimit: number;
+}
 
 interface BillingSectionProps {
   businessName: string;
   currentPlanTier: string;
+  usage: UsageSummary;
+}
+
+/** Infinity limits render as "Unlimited" rather than a meaningless "12 / ∞". */
+function formatLimit(value: number): string {
+  return Number.isFinite(value) ? value.toLocaleString("en-IN") : "Unlimited";
+}
+
+function usagePercent(count: number, limit: number): number {
+  if (!Number.isFinite(limit) || limit <= 0) return 0;
+  return Math.min(100, Math.round((count / limit) * 100));
 }
 
 interface PlanDetails {
@@ -105,18 +140,19 @@ const PLANS: PlanDetails[] = [
   }
 ];
 
-export default function BillingSection({ businessName, currentPlanTier }: BillingSectionProps) {
-  const [activePlan, setActivePlan] = useState(currentPlanTier.toUpperCase());
-  const [isAnnual, setIsAnnual] = useState(false);
-  const [autoRenew, setAutoRenew] = useState(true);
+export default function BillingSection({ businessName, currentPlanTier, usage }: BillingSectionProps) {
+  const router = useRouter();
+  // The plan tier is server-fetched truth (see app/(dashboard)/settings/page.tsx)
+  // — no local "activePlan" state, so there's no way for the UI to show a
+  // plan that isn't actually the one stored on the business.
+  const activePlan = currentPlanTier.toUpperCase();
   const [confirmDeleteText, setConfirmDeleteText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // Simulated Checkout Modal states
   const [selectedPlan, setSelectedPlan] = useState<PlanDetails | null>(null);
   const [checkoutStep, setCheckoutStep] = useState<"review" | "processing" | "success">("review");
   const [paymentMethod, setPaymentMethod] = useState<"upi" | "card" | "netbanking" | "wallet">("upi");
-  const [processingMsg, setProcessingMsg] = useState("Establishing secure session with Razorpay...");
+  const [isRazorpayReady, setIsRazorpayReady] = useState(false);
 
   const getPlanDisplayName = (tier: string) => {
     switch (tier.toUpperCase()) {
@@ -133,30 +169,61 @@ export default function BillingSection({ businessName, currentPlanTier }: Billin
     setCheckoutStep("review");
   };
 
-  const handleStartCheckout = () => {
+  // Real Razorpay Subscriptions flow: create the subscription server-side,
+  // then open Razorpay's own hosted Checkout widget for the actual payment
+  // — payment method selection below happens inside that widget, our local
+  // `paymentMethod` state is just which one to pre-select on open.
+  const handleStartCheckout = async () => {
     if (!selectedPlan) return;
+    if (!isRazorpayReady || !window.Razorpay) {
+      toast.error("Payment widget is still loading — try again in a moment");
+      return;
+    }
+
     setCheckoutStep("processing");
 
-    // Cycle through messaging simulation
-    const msgs = [
-      "Establishing secure session with Razorpay...",
-      "Authorizing subscription token validation...",
-      "Registering workspace update protocols...",
-      "Verifying payment confirmation status..."
-    ];
+    try {
+      const res = await fetch("/api/subscriptions/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ planTier: selectedPlan.key }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.message ?? "Failed to start checkout");
 
-    let currentMsgIdx = 0;
-    const interval = setInterval(() => {
-      currentMsgIdx++;
-      if (currentMsgIdx < msgs.length) {
-        setProcessingMsg(msgs[currentMsgIdx]);
-      } else {
-        clearInterval(interval);
-        setCheckoutStep("success");
-        setActivePlan(selectedPlan.key);
-        toast.success(`Subscribed to ${selectedPlan.name} successfully!`);
-      }
-    }, 1200);
+      const razorpay = new window.Razorpay({
+        key: json.razorpayKeyId,
+        subscription_id: json.subscriptionId,
+        name: "UdhaarClear",
+        description: `${selectedPlan.name} — Monthly`,
+        theme: { color: "#FF6B00" },
+        handler: () => {
+          setCheckoutStep("success");
+          toast.success(`Subscribed to ${selectedPlan.name}! Activating your plan...`);
+          // The webhook (not this callback) is what actually confirms the
+          // payment and updates the plan in the database — refresh a couple
+          // times to pick that up once it lands, same pattern as buyer
+          // invoice payments elsewhere in the app.
+          router.refresh();
+          setTimeout(() => router.refresh(), 2500);
+        },
+        modal: {
+          ondismiss: () => setCheckoutStep("review"),
+        },
+      });
+      razorpay.open();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to start checkout");
+      setCheckoutStep("review");
+    }
+  };
+
+  const handleCancelSubscription = async () => {
+    const res = await fetch("/api/subscriptions/cancel", { method: "POST" });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.message ?? "Failed to cancel subscription");
+    toast.success("Subscription cancelled — you're back on the Free plan");
+    router.refresh();
   };
 
   const handleDeleteOrganization = (e: React.FormEvent) => {
@@ -183,15 +250,19 @@ export default function BillingSection({ businessName, currentPlanTier }: Billin
     );
   };
 
-  // Get active plan prices
+  // Get active plan price — monthly only for now; annual billing isn't wired
+  // up to a real Razorpay plan yet, so there's nothing honest to show for it.
   const currentPlanObj = PLANS.find(p => p.key === activePlan);
-  const currentPrice = currentPlanObj 
-    ? (isAnnual ? currentPlanObj.annualPrice : currentPlanObj.monthlyPrice)
-    : 0;
+  const currentPrice = currentPlanObj?.monthlyPrice ?? 0;
 
   return (
     <div className="space-y-7 w-full animate-in fade-in duration-200">
-      
+      <Script
+        src="https://checkout.razorpay.com/v1/checkout.js"
+        strategy="lazyOnload"
+        onReady={() => setIsRazorpayReady(true)}
+      />
+
       {/* ── Pricing & Upgrade Sub-Dashboard ── */}
       <div className="bg-white border border-[#EBEAE6]/60 rounded-[22px] p-6 shadow-[0_8px_30px_rgba(0,0,0,0.015)] text-center relative overflow-hidden">
         
@@ -206,41 +277,14 @@ export default function BillingSection({ businessName, currentPlanTier }: Billin
               Current active plan: <strong className="text-gray-900 font-semibold">{getPlanDisplayName(activePlan)}</strong>. Upgrade/downgrade to adjust limits.
             </p>
           </div>
-
-          {/* Pricing cycle selector */}
-          <div className="flex items-center gap-1.5 self-start md:self-auto bg-gray-100 p-1 rounded-xl">
-            <button
-              onClick={() => setIsAnnual(false)}
-              className={`text-xs font-semibold px-4 py-2 rounded-lg transition-all ${
-                !isAnnual 
-                  ? "bg-white text-gray-900 shadow-3xs" 
-                  : "text-gray-500 hover:text-gray-900"
-              }`}
-            >
-              Monthly
-            </button>
-            <button
-              onClick={() => setIsAnnual(true)}
-              className={`text-xs font-semibold px-4 py-2 rounded-lg transition-all flex items-center gap-1.5 ${
-                isAnnual 
-                  ? "bg-white text-gray-900 shadow-3xs" 
-                  : "text-gray-500 hover:text-gray-900"
-              }`}
-            >
-              Annual
-              <span className="text-[9px] bg-emerald-500 text-white font-bold px-1.5 py-0.5 rounded-full uppercase leading-none">
-                -20%
-              </span>
-            </button>
-          </div>
         </div>
 
         {/* Dynamic Cards Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
           {PLANS.map((plan) => {
             const isCurrent = activePlan === plan.key;
-            const price = isAnnual ? plan.annualPrice : plan.monthlyPrice;
-            const cycleText = isAnnual ? "/ year" : "/ month";
+            const price = plan.monthlyPrice;
+            const cycleText = "/ month";
 
             // Determine relative rank for upgrade/downgrade logic
             const planOrder = ["FREE", "STARTER", "GROWTH", "CA_PRO"];
@@ -326,112 +370,48 @@ export default function BillingSection({ businessName, currentPlanTier }: Billin
           </span>
         </div>
 
-        {/* Meters dependent on plan */}
+        {/* Meters — real counts from the database, not hardcoded per-tier fakes */}
         <div className="space-y-5">
-          {activePlan === "FREE" && (
-            <>
-              <div>
-                <div className="flex justify-between items-center text-xs font-medium text-gray-500 mb-2">
-                  <span>Debtor Customers</span>
-                  <span className="text-gray-900 font-semibold">9 / 10 added</span>
-                </div>
-                <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-                  <div className="bg-emerald-500 h-full rounded-full transition-all duration-500" style={{ width: "90%" }} />
-                </div>
-              </div>
-              <div>
-                <div className="flex justify-between items-center text-xs font-medium text-gray-500 mb-2">
-                  <span>PDF Invoices</span>
-                  <span className="text-gray-900 font-semibold">28 / 30 generated</span>
-                </div>
-                <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-                  <div className="bg-[#FF6B00] h-full rounded-full transition-all duration-500" style={{ width: "93%" }} />
-                </div>
-              </div>
-            </>
-          )}
-
-          {activePlan === "STARTER" && (
-            <>
-              <div>
-                <div className="flex justify-between items-center text-xs font-medium text-gray-500 mb-2">
-                  <span>Debtor Customers</span>
-                  <span className="text-gray-900 font-semibold">18 / 25 added</span>
-                </div>
-                <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-                  <div className="bg-emerald-500 h-full rounded-full transition-all duration-500" style={{ width: "72%" }} />
-                </div>
-              </div>
-              <div>
-                <div className="flex justify-between items-center text-xs font-medium text-gray-500 mb-2">
-                  <span>PDF Invoices</span>
-                  <span className="text-gray-900 font-semibold">76 / 100 generated</span>
-                </div>
-                <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-                  <div className="bg-[#FF6B00] h-full rounded-full transition-all duration-500" style={{ width: "76%" }} />
-                </div>
-              </div>
-            </>
-          )}
-
-          {activePlan === "GROWTH" && (
-            <>
-              <div>
-                <div className="flex justify-between items-center text-xs font-medium text-gray-500 mb-2">
-                  <span>Debtor Customers</span>
-                  <span className="text-gray-900 font-semibold">74 / 100 added</span>
-                </div>
-                <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-                  <div className="bg-emerald-500 h-full rounded-full transition-all duration-500" style={{ width: "74%" }} />
-                </div>
-              </div>
-              <div>
-                <div className="flex justify-between items-center text-xs font-medium text-gray-500 mb-2">
-                  <span>Advocate Legal Notices</span>
-                  <span className="text-gray-900 font-semibold">18 / 50 generated</span>
-                </div>
-                <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-                  <div className="bg-[#FF6B00] h-full rounded-full transition-all duration-500" style={{ width: "36%" }} />
-                </div>
-              </div>
-            </>
-          )}
-
-          {activePlan === "CA_PRO" && (
-            <>
-              <div>
-                <div className="flex justify-between items-center text-xs font-medium text-gray-500 mb-2">
-                  <span>Client Businesses</span>
-                  <span className="text-gray-900 font-semibold">12 / 20 registered</span>
-                </div>
-                <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-                  <div className="bg-emerald-500 h-full rounded-full transition-all duration-500" style={{ width: "60%" }} />
-                </div>
-              </div>
-              <div>
-                <div className="flex justify-between items-center text-xs font-medium text-gray-500 mb-2">
-                  <span>Debtor Customers</span>
-                  <span className="text-gray-900 font-semibold">Unlimited (Active)</span>
-                </div>
-                <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-                  <div className="bg-[#FF6B00] h-full rounded-full transition-all duration-500" style={{ width: "15%" }} />
-                </div>
-              </div>
-            </>
-          )}
-
-          <div className="flex items-center justify-between pt-2 border-t border-gray-50">
-            <div className="flex flex-col text-left">
-              <span className="text-xs font-bold text-gray-900 font-outfit">Auto-Renew Subscriptions (Razorpay)</span>
-              <span className="text-[10px] text-gray-400 font-medium mt-0.5 leading-normal">
-                Automatically renew limits and renew cycle subscription at the end of billing period.
+          <div>
+            <div className="flex justify-between items-center text-xs font-medium text-gray-500 mb-2">
+              <span>Debtor Customers</span>
+              <span className="text-gray-900 font-semibold">
+                {usage.customerCount.toLocaleString("en-IN")} / {formatLimit(usage.customerLimit)} added
               </span>
             </div>
-            <label className="relative inline-flex items-center cursor-pointer select-none">
-              <input type="checkbox" checked={autoRenew} onChange={(e) => setAutoRenew(e.target.checked)} className="sr-only peer" />
-              <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#FF6B00]"></div>
-            </label>
+            <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
+              <div
+                className="bg-emerald-500 h-full rounded-full transition-all duration-500"
+                style={{ width: `${usagePercent(usage.customerCount, usage.customerLimit)}%` }}
+              />
+            </div>
           </div>
+          <div>
+            <div className="flex justify-between items-center text-xs font-medium text-gray-500 mb-2">
+              <span>Invoices Created</span>
+              <span className="text-gray-900 font-semibold">
+                {usage.invoiceCount.toLocaleString("en-IN")} / {formatLimit(usage.invoiceLimit)} generated
+              </span>
+            </div>
+            <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
+              <div
+                className="bg-[#FF6B00] h-full rounded-full transition-all duration-500"
+                style={{ width: `${usagePercent(usage.invoiceCount, usage.invoiceLimit)}%` }}
+              />
+            </div>
+          </div>
+
+          {activePlan !== "FREE" && (
+            <div className="flex items-center justify-between pt-2 border-t border-gray-50">
+              <div className="flex flex-col text-left">
+                <span className="text-xs font-bold text-gray-900 font-outfit">Manage subscription</span>
+                <span className="text-[10px] text-gray-400 font-medium mt-0.5 leading-normal">
+                  Cancelling switches you to the Free plan immediately.
+                </span>
+              </div>
+              <CancelSubscriptionButton onCancel={handleCancelSubscription} />
+            </div>
+          )}
         </div>
       </div>
 
@@ -450,28 +430,19 @@ export default function BillingSection({ businessName, currentPlanTier }: Billin
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              <tr>
-                <td className="py-3 font-medium text-gray-800">June 1, 2026</td>
-                <td className="py-3">{getPlanDisplayName(activePlan)} - Monthly</td>
-                <td className="py-3 font-mono">₹{currentPrice.toLocaleString("en-IN")}.00</td>
-                <td className="py-3 text-emerald-600 font-semibold">Paid</td>
-                <td className="py-3 text-right">
-                  <button type="button" className="text-[#FF6B00] hover:text-[#E05B2E] font-bold inline-flex items-center gap-1 cursor-pointer">
-                    <FileDown className="w-3.5 h-3.5" /> PDF
-                  </button>
-                </td>
-              </tr>
-              {activePlan !== "FREE" && (
+              {activePlan === "FREE" ? (
                 <tr>
-                  <td className="py-3 font-medium text-gray-800">May 1, 2026</td>
-                  <td className="py-3">Starter Plan - Monthly</td>
-                  <td className="py-3 font-mono">₹799.00</td>
-                  <td className="py-3 text-emerald-600 font-semibold">Paid</td>
-                  <td className="py-3 text-right">
-                    <button type="button" className="text-[#FF6B00] hover:text-[#E05B2E] font-bold inline-flex items-center gap-1 cursor-pointer">
-                      <FileDown className="w-3.5 h-3.5" /> PDF
-                    </button>
+                  <td colSpan={5} className="py-6 text-center text-gray-400 font-medium normal-case">
+                    No billing history yet — receipts appear here after your first payment.
                   </td>
+                </tr>
+              ) : (
+                <tr>
+                  <td className="py-3 font-medium text-gray-800">Current period</td>
+                  <td className="py-3">{getPlanDisplayName(activePlan)} - Monthly</td>
+                  <td className="py-3 font-mono">₹{currentPrice.toLocaleString("en-IN")}</td>
+                  <td className="py-3 text-emerald-600 font-semibold">Active</td>
+                  <td className="py-3 text-right text-gray-300">—</td>
                 </tr>
               )}
             </tbody>
@@ -551,27 +522,19 @@ export default function BillingSection({ businessName, currentPlanTier }: Billin
                   <div className="flex justify-between items-center mt-2">
                     <span className="text-xs font-semibold text-gray-500">Billing Interval</span>
                     <span className="text-xs font-bold text-gray-900 bg-gray-200/60 px-2.5 py-0.5 rounded-full uppercase leading-none">
-                      {isAnnual ? "Annual" : "Monthly"}
+                      Monthly
                     </span>
-                  </div>
-                  <div className="border-t border-gray-200/50 my-3" />
-                  
-                  {/* Calculations */}
-                  <div className="flex justify-between items-center text-xs font-medium text-gray-600">
-                    <span>Base Amount</span>
-                    <span>₹{(isAnnual ? selectedPlan.annualPrice : selectedPlan.monthlyPrice).toLocaleString("en-IN")}.00</span>
-                  </div>
-                  <div className="flex justify-between items-center text-xs font-medium text-gray-600 mt-2">
-                    <span>Estimated GST (18%)</span>
-                    <span>₹{((isAnnual ? selectedPlan.annualPrice : selectedPlan.monthlyPrice) * 0.18).toLocaleString("en-IN", { maximumFractionDigits: 2 })}</span>
                   </div>
                   <div className="border-t border-gray-200/50 my-3" />
                   <div className="flex justify-between items-center">
-                    <span className="text-sm font-bold text-gray-900 font-outfit">Total Payment</span>
+                    <span className="text-sm font-bold text-gray-900 font-outfit">Charged today</span>
                     <span className="text-base font-extrabold text-[#FF6B00] font-outfit">
-                      ₹{((isAnnual ? selectedPlan.annualPrice : selectedPlan.monthlyPrice) * 1.18).toLocaleString("en-IN", { maximumFractionDigits: 2 })}
+                      ₹{selectedPlan.monthlyPrice.toLocaleString("en-IN")}
                     </span>
                   </div>
+                  <p className="mt-2 text-[10.5px] text-gray-400">
+                    Renews automatically every month until cancelled. Cancel anytime from this page.
+                  </p>
                 </div>
 
                 {/* Payment Methods */}
@@ -639,12 +602,12 @@ export default function BillingSection({ businessName, currentPlanTier }: Billin
               </div>
             )}
 
-            {/* Step 2: Processing state */}
+            {/* Step 2: Processing state — Razorpay's own widget is open on top of this */}
             {checkoutStep === "processing" && (
               <div className="mt-5 py-12 flex flex-col items-center justify-center text-center">
                 <Loader2 className="w-10 h-10 text-[#FF6B00] animate-spin mb-4" />
-                <h4 className="text-sm font-bold text-gray-900 font-outfit">Processing transaction...</h4>
-                <p className="text-[11.5px] text-gray-400 font-medium mt-1 animate-pulse">{processingMsg}</p>
+                <h4 className="text-sm font-bold text-gray-900 font-outfit">Opening secure checkout...</h4>
+                <p className="text-[11.5px] text-gray-400 font-medium mt-1">Complete your payment in the Razorpay window</p>
               </div>
             )}
 
@@ -654,9 +617,9 @@ export default function BillingSection({ businessName, currentPlanTier }: Billin
                 <div className="w-12 h-12 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center mb-4 border border-emerald-100 shadow-3xs">
                   <CheckCircle2 className="w-7 h-7" />
                 </div>
-                <h4 className="text-base font-bold text-gray-900 font-outfit">Payment Completed!</h4>
+                <h4 className="text-base font-bold text-gray-900 font-outfit">Payment received!</h4>
                 <p className="text-xs text-gray-400 font-semibold mt-1 leading-relaxed px-4">
-                  Your workspace has been successfully upgraded to the **{selectedPlan.name}**. Enjoy your expanded usage limits.
+                  Activating your <strong>{selectedPlan.name}</strong> — this usually takes just a few seconds.
                 </p>
 
                 <div className="mt-6 w-full">

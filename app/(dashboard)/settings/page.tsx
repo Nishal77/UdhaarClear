@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma/client'
 import { SettingsLayout } from '@/components/settings/SettingsLayout'
 import SettingsClient from './SettingsClient'
 import { headers } from 'next/headers'
+import { PLAN_LIMITS } from '@/lib/plans'
 
 async function getSessionInfo() {
   let ip = '—'
@@ -89,6 +90,18 @@ export default async function MySettingsPage({
   const businessName = dbUser.ownedBusiness?.name ?? 'My Business'
   const planTier = dbUser.ownedBusiness?.planTier ?? 'FREE'
 
+  // Real usage counts for the billing tab's limit meters — replaces what
+  // used to be hardcoded fake numbers ("18 / 25 added" etc.) regardless of
+  // the business's actual data.
+  const businessId = dbUser.ownedBusiness?.id
+  const [customerCount, invoiceCount] = businessId
+    ? await Promise.all([
+        prisma.customer.count({ where: { businessId } }),
+        prisma.invoice.count({ where: { businessId } }),
+      ])
+    : [0, 0]
+  const planLimits = PLAN_LIMITS[planTier]
+
   let userRole: 'Owner' | 'CA Auditor' | 'Accounts Executive' = 'Accounts Executive'
   if (dbUser.caProfile) userRole = 'CA Auditor'
   else if (dbUser.ownedBusiness) userRole = 'Owner'
@@ -129,6 +142,12 @@ export default async function MySettingsPage({
         }}
         businessName={businessName}
         planTier={planTier}
+        usage={{
+          customerCount,
+          customerLimit: planLimits.customers,
+          invoiceCount,
+          invoiceLimit: planLimits.invoices,
+        }}
         userRole={userRole}
         currentSession={currentSession}
         initialAvatarUrl={user.user_metadata?.avatar_url ?? ''}

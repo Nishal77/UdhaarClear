@@ -33,10 +33,18 @@ interface SessionInfo {
   isVpn: boolean;
 }
 
+interface UsageSummary {
+  customerCount: number;
+  customerLimit: number;
+  invoiceCount: number;
+  invoiceLimit: number;
+}
+
 interface SettingsClientProps {
   dbUser: DbUser;
   businessName: string;
   planTier: string;
+  usage: UsageSummary;
   userRole: "Owner" | "CA Auditor" | "Accounts Executive";
   currentSession: SessionInfo;
   initialAvatarUrl: string;
@@ -76,6 +84,7 @@ export default function SettingsClient({
   dbUser,
   businessName,
   planTier,
+  usage,
   userRole,
   currentSession,
   initialAvatarUrl,
@@ -156,7 +165,7 @@ export default function SettingsClient({
         {activeTab === "notifications" && <NotificationsSection />}
 
         {activeTab === "billing" && (
-          <BillingSection businessName={businessName} currentPlanTier={planTier} />
+          <BillingSection businessName={businessName} currentPlanTier={planTier} usage={usage} />
         )}
       </div>
     </div>
