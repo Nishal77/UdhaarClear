@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import { HugeiconsIcon } from '@hugeicons/react'
@@ -669,6 +670,18 @@ export default function OnboardingPage() {
           {step === 2 && <StepPayment form={form} onChange={update} />}
           {step === 3 && <StepDone businessName={form.businessName} form={form} />}
         </div>
+
+        {/* This wizard is for business owners only — a CA registering here
+            by mistake gets redirected to the right flow instead of filling
+            out business fields that don't apply to them. */}
+        {step === 0 && (
+          <p className="mt-4 text-center text-[12.5px] text-gray-400">
+            Are you a Chartered Accountant?{' '}
+            <Link href="/ca/onboarding" className="font-semibold text-gray-700 hover:text-gray-900">
+              Register as a CA partner →
+            </Link>
+          </p>
+        )}
 
         {/* Footer */}
         <div className="flex items-center gap-3 mt-8 pt-5 border-t border-[#EBEAE6]">

@@ -28,7 +28,20 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser()
 
   const path = request.nextUrl.pathname
-  const isOnboardingPath = path.startsWith('/onboarding')
+
+  // Two separate onboarding wizards share the same "onboarded" metadata
+  // flag (see app/onboarding/page.tsx and app/ca/onboarding/page.tsx, both
+  // call supabase.auth.updateUser({ data: { onboarded: true } }) on
+  // completion) — a given account is only ever a business owner OR a CA,
+  // never both, so one boolean is enough.
+  const isCAOnboardingPath = path.startsWith('/ca/onboarding')
+  const isBusinessOnboardingPath = path.startsWith('/onboarding')
+  const isOnboardingPath = isBusinessOnboardingPath || isCAOnboardingPath
+
+  // /ca/* other than the onboarding page itself is the CA dashboard area —
+  // checked separately so a not-yet-onboarded CA gets sent to CA onboarding,
+  // not the business wizard.
+  const isCAProtected = path.startsWith('/ca') && !isCAOnboardingPath
 
   const isProtected =
     path.startsWith('/dashboard') ||
@@ -40,7 +53,7 @@ export async function updateSession(request: NextRequest) {
     path.startsWith('/msme-samadhaan') ||
     path.startsWith('/analytics') ||
     path.startsWith('/team') ||
-    path.startsWith('/ca')
+    isCAProtected
 
   if (!user) {
     if (process.env.NODE_ENV === 'development') {
@@ -56,17 +69,24 @@ export async function updateSession(request: NextRequest) {
     const isOnboarded = user.user_metadata?.onboarded === true
 
     if (isOnboardingPath && isOnboarded) {
-      // User is already onboarded, send them to dashboard
+      // User is already onboarded, send them to dashboard (which itself
+      // forwards CAs on to /ca/dashboard — see app/(dashboard)/dashboard/page.tsx)
       const url = request.nextUrl.clone()
       url.pathname = '/dashboard'
       return NextResponse.redirect(url)
     }
 
-    if (isProtected && !isOnboarded) {
-      // User is logged in but not onboarded, send them to onboarding
-      const url = request.nextUrl.clone()
-      url.pathname = '/onboarding'
-      return NextResponse.redirect(url)
+    if (!isOnboarded) {
+      if (isCAProtected) {
+        const url = request.nextUrl.clone()
+        url.pathname = '/ca/onboarding'
+        return NextResponse.redirect(url)
+      }
+      if (isProtected) {
+        const url = request.nextUrl.clone()
+        url.pathname = '/onboarding'
+        return NextResponse.redirect(url)
+      }
     }
   }
 

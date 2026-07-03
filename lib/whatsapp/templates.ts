@@ -5,6 +5,7 @@ export const TEMPLATE_NAMES = {
   LEGAL_35:         'payment_reminder_legal_35',   // 48-hour ultimatum
   LEGAL_42:         'payment_reminder_legal_42',   // proceedings initiated
   PAYMENT_CONFIRMED:'payment_confirmed',
+  CA_OTP:           'ca_partner_otp',              // AUTHENTICATION category — see docs/waba-template-submission.md
 } as const
 
 export type TemplateName = (typeof TEMPLATE_NAMES)[keyof typeof TEMPLATE_NAMES]
@@ -216,6 +217,24 @@ export function buildPaymentConfirmedComponents(params: {
         { type: 'text', text: params.invoiceNumber },
         { type: 'text', text: params.businessName },
       ],
+    },
+  ]
+}
+
+// ─── CA PARTNER OTP ──────────────────────────────────────────────────────────
+// Template: ca_partner_otp (register under AUTHENTICATION category)
+// Body: {{1}} is your UdhaarClear CA partner verification code. Valid for 10 minutes.
+//
+// This is a CA's very first message from the business's WABA number, so a
+// free-form text message (sendTextMessage) would be rejected outside an
+// existing 24-hour conversation window — an approved template is required
+// for first contact, which is what this is for.
+
+export function buildCAOtpComponents(otp: string): TemplateComponent[] {
+  return [
+    {
+      type: 'body',
+      parameters: [{ type: 'text', text: otp }],
     },
   ]
 }

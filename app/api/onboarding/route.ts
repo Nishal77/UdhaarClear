@@ -2,6 +2,8 @@ import { prisma } from '@/lib/prisma/client'
 import { normalizeIndianPhone } from '@/lib/utils/phone'
 import { apiError, apiSuccess } from '@/lib/utils/api-error'
 import { getSessionUser } from '@/lib/utils/auth'
+import { REFERRAL_COOKIE_NAME } from '@/lib/ca/referral'
+import { cookies } from 'next/headers'
 import { z } from 'zod'
 
 // Schema for checking / creating onboarding flow details.
@@ -87,6 +89,16 @@ export async function POST(request: Request) {
     const normalizedPersonalPhone = phone ? normalizeIndianPhone(phone) : null
     const normalizedBizPhone = bizPhone ? normalizeIndianPhone(bizPhone) : (phone ? normalizeIndianPhone(phone) : '')
 
+    // Referral attribution: read the CA's code exactly once, right here at
+    // business creation. No other code path in this app ever writes to
+    // Business.caId again — that's what makes it "locked forever" per the
+    // CA partner program (see lib/ca/referral.ts).
+    const cookieStore = await cookies()
+    const referralCode = cookieStore.get(REFERRAL_COOKIE_NAME)?.value
+    const referringCA = referralCode
+      ? await prisma.cAProfile.findUnique({ where: { referralCode }, select: { id: true } })
+      : null
+
     const user = await prisma.user.create({
       data: {
         supabaseId,
@@ -100,6 +112,7 @@ export async function POST(request: Request) {
             email,
             city: city ?? null,
             gstin: gstin ?? null,
+            caId: referringCA?.id ?? null,
           },
         },
       },

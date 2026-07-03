@@ -37,6 +37,7 @@ export default function Footer() {
     { label: "Payment Links", href: "#" },
     { label: "MSME Guide", href: "/msme-samadhaan" },
     { label: "Pricing", href: "/pricing" },
+    { label: "CA Partner Program", href: "/ca/onboarding" },
     { label: "About Us", href: "#" },
     { label: "Contact Us", href: "mailto:sales@udhaarclear.com" },
   ];

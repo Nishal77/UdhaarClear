@@ -141,6 +141,25 @@ Ref: {{5}}
 
 ---
 
+## 7. `ca_partner_otp` (CA partner phone verification — register under AUTHENTICATION category, not Utility)
+
+**Body:**
+```
+{{1}} is your UdhaarClear CA partner verification code. Valid for 10 minutes. Do not share this code with anyone.
+```
+
+**Sample values:**
+`{{1}}` 482913
+
+Meta's Authentication category has its own submission flow separate from
+Utility/Marketing — when creating this template, pick "Authentication" as
+the category in Meta Business Manager, not Utility. This is the CA's first
+message from the business's WABA number, so — same reasoning as the other
+templates — it must be pre-approved; a free-form `sendTextMessage` call
+would be rejected outside an existing 24-hour conversation window.
+
+---
+
 ## After submission
 
 - Track approval status in Meta Business Manager (Pending → Approved/Rejected).

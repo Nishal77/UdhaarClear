@@ -193,8 +193,12 @@ export default async function DashboardPage() {
 
   const dbUser = await prisma.user.findUnique({
     where: { supabaseId: user.id },
-    include: { ownedBusiness: true },
+    include: { ownedBusiness: true, caProfile: true },
   })
+
+  // A CA partner never has a business — send them to their own dashboard
+  // instead of the onboarding wizard meant for business owners.
+  if (dbUser?.caProfile) redirect('/ca/dashboard')
 
   if (!dbUser?.ownedBusiness) redirect('/onboarding')
 
