@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma/client'
 import { InvoiceTable, ClientInvoice } from '@/components/invoices/InvoiceTable'
+import { TallyImportButton } from '@/components/invoices/TallyImportButton'
 import { EmptyState } from '@/components/shared/EmptyState'
 import { formatINRCompact } from '@/lib/utils/currency'
 import Link from 'next/link'
@@ -298,13 +299,16 @@ export default async function InvoicesPage({
         </nav>
         <div className="flex items-center justify-between mt-1">
           <h1 className="text-[24px] font-bold text-gray-900 leading-tight">Invoices</h1>
-          <Link
-            href="/invoices/new"
-            className="flex items-center gap-2 rounded-xl bg-[#FF6A39] px-4 py-2.5 text-[13px] font-semibold text-white shadow-sm hover:bg-[#E05B2E] transition-all"
-          >
-            <HugeiconsIcon icon={Add01Icon} size={15} />
-            Add Invoice
-          </Link>
+          <div className="flex items-center gap-3">
+            <TallyImportButton />
+            <Link
+              href="/invoices/new"
+              className="flex items-center gap-2 rounded-xl bg-[#FF6A39] px-4 py-2.5 text-[13px] font-semibold text-white shadow-sm hover:bg-[#E05B2E] transition-all"
+            >
+              <HugeiconsIcon icon={Add01Icon} size={15} />
+              Add Invoice
+            </Link>
+          </div>
         </div>
         <p className="mt-1 text-[13px] text-gray-400">
           Track, manage, and collect on all your outstanding invoices

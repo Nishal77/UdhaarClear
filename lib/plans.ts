@@ -1,11 +1,11 @@
 import { PlanTier } from '@prisma/client'
 import { prisma } from '@/lib/prisma/client'
 
-export const PLAN_LIMITS: Record<PlanTier, { customers: number; invoices: number; clients: number }> = {
-  FREE: { customers: 10, invoices: 30, clients: 0 },
-  STARTER: { customers: 25, invoices: 100, clients: 0 },
-  GROWTH: { customers: 100, invoices: Infinity, clients: 0 },
-  CA_PRO: { customers: Infinity, invoices: Infinity, clients: 20 },
+export const PLAN_LIMITS: Record<PlanTier, { customers: number; invoices: number; clients: number; tallyImport: boolean }> = {
+  FREE: { customers: 10, invoices: 30, clients: 0, tallyImport: false },
+  STARTER: { customers: 25, invoices: 100, clients: 0, tallyImport: false },
+  GROWTH: { customers: 100, invoices: Infinity, clients: 0, tallyImport: true },
+  CA_PRO: { customers: Infinity, invoices: Infinity, clients: 20, tallyImport: true },
 }
 
 export const PLAN_PRICES = {

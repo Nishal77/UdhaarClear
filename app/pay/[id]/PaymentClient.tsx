@@ -232,6 +232,27 @@ export default function PaymentClient({
             </div>
             <h2 className="text-xl font-semibold text-gray-900 mb-2">Payment received!</h2>
             <p className="text-[13.5px] text-gray-500">This invoice has already been fully settled. Thank you!</p>
+
+            {/* Growth loop: every buyer who pays is a seller who has their own
+                overdue customers. This is the single highest-leverage CTA in
+                the product — see PRD section 9.3 "The Buyer Viral Loop". */}
+            <a
+              href="/signup"
+              className="mt-6 block rounded-2xl bg-[#FAFAF8] border border-[#EBEAE6] px-5 py-4 text-left hover:border-[#FF6A39]/40 hover:bg-[#FFF7F4] transition-all"
+            >
+              <p className="text-[13.5px] font-semibold text-gray-900">
+                Do <span className="text-[#FF6A39]">YOUR</span> customers owe you money?
+              </p>
+              <p className="text-[12px] text-gray-500 mt-1 leading-relaxed">
+                Try UdhaarClear free — the same payment link that just collected from you can chase your own overdue invoices automatically.
+              </p>
+              <span className="inline-flex items-center gap-1 mt-3 text-[12.5px] font-semibold text-[#FF6A39]">
+                Start free
+                <svg viewBox="0 0 20 20" fill="none" className="w-3.5 h-3.5" aria-hidden="true">
+                  <path d="M4 10h12M12 6l4 4-4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </span>
+            </a>
           </div>
         )}
 

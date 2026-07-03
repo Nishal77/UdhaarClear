@@ -2,45 +2,15 @@ import { prisma } from '@/lib/prisma/client'
 import { normalizeIndianPhone } from '@/lib/utils/phone'
 import { sendTextMessage } from '@/lib/whatsapp/client'
 import { formatINR } from '@/lib/utils/currency'
-import { formatDate, daysOverdue, addDays } from '@/lib/utils/date'
+import { formatDate, daysOverdue, addDays, parseFlexibleDate } from '@/lib/utils/date'
 import { getReminderPhase } from '@/lib/whatsapp/tone-engine'
 import type { WhatsAppMessage } from '@/types/whatsapp'
 import { InvoiceStatus } from '@prisma/client'
 import { ReminderService } from '@/lib/services/reminder-service'
 
-/**
- * Parses DD-MM-YYYY, DD/MM/YYYY, or YYYY-MM-DD string into a valid Date object.
- * Defaults to 30 days in the future if invalid or not specified.
- */
+/** Parses the trailing due-date text in a "New invoice" command, defaulting to 30 days credit. */
 function parseDueDate(dateStr?: string): Date {
-  const defaultDate = new Date()
-  defaultDate.setDate(defaultDate.getDate() + 30) // default 30 days credit
-
-  if (!dateStr || !dateStr.trim()) return defaultDate
-
-  const cleaned = dateStr.trim()
-  
-  // Try matching DD-MM-YYYY or DD/MM/YYYY
-  const dmyMatch = cleaned.match(/^(\d{1,2})[-/](\d{1,2})[-/](\d{4})$/)
-  if (dmyMatch) {
-    const [_, day, month, year] = dmyMatch
-    const date = new Date(Number(year), Number(month) - 1, Number(day))
-    if (!isNaN(date.getTime())) return date
-  }
-
-  // Try matching YYYY-MM-DD or YYYY/MM/DD
-  const ymdMatch = cleaned.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})$/)
-  if (ymdMatch) {
-    const [_, year, month, day] = ymdMatch
-    const date = new Date(Number(year), Number(month) - 1, Number(day))
-    if (!isNaN(date.getTime())) return date
-  }
-
-  // Fallback to native JS parser
-  const nativeDate = new Date(cleaned)
-  if (!isNaN(nativeDate.getTime())) return nativeDate
-
-  return defaultDate
+  return parseFlexibleDate(dateStr, 30)
 }
 
 /**
