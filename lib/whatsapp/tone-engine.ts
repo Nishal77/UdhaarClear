@@ -1,14 +1,16 @@
 import { ReminderTone } from '@prisma/client'
 
 /**
- * 11-touch reminder cadence:
+ * Reminder cadence, matching the PRD 6.1.2 tonal ladder:
  *
- *  Gentle   (days -3 → +7) :  -3, 0, +3, +7
- *  Firm     (days +8 → +44):  +10, +15, +21, +30
- *  Legal    (days +45 → +60): +45, +60
- *  Auto-pause after day +67  (no further automated sends)
+ *  Gentle        (days -3 → +7)  : -3, 0, +3, +7
+ *  Firm          (days +8 → +21) : +10, +15, +21
+ *  Legal Warning (days +22 → +27): +24        — still automated
+ *  Human Gate    (day +28)       : owner approval required, no auto-send
+ *  Legal Action  (owner-approved): +28, +35, +42
+ *  Auto-pause after day +42 (no further automated sends)
  */
-export const REMINDER_SCHEDULE_DAYS = [-3, 0, 3, 7, 10, 15, 21, 28, 35, 42] as const
+export const REMINDER_SCHEDULE_DAYS = [-3, 0, 3, 7, 10, 15, 21, 24, 28, 35, 42] as const
 
 export type ReminderScheduleDay = (typeof REMINDER_SCHEDULE_DAYS)[number]
 

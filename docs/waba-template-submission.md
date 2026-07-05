@@ -13,11 +13,14 @@ and every other Phase 0 task can run in parallel with the review.
 
 Meta Business Manager → WhatsApp Manager → your WABA → Message Templates → Create Template.
 
-## Category — use UTILITY for all six templates
+## Category — use UTILITY for templates 1-7
 
-These are transactional messages about an existing invoice a customer
-already owes (a payment notice), not promotional content. Registering them
-under MARKETING instead of UTILITY has two real costs:
+Templates 1-6 (Gentle → Firm → Legal Warning → 3× Legal Action) plus
+`payment_confirmed` (#7) are transactional messages about an existing
+invoice a customer already owes, not promotional content. `ca_partner_otp`
+(#8) is the one exception — register it under **Authentication**, see its
+own section below. Registering the reminder ladder under MARKETING instead
+of UTILITY has two real costs:
 - Marketing messages are billed at a higher per-conversation rate.
 - Customers can globally opt out of marketing messages in WhatsApp, which
   would silently break the entire reminder engine for opted-out customers.
@@ -57,19 +60,48 @@ Due Date: {{5}}
 
 ---
 
-## 2. `payment_reminder_firm` (FIRM — day +8 to +27)
+## 2. `payment_reminder_firm` (FIRM — day +8 to +21)
 
 **Body:**
 ```
-Dear {{1}}, invoice {{2}} from {{3}} for {{4}} is {{5}} days overdue. Please pay by {{6}}: {{7}}
+Dear {{1}}, invoice {{2}} from {{3}} for {{4}} is {{5}} days overdue.
+
+A late fee may apply as per our payment terms. Please pay by {{6}} to avoid further action: {{7}}
 ```
 
 **Sample values:**
 `{{1}}` Ramesh · `{{2}}` INV-2026-0042 · `{{3}}` Sharma Textiles · `{{4}}` ₹15,000 · `{{5}}` 10 · `{{6}}` 25 Jul 2026 · `{{7}}` https://udhaarclear.in/pay/abc123
 
+Added the late-fee reference line — PRD 6.1.2 Phase 2 explicitly calls for it
+("references late fee policy if set"). Kept generic rather than a numeric
+placeholder because there's no `lateFee` field on Invoice/Business yet —
+PRD 6.1.3's late-fee auto-calculation was never built. Add a `{{8}}` numeric
+placeholder here once that feature exists.
+
 ---
 
-## 3. `payment_reminder_legal_28` (LEGAL — day 28, after human-gate approval)
+## 3. `payment_reminder_legal_warning` (LEGAL WARNING — day +22 to +27, NEW)
+
+Added to close a real gap: the PRD's tonal ladder (section 6.1.2) has a
+distinct "Legal warning" phase at day 22-27 — stern tone, references the
+MSMED Act 45-day rule, signals formal action is coming — that the code
+previously skipped, jumping straight from Firm (which absorbed days up to
+27) to the Day-28 human gate. This template fills that gap and is still
+fully automated; the human gate still only starts at Day 28.
+
+**Body:**
+```
+⚠️ Dear {{1}}, invoice {{2}} from {{3}} for {{4}} is now {{5}} days overdue.
+
+Under the MSMED Act, payment is due within 45 days. Please clear this immediately to avoid formal action: {{6}}
+```
+
+**Sample values:**
+`{{1}}` Ramesh · `{{2}}` INV-2026-0042 · `{{3}}` Sharma Textiles · `{{4}}` ₹15,000 · `{{5}}` 24 · `{{6}}` https://udhaarclear.in/pay/abc123
+
+---
+
+## 4. `payment_reminder_legal_28` (LEGAL — day 28, after human-gate approval)
 
 **Body:**
 ```
@@ -90,7 +122,7 @@ Ref: {{6}}
 
 ---
 
-## 4. `payment_reminder_legal_35` (LEGAL — day 35, 48hr ultimatum)
+## 5. `payment_reminder_legal_35` (LEGAL — day 35, 48hr ultimatum)
 
 **Body:**
 ```
@@ -110,7 +142,7 @@ Pay immediately: {{4}}
 
 ---
 
-## 5. `payment_reminder_legal_42` (LEGAL — day 42, proceedings initiated, final auto message)
+## 6. `payment_reminder_legal_42` (LEGAL — day 42, proceedings initiated, final auto message)
 
 **Body:**
 ```
@@ -129,7 +161,7 @@ Ref: {{5}}
 
 ---
 
-## 6. `payment_confirmed` (sent to customer immediately on successful payment)
+## 7. `payment_confirmed` (sent to customer immediately on successful payment)
 
 **Body:**
 ```
@@ -141,7 +173,7 @@ Ref: {{5}}
 
 ---
 
-## 7. `ca_partner_otp` (CA partner phone verification — register under AUTHENTICATION category, not Utility)
+## 8. `ca_partner_otp` (CA partner phone verification — register under AUTHENTICATION category, not Utility)
 
 **Body:**
 ```

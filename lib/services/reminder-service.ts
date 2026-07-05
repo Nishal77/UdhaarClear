@@ -2,9 +2,11 @@ import { prisma } from '@/lib/prisma/client'
 import { sendTemplateMessage } from '@/lib/whatsapp/client'
 import { selectTone } from '@/lib/whatsapp/tone-engine'
 import {
+  TEMPLATE_NAMES,
   getLegalTemplateName,
   buildGentleComponents,
   buildFirmComponents,
+  buildLegalWarningComponents,
   buildLegal28Components,
   buildLegal35Components,
   buildLegal42Components,
@@ -94,12 +96,22 @@ export class ReminderService {
 
     const legalRef = `UC-${new Date().getFullYear()}-${invoice.invoiceNumber.replace(/[^A-Z0-9]/gi, '').toUpperCase()}`
 
-    // Pick the correct WhatsApp template name (LEGAL has 3 day-specific variants)
+    // Days 22-27 are still tone=FIRM in the DB (no schema migration for a
+    // dedicated enum value) but get the PRD's separate "Legal Warning"
+    // template — same pattern getLegalTemplateName() already uses to pick
+    // between the 3 LEGAL-tier variants by day.
+    const isLegalWarningWindow = tone === 'FIRM' && days >= 22
+
+    // Pick the correct WhatsApp template name — always resolved from
+    // TEMPLATE_NAMES, never a hardcoded literal, so the name sent to Meta
+    // can never drift from the name registered in WhatsApp Manager.
     const templateName = tone === 'LEGAL'
       ? getLegalTemplateName(days)
-      : tone === 'FIRM'
-        ? 'payment_reminder_firm'
-        : 'payment_reminder_gentle'
+      : isLegalWarningWindow
+        ? TEMPLATE_NAMES.LEGAL_WARNING
+        : tone === 'FIRM'
+          ? TEMPLATE_NAMES.FIRM
+          : TEMPLATE_NAMES.GENTLE
 
     // Plain-language clause appended to the internal log + as a fallback —
     // makes the partial-payment state explicit rather than just showing a
@@ -123,6 +135,19 @@ export class ReminderService {
         invoiceId: invoice.id,
       })
       messageBody = `Hi ${customerName}, invoice ${invoice.invoiceNumber} from ${invoice.business.name} for ${amount}${partialPaymentNote} is ${days <= 0 ? `due on ${formatDate(invoice.dueDate)}` : `${days} days overdue`}. Pay: ${paymentLink}`
+    } else if (isLegalWarningWindow) {
+      // Day 22-27 — PRD Phase 3: stern, references the MSMED Act 45-day
+      // rule, signals formal action is coming, still fully automated (the
+      // human gate only starts at Day 28).
+      components = buildLegalWarningComponents({
+        customerName,
+        invoiceNumber: invoice.invoiceNumber,
+        businessName: invoice.business.name,
+        amount: waAmountText,
+        daysOverdue: String(days),
+        paymentLink: paymentLink ?? '',
+      })
+      messageBody = `⚠️ Dear ${customerName}, invoice ${invoice.invoiceNumber} for ${amount}${partialPaymentNote} is now ${days} days overdue. Under the MSMED Act, payment is due within 45 days. Please clear this immediately to avoid formal action: ${paymentLink}`
     } else if (tone === 'FIRM') {
       const deadlineDate = new Date()
       deadlineDate.setDate(deadlineDate.getDate() + 5)
@@ -137,7 +162,7 @@ export class ReminderService {
         businessPhone: invoice.business.phone,
         businessName: invoice.business.name,
       })
-      messageBody = `Dear ${customerName}, invoice ${invoice.invoiceNumber} for ${amount}${partialPaymentNote} is ${days} days overdue. Pay by ${deadlineStr}: ${paymentLink}`
+      messageBody = `Dear ${customerName}, invoice ${invoice.invoiceNumber} for ${amount}${partialPaymentNote} is ${days} days overdue. A late fee may apply as per our payment terms. Pay by ${deadlineStr}: ${paymentLink}`
     } else if (days < 35) {
       // LEGAL day +28 — formal demand, 7-day window
       components = buildLegal28Components({

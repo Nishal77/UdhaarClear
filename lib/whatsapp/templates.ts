@@ -1,7 +1,8 @@
 export const TEMPLATE_NAMES = {
-  GENTLE:           'invoice_update_alert',
+  GENTLE:           'invoice_update_alert',        // matches docs/waba-template-submission.md — do not rename without resubmitting to Meta
   FIRM:             'payment_reminder_firm',
-  LEGAL_28:         'payment_reminder_legal_28',   // 7-day window — formal demand
+  LEGAL_WARNING:    'payment_reminder_legal_warning', // Day 22-27 — MSMED Act warning, still automated
+  LEGAL_28:         'payment_reminder_legal_28',   // Day 28 — owner-approved formal demand, 7-day window
   LEGAL_35:         'payment_reminder_legal_35',   // 48-hour ultimatum
   LEGAL_42:         'payment_reminder_legal_42',   // proceedings initiated
   PAYMENT_CONFIRMED:'payment_confirmed',
@@ -71,9 +72,15 @@ export function buildGentleComponents(params: {
 }
 
 // ─── FIRM ────────────────────────────────────────────────────────────────────
-// Template body:
+// Template body (PRD 6.1.2 Phase 2, Day 8-21 — "mentions overdue days,
+// references late fee policy if set, more direct language"). There's no
+// lateFee field on Invoice/Business yet (PRD 6.1.3's late-fee auto-calc was
+// never built), so this stays a generic policy reference rather than a
+// numeric placeholder that doesn't exist:
+//
 // Dear {{1}}, invoice {{2}} from {{3}} for {{4}} is {{5}} days overdue.
-// Please pay by {{6}}: {{7}}
+// A late fee may apply as per our payment terms. Please pay by {{6}} to
+// avoid further action: {{7}}
 
 export function buildFirmComponents(params: {
   customerName: string
@@ -95,6 +102,40 @@ export function buildFirmComponents(params: {
         { type: 'text', text: params.amount },
         { type: 'text', text: params.daysOverdue },
         { type: 'text', text: params.deadlineDate },
+        { type: 'text', text: params.paymentLink },
+      ],
+    },
+  ]
+}
+
+// ─── LEGAL WARNING — Day 22-27 ───────────────────────────────────────────────
+// Template body (PRD 6.1.2 Phase 3 — "legal warning tone, references MSMED
+// Act 45-day rule, signals formal action is coming, stern"). Still fully
+// automated — the human gate only kicks in at Day 28 (see
+// lib/cron/reminder-engine.ts). This is the message that comes right before
+// that gate, so it warns without yet naming a filed legal notice.
+//
+// ⚠️ Dear {{1}}, invoice {{2}} from {{3}} for {{4}} is now {{5}} days
+// overdue. Under the MSMED Act, payment is due within 45 days of delivery.
+// Please clear this immediately to avoid formal action: {{6}}
+
+export function buildLegalWarningComponents(params: {
+  customerName: string
+  invoiceNumber: string
+  businessName: string
+  amount: string
+  daysOverdue: string
+  paymentLink: string
+}): TemplateComponent[] {
+  return [
+    {
+      type: 'body',
+      parameters: [
+        { type: 'text', text: params.customerName },
+        { type: 'text', text: params.invoiceNumber },
+        { type: 'text', text: params.businessName },
+        { type: 'text', text: params.amount },
+        { type: 'text', text: params.daysOverdue },
         { type: 'text', text: params.paymentLink },
       ],
     },
