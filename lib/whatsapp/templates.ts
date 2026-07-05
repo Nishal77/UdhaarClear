@@ -1,12 +1,17 @@
+// Names below are the ACTUAL names registered in Meta WhatsApp Manager
+// (confirmed 2026-07-05) — several got a _v2/_v3 suffix because Meta
+// enforces a ~4-week cooldown on reusing a name+language combo after a
+// prior version of that template was deleted. Do not rename these without
+// also resubmitting to Meta — see docs/waba-template-submission.md.
 export const TEMPLATE_NAMES = {
-  GENTLE:           'invoice_update_alert',        // matches docs/waba-template-submission.md — do not rename without resubmitting to Meta
-  FIRM:             'payment_reminder_firm',
-  LEGAL_WARNING:    'payment_reminder_legal_warning', // Day 22-27 — MSMED Act warning, still automated
-  LEGAL_28:         'payment_reminder_legal_28',   // Day 28 — owner-approved formal demand, 7-day window
-  LEGAL_35:         'payment_reminder_legal_35',   // 48-hour ultimatum
-  LEGAL_42:         'payment_reminder_legal_42',   // proceedings initiated
+  GENTLE:           'invoice_update_alert_v3',
+  FIRM:             'payment_reminder_firm_v2',
+  LEGAL_WARNING:    'payment_reminder_legal_warning_v2', // Day 22-27 — MSMED Act warning, still automated
+  LEGAL_28:         'payment_reminder_legal_28_v2',   // Day 28 — owner-approved formal demand, 7-day window
+  LEGAL_35:         'payment_reminder_legal_35_v2',   // 48-hour ultimatum
+  LEGAL_42:         'payment_reminder_legal_42_v2',   // proceedings initiated
   PAYMENT_CONFIRMED:'payment_confirmed',
-  CA_OTP:           'ca_partner_otp',              // AUTHENTICATION category — see docs/waba-template-submission.md
+  CA_OTP:           'ca_partner_otp',              // AUTHENTICATION category — see docs/waba-template-submission.md — pending, confirm with user once submitted
 } as const
 
 export type TemplateName = (typeof TEMPLATE_NAMES)[keyof typeof TEMPLATE_NAMES]
