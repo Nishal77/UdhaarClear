@@ -202,7 +202,7 @@ export class ReminderService {
         const waResponse = await sendTemplateMessage({
           to: formattedPhone,
           templateName,
-          languageCode: 'en_US',
+          languageCode: 'en',
           components,
           phoneNumberId: useBusinessWhatsApp ? invoice.business.waPhoneId || undefined : undefined,
         })

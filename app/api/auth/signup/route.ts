@@ -9,9 +9,11 @@ import { createServiceClient } from '@/lib/supabase/server'
 import fs from 'fs'
 import path from 'path'
 
+// OTP-only signup — no passwords anywhere in the auth flow. Email is
+// validated server-side here (Zod format check) and again by Supabase when
+// the auth user is created; the client-side regex is never the only gate.
 const signupSchema = z.object({
-  email: z.string().email('Invalid email'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
+  email: z.string().trim().toLowerCase().email('Invalid email'),
   name: z.string().optional(),
 })
 
@@ -26,7 +28,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: message }, { status: 400 })
     }
 
-    const { email, password } = parsed.data
+    const { email } = parsed.data
     const name = parsed.data.name || email.split('@')[0]
 
     const ip = await getClientIp()
@@ -95,9 +97,9 @@ export async function POST(request: Request) {
 
     // 4. Create or update unconfirmed user record in Supabase immediately
     if (existingUser) {
-      // Update unconfirmed user's password and metadata in case they changed it
+      // Refresh display metadata in case the name/avatar changed. No password
+      // is ever set — this is an OTP-only account.
       const { error: updateError } = await adminClient.auth.admin.updateUserById(existingUser.id, {
-        password,
         user_metadata: { name, avatar_url: defaultAvatar },
       })
       if (updateError) {
@@ -105,10 +107,10 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: 'Failed to update account details' }, { status: 500 })
       }
     } else {
-      // Create new unconfirmed auth user in Supabase
+      // Create new unconfirmed, passwordless auth user in Supabase. Auth
+      // happens entirely via the emailed OTP → magiclink token in verify-otp.
       const { error: createError } = await adminClient.auth.admin.createUser({
         email,
-        password,
         email_confirm: false, // starts unconfirmed
         user_metadata: { name, avatar_url: defaultAvatar },
       })

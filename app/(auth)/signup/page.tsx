@@ -8,7 +8,7 @@ import { AuthLogo } from '@/components/auth/AuthLogo'
 import { GoogleButton } from '@/components/auth/GoogleButton'
 import { MicrosoftButton } from '@/components/auth/MicrosoftButton'
 import { OtpInput } from '@/components/auth/OtpInput'
-import { Eye, EyeOff, Mail, Lock } from 'lucide-react'
+import { Mail } from 'lucide-react'
 
 const RESEND_COOLDOWN = 60
 
@@ -24,11 +24,9 @@ function maskEmail(email: string): string {
 
 export default function SignupPage() {
   const router = useRouter()
-  const [step, setStep] = useState<'email' | 'password' | 'otp'>('email')
+  const [step, setStep] = useState<'email' | 'otp'>('email')
   const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
-  
+
   const [loading, setLoading] = useState(false)
   const [cooldown, setCooldown] = useState(RESEND_COOLDOWN)
   const [canResend, setCanResend] = useState(false)
@@ -44,21 +42,11 @@ export default function SignupPage() {
     return () => clearTimeout(t)
   }, [cooldown, step])
 
-  // Email form submit
-  function handleEmailSubmit(e: React.FormEvent) {
+  // Email form submit -> sends OTP directly (OTP-only, no password step)
+  async function handleEmailSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
       toast.error('Please enter a valid email address')
-      return
-    }
-    setStep('password')
-  }
-
-  // Password form submit -> sends OTP
-  async function handlePasswordSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    if (password.length < 8) {
-      toast.error('Password must be at least 8 characters')
       return
     }
 
@@ -67,7 +55,7 @@ export default function SignupPage() {
       const res = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email }),
       })
 
       const data = await res.json()
@@ -214,10 +202,11 @@ export default function SignupPage() {
 
                   <button
                     type="submit"
-                    className="mt-2 flex w-full items-center justify-center rounded-xl py-3.5 text-sm font-medium text-white shadow-md shadow-amber-500/10 hover:shadow-lg active:scale-[0.98] transition-all"
+                    disabled={loading}
+                    className="mt-2 flex w-full items-center justify-center rounded-xl py-3.5 text-sm font-medium text-white shadow-md shadow-amber-500/10 hover:shadow-lg active:scale-[0.98] transition-all disabled:opacity-55 disabled:cursor-not-allowed"
                     style={{ backgroundColor: '#262624' }}
                   >
-                    Continue with email
+                    {loading ? 'Sending code...' : 'Continue with email'}
                   </button>
                 </form>
 
@@ -230,60 +219,7 @@ export default function SignupPage() {
               </div>
             )}
 
-            {/* STEP 2: PASSWORD */}
-            {step === 'password' && (
-              <div>
-                <button
-                  onClick={() => setStep('email')}
-                  className="mb-6 inline-flex items-center text-xs font-semibold text-gray-600 hover:text-gray-900 transition-colors"
-                >
-                  ← Change email
-                </button>
-
-                <div className="mb-6">
-                  <h1 className="text-3xl font-semibold tracking-tight text-gray-900 mb-1">Choose your password</h1>
-                  <p className="text-sm text-gray-500 truncate max-w-sm">
-                    Setting up credentials for <span className="font-semibold text-gray-700">{maskEmail(email)}</span>
-                  </p>
-                </div>
-
-                <form onSubmit={handlePasswordSubmit} className="space-y-4">
-                  <div>
-                    <label className="mb-1.5 block text-sm font-semibold text-gray-700">Password</label>
-                    <div className="relative">
-                      <input
-                        type={showPassword ? 'text' : 'password'}
-                        required
-                        minLength={8}
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder="minimum 8 characters"
-                        className="block w-full rounded-xl border border-gray-200 pl-10 pr-11 py-3 text-sm text-gray-900 placeholder-gray-400 focus:border-gray-600 focus:outline-none  font-medium"
-                      />
-                      <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword((v) => !v)}
-                        className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
-                      >
-                        {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                      </button>
-                    </div>
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="mt-2 flex w-full items-center justify-center rounded-xl py-3.5 text-sm font-medium text-white shadow-md shadow-amber-500/10 hover:shadow-lg active:scale-[0.98] transition-all disabled:opacity-55 disabled:cursor-not-allowed"
-                    style={{ backgroundColor: '#262624' }}
-                  >
-                    {loading ? 'Submitting...' : 'Create account →'}
-                  </button>
-                </form>
-              </div>
-            )}
-
-            {/* STEP 3: OTP */}
+            {/* STEP 2: OTP */}
             {step === 'otp' && (
               <div className="text-center">
                 <button

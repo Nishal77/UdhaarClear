@@ -17,7 +17,7 @@ export const TEMPLATE_NAMES = {
 export type TemplateName = (typeof TEMPLATE_NAMES)[keyof typeof TEMPLATE_NAMES]
 
 export interface TemplateComponent {
-  type: 'body' | 'button'
+  type: 'body' | 'button' | 'header'
   sub_type?: 'url'
   index?: number
   parameters: Array<{ type: 'text'; text: string }>
@@ -56,21 +56,18 @@ export function buildGentleComponents(params: {
 }): TemplateComponent[] {
   return [
     {
-      type: 'body',
+      type: 'header',
       parameters: [
-        { type: 'text', text: params.customerName },
         { type: 'text', text: params.businessName },
-        { type: 'text', text: params.invoiceNumber },
-        { type: 'text', text: params.amount },
-        { type: 'text', text: params.dueDate },
       ],
     },
     {
-      type: 'button',
-      sub_type: 'url',
-      index: 0,
+      type: 'body',
       parameters: [
-        { type: 'text', text: params.invoiceId },
+        { type: 'text', text: params.customerName },
+        { type: 'text', text: params.invoiceNumber },
+        { type: 'text', text: params.amount },
+        { type: 'text', text: params.dueDate },
       ],
     },
   ]

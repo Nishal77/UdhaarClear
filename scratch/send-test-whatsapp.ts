@@ -98,6 +98,7 @@ async function main() {
     const result = await ReminderService.sendReminder({
       invoiceId: invoice.id,
       channel: 'WHATSAPP',
+      tone: 'GENTLE',
       triggeredBy: 'MANUAL',
     })
 

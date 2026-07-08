@@ -1,15 +1,22 @@
-// Sentry setup for the Node.js server runtime (API routes, server components,
-// the cron reminder engine). Loaded by instrumentation.ts — never import this
-// file directly anywhere else.
-import * as Sentry from '@sentry/nextjs'
+// This file configures the initialization of Sentry on the server.
+// The config you add here will be used whenever the server handles a request.
+// https://docs.sentry.io/platforms/javascript/guides/nextjs/
+
+import * as Sentry from "@sentry/nextjs";
 
 Sentry.init({
-  dsn: process.env.SENTRY_DSN,
+  dsn: "https://ea1c9dbdac8f7c4322ccc8c5cb8cda02@o4509778049892352.ingest.us.sentry.io/4511677935910912",
 
-  // Fraction of transactions sent for performance tracing. 1.0 = capture
-  // everything. Lower this once traffic grows to control Sentry costs.
-  tracesSampleRate: 1.0,
+  // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
+  tracesSampleRate: 1,
 
-  // Sentry's own debug logging — keep off in production, it's noisy.
-  debug: false,
-})
+  // Enable logs to be sent to Sentry
+  enableLogs: true,
+
+  dataCollection: {
+    // To disable sending user data and HTTP bodies, uncomment the lines below. For more info visit:
+    // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#dataCollection
+    // userInfo: false,
+    // httpBodies: [],
+  },
+});

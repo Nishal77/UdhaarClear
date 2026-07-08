@@ -14,7 +14,7 @@ export interface SendTemplateParams {
 export async function sendTemplateMessage({
   to,
   templateName,
-  languageCode = 'en_US',
+  languageCode = 'en',
   components,
   phoneNumberId,
   accessToken,
