@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Check } from "lucide-react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ShoppingCart02Icon, ArrowRight02Icon } from "@hugeicons/core-free-icons";
+import { PLAN_PRICING } from "@/lib/pricing";
 
 
 
@@ -36,8 +37,8 @@ export default function Pricing() {
     {
       name: "Chota Vyaapar - Starter",
       description: "For small shops. Up to 15 customers. Affordable first step.",
-      monthlyPrice: 399,
-      yearlyPrice: 319,
+      monthlyPrice: PLAN_PRICING.STARTER.monthly,
+      yearlyPrice: PLAN_PRICING.STARTER.annualPerMonth,
       priceSubtext: "/month · 15 customers",
       badge: null,
       isHighlighted: false,
@@ -55,8 +56,8 @@ export default function Pricing() {
     {
       name: "Vyaapaar - Pro",
       description: "Full recovery engine. Unlimited customers. Legal notices included.",
-      monthlyPrice: 999,
-      yearlyPrice: 799,
+      monthlyPrice: PLAN_PRICING.GROWTH.monthly,
+      yearlyPrice: PLAN_PRICING.GROWTH.annualPerMonth,
       priceSubtext: "/month · Unlimited",
       badge: "★ Most popular",
       isHighlighted: true,
@@ -74,8 +75,8 @@ export default function Pricing() {
     {
       name: "Udyog - Enterprise",
       description: "Teams. API. UdhaarClear Score. For distributors handling crores.",
-      monthlyPrice: 9999,
-      yearlyPrice: 7999,
+      monthlyPrice: PLAN_PRICING.CA_PRO.monthly,
+      yearlyPrice: PLAN_PRICING.CA_PRO.annualPerMonth,
       priceSubtext: "/month · Teams + API",
       badge: null,
       isHighlighted: false,
@@ -552,7 +553,7 @@ export default function Pricing() {
                         Starter
                       </span>
                       <span className="text-[11px] md:text-[12px] text-zinc-400 font-medium mt-1 block leading-tight select-none whitespace-nowrap">
-                        {billingPeriod === "yearly" ? "₹319/mo" : "₹399/mo"}
+                        {billingPeriod === "yearly" ? `₹${PLAN_PRICING.STARTER.annualPerMonth}/mo` : `₹${PLAN_PRICING.STARTER.monthly}/mo`}
                       </span>
                     </div>
                   </th>
@@ -564,7 +565,7 @@ export default function Pricing() {
                         Pro
                       </span>
                       <span className="text-[11px] md:text-[12px] text-zinc-400 font-medium mt-1 block leading-tight select-none whitespace-nowrap">
-                        {billingPeriod === "yearly" ? "₹799/mo" : "₹999/mo"}
+                        {billingPeriod === "yearly" ? `₹${PLAN_PRICING.GROWTH.annualPerMonth}/mo` : `₹${PLAN_PRICING.GROWTH.monthly}/mo`}
                       </span>
                     </div>
                   </th>
@@ -576,7 +577,7 @@ export default function Pricing() {
                         Enterprise
                       </span>
                       <span className="text-[11px] md:text-[12px] text-zinc-400 font-medium mt-1 block leading-tight select-none whitespace-nowrap">
-                        {billingPeriod === "yearly" ? "₹7,999/mo" : "₹9,999/mo"}
+                        {billingPeriod === "yearly" ? `₹${PLAN_PRICING.CA_PRO.annualPerMonth.toLocaleString("en-IN")}/mo` : `₹${PLAN_PRICING.CA_PRO.monthly.toLocaleString("en-IN")}/mo`}
                       </span>
                     </div>
                   </th>

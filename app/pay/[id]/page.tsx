@@ -31,6 +31,7 @@ export default async function PayPage({ params }: { params: Promise<{ id: string
           name: true,
           phone: true,
           city: true,
+          logoUrl: true,
           upiId: true,
           bankAccountNo: true,
           bankIfsc: true,
@@ -73,6 +74,7 @@ export default async function PayPage({ params }: { params: Promise<{ id: string
       formattedInvoice={formattedInvoice}
       customerName={customerName}
       businessName={invoice.business.name}
+      businessLogoUrl={invoice.business.logoUrl ?? null}
       businessPhone={invoice.business.phone}
       businessCity={invoice.business.city ?? ''}
       upiId={invoice.business.upiId ?? null}
