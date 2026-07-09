@@ -1,4 +1,5 @@
 import type { TemplateComponent } from './templates'
+import { TEMPLATE_LANGUAGE_CODE } from './templates'
 
 const WHATSAPP_API_BASE = `https://graph.facebook.com/v19.0`
 
@@ -14,7 +15,7 @@ export interface SendTemplateParams {
 export async function sendTemplateMessage({
   to,
   templateName,
-  languageCode = 'en',
+  languageCode = TEMPLATE_LANGUAGE_CODE,
   components,
   phoneNumberId,
   accessToken,

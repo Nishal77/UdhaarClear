@@ -28,6 +28,7 @@ interface Props {
   parts: number[]
   isPaid: boolean
   description: string
+  razorpayEnabled: boolean
 }
 
 // ─── Copy Button ─────────────────────────────────────────────────────────────
@@ -183,11 +184,28 @@ export default function PaymentClient({
   invoiceId, invoiceNumber, amount, formattedAmount, formattedDue, formattedInvoice,
   customerName, businessName, businessLogoUrl, businessPhone, businessCity,
   upiId, upiLink, bankAccountNo, bankIfsc, bankAccountName,
-  payMode, parts, isPaid, description,
+  payMode, parts, isPaid, description, razorpayEnabled,
 }: Props) {
   const router = useRouter()
   const [showVerify, setShowVerify] = useState(false)
   const [activePartIdx, setActivePartIdx] = useState(0)
+  const [payingOnline, setPayingOnline] = useState(false)
+
+  // Razorpay hosted checkout (Card / UPI / Net-banking). Mints or reuses a
+  // hosted payment link server-side, then sends the buyer to it. Payment is
+  // reconciled by the payment_link.paid webhook, not this redirect.
+  const startOnlineCheckout = async () => {
+    setPayingOnline(true)
+    try {
+      const res = await fetch(`/api/pay/${invoiceId}/checkout`, { method: 'POST' })
+      const data = await res.json()
+      if (!res.ok || !data?.url) throw new Error(data?.message ?? 'Could not start payment')
+      window.location.href = data.url
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Could not start online payment. Try UPI or bank transfer below.')
+      setPayingOnline(false)
+    }
+  }
 
   const partUpiLink = (partAmount: number) =>
     upiId
@@ -280,6 +298,43 @@ export default function PaymentClient({
         {/* Payment options */}
         {!isPaid && (
           <div className="p-6 space-y-5">
+
+            {/* ── Pay online: Card / UPI / Net-banking via Razorpay hosted checkout.
+                 Shown for UPI + hybrid amounts; large bank-only invoices keep
+                 the NEFT/RTGS flow finance teams expect. ── */}
+            {razorpayEnabled && payMode !== 'bank' && (
+              <div>
+                <button
+                  onClick={startOnlineCheckout}
+                  disabled={payingOnline}
+                  className="w-full h-12 rounded-xl bg-[#FF6A39] hover:bg-[#E05B2E] active:scale-[0.99] text-white text-[14px] font-semibold transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:pointer-events-none"
+                >
+                  {payingOnline ? (
+                    <>
+                      <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 animate-spin" aria-hidden="true">
+                        <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="3" opacity="0.25" />
+                        <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+                      </svg>
+                      Opening secure checkout…
+                    </>
+                  ) : (
+                    <>
+                      <svg viewBox="0 0 20 20" fill="none" className="w-4 h-4" aria-hidden="true">
+                        <rect x="2" y="4" width="16" height="12" rx="2" stroke="currentColor" strokeWidth="1.8" />
+                        <path d="M2 8h16" stroke="currentColor" strokeWidth="1.8" />
+                      </svg>
+                      Pay {formattedAmount} — Card / UPI / Net-banking
+                    </>
+                  )}
+                </button>
+                <p className="mt-2 text-center text-[11.5px] text-gray-400">Secure checkout powered by Razorpay · instant confirmation</p>
+                <div className="flex items-center gap-3 mt-4">
+                  <div className="flex-1 h-px bg-[#EBEAE6]" />
+                  <span className="text-[12px] text-gray-400 font-medium">or pay directly</span>
+                  <div className="flex-1 h-px bg-[#EBEAE6]" />
+                </div>
+              </div>
+            )}
 
             {/* ── MODE: UPI only (< ₹1L) ── */}
             {payMode === 'upi' && (

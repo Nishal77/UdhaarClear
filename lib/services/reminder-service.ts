@@ -3,6 +3,7 @@ import { sendTemplateMessage } from '@/lib/whatsapp/client'
 import { selectTone } from '@/lib/whatsapp/tone-engine'
 import {
   TEMPLATE_NAMES,
+  TEMPLATE_LANGUAGE_CODE,
   getLegalTemplateName,
   buildGentleComponents,
   buildFirmComponents,
@@ -202,7 +203,7 @@ export class ReminderService {
         const waResponse = await sendTemplateMessage({
           to: formattedPhone,
           templateName,
-          languageCode: 'en',
+          languageCode: TEMPLATE_LANGUAGE_CODE,
           components,
           phoneNumberId: useBusinessWhatsApp ? invoice.business.waPhoneId || undefined : undefined,
         })

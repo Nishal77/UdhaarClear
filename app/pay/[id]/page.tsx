@@ -86,6 +86,7 @@ export default async function PayPage({ params }: { params: Promise<{ id: string
       parts={parts}
       isPaid={paid}
       description={invoice.description ?? ''}
+      razorpayEnabled={!!process.env.RAZORPAY_KEY_ID && !!process.env.RAZORPAY_KEY_SECRET}
     />
   )
 }

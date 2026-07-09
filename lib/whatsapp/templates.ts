@@ -16,6 +16,18 @@ export const TEMPLATE_NAMES = {
 
 export type TemplateName = (typeof TEMPLATE_NAMES)[keyof typeof TEMPLATE_NAMES]
 
+/**
+ * WhatsApp template language code. MUST exactly match the language each
+ * template is registered under in Meta WhatsApp Manager — a mismatch (e.g.
+ * sending "en" when Meta has "en_US") makes Meta reject the message even
+ * though the template is approved, and it fails silently at send time.
+ *
+ * Configurable via WHATSAPP_TEMPLATE_LANG so it can be corrected to whatever
+ * Meta actually shows without a code change. Defaults to "en".
+ */
+export const TEMPLATE_LANGUAGE_CODE = process.env.WHATSAPP_TEMPLATE_LANG || 'en'
+
+
 export interface TemplateComponent {
   type: 'body' | 'button' | 'header'
   sub_type?: 'url'
