@@ -82,6 +82,7 @@ export async function POST(request: Request) {
           amount: formatINR(payment.amount / 100),
           invoiceNumber: invoice.invoiceNumber,
           businessName: invoice.business.name,
+          invoiceId: invoice.id,
         }),
       })
     } catch {

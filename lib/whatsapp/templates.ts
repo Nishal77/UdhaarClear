@@ -35,6 +35,24 @@ export interface TemplateComponent {
   parameters: Array<{ type: 'text'; text: string }>
 }
 
+// ── Shared component helpers ────────────────────────────────────────────────
+// Every reminder + confirmation template registered in Meta shares the same
+// outer shape: a TEXT header "... — {{1}}" whose one param is the business
+// name, and a single dynamic URL button whose one param is the invoice id
+// (button URL is https://udhaarclear.in/pay/{{1}}). These helpers keep that
+// shape in one place so a builder can't drift from the registered template.
+
+/** Header param — the business name shown after the "— " in every header. */
+function headerBusinessName(businessName: string): TemplateComponent {
+  return { type: 'header', parameters: [{ type: 'text', text: businessName }] }
+}
+
+/** The single dynamic URL button — its variable is the invoice id suffix. */
+function payButton(invoiceId: string): TemplateComponent {
+  return { type: 'button', sub_type: 'url', index: 0, parameters: [{ type: 'text', text: invoiceId }] }
+}
+
+
 /** Pick the right legal template name based on the exact overdue day. */
 export function getLegalTemplateName(daysOverdue: number): string {
   if (daysOverdue < 35) return TEMPLATE_NAMES.LEGAL_28
@@ -102,23 +120,26 @@ export function buildFirmComponents(params: {
   amount: string
   daysOverdue: string
   deadlineDate: string
-  paymentLink: string
-  businessPhone: string
   businessName: string
+  invoiceId: string
 }): TemplateComponent[] {
+  // Registered payment_reminder_firm_v2:
+  //   HEADER "Payment Reminder — {{1}}"        → businessName
+  //   BODY   {{1}}name {{2}}invoice {{3}}amount {{4}}daysOverdue {{5}}deadline
+  //   BUTTON URL https://udhaarclear.in/pay/{{1}} → invoiceId
   return [
+    headerBusinessName(params.businessName),
     {
       type: 'body',
       parameters: [
         { type: 'text', text: params.customerName },
         { type: 'text', text: params.invoiceNumber },
-        { type: 'text', text: params.businessName },
         { type: 'text', text: params.amount },
         { type: 'text', text: params.daysOverdue },
         { type: 'text', text: params.deadlineDate },
-        { type: 'text', text: params.paymentLink },
       ],
     },
+    payButton(params.invoiceId),
   ]
 }
 
@@ -136,23 +157,27 @@ export function buildFirmComponents(params: {
 export function buildLegalWarningComponents(params: {
   customerName: string
   invoiceNumber: string
-  businessName: string
   amount: string
   daysOverdue: string
-  paymentLink: string
+  businessName: string
+  invoiceId: string
 }): TemplateComponent[] {
+  // Registered payment_reminder_legal_warning_v2:
+  //   HEADER "Important: Payment Notice — {{1}}" → businessName
+  //   BODY   {{1}}name {{2}}invoice {{3}}amount {{4}}daysOverdue
+  //   BUTTON URL → invoiceId
   return [
+    headerBusinessName(params.businessName),
     {
       type: 'body',
       parameters: [
         { type: 'text', text: params.customerName },
         { type: 'text', text: params.invoiceNumber },
-        { type: 'text', text: params.businessName },
         { type: 'text', text: params.amount },
         { type: 'text', text: params.daysOverdue },
-        { type: 'text', text: params.paymentLink },
       ],
     },
+    payButton(params.invoiceId),
   ]
 }
 
@@ -172,23 +197,27 @@ export function buildLegalWarningComponents(params: {
 export function buildLegal28Components(params: {
   customerName: string
   invoiceNumber: string
-  businessName: string
   amount: string
-  paymentLink: string
   legalRefNo: string
+  businessName: string
+  invoiceId: string
 }): TemplateComponent[] {
+  // Registered payment_reminder_legal_28_v2:
+  //   HEADER "Formal Notice — {{1}}" → businessName
+  //   BODY   {{1}}name {{2}}invoice {{3}}amount {{4}}legalRef
+  //   BUTTON URL → invoiceId
   return [
+    headerBusinessName(params.businessName),
     {
       type: 'body',
       parameters: [
         { type: 'text', text: params.customerName },
         { type: 'text', text: params.invoiceNumber },
-        { type: 'text', text: params.businessName },
         { type: 'text', text: params.amount },
-        { type: 'text', text: params.paymentLink },
         { type: 'text', text: params.legalRefNo },
       ],
     },
+    payButton(params.invoiceId),
   ]
 }
 
@@ -208,18 +237,24 @@ export function buildLegal35Components(params: {
   customerName: string
   invoiceNumber: string
   amount: string
-  paymentLink: string
+  businessName: string
+  invoiceId: string
 }): TemplateComponent[] {
+  // Registered payment_reminder_legal_35_v2:
+  //   HEADER "Formal Notice — {{1}}" → businessName
+  //   BODY   {{1}}name {{2}}invoice {{3}}amount
+  //   BUTTON URL → invoiceId
   return [
+    headerBusinessName(params.businessName),
     {
       type: 'body',
       parameters: [
         { type: 'text', text: params.customerName },
         { type: 'text', text: params.invoiceNumber },
         { type: 'text', text: params.amount },
-        { type: 'text', text: params.paymentLink },
       ],
     },
+    payButton(params.invoiceId),
   ]
 }
 
@@ -240,8 +275,15 @@ export function buildLegal42Components(params: {
   invoiceNumber: string
   businessPhone: string
   legalRefNo: string
+  businessName: string
+  invoiceId: string
 }): TemplateComponent[] {
+  // Registered payment_reminder_legal_42_v2:
+  //   HEADER "Formal Notice — {{1}}" → businessName
+  //   BODY   {{1}}name {{2}}amount {{3}}invoice {{4}}businessPhone {{5}}legalRef
+  //   BUTTON URL → invoiceId
   return [
+    headerBusinessName(params.businessName),
     {
       type: 'body',
       parameters: [
@@ -252,6 +294,7 @@ export function buildLegal42Components(params: {
         { type: 'text', text: params.legalRefNo },
       ],
     },
+    payButton(params.invoiceId),
   ]
 }
 
@@ -262,17 +305,24 @@ export function buildPaymentConfirmedComponents(params: {
   amount: string
   invoiceNumber: string
   businessName: string
+  invoiceId: string
 }): TemplateComponent[] {
+  // Registered payment_confirmed:
+  //   HEADER "Payment Confirmed — {{1}}" → businessName
+  //   BODY   {{1}}name {{2}}amount {{3}}invoice
+  //   BUTTON URL "View Receipt" → base https://udhaarclear.in/pay/{{1}},
+  //          sample suffix "abc123/confirm" → links to the /pay/[id]/confirm page
   return [
+    headerBusinessName(params.businessName),
     {
       type: 'body',
       parameters: [
         { type: 'text', text: params.customerName },
         { type: 'text', text: params.amount },
         { type: 'text', text: params.invoiceNumber },
-        { type: 'text', text: params.businessName },
       ],
     },
+    payButton(`${params.invoiceId}/confirm`),
   ]
 }
 
