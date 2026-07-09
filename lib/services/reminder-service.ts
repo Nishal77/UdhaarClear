@@ -146,7 +146,7 @@ export class ReminderService {
         businessName: invoice.business.name,
         amount: waAmountText,
         daysOverdue: String(days),
-        paymentLink: paymentLink ?? '',
+        invoiceId: invoice.id,
       })
       messageBody = `⚠️ Dear ${customerName}, invoice ${invoice.invoiceNumber} for ${amount}${partialPaymentNote} is now ${days} days overdue. Under the MSMED Act, payment is due within 45 days. Please clear this immediately to avoid formal action: ${paymentLink}`
     } else if (tone === 'FIRM') {
@@ -159,9 +159,8 @@ export class ReminderService {
         amount: waAmountText,
         daysOverdue: String(days),
         deadlineDate: deadlineStr,
-        paymentLink: paymentLink ?? '',
-        businessPhone: invoice.business.phone,
         businessName: invoice.business.name,
+        invoiceId: invoice.id,
       })
       messageBody = `Dear ${customerName}, invoice ${invoice.invoiceNumber} for ${amount}${partialPaymentNote} is ${days} days overdue. A late fee may apply as per our payment terms. Pay by ${deadlineStr}: ${paymentLink}`
     } else if (days < 35) {
@@ -171,8 +170,8 @@ export class ReminderService {
         invoiceNumber: invoice.invoiceNumber,
         businessName: invoice.business.name,
         amount: waAmountText,
-        paymentLink: paymentLink ?? '',
         legalRefNo: legalRef,
+        invoiceId: invoice.id,
       })
       messageBody = `⚠️ Dear ${customerName}, a formal legal demand notice has been sent to your email. Invoice ${invoice.invoiceNumber} for ${amount}${partialPaymentNote} is 28 days overdue. Pay within 7 days to avoid MSME Facilitation Council filing: ${paymentLink} — Ref: ${legalRef}`
     } else if (days < 42) {
@@ -181,7 +180,8 @@ export class ReminderService {
         customerName,
         invoiceNumber: invoice.invoiceNumber,
         amount: waAmountText,
-        paymentLink: paymentLink ?? '',
+        businessName: invoice.business.name,
+        invoiceId: invoice.id,
       })
       messageBody = `🚨 Dear ${customerName}, 48-hour window running. Invoice ${invoice.invoiceNumber} for ${amount}${partialPaymentNote} is 35 days overdue. Filing with MSME Facilitation Council cannot be reversed once initiated. Pay immediately: ${paymentLink}`
     } else {
@@ -192,6 +192,8 @@ export class ReminderService {
         invoiceNumber: invoice.invoiceNumber,
         businessPhone: invoice.business.phone,
         legalRefNo: legalRef,
+        businessName: invoice.business.name,
+        invoiceId: invoice.id,
       })
       messageBody = `🔴 Dear ${customerName}, formal legal proceedings have been initiated for non-payment of ${amount}${partialPaymentNote} (Invoice ${invoice.invoiceNumber}, Ref: ${legalRef}). Pay immediately and share UTR with ${invoice.business.phone} to halt proceedings.`
     }
