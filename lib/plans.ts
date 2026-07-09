@@ -1,18 +1,21 @@
-import { PlanTier } from '@prisma/client'
 import { prisma } from '@/lib/prisma/client'
 
-export const PLAN_LIMITS: Record<PlanTier, { customers: number; invoices: number; clients: number; tallyImport: boolean }> = {
-  FREE: { customers: 10, invoices: 30, clients: 0, tallyImport: false },
-  STARTER: { customers: 25, invoices: 100, clients: 0, tallyImport: false },
-  GROWTH: { customers: 100, invoices: Infinity, clients: 0, tallyImport: true },
-  CA_PRO: { customers: Infinity, invoices: Infinity, clients: 20, tallyImport: true },
-}
+// Plan pricing, limits, names, and tier helpers now live in a single
+// server+client-safe source of truth (lib/pricing.ts). Re-exported here so
+// existing imports (`@/lib/plans`) keep working, while the actual numbers
+// are defined once and can't drift between the landing page, the in-app
+// upgrade cards, and the amount Razorpay actually charges.
+export {
+  PLAN_LIMITS,
+  PLAN_PRICING,
+  PLAN_DISPLAY_NAMES,
+  PLAN_ORDER,
+  isPaidPlanTier,
+  monthlyPriceInPaise,
+} from '@/lib/pricing'
+export type { PaidPlanTier, PlanLimits, PlanPricing } from '@/lib/pricing'
 
-export const PLAN_PRICES = {
-  STARTER: { monthly: 799, annual: 799 * 10 },
-  GROWTH: { monthly: 1999, annual: 1999 * 10 },
-  CA_PRO: { monthly: 4999, annual: 4999 * 10 },
-}
+import { PLAN_LIMITS } from '@/lib/pricing'
 
 export async function checkCustomerLimit(businessId: string): Promise<boolean> {
   const business = await prisma.business.findUnique({

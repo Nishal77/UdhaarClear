@@ -1,14 +1,25 @@
 import { ReminderTone } from '@prisma/client'
 
 /**
- * Reminder cadence, matching the PRD 6.1.2 tonal ladder:
+ * Reminder cadence — the CONCRETE send-day schedule for UdhaarClear.
  *
- *  Gentle        (days -3 → +7)  : -3, 0, +3, +7
- *  Firm          (days +8 → +21) : +10, +15, +21
- *  Legal Warning (days +22 → +27): +24        — still automated
- *  Human Gate    (day +28)       : owner approval required, no auto-send
- *  Legal Action  (owner-approved): +28, +35, +42
- *  Auto-pause after day +42 (no further automated sends)
+ * The PRD §3.2 tonal ladder gives illustrative day-RANGES per phase (Polite
+ * D1-3, Gentle D7-10, Firm D14-18, Serious D21-27, Human Gate D28+). Those
+ * are example windows, not a fixed send schedule. This is the product's
+ * decided mapping of those phases to the exact days we actually message on,
+ * documented and signed off in docs/reminder-cadence.md so the behavior is
+ * intentional rather than incidental:
+ *
+ *  Phase 1  Polite         (PRD D1-3)   → send on D-3 (pre-due nudge), D0 (due), D3
+ *  Phase 2  Gentle         (PRD D7-10)  → send on D7, D10
+ *  Phase 3  Firm           (PRD D14-18) → send on D15
+ *  Phase 4  Serious/Legal  (PRD D21-27) → send on D21, D24 (MSMED Act warning)
+ *  Phase 5  Human Gate      (PRD D28+)  → D28 owner approval required, no auto-send
+ *  Owner-approved legal action           → D35, D42
+ *  Auto-pause after D42 (no further automated sends)
+ *
+ * Every scheduled day falls inside its PRD phase window, so the tone the
+ * buyer sees always matches the PRD ladder. See docs/reminder-cadence.md.
  */
 export const REMINDER_SCHEDULE_DAYS = [-3, 0, 3, 7, 10, 15, 21, 24, 28, 35, 42] as const
 

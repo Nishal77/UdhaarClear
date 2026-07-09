@@ -6,6 +6,7 @@
  */
 import { prisma } from '@/lib/prisma/client'
 import { apiError, apiSuccess } from '@/lib/utils/api-error'
+import { notifyOwnerTransferSubmitted } from '@/lib/services/owner-notifications'
 import { z } from 'zod'
 
 const verifySchema = z.object({
@@ -23,7 +24,15 @@ export async function POST(
 
   const invoice = await prisma.invoice.findUnique({
     where: { id },
-    select: { id: true, status: true, amount: true, businessId: true },
+    select: {
+      id: true,
+      status: true,
+      amount: true,
+      businessId: true,
+      invoiceNumber: true,
+      business: { select: { phone: true } },
+      customer: { select: { name: true } },
+    },
   })
 
   if (!invoice) return apiError('NOT_FOUND', 'Invoice not found', 404)
@@ -64,6 +73,17 @@ export async function POST(
       status: 'SENT',
       triggeredBy: 'MANUAL',
     },
+  })
+
+  // Notify the business owner on WhatsApp that a transfer needs verifying —
+  // PRD §3.1/4.1: seller must be told on WhatsApp, on every payment path.
+  await notifyOwnerTransferSubmitted({
+    ownerPhone: invoice.business?.phone,
+    customerName: invoice.customer?.name ?? 'A customer',
+    invoiceNumber: invoice.invoiceNumber,
+    amount: transferredAmount,
+    transferRef: transferRef ?? null,
+    payerBank: payerBank ?? null,
   })
 
   return apiSuccess({ message: 'Transfer recorded. We will confirm within 1 business day.' })

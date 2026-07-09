@@ -17,6 +17,7 @@ import {
   CheckCircle2
 } from "lucide-react";
 import { CancelSubscriptionButton } from "./CancelSubscriptionButton";
+import { PLAN_PRICING } from "@/lib/pricing";
 
 // Minimal shape of the Razorpay Checkout.js constructor this component uses —
 // the actual global is loaded at runtime via the <Script> tag below.
@@ -77,18 +78,20 @@ interface PlanDetails {
 const PLANS: PlanDetails[] = [
   {
     key: "STARTER",
-    name: "Starter Plan",
-    monthlyPrice: 799,
-    annualPrice: 7990,
-    customers: "25 Customers",
-    invoices: "100 Invoices/mo",
+    name: "Chota Vyaapar — Starter",
+    // Prices come from the single source of truth (lib/pricing.ts) — the same
+    // numbers shown on the landing page and charged by Razorpay. Never hardcode.
+    monthlyPrice: PLAN_PRICING.STARTER.monthly,
+    annualPrice: PLAN_PRICING.STARTER.annualPerMonth * 12,
+    customers: "15 Customers",
+    invoices: "Unlimited Invoices",
     limitText: "Perfect for growing vendors starting automated recovery chasers.",
     features: [
-      "Up to 25 active customers",
-      "100 automated PDF invoices/mo",
-      "Smart WhatsApp reminders",
-      "UPI & bank payment collection",
-      "Standard daily email digest"
+      "Up to 15 active customers",
+      "Unlimited automated invoices",
+      "Smart WhatsApp reminders (3 phases)",
+      "Buyer payment page (UPI)",
+      "Tally / Excel CSV import"
     ],
     color: "text-slate-900",
     bgColor: "bg-white",
@@ -97,19 +100,19 @@ const PLANS: PlanDetails[] = [
   },
   {
     key: "GROWTH",
-    name: "Growth Plan",
-    monthlyPrice: 1999,
-    annualPrice: 19990,
-    customers: "100 Customers",
+    name: "Vyaapaar — Pro",
+    monthlyPrice: PLAN_PRICING.GROWTH.monthly,
+    annualPrice: PLAN_PRICING.GROWTH.annualPerMonth * 12,
+    customers: "Unlimited Customers",
     invoices: "Unlimited Invoices",
-    limitText: "Designed for mid-market businesses requiring full autopilot recovery.",
+    limitText: "Full recovery engine with all 5 phases and legal notices included.",
     features: [
-      "Up to 100 active customers",
-      "Unlimited invoices & templates",
-      "Advocate legal notices (50/mo)",
+      "Unlimited active customers",
+      "All 5 reminder phases + human gate",
+      "Legal notices included",
       "Priority WhatsApp & SMS triggers",
       "Collection Autopilot engine",
-      "Zoho Books & Tally Prime sync"
+      "Tally / Excel CSV import"
     ],
     color: "text-gray-900",
     bgColor: "bg-[#FFFBF7]",
@@ -119,12 +122,12 @@ const PLANS: PlanDetails[] = [
   },
   {
     key: "CA_PRO",
-    name: "CA Pro Plan",
-    monthlyPrice: 4999,
-    annualPrice: 49990,
+    name: "Udyog — Enterprise",
+    monthlyPrice: PLAN_PRICING.CA_PRO.monthly,
+    annualPrice: PLAN_PRICING.CA_PRO.annualPerMonth * 12,
     customers: "Unlimited Customers",
     invoices: "Unlimited Invoices",
-    limitText: "For professional accounting firms managing recovery for multiple clients.",
+    limitText: "For teams and firms managing recovery across multiple businesses.",
     features: [
       "Unlimited active customers",
       "Unlimited automated invoices",
@@ -156,10 +159,10 @@ export default function BillingSection({ businessName, currentPlanTier, usage }:
 
   const getPlanDisplayName = (tier: string) => {
     switch (tier.toUpperCase()) {
-      case "STARTER": return "Starter Plan";
-      case "GROWTH":  return "Growth Plan";
-      case "CA_PRO":  return "CA Pro Plan";
-      case "FREE":    return "Free Plan";
+      case "STARTER": return "Chota Vyaapar — Starter";
+      case "GROWTH":  return "Vyaapaar — Pro";
+      case "CA_PRO":  return "Udyog — Enterprise";
+      case "FREE":    return "Shuruat — Free";
       default:        return tier;
     }
   };

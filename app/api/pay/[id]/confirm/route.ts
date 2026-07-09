@@ -2,6 +2,7 @@ import { prisma } from '@/lib/prisma/client'
 import { apiError, apiSuccess } from '@/lib/utils/api-error'
 import { createClient as createServiceClient } from '@supabase/supabase-js'
 import { sendEmail } from '@/lib/email/client'
+import { notifyOwnerTransferSubmitted } from '@/lib/services/owner-notifications'
 import { formatINR } from '@/lib/utils/currency'
 
 export async function POST(
@@ -191,6 +192,17 @@ export async function POST(
         console.error('Failed to dispatch notification email:', e)
       })
     }
+
+    // Notify the owner on WhatsApp too — PRD §3.1/4.1 requires seller
+    // confirmation via WhatsApp on every payment path, not just email.
+    await notifyOwnerTransferSubmitted({
+      ownerPhone: invoice.business.phone,
+      customerName: invoice.customer.name,
+      invoiceNumber: invoice.invoiceNumber,
+      amount: transferredAmount,
+      transferRef: transferRef.trim(),
+      payerBank: payerBank?.trim() || null,
+    })
 
     return apiSuccess({ message: 'Verification details submitted successfully' })
   } catch (err) {

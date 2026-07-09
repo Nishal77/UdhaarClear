@@ -1,12 +1,14 @@
 import { prisma } from '@/lib/prisma/client'
 import { normalizeIndianPhone } from '@/lib/utils/phone'
-import { sendTextMessage } from '@/lib/whatsapp/client'
+import { sendTextMessage, sendDocumentMessage } from '@/lib/whatsapp/client'
 import { formatINR } from '@/lib/utils/currency'
 import { formatDate, daysOverdue, addDays, parseFlexibleDate } from '@/lib/utils/date'
 import { getReminderPhase } from '@/lib/whatsapp/tone-engine'
 import type { WhatsAppMessage } from '@/types/whatsapp'
 import { InvoiceStatus } from '@prisma/client'
 import { ReminderService } from '@/lib/services/reminder-service'
+import { generateAuditorReportPDF } from '@/lib/pdf/auditor-report'
+import { uploadReportPDF } from '@/lib/storage/report-upload'
 
 /** Parses the trailing due-date text in a "New invoice" command, defaulting to 30 days credit. */
 function parseDueDate(dateStr?: string): Date {
@@ -364,8 +366,37 @@ export async function handleInboundMessage(message: WhatsAppMessage): Promise<vo
 
       await sendTextMessage({
         to: incomingPhone,
-        body: `📈 Recovery Performance (This Month):\n\n📥 Total Invoiced: ${formatINR(totalInvoiced)}\n💰 Total Recovered: ${formatINR(totalRecovered)}\n📊 Collection Rate: ${collectionRate}%\n👥 Active Debtors: ${activeDebtors}\n\nView detailed ageing analysis and export CSV at:\n🔗 ${reportLink}`,
+        body: `📈 Recovery Performance (This Month):\n\n📥 Total Invoiced: ${formatINR(totalInvoiced)}\n💰 Total Recovered: ${formatINR(totalRecovered)}\n📊 Collection Rate: ${collectionRate}%\n👥 Active Debtors: ${activeDebtors}\n\nGenerating your full PDF report...`,
       })
+
+      // PRD §3.3: "Report" delivers a PDF summary. Generate the auditor-ready
+      // PDF, upload it, and send it as a WhatsApp document. If any step fails,
+      // fall back to the dashboard link so the owner is never left empty-handed.
+      try {
+        const pdf = await generateAuditorReportPDF(business.id)
+        const signedUrl = pdf ? await uploadReportPDF({ businessId: business.id, buffer: pdf }) : null
+
+        if (signedUrl) {
+          const monthLabel = now.toLocaleString('en-IN', { month: 'short', year: 'numeric' })
+          await sendDocumentMessage({
+            to: incomingPhone,
+            link: signedUrl,
+            filename: `UdhaarClear-Recovery-Report-${monthLabel.replace(' ', '-')}.pdf`,
+            caption: `📄 Your ${monthLabel} recovery report — ageing analysis, collection rate, and full ledger.`,
+          })
+        } else {
+          await sendTextMessage({
+            to: incomingPhone,
+            body: `📊 View your detailed ageing analysis and export at:\n🔗 ${reportLink}`,
+          })
+        }
+      } catch (reportErr) {
+        console.error('Failed to send PDF report via WhatsApp:', reportErr)
+        await sendTextMessage({
+          to: incomingPhone,
+          body: `📊 Your PDF is taking a moment — view and download it any time at:\n🔗 ${reportLink}`,
+        })
+      }
       return
     }
 
