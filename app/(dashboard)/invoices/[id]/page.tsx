@@ -19,6 +19,7 @@ import {
   Calendar01Icon,
   Clock01Icon,
   SentIcon,
+  Alert02Icon,
 } from '@hugeicons/core-free-icons'
 import type { InvoiceWithAll } from '@/types/database'
 import { triggerActivityToast } from '@/components/shared/ActivityToast'
@@ -31,6 +32,7 @@ export default function InvoiceDetailPage() {
   const [sending, setSending] = useState(false)
   const [markingPaid, setMarkingPaid] = useState(false)
   const [rejecting, setRejecting] = useState(false)
+  const [disputing, setDisputing] = useState(false)
 
   // Reminder Modal States
   const [showReminderModal, setShowReminderModal] = useState(false)
@@ -127,7 +129,7 @@ export default function InvoiceDetailPage() {
       const res = await fetch(`/api/invoices/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           status: days > 0 ? 'OVERDUE' : days === 0 ? 'DUE' : 'PENDING',
           autoReminder: true,
           paymentRef: null,
@@ -139,6 +141,36 @@ export default function InvoiceDetailPage() {
       setInvoice((prev: any) => prev ? { ...prev, ...d.invoice } : null)
     } finally {
       setRejecting(false)
+    }
+  }
+
+  // Toggle dispute: flagging DISPUTED excludes the invoice from the automated
+  // reminder engine (see lib/cron/reminder-engine.ts status filter). Clearing
+  // it returns the invoice to its correct live status and resumes reminders.
+  async function toggleDispute() {
+    if (!invoice) return
+    const isDisputed = invoice.status === 'DISPUTED'
+    setDisputing(true)
+    try {
+      const days = daysOverdue(invoice.dueDate)
+      const nextStatus = isDisputed
+        ? (days > 0 ? 'OVERDUE' : days === 0 ? 'DUE' : 'PENDING')
+        : 'DISPUTED'
+      const res = await fetch(`/api/invoices/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          status: nextStatus,
+          // Pause automation while disputed; resume it when the dispute clears.
+          autoReminder: isDisputed,
+        }),
+      })
+      if (!res.ok) { toast.error(isDisputed ? 'Failed to clear dispute' : 'Failed to flag dispute'); return }
+      toast.success(isDisputed ? 'Dispute cleared. Reminders resumed.' : 'Invoice marked under dispute. Reminders paused.')
+      const d = await res.json()
+      setInvoice((prev: any) => prev ? { ...prev, ...d.invoice } : null)
+    } finally {
+      setDisputing(false)
     }
   }
 
@@ -297,6 +329,22 @@ export default function InvoiceDetailPage() {
                 >
                   <HugeiconsIcon icon={CheckmarkCircle01Icon} size={14} />
                   {markingPaid ? 'Saving...' : 'Mark Paid'}
+                </button>
+                <button
+                  onClick={toggleDispute}
+                  disabled={disputing}
+                  className={`flex items-center gap-1.5 rounded-xl px-4 py-2.5 text-[13px] font-semibold transition-all select-none cursor-pointer disabled:opacity-50 ${
+                    invoice.status === 'DISPUTED'
+                      ? 'bg-purple-600 hover:bg-purple-700 text-white'
+                      : 'border border-purple-200 bg-white hover:bg-purple-50 text-purple-700'
+                  }`}
+                >
+                  <HugeiconsIcon icon={Alert02Icon} size={14} />
+                  {disputing
+                    ? 'Saving...'
+                    : invoice.status === 'DISPUTED'
+                      ? 'Clear Dispute'
+                      : 'Mark Disputed'}
                 </button>
               </>
             )}

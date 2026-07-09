@@ -4,6 +4,7 @@ import { sendTemplateMessage } from '@/lib/whatsapp/client'
 import { TEMPLATE_NAMES, buildPaymentConfirmedComponents } from '@/lib/whatsapp/templates'
 import { sendEmail } from '@/lib/email/client'
 import { paymentReceivedEmail } from '@/lib/email/templates/payment-received'
+import { notifyOwnerPaymentConfirmed } from '@/lib/services/owner-notifications'
 import { formatINR } from '@/lib/utils/currency'
 import { PlanTier } from '@prisma/client'
 import type { RazorpayPaymentLinkPaidEvent, RazorpaySubscriptionEvent } from '@/types/razorpay'
@@ -105,6 +106,16 @@ export async function POST(request: Request) {
         // Non-critical
       }
     }
+
+    // Send WhatsApp confirmation to the business owner (seller) too — PRD
+    // §3.1/4.1 requires confirmation to BOTH buyer and seller. Best-effort.
+    await notifyOwnerPaymentConfirmed({
+      ownerPhone: invoice.business.phone,
+      customerName: invoice.customer.name,
+      invoiceNumber: invoice.invoiceNumber,
+      amount: payment.amount / 100,
+      paymentMethod,
+    })
   }
 
   return new Response('OK', { status: 200 })

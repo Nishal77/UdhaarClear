@@ -16,6 +16,7 @@ interface Props {
   formattedInvoice: string
   customerName: string
   businessName: string
+  businessLogoUrl: string | null
   businessPhone: string
   businessCity: string
   upiId: string | null
@@ -180,7 +181,7 @@ function VerifyModal({ invoiceId, amount, onClose }: { invoiceId: string; amount
 
 export default function PaymentClient({
   invoiceId, invoiceNumber, amount, formattedAmount, formattedDue, formattedInvoice,
-  customerName, businessName, businessPhone, businessCity,
+  customerName, businessName, businessLogoUrl, businessPhone, businessCity,
   upiId, upiLink, bankAccountNo, bankIfsc, bankAccountName,
   payMode, parts, isPaid, description,
 }: Props) {
@@ -206,6 +207,26 @@ export default function PaymentClient({
           <span className="ml-1 text-[11px] text-gray-400 border border-[#EBEAE6] rounded-full px-2 py-0.5">Secure payment</span>
         </div>
         <p className="text-[12px] text-gray-400">Payment request from <span className="font-semibold text-gray-600">{businessName}</span></p>
+      </div>
+
+      {/* Business branding — logo + name, so the buyer sees who they're paying */}
+      <div className="w-full max-w-[460px] mb-4 flex items-center gap-3">
+        {businessLogoUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element -- remote Supabase URL, next/image config not set up for arbitrary buckets
+          <img
+            src={businessLogoUrl}
+            alt={`${businessName} logo`}
+            className="w-11 h-11 rounded-xl object-contain bg-white border border-[#EBEAE6]"
+          />
+        ) : (
+          <div className="w-11 h-11 rounded-xl bg-[#376E55] flex items-center justify-center border border-[#EBEAE6]">
+            <span className="text-white text-[18px] font-bold">{businessName.charAt(0).toUpperCase()}</span>
+          </div>
+        )}
+        <div className="leading-tight">
+          <p className="text-[15px] font-bold text-gray-900">{businessName}</p>
+          {businessCity ? <p className="text-[12px] text-gray-400">{businessCity}</p> : null}
+        </div>
       </div>
 
       {/* Invoice card */}
