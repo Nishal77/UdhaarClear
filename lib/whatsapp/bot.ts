@@ -9,6 +9,7 @@ import { InvoiceStatus } from '@prisma/client'
 import { ReminderService } from '@/lib/services/reminder-service'
 import { generateAuditorReportPDF } from '@/lib/pdf/auditor-report'
 import { uploadReportPDF } from '@/lib/storage/report-upload'
+import { isButtonReply, handleNegotiationButton } from '@/lib/whatsapp/negotiation'
 
 /** Parses the trailing due-date text in a "New invoice" command, defaulting to 30 days credit. */
 function parseDueDate(dateStr?: string): Date {
@@ -20,6 +21,17 @@ function parseDueDate(dateStr?: string): Date {
  */
 export async function handleInboundMessage(message: WhatsAppMessage): Promise<void> {
   const incomingPhone = message.from
+
+  // Buyer quick-reply button taps (Pay Full / Pay Half on the GENTLE
+  // reminder) arrive as type 'button'/'interactive' with no text body — they
+  // come from the CUSTOMER, not a registered seller, so they're handled here
+  // before the seller-command auth path below (which would otherwise reject
+  // an unknown number as "unauthorized").
+  if (isButtonReply(message)) {
+    await handleNegotiationButton(message)
+    return
+  }
+
   const body = message.text?.body?.trim()
 
   if (!body) return
