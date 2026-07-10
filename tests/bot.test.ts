@@ -6,6 +6,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { handleInboundMessage } from '@/lib/whatsapp/bot'
 import { prisma } from '@/lib/prisma/client'
 import * as client from '@/lib/whatsapp/client'
+import * as paymentConfirmation from '@/lib/services/payment-confirmation'
 
 // Mock the prisma client and the whatsapp client methods
 vi.mock('@/lib/prisma/client', () => ({
@@ -36,6 +37,15 @@ vi.mock('@/lib/services/reminder-service', () => ({
   ReminderService: {
     sendReminder: vi.fn().mockResolvedValue({ success: true, tone: 'LEGAL' }),
   },
+}))
+
+vi.mock('@/lib/services/payment-confirmation', () => ({
+  confirmInvoicePayment: vi.fn().mockResolvedValue({ ok: true, paidAmount: 15000 }),
+  sendBuyerPaymentReceipt: vi.fn().mockResolvedValue(undefined),
+}))
+
+vi.mock('@/lib/whatsapp/buyer-payment', () => ({
+  tryHandleBuyerUtrReply: vi.fn().mockResolvedValue(false),
 }))
 
 describe('WhatsApp Bot Inbound Command Processor', () => {
@@ -371,6 +381,54 @@ describe('WhatsApp Bot Inbound Command Processor', () => {
           body: expect.stringContaining('dismissed'),
         })
       )
+    })
+
+    it('processes "Approve [Name]" command to confirm PENDING_CONFIRMATION payment', async () => {
+      const mockCustomer = { id: 'cust-1', name: 'Jethalal', contactName: null, phone: '+919876543210' }
+      const mockInvoice = { id: 'inv-1', invoiceNumber: 'INV-101', amount: 15000, status: 'PENDING_CONFIRMATION', customer: mockCustomer }
+      vi.mocked(prisma.customer.findFirst).mockResolvedValue(mockCustomer as any)
+      vi.mocked(prisma.invoice.findFirst).mockResolvedValue(mockInvoice as any)
+
+      await handleInboundMessage({
+        id: 'msg-1',
+        from: mockIncomingPhone,
+        timestamp: '1234567890',
+        type: 'text',
+        text: { body: 'Approve Jethalal' },
+      })
+
+      expect(paymentConfirmation.confirmInvoicePayment).toHaveBeenCalledWith(
+        expect.objectContaining({ invoiceId: 'inv-1' })
+      )
+      expect(client.sendTextMessage).toHaveBeenCalledWith(
+        expect.objectContaining({ body: expect.stringContaining('confirmed') })
+      )
+    })
+
+    it('processes "Reject [Name]" command to reject PENDING_CONFIRMATION payment', async () => {
+      const mockCustomer = { id: 'cust-1', name: 'Jethalal', contactName: null, phone: '+919876543210' }
+      const mockInvoice = { id: 'inv-1', invoiceNumber: 'INV-101', amount: 15000, status: 'PENDING_CONFIRMATION', customer: mockCustomer }
+      vi.mocked(prisma.customer.findFirst).mockResolvedValue(mockCustomer as any)
+      vi.mocked(prisma.invoice.findFirst).mockResolvedValue(mockInvoice as any)
+      vi.mocked(prisma.invoice.update).mockResolvedValue(mockInvoice as any)
+
+      await handleInboundMessage({
+        id: 'msg-1',
+        from: mockIncomingPhone,
+        timestamp: '1234567890',
+        type: 'text',
+        text: { body: 'Reject Jethalal' },
+      })
+
+      expect(prisma.invoice.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: 'inv-1' },
+          data: expect.objectContaining({ status: 'OVERDUE', autoReminder: true }),
+        })
+      )
+      // Owner confirmation + buyer rejection notice = 2 sendTextMessage calls
+      const calls = vi.mocked(client.sendTextMessage).mock.calls
+      expect(calls.some(([arg]) => arg.body.toLowerCase().includes('rejected'))).toBe(true)
     })
 
     it('processes "Snooze [Name]" command to delay due date', async () => {

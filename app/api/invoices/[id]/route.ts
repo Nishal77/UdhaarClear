@@ -1,6 +1,7 @@
 import { getBusinessFromSession } from '@/lib/utils/auth'
 import { apiError, apiSuccess } from '@/lib/utils/api-error'
 import { prisma } from '@/lib/prisma/client'
+import { sendBuyerPaymentReceipt } from '@/lib/services/payment-confirmation'
 import { z } from 'zod'
 
 const patchSchema = z.object({
@@ -74,7 +75,20 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     updateData.paidAmount = parsed.data.paidAmount ?? existing.amount
   }
 
-  const invoice = await prisma.invoice.update({ where: { id }, data: updateData })
+  const invoice = await prisma.invoice.update({
+    where: { id },
+    data: updateData,
+    include: { customer: true, business: true },
+  })
+
+  // When the owner marks an invoice PAID from the dashboard, send the buyer
+  // the same WhatsApp receipt the Razorpay auto-path sends — closes the gap
+  // where manual approvals never notified the buyer. Only on the transition
+  // into PAID (not a re-save of an already-paid invoice).
+  if (parsed.data.status === 'PAID' && existing.status !== 'PAID') {
+    await sendBuyerPaymentReceipt(invoice, Number(invoice.paidAmount ?? invoice.amount))
+  }
+
   return apiSuccess({ invoice })
 }
 

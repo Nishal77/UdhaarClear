@@ -24,6 +24,7 @@ import {
   buildLegal35Components,
   buildLegal42Components,
   buildPaymentConfirmedComponents,
+  buildPaymentPendingApprovalComponents,
   type TemplateComponent,
 } from '@/lib/whatsapp/templates'
 
@@ -84,6 +85,17 @@ describe('WABA template builders match the registered Meta template shapes', () 
     expect(shape(c)).toEqual(['header:1', 'body:5', 'button(url):1'])
   })
 
+  it('PAYMENT PENDING APPROVAL (payment_pending_approval): header 1 + body 4 + 2 quick-reply buttons, payloads embed invoiceId', () => {
+    const c = buildPaymentPendingApprovalComponents({
+      customerName: 'Ramesh', amount: '₹1', invoiceNumber: 'INV-1', utr: 'HDFC0001234567890', invoiceId: 'abc',
+    })
+    expect(shape(c)).toEqual(['header:1', 'body:4', 'button(quick_reply):1', 'button(quick_reply):1'])
+    const approveParam = c[2].parameters[0]
+    const rejectParam = c[3].parameters[0]
+    expect(approveParam && 'payload' in approveParam ? approveParam.payload : undefined).toBe('approve_payment_abc')
+    expect(rejectParam && 'payload' in rejectParam ? rejectParam.payload : undefined).toBe('reject_payment_abc')
+  })
+
   it('PAYMENT CONFIRMED (payment_confirmed): header 1 + body 3 + url button 1, button links to /confirm', () => {
     const c = buildPaymentConfirmedComponents({
       customerName: 'Ramesh', amount: '₹1', invoiceNumber: 'INV-1',
@@ -92,6 +104,7 @@ describe('WABA template builders match the registered Meta template shapes', () 
     expect(shape(c)).toEqual(['header:1', 'body:3', 'button(url):1'])
     // Button variable must carry the "<id>/confirm" suffix so the receipt
     // button opens the /pay/[id]/confirm page, per the registered template.
-    expect(c.at(-1)?.parameters[0].text).toBe('abc/confirm')
+    const lastParam = c.at(-1)?.parameters[0]
+    expect(lastParam && 'text' in lastParam ? lastParam.text : undefined).toBe('abc/confirm')
   })
 })

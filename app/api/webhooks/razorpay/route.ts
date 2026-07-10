@@ -1,11 +1,9 @@
 import { verifyRazorpaySignature } from '@/lib/razorpay/webhook'
 import { prisma } from '@/lib/prisma/client'
-import { sendTemplateMessage } from '@/lib/whatsapp/client'
-import { TEMPLATE_NAMES, buildPaymentConfirmedComponents } from '@/lib/whatsapp/templates'
 import { sendEmail } from '@/lib/email/client'
 import { paymentReceivedEmail } from '@/lib/email/templates/payment-received'
 import { notifyOwnerPaymentConfirmed } from '@/lib/services/owner-notifications'
-import { formatINR } from '@/lib/utils/currency'
+import { sendBuyerPaymentReceipt } from '@/lib/services/payment-confirmation'
 import { PlanTier } from '@prisma/client'
 import type { RazorpayPaymentLinkPaidEvent, RazorpaySubscriptionEvent } from '@/types/razorpay'
 
@@ -72,22 +70,9 @@ export async function POST(request: Request) {
       },
     })
 
-    // Send WhatsApp confirmation to customer
-    try {
-      await sendTemplateMessage({
-        to: invoice.customer.phone,
-        templateName: TEMPLATE_NAMES.PAYMENT_CONFIRMED,
-        components: buildPaymentConfirmedComponents({
-          customerName: invoice.customer.contactName ?? invoice.customer.name,
-          amount: formatINR(payment.amount / 100),
-          invoiceNumber: invoice.invoiceNumber,
-          businessName: invoice.business.name,
-          invoiceId: invoice.id,
-        }),
-      })
-    } catch {
-      // Non-critical — log but don't fail
-    }
+    // Send WhatsApp receipt to the buyer — shared with every other approval
+    // path (web Mark Paid, bot "paid", WhatsApp Approve) via one function.
+    await sendBuyerPaymentReceipt(invoice, payment.amount / 100)
 
     // Send email to business owner
     if (invoice.business.owner.email) {

@@ -59,7 +59,7 @@ async function resolveInvoiceForTap(message: WhatsAppMessage) {
   const plain = senderPhone.replace(/^\+91/, '')
   const invoice = await prisma.invoice.findFirst({
     where: {
-      status: { in: ['PENDING', 'DUE', 'OVERDUE', 'PARTIALLY_PAID'] },
+      status: { in: ['PENDING', 'DUE', 'OVERDUE', 'PARTIALLY_PAID', 'PENDING_CONFIRMATION'] },
       customer: { phone: { in: [senderPhone, plain, `+91${plain}`, `91${plain}`] } },
     },
     orderBy: { createdAt: 'desc' },

@@ -45,14 +45,14 @@ export async function POST(
 
   const { transferRef, transferredAmount, payerName, payerBank } = parsed.data
 
-  // Mark as PARTIALLY_PAID — admin/cron confirms later via bank statement.
-  // autoReminder: false stops the reminder engine from firing while the
-  // transfer is sitting in PENDING_VERIFICATION state. Without this, the
-  // customer gets chased for an invoice they've already paid.
+  // Mark as PENDING_CONFIRMATION — one consistent "awaiting owner verification"
+  // state across every manual-UTR path (this route and /confirm), so the
+  // dashboard shows a single uniform status. autoReminder: false stops the
+  // reminder engine from chasing an invoice the buyer has already paid.
   await prisma.invoice.update({
     where: { id },
     data: {
-      status: 'PARTIALLY_PAID',
+      status: 'PENDING_CONFIRMATION',
       paidAmount: transferredAmount,
       paymentMethod: payerBank ? `NEFT/RTGS via ${payerBank}` : 'NEFT/RTGS',
       paymentRef: transferRef ?? 'PENDING_VERIFICATION',

@@ -1,5 +1,6 @@
-import { sendTextMessage } from '@/lib/whatsapp/client'
+import { sendTextMessage, sendTemplateMessage } from '@/lib/whatsapp/client'
 import { formatINR } from '@/lib/utils/currency'
+import { TEMPLATE_NAMES, buildPaymentPendingApprovalComponents } from '@/lib/whatsapp/templates'
 
 /**
  * Best-effort WhatsApp notifications to the BUSINESS OWNER (the seller) about
@@ -38,6 +39,55 @@ export async function notifyOwnerPaymentConfirmed(params: {
     })
   } catch (err) {
     console.error('notifyOwnerPaymentConfirmed failed:', err)
+  }
+}
+
+/**
+ * Owner alert: buyer submitted a UTR by replying to a WhatsApp reminder.
+ * Primary: UTILITY template with Approve/Reject quick-reply buttons (reliable
+ * delivery outside 24h window, pending Meta approval). Fallback: free-text with
+ * text-command instructions for when the template isn't yet approved.
+ */
+export async function notifyOwnerPaymentPendingApproval(params: {
+  ownerPhone: string | null | undefined
+  customerName: string
+  invoiceNumber: string
+  amount: number
+  utr: string
+  invoiceId: string
+}): Promise<void> {
+  const { ownerPhone, customerName, invoiceNumber, amount, utr, invoiceId } = params
+  if (!ownerPhone) return
+
+  try {
+    await sendTemplateMessage({
+      to: ownerPhone,
+      templateName: TEMPLATE_NAMES.PAYMENT_PENDING_APPROVAL,
+      components: buildPaymentPendingApprovalComponents({
+        customerName,
+        amount: formatINR(amount),
+        invoiceNumber,
+        utr,
+        invoiceId,
+      }),
+    })
+  } catch {
+    // Template not yet Meta-approved — fall back to free-text.
+    // Owner is an active bot user so the 24h window is usually open.
+    try {
+      await sendTextMessage({
+        to: ownerPhone,
+        body:
+          `🔔 Payment UTR received!\n\n` +
+          `*${customerName}* submitted UTR *${utr}* for invoice ${invoiceNumber} ` +
+          `(${formatINR(amount)}).\n\n` +
+          `Check your bank statement, then:\n` +
+          `✅ Reply *Approve ${customerName}* to mark paid & send buyer receipt\n` +
+          `❌ Reply *Reject ${customerName}* if UTR is invalid`,
+      })
+    } catch (err) {
+      console.error('notifyOwnerPaymentPendingApproval failed:', err)
+    }
   }
 }
 

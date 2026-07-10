@@ -10,10 +10,58 @@ import { ReminderService } from '@/lib/services/reminder-service'
 import { generateAuditorReportPDF } from '@/lib/pdf/auditor-report'
 import { uploadReportPDF } from '@/lib/storage/report-upload'
 import { isButtonReply, handleNegotiationButton } from '@/lib/whatsapp/negotiation'
+import { confirmInvoicePayment, sendBuyerPaymentReceipt } from '@/lib/services/payment-confirmation'
+import { tryHandleBuyerUtrReply } from '@/lib/whatsapp/buyer-payment'
 
 /** Parses the trailing due-date text in a "New invoice" command, defaulting to 30 days credit. */
 function parseDueDate(dateStr?: string): Date {
   return parseFlexibleDate(dateStr, 30)
+}
+
+/**
+ * Handles an owner tapping the Approve or Reject quick-reply button on the
+ * payment_pending_approval template. The invoiceId is embedded in the payload.
+ */
+async function handlePaymentApprovalButton(message: WhatsAppMessage, payload: string): Promise<void> {
+  const isApprove = payload.startsWith('approve_payment_')
+  const invoiceId = isApprove ? payload.slice(16) : payload.slice(15)
+
+  if (isApprove) {
+    const result = await confirmInvoicePayment({ invoiceId })
+    await sendTextMessage({
+      to: message.from,
+      body: result.alreadyPaid
+        ? `✅ Invoice already marked paid.`
+        : result.notFound
+        ? `⚠️ Invoice not found — it may have been deleted.`
+        : `✅ Payment confirmed! Receipt sent to the buyer on WhatsApp.`,
+    }).catch(() => {})
+  } else {
+    const invoice = await prisma.invoice.findFirst({
+      where: { id: invoiceId },
+      include: { customer: true },
+    })
+    if (!invoice) return
+
+    await prisma.invoice.update({
+      where: { id: invoiceId },
+      data: {
+        status: 'OVERDUE',
+        paymentRef: null,
+        autoReminder: true,
+      },
+    })
+
+    await sendTextMessage({
+      to: invoice.customer.phone,
+      body: `⚠️ We couldn't verify your payment for invoice ${invoice.invoiceNumber}. Please check your transaction details and resubmit, or contact the business directly.`,
+    }).catch(() => {})
+
+    await sendTextMessage({
+      to: message.from,
+      body: `❌ Payment rejected for ${invoice.customer.name} (${invoice.invoiceNumber}). Buyer notified. Reminders will resume.`,
+    }).catch(() => {})
+  }
 }
 
 /**
@@ -22,14 +70,26 @@ function parseDueDate(dateStr?: string): Date {
 export async function handleInboundMessage(message: WhatsAppMessage): Promise<void> {
   const incomingPhone = message.from
 
-  // Buyer quick-reply button taps (Pay Full / Pay Half on the GENTLE
-  // reminder) arrive as type 'button'/'interactive' with no text body — they
-  // come from the CUSTOMER, not a registered seller, so they're handled here
-  // before the seller-command auth path below (which would otherwise reject
-  // an unknown number as "unauthorized").
+  // Button taps arrive from both buyers (Pay Full/Pay Half) and owners
+  // (Approve/Reject payment). Distinguish by payload prefix before routing.
   if (isButtonReply(message)) {
+    const payload =
+      message.button?.payload ??
+      message.interactive?.button_reply?.id ??
+      ''
+    if (payload.startsWith('approve_payment_') || payload.startsWith('reject_payment_')) {
+      await handlePaymentApprovalButton(message, payload)
+      return
+    }
     await handleNegotiationButton(message)
     return
+  }
+
+  // Buyer UTR reply — before seller-auth check so buyers (who aren't sellers)
+  // can submit payment references by replying to a reminder.
+  {
+    const handled = await tryHandleBuyerUtrReply(message)
+    if (handled) return
   }
 
   const body = message.text?.body?.trim()
@@ -283,6 +343,20 @@ export async function handleInboundMessage(message: WhatsAppMessage): Promise<vo
         },
       })
 
+      // Buyer receipt on full settlement — same WhatsApp receipt every other
+      // approval path sends (Razorpay auto, web Mark Paid, WhatsApp Approve).
+      if (nextStatus === 'PAID') {
+        await sendBuyerPaymentReceipt(
+          {
+            id: unpaidInvoice.id,
+            invoiceNumber: unpaidInvoice.invoiceNumber,
+            customer: { name: customer.name, contactName: customer.contactName, phone: customer.phone },
+            business: { name: business.name },
+          },
+          finalPaidAmount
+        )
+      }
+
       await sendTextMessage({
         to: incomingPhone,
         body: `✅ Payment recorded for ${customer.name}!\n📝 ${messageSuffix}\nAutomated alerts paused for this invoice.`,
@@ -469,6 +543,116 @@ export async function handleInboundMessage(message: WhatsAppMessage): Promise<vo
       await sendTextMessage({
         to: incomingPhone,
         body: `✅ Legal notice warning approved and sent to ${customer.name} on WhatsApp & Email!\nCadence resumed.`,
+      })
+      return
+    }
+
+    // Command 7b: "Approve [Name]" — owner approves a PENDING_CONFIRMATION payment via text
+    // (used when the payment_pending_approval template isn't yet Meta-approved, so the
+    // owner gets a free-text alert with these instructions instead of buttons)
+    const approvePaymentRegex = /^approve\s+(.+)$/i
+    const approvePaymentMatch = body.match(approvePaymentRegex)
+
+    if (approvePaymentMatch) {
+      const customerName = approvePaymentMatch[1].trim()
+
+      const customer = await prisma.customer.findFirst({
+        where: {
+          businessId: business.id,
+          name: { equals: customerName, mode: 'insensitive' },
+        },
+      })
+
+      if (!customer) {
+        await sendTextMessage({
+          to: incomingPhone,
+          body: `⚠️ Customer "${customerName}" not found.`,
+        })
+        return
+      }
+
+      const invoice = await prisma.invoice.findFirst({
+        where: {
+          customerId: customer.id,
+          businessId: business.id,
+          status: 'PENDING_CONFIRMATION',
+        },
+      })
+
+      if (!invoice) {
+        await sendTextMessage({
+          to: incomingPhone,
+          body: `✨ No payment pending confirmation from ${customer.name}.`,
+        })
+        return
+      }
+
+      const result = await confirmInvoicePayment({ invoiceId: invoice.id })
+      await sendTextMessage({
+        to: incomingPhone,
+        body: result.ok
+          ? `✅ Payment confirmed for ${customer.name}! Receipt sent to them on WhatsApp.`
+          : `⚠️ Could not confirm payment — please check the dashboard.`,
+      })
+      return
+    }
+
+    // Command 7c: "Reject [Name]" — owner rejects a PENDING_CONFIRMATION payment
+    const rejectPaymentRegex = /^reject\s+(.+)$/i
+    const rejectPaymentMatch = body.match(rejectPaymentRegex)
+
+    if (rejectPaymentMatch) {
+      const customerName = rejectPaymentMatch[1].trim()
+
+      const customer = await prisma.customer.findFirst({
+        where: {
+          businessId: business.id,
+          name: { equals: customerName, mode: 'insensitive' },
+        },
+      })
+
+      if (!customer) {
+        await sendTextMessage({
+          to: incomingPhone,
+          body: `⚠️ Customer "${customerName}" not found.`,
+        })
+        return
+      }
+
+      const invoice = await prisma.invoice.findFirst({
+        where: {
+          customerId: customer.id,
+          businessId: business.id,
+          status: 'PENDING_CONFIRMATION',
+        },
+        include: { customer: true },
+      })
+
+      if (!invoice) {
+        await sendTextMessage({
+          to: incomingPhone,
+          body: `✨ No payment pending rejection from ${customer.name}.`,
+        })
+        return
+      }
+
+      await prisma.invoice.update({
+        where: { id: invoice.id },
+        data: {
+          status: 'OVERDUE',
+          paymentRef: null,
+          autoReminder: true,
+        },
+      })
+
+      await sendTextMessage({
+        to: invoice.customer.phone,
+        body: `⚠️ We couldn't verify your payment for invoice ${invoice.invoiceNumber}. Please check your transaction details and resubmit, or contact the business directly.`,
+      }).catch(() => {})
+
+      await sendTextMessage({
+        to: incomingPhone,
+        body: `❌ Payment rejected for ${customer.name} (${invoice.invoiceNumber}). Buyer notified. Reminders will resume.`,
       })
       return
     }

@@ -4,14 +4,15 @@
 // prior version of that template was deleted. Do not rename these without
 // also resubmitting to Meta — see docs/waba-template-submission.md.
 export const TEMPLATE_NAMES = {
-  GENTLE:           'invoice_update_alert_v3',
-  FIRM:             'payment_reminder_firm_v2',
-  LEGAL_WARNING:    'payment_reminder_legal_warning_v2', // Day 22-27 — MSMED Act warning, still automated
-  LEGAL_28:         'payment_reminder_legal_28_v2',   // Day 28 — owner-approved formal demand, 7-day window
-  LEGAL_35:         'payment_reminder_legal_35_v2',   // 48-hour ultimatum
-  LEGAL_42:         'payment_reminder_legal_42_v2',   // proceedings initiated
-  PAYMENT_CONFIRMED:'payment_confirmed',
-  CA_OTP:           'ca_partner_otp',              // AUTHENTICATION category — see docs/waba-template-submission.md — pending, confirm with user once submitted
+  GENTLE:                   'invoice_update_alert_v3',
+  FIRM:                     'payment_reminder_firm_v2',
+  LEGAL_WARNING:            'payment_reminder_legal_warning_v2', // Day 22-27 — MSMED Act warning, still automated
+  LEGAL_28:                 'payment_reminder_legal_28_v2',      // Day 28 — owner-approved formal demand, 7-day window
+  LEGAL_35:                 'payment_reminder_legal_35_v2',      // 48-hour ultimatum
+  LEGAL_42:                 'payment_reminder_legal_42_v2',      // proceedings initiated
+  PAYMENT_CONFIRMED:        'payment_confirmed',
+  PAYMENT_PENDING_APPROVAL: 'payment_pending_approval',          // UTILITY — owner Approve/Reject quick-reply; PENDING META APPROVAL
+  CA_OTP:                   'ca_partner_otp',                    // AUTHENTICATION category — pending, confirm with user once submitted
 } as const
 
 export type TemplateName = (typeof TEMPLATE_NAMES)[keyof typeof TEMPLATE_NAMES]
@@ -28,11 +29,15 @@ export type TemplateName = (typeof TEMPLATE_NAMES)[keyof typeof TEMPLATE_NAMES]
 export const TEMPLATE_LANGUAGE_CODE = process.env.WHATSAPP_TEMPLATE_LANG || 'en'
 
 
+export type TemplateParameter =
+  | { type: 'text'; text: string }
+  | { type: 'payload'; payload: string }
+
 export interface TemplateComponent {
   type: 'body' | 'button' | 'header'
-  sub_type?: 'url'
+  sub_type?: 'url' | 'quick_reply'
   index?: number
-  parameters: Array<{ type: 'text'; text: string }>
+  parameters: TemplateParameter[]
 }
 
 // ── Shared component helpers ────────────────────────────────────────────────
@@ -323,6 +328,52 @@ export function buildPaymentConfirmedComponents(params: {
       ],
     },
     payButton(`${params.invoiceId}/confirm`),
+  ]
+}
+
+// ─── PAYMENT PENDING APPROVAL (owner-facing) ─────────────────────────────────
+// Template: payment_pending_approval — UTILITY category (reliable delivery
+// outside 24h window). QUICK-REPLY buttons (not URL). Submit to Meta before use.
+//
+// Header: "Payment Pending — {{1}}"         → customerName
+// Body: "{{1}} submitted payment of {{2}} for Invoice {{3}} (UTR: {{4}}).
+//        Verify against your bank statement and tap Approve or Reject."
+// Button 0: quick_reply "✅ Approve"        → payload approve_payment_<invoiceId>
+// Button 1: quick_reply "❌ Reject"         → payload reject_payment_<invoiceId>
+
+export function buildPaymentPendingApprovalComponents(params: {
+  customerName: string
+  amount: string
+  invoiceNumber: string
+  utr: string
+  invoiceId: string
+}): TemplateComponent[] {
+  return [
+    {
+      type: 'header',
+      parameters: [{ type: 'text', text: params.customerName }],
+    },
+    {
+      type: 'body',
+      parameters: [
+        { type: 'text', text: params.customerName },
+        { type: 'text', text: params.amount },
+        { type: 'text', text: params.invoiceNumber },
+        { type: 'text', text: params.utr },
+      ],
+    },
+    {
+      type: 'button',
+      sub_type: 'quick_reply',
+      index: 0,
+      parameters: [{ type: 'payload', payload: `approve_payment_${params.invoiceId}` }],
+    },
+    {
+      type: 'button',
+      sub_type: 'quick_reply',
+      index: 1,
+      parameters: [{ type: 'payload', payload: `reject_payment_${params.invoiceId}` }],
+    },
   ]
 }
 
