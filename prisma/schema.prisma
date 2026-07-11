@@ -53,6 +53,11 @@ model Business {
 
   planTier PlanTier @default(FREE)
 
+  // MSMED Act §16 late-fee collection — owner opts in per business.
+  // When true, the reminder engine calculates and displays the accrued
+  // late fee (3× RBI bank rate, compounded monthly from dueDate+1).
+  lateFeeEnabled Boolean @default(false)
+
   caId String?
   ca   CAProfile? @relation(fields: [caId], references: [id])
 
@@ -249,6 +254,12 @@ model Invoice {
 
   legalNoticeGeneratedAt DateTime?
   legalNoticeSentAt      DateTime?
+
+  // Late fee accrued under MSMED Act §16 — updated by the reminder engine
+  // each time a FIRM or LEGAL reminder is dispatched, only when
+  // business.lateFeeEnabled is true. Null = not enabled / not yet calculated.
+  lateFeeAccrued          Decimal?  @db.Decimal(12, 2)
+  lateFeeLastCalculatedAt DateTime?
 
   reminders Reminder[]
 

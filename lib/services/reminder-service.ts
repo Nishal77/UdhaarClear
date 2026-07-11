@@ -16,6 +16,7 @@ import { buildReminderEmail } from '@/lib/email/templates/payment-reminder'
 import { sendEmail } from '@/lib/email/client'
 import { formatINR } from '@/lib/utils/currency'
 import { formatDate, daysOverdue } from '@/lib/utils/date'
+import { calculateLateFee } from '@/lib/utils/late-fee'
 import { ReminderTone, ReminderChannel, TriggerSource } from '@prisma/client'
 import crypto from 'crypto'
 
@@ -65,6 +66,25 @@ export class ReminderService {
     const remainingBalance = Number(invoice.amount) - paidSoFar
     const isPartiallyPaid = paidSoFar > 0 && invoice.status === 'PARTIALLY_PAID'
     const amount = formatINR(remainingBalance)
+
+    // MSMED Act §16 late fee — only when the business has opted in and the
+    // reminder phase has passed the GENTLE stage (no point showing a fee before
+    // the first overdue nudge). Store the latest calculated value on the invoice
+    // so the dashboard can display it without re-deriving it.
+    const lateFeeResult = invoice.business.lateFeeEnabled
+      ? calculateLateFee({ principalOutstanding: remainingBalance, dueDate: invoice.dueDate })
+      : null
+    const lateFeeAmount = lateFeeResult?.lateFeeAmount ?? 0
+
+    if (lateFeeAmount > 0) {
+      await prisma.invoice.update({
+        where: { id: invoiceId },
+        data: {
+          lateFeeAccrued: lateFeeAmount,
+          lateFeeLastCalculatedAt: new Date(),
+        },
+      })
+    }
 
     // WhatsApp templates are pre-approved by Meta with a single fixed
     // {{amount}} placeholder (see docs/waba-template-submission.md) — there's
@@ -148,7 +168,10 @@ export class ReminderService {
         daysOverdue: String(days),
         invoiceId: invoice.id,
       })
-      messageBody = `⚠️ Dear ${customerName}, invoice ${invoice.invoiceNumber} for ${amount}${partialPaymentNote} is now ${days} days overdue. Under the MSMED Act, payment is due within 45 days. Please clear this immediately to avoid formal action: ${paymentLink}`
+      const legalWarningLateFeeNote = lateFeeAmount > 0
+        ? ` A late fee of ${formatINR(lateFeeAmount)} (MSMED Act — 3× RBI rate, compounded monthly) has accrued.`
+        : ' A late fee (MSMED Act — 3× RBI rate, compounding monthly) may now apply.'
+      messageBody = `⚠️ Dear ${customerName}, invoice ${invoice.invoiceNumber} for ${amount}${partialPaymentNote} is now ${days} days overdue.${legalWarningLateFeeNote} Under the MSMED Act, payment is due within 45 days. Please clear this immediately to avoid formal action: ${paymentLink}`
     } else if (tone === 'FIRM') {
       const deadlineDate = new Date()
       deadlineDate.setDate(deadlineDate.getDate() + 5)
@@ -162,7 +185,10 @@ export class ReminderService {
         businessName: invoice.business.name,
         invoiceId: invoice.id,
       })
-      messageBody = `Dear ${customerName}, invoice ${invoice.invoiceNumber} for ${amount}${partialPaymentNote} is ${days} days overdue. A late fee may apply as per our payment terms. Pay by ${deadlineStr}: ${paymentLink}`
+      const firmLateFeeNote = lateFeeAmount > 0
+        ? `A late fee of ${formatINR(lateFeeAmount)} has accrued under MSMED Act (3× RBI rate, compounded monthly).`
+        : 'A late fee may apply as per our payment terms.'
+      messageBody = `Dear ${customerName}, invoice ${invoice.invoiceNumber} for ${amount}${partialPaymentNote} is ${days} days overdue. ${firmLateFeeNote} Pay by ${deadlineStr}: ${paymentLink}`
     } else if (days < 35) {
       // LEGAL day +28 — formal demand, 7-day window
       components = buildLegal28Components({
