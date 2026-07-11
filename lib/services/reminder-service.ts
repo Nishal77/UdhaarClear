@@ -1,5 +1,7 @@
 import { prisma } from '@/lib/prisma/client'
-import { sendTemplateMessage } from '@/lib/whatsapp/client'
+import { sendTemplateMessage, sendDocumentMessage } from '@/lib/whatsapp/client'
+import { generateLegalNoticePDF } from '@/lib/pdf/generate'
+import { uploadReportPDF } from '@/lib/storage/report-upload'
 import { selectTone } from '@/lib/whatsapp/tone-engine'
 import {
   TEMPLATE_NAMES,
@@ -199,7 +201,7 @@ export class ReminderService {
         legalRefNo: legalRef,
         invoiceId: invoice.id,
       })
-      messageBody = `⚠️ Dear ${customerName}, a formal legal demand notice has been sent to your email. Invoice ${invoice.invoiceNumber} for ${amount}${partialPaymentNote} is 28 days overdue. Pay within 7 days to avoid MSME Facilitation Council filing: ${paymentLink} — Ref: ${legalRef}`
+      messageBody = `⚠️ Dear ${customerName}, a formal legal demand notice has been sent to your email and WhatsApp. Invoice ${invoice.invoiceNumber} for ${amount}${partialPaymentNote} is 28 days overdue. Pay within 7 days to avoid MSME Facilitation Council filing: ${paymentLink} — Ref: ${legalRef}`
     } else if (days < 42) {
       // LEGAL day +35 — 48-hour ultimatum
       components = buildLegal35Components({
@@ -238,6 +240,56 @@ export class ReminderService {
         whatsappMessageId = waResponse.messages?.[0]?.id
       } catch (err: any) {
         whatsappError = err.message || String(err)
+      }
+    }
+
+    // 2b. Day-28 LEGAL: attach the generated legal notice PDF via WhatsApp document
+    // message immediately after the template — the template says "sent to your
+    // email and WhatsApp as an attached document", so the PDF must follow.
+    // Best-effort: a PDF failure never blocks the main reminder flow.
+    const isDay28Legal = tone === 'LEGAL' && days < 35
+    if (shouldSendWhatsApp && isDay28Legal && whatsappMessageId) {
+      try {
+        const formattedPhone = formatPhoneForWhatsApp(invoice.customer.phone)
+        const pdfBuffer = await generateLegalNoticePDF({
+          business: {
+            name: invoice.business.name,
+            legalName: invoice.business.legalName,
+            gstin: invoice.business.gstin,
+            address: invoice.business.address,
+            city: invoice.business.city,
+            state: invoice.business.state,
+            phone: invoice.business.phone,
+          },
+          customer: {
+            name: customerName,
+            gstin: invoice.customer.gstin,
+            address: invoice.customer.address,
+            city: invoice.customer.city,
+          },
+          invoice: {
+            invoiceNumber: invoice.invoiceNumber,
+            amount: Number(invoice.amount),
+            invoiceDate: invoice.invoiceDate,
+            dueDate: invoice.dueDate,
+            daysOverdue: days,
+          },
+        })
+        const pdfUrl = await uploadReportPDF({
+          businessId: invoice.businessId,
+          buffer: pdfBuffer,
+        })
+        if (pdfUrl) {
+          await sendDocumentMessage({
+            to: formattedPhone,
+            link: pdfUrl,
+            filename: `Legal-Notice-${invoice.invoiceNumber}.pdf`,
+            caption: `Legal demand notice — Invoice ${invoice.invoiceNumber} · Ref: ${legalRef}`,
+            phoneNumberId: useBusinessWhatsApp ? invoice.business.waPhoneId || undefined : undefined,
+          })
+        }
+      } catch (pdfErr) {
+        console.error('Day-28 legal notice PDF send failed (non-critical):', pdfErr)
       }
     }
 
