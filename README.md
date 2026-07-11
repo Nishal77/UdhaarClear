@@ -1,4 +1,4 @@
-# UdhaarClear
+![UdhaarClear](public/readme/udhaarclear.png)
 
 UdhaarClear is a debt recovery automation platform for Indian businesses. It tracks unpaid invoices, sends escalating WhatsApp reminders (gentle → firm → legal), generates payment links via Razorpay, and includes a CA referral program where chartered accountants earn commission on referred clients. The system runs automated reminder cadences, handles payment webhooks, and provides WhatsApp bot commands for sellers to manage invoices without logging in.
 
