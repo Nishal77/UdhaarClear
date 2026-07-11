@@ -76,12 +76,33 @@ export default function InvoiceDetailPage() {
           tone: tone === 'AUTO' ? undefined : tone,
         }),
       })
+      const data = await res.json()
       if (!res.ok) {
-        const err = await res.json()
-        toast.error(err.message || 'Failed to send reminder')
+        toast.error(data.message || 'Failed to send reminder')
         return
       }
-      toast.success(`Reminder sent via ${channel === 'BOTH' ? 'WhatsApp & Email' : channel}`)
+      const results = data.results
+      const waOk = !!results?.whatsappMessageId
+      const emailOk = !!results?.emailSent
+      let toastMsg = ''
+      if (channel === 'WHATSAPP') {
+        toastMsg = waOk ? '✅ WhatsApp reminder sent!' : '⚠️ WhatsApp delivery failed — check logs'
+      } else if (channel === 'EMAIL') {
+        toastMsg = emailOk ? '✅ Email reminder sent!' : '⚠️ Email delivery failed'
+      } else {
+        const parts = []
+        if (waOk) parts.push('WhatsApp ✓')
+        else parts.push('WhatsApp ✗')
+        if (emailOk) parts.push('Email ✓')
+        else if (invoice?.customer?.email) parts.push('Email ✗')
+        toastMsg = `Reminder sent — ${parts.join(' · ')}`
+      }
+      const isSuccess = channel === 'WHATSAPP' ? waOk : channel === 'EMAIL' ? emailOk : (waOk || emailOk)
+      if (isSuccess) {
+        toast.success(toastMsg)
+      } else {
+        toast.error(toastMsg)
+      }
       if (invoice) {
         triggerActivityToast({
           type: 'reminder',

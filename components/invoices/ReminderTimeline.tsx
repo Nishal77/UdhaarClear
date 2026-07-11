@@ -1,8 +1,14 @@
 'use client'
 
 import { Reminder } from '@prisma/client'
-import { formatDateLong } from '@/lib/utils/date'
+import { format, parseISO, isValid } from 'date-fns'
 import { IconMessage, IconCheck, IconEye, IconX } from '@tabler/icons-react'
+
+function fmtDateTime(date: Date | string): string {
+  const d = typeof date === 'string' ? parseISO(date) : date
+  if (!isValid(d)) return ''
+  return format(d, 'd MMM yyyy, h:mm a')
+}
 import { cn } from '@/lib/utils/cn'
 
 const STATUS_ICON = {
@@ -59,7 +65,7 @@ export function ReminderTimeline({ reminders }: { reminders: Reminder[] }) {
               )}
             </div>
             <p className="mt-1 text-[13px] text-gray-700 leading-relaxed font-medium">{recent.messageBody}</p>
-            <p className="mt-1 text-[11px] text-gray-400 font-medium">{formatDateLong(recent.createdAt)}</p>
+            <p className="mt-1 text-[11px] text-gray-400 font-medium">{fmtDateTime(recent.createdAt)}</p>
           </div>
         </div>
       </div>
@@ -102,7 +108,7 @@ export function ReminderTimeline({ reminders }: { reminders: Reminder[] }) {
                             )}
                           </div>
                           <p className="mt-1 text-[13px] text-gray-500 leading-relaxed line-clamp-2">{r.messageBody}</p>
-                          <p className="mt-1 text-[11px] text-gray-400">{formatDateLong(r.createdAt)}</p>
+                          <p className="mt-1 text-[11px] text-gray-400">{fmtDateTime(r.createdAt)}</p>
                         </div>
                       </div>
                     </div>
