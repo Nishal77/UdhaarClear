@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma/client'
-import { sendTemplateMessage, sendDocumentMessage } from '@/lib/whatsapp/client'
+import { sendTemplateMessage, sendDocumentMessage, sendTextMessage } from '@/lib/whatsapp/client'
 import { generateLegalNoticePDF } from '@/lib/pdf/generate'
 import { uploadReportPDF } from '@/lib/storage/report-upload'
 import { selectTone } from '@/lib/whatsapp/tone-engine'
@@ -240,6 +240,36 @@ export class ReminderService {
         whatsappMessageId = waResponse.messages?.[0]?.id
       } catch (err: any) {
         whatsappError = err.message || String(err)
+      }
+    }
+
+    // 2c. Payment details + UTR nudge — free-text follow-up riding the 24h window
+    // opened by the template above. Tells buyer exactly how to pay and instructs
+    // them to reply with their UTR so the bot can route the confirmation.
+    // Skipped if no payment details are set on the business.
+    if (shouldSendWhatsApp && whatsappMessageId) {
+      const biz = invoice.business
+      const lines: string[] = []
+
+      if (biz.upiId) lines.push(`UPI: ${biz.upiId}`)
+      if (biz.bankAccountNo && biz.bankIfsc) {
+        lines.push(`Bank Transfer:\nAccount: ${biz.bankAccountNo}\nIFSC: ${biz.bankIfsc}${biz.bankAccountName ? `\nName: ${biz.bankAccountName}` : ''}`)
+      }
+
+      if (lines.length > 0) {
+        const paymentDetailsText =
+          `💳 *Payment Options*\n\n${lines.join('\n\n')}\n\n` +
+          `✅ Paid via bank/NEFT/RTGS? *Reply to this message with your UTR number* and we'll confirm your payment instantly.`
+        try {
+          const formattedPhone = formatPhoneForWhatsApp(invoice.customer.phone)
+          await sendTextMessage({
+            to: formattedPhone,
+            body: paymentDetailsText,
+            phoneNumberId: useBusinessWhatsApp ? invoice.business.waPhoneId || undefined : undefined,
+          })
+        } catch {
+          // non-critical — main reminder already sent
+        }
       }
     }
 
