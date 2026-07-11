@@ -38,6 +38,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     where: { id, businessId: session.businessId },
     include: {
       customer: true,
+      business: true,
       reminders: { orderBy: { createdAt: 'desc' } },
     },
   })
