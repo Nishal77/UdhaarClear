@@ -76,11 +76,20 @@ export default function InvoiceDetailPage() {
           tone: tone === 'AUTO' ? undefined : tone,
         }),
       })
-      const data = await res.json()
-      if (!res.ok) {
-        toast.error(data.message || 'Failed to send reminder')
+
+      let data: any = null
+      try {
+        data = await res.json()
+      } catch {
+        toast.error(`Server error (${res.status}) — reminder may not have sent`)
         return
       }
+
+      if (!res.ok) {
+        toast.error(data?.message || `Failed to send reminder (${res.status})`)
+        return
+      }
+
       const results = data.results
       const waOk = !!results?.whatsappMessageId
       const emailOk = !!results?.emailSent
@@ -112,6 +121,8 @@ export default function InvoiceDetailPage() {
       }
       setShowReminderModal(false)
       loadInvoice()
+    } catch (err: any) {
+      toast.error(err?.message || 'Unexpected error — reminder not sent')
     } finally {
       setSending(false)
     }
