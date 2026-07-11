@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { format } from 'date-fns'
 import Link from 'next/link'
 import { formatINRCompact } from '@/lib/utils/currency'
 import { HugeiconsIcon } from '@hugeicons/react'
@@ -462,15 +463,8 @@ export function WhatsappEmailLogDashboard({
                 </tr>
               ) : (
                 filtered.map((item, idx) => {
-                  const dateStr = item.createdAt.toLocaleDateString('en-IN', {
-                    day: 'numeric',
-                    month: 'short',
-                  })
-                  const timeStr = item.createdAt.toLocaleTimeString('en-IN', {
-                    hour: 'numeric',
-                    minute: '2-digit',
-                    hour12: true,
-                  })
+                  const dateStr = format(item.createdAt, 'd MMM')
+                  const timeStr = format(item.createdAt, 'h:mm a')
 
                   return (
                     <tr
@@ -755,17 +749,10 @@ export function WhatsappEmailLogDashboard({
                         </div>
                         <div className="text-[11.5px] text-gray-455 mt-1 font-medium space-y-1">
                           <p className="flex items-center gap-1">
-                            <span className="font-bold text-gray-700">Due Date:</span> {selectedLog.splitPayment.nextDueDate.toLocaleDateString('en-IN', {
-                              day: 'numeric',
-                              month: 'short',
-                              year: 'numeric'
-                            })}
+                            <span className="font-bold text-gray-700">Due Date:</span> {format(selectedLog.splitPayment.nextDueDate, 'd MMM yyyy')}
                           </p>
                           <p className="flex items-center gap-1 text-orange-600 font-bold">
-                            <span>Auto-Reminder:</span> {selectedLog.splitPayment.nextRemindDate.toLocaleDateString('en-IN', {
-                              day: 'numeric',
-                              month: 'short'
-                            })} at 10:00 AM (via WhatsApp)
+                            <span>Auto-Reminder:</span> {format(selectedLog.splitPayment.nextRemindDate, 'd MMM')} at 10:00 AM (via WhatsApp)
                           </p>
                         </div>
                       </div>
@@ -858,13 +845,7 @@ export function WhatsappEmailLogDashboard({
 
                         {/* Message status indicators */}
                         <div className="flex items-center justify-end gap-1 mt-1.5 text-[9px] text-gray-400 select-none">
-                          <span>
-                            {selectedLog.createdAt.toLocaleTimeString('en-IN', {
-                              hour: 'numeric',
-                              minute: '2-digit',
-                              hour12: true,
-                            })}
-                          </span>
+                          <span>{format(selectedLog.createdAt, 'h:mm a')}</span>
                           {selectedLog.status === 'READ' || selectedLog.status === 'REPLIED' ? (
                             <span className="text-[#34B7F1] font-bold text-[10px]">✓✓</span>
                           ) : selectedLog.status === 'DELIVERED' ? (
@@ -886,11 +867,7 @@ export function WhatsappEmailLogDashboard({
                             {selectedLog.outcome.replace('Replied: ', '')}
                           </p>
                           <div className="text-right mt-1.5 text-[9px] text-gray-400">
-                            {selectedLog.readAt ? new Date(selectedLog.readAt).toLocaleTimeString('en-IN', {
-                              hour: 'numeric',
-                              minute: '2-digit',
-                              hour12: true,
-                            }) : '6:42 am'}
+                            {selectedLog.readAt ? format(new Date(selectedLog.readAt), 'h:mm a') : '6:42 AM'}
                           </div>
                         </div>
                       )}
@@ -1004,11 +981,7 @@ export function WhatsappEmailLogDashboard({
                         {selectedLog.messageBody}
                       </p>
                       <span className="text-[9px] text-gray-400 block mt-2 text-right">
-                        {selectedLog.createdAt.toLocaleTimeString('en-IN', {
-                          hour: 'numeric',
-                          minute: '2-digit',
-                          hour12: true,
-                        })}
+                        {format(selectedLog.createdAt, 'h:mm a')}
                       </span>
                     </div>
                   </div>
