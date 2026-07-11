@@ -318,7 +318,27 @@ would be a separate, bigger feature if a more formal document is ever wanted.
 
 ---
 
-## 8. `ca_partner_otp` (CA partner phone verification — register under AUTHENTICATION category, not Utility)
+## 8. `payment_pending_approval` (owner-facing payment verification — Utility category, NEW)
+
+**Header:** `Payment Pending — {{1}}` · sample: `Sharma Textiles`
+
+**Body:**
+```
+Customer {{1}} has submitted a payment of {{2}} for Invoice {{3}} (UTR: {{4}}).
+
+Please verify this against your bank statement and approve or reject below.
+```
+
+**Sample values:**
+`{{1}}` Ramesh · `{{2}}` ₹15,000 · `{{3}}` INV-2026-0042 · `{{4}}` UTR12345678
+
+**Footer:** `Powered by udhaarclear.in`
+
+**Buttons:** Quick Reply × 2 (type: Custom) — `✅ Approve` · `❌ Reject`
+
+---
+
+## 9. `ca_partner_otp` (CA partner phone verification — register under AUTHENTICATION category, not Utility)
 
 **Body:**
 ```
@@ -355,7 +375,8 @@ an existing 24-hour conversation window.
 | 5 | `payment_reminder_legal_35_v2` | Utility | Submitted |
 | 6 | `payment_reminder_legal_42_v2` | Utility | Submitted |
 | 7 | `payment_confirmed` | Utility | Submitted |
-| 8 | `ca_partner_otp` | Authentication | Confirm status |
+| 8 | `payment_pending_approval` | Utility | New |
+| 9 | `ca_partner_otp` | Authentication | Confirm status |
 
 These match `TEMPLATE_NAMES` in `lib/whatsapp/templates.ts` as of
 2026-07-05 — a mismatch fails silently at send time with a Meta API

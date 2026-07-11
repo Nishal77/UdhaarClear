@@ -335,13 +335,14 @@ export function buildPaymentConfirmedComponents(params: {
 // Template: payment_pending_approval — UTILITY category (reliable delivery
 // outside 24h window). QUICK-REPLY buttons (not URL). Submit to Meta before use.
 //
-// Header: "Payment Pending — {{1}}"         → customerName
-// Body: "{{1}} submitted payment of {{2}} for Invoice {{3}} (UTR: {{4}}).
-//        Verify against your bank statement and tap Approve or Reject."
+// Header: "Payment Pending — {{1}}"         → businessName
+// Body: "Customer {{1}} has submitted a payment of {{2}} for Invoice {{3}} (UTR: {{4}}).
+//        Verify this against your bank statement and approve or reject below."
 // Button 0: quick_reply "✅ Approve"        → payload approve_payment_<invoiceId>
 // Button 1: quick_reply "❌ Reject"         → payload reject_payment_<invoiceId>
 
 export function buildPaymentPendingApprovalComponents(params: {
+  businessName: string
   customerName: string
   amount: string
   invoiceNumber: string
@@ -351,7 +352,7 @@ export function buildPaymentPendingApprovalComponents(params: {
   return [
     {
       type: 'header',
-      parameters: [{ type: 'text', text: params.customerName }],
+      parameters: [{ type: 'text', text: params.businessName }],
     },
     {
       type: 'body',

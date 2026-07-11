@@ -107,6 +107,7 @@ export async function tryHandleBuyerUtrReply(message: WhatsAppMessage): Promise<
   // Alert owner with Approve/Reject
   await notifyOwnerPaymentPendingApproval({
     ownerPhone: invoice.business.phone,
+    businessName: invoice.business.name,
     customerName: invoice.customer.contactName ?? invoice.customer.name,
     invoiceNumber: invoice.invoiceNumber,
     amount: remaining,

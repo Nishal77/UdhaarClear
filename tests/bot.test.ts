@@ -13,6 +13,7 @@ vi.mock('@/lib/prisma/client', () => ({
   prisma: {
     business: {
       findFirst: vi.fn(),
+      findUnique: vi.fn(),
     },
     customer: {
       findFirst: vi.fn(),

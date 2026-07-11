@@ -87,7 +87,7 @@ describe('WABA template builders match the registered Meta template shapes', () 
 
   it('PAYMENT PENDING APPROVAL (payment_pending_approval): header 1 + body 4 + 2 quick-reply buttons, payloads embed invoiceId', () => {
     const c = buildPaymentPendingApprovalComponents({
-      customerName: 'Ramesh', amount: '₹1', invoiceNumber: 'INV-1', utr: 'HDFC0001234567890', invoiceId: 'abc',
+      businessName: 'Sharma', customerName: 'Ramesh', amount: '₹1', invoiceNumber: 'INV-1', utr: 'HDFC0001234567890', invoiceId: 'abc',
     })
     expect(shape(c)).toEqual(['header:1', 'body:4', 'button(quick_reply):1', 'button(quick_reply):1'])
     const approveParam = c[2].parameters[0]

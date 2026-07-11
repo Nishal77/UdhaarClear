@@ -50,13 +50,14 @@ export async function notifyOwnerPaymentConfirmed(params: {
  */
 export async function notifyOwnerPaymentPendingApproval(params: {
   ownerPhone: string | null | undefined
+  businessName: string
   customerName: string
   invoiceNumber: string
   amount: number
   utr: string
   invoiceId: string
 }): Promise<void> {
-  const { ownerPhone, customerName, invoiceNumber, amount, utr, invoiceId } = params
+  const { ownerPhone, businessName, customerName, invoiceNumber, amount, utr, invoiceId } = params
   if (!ownerPhone) return
 
   try {
@@ -64,6 +65,7 @@ export async function notifyOwnerPaymentPendingApproval(params: {
       to: ownerPhone,
       templateName: TEMPLATE_NAMES.PAYMENT_PENDING_APPROVAL,
       components: buildPaymentPendingApprovalComponents({
+        businessName,
         customerName,
         amount: formatINR(amount),
         invoiceNumber,
