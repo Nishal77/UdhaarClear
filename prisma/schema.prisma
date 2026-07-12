@@ -442,4 +442,32 @@ model WebhookEvent {
   @@map("webhook_events")
 }
 
+model WishlistVote {
+  id        String   @id @default(cuid())
+  ipHash    String   @unique
+  createdAt DateTime @default(now())
+
+  @@map("wishlist_votes")
+}
+
+model WishlistEmail {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+
+  @@map("wishlist_emails")
+}
+
+model WishlistFeedback {
+  id        String   @id @default(cuid())
+  email     String
+  message   String
+  createdAt DateTime @default(now())
+
+  @@map("wishlist_feedbacks")
+}
+
+
+
+
 
