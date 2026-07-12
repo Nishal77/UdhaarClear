@@ -167,7 +167,7 @@ export default function Waitlist() {
 
       {/* Main Hero */}
       <main className="flex-1 flex flex-col items-center justify-center px-6 py-8 text-center relative z-10 overflow-auto">
-        <h1 className="text-black text-4xl sm:text-6xl font-normal tracking-tight max-w-6xl mt-8">
+        <h1 className="text-black text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-normal tracking-tight w-full max-w-6xl mt-8 px-4 leading-tight sm:leading-none">
           How much capital is trapped in your outstanding invoices? If we automated global payment recovery, would it help you grow?
         </h1>
 
@@ -175,12 +175,12 @@ export default function Waitlist() {
           Help us shape the future of B2B collections. A smart billing platform that schedules automated reminders, instantly reconciles ledger deposits, and offers localized payment options.
         </p>
 
-        <div className="flex flex-row items-center mt-10 gap-4 max-w-md">
+        <div className="flex flex-col sm:flex-row items-center mt-10 gap-4 w-full max-w-md sm:max-w-xl px-4 justify-center">
           <button
             type="button"
             onClick={handleUpvote}
             disabled={upvoted || loading}
-            className="cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed inline-flex items-center gap-2 px-6 py-3 rounded-2xl text-white bg-[#1F51FF] border border-white/10 hover:bg-[#1E293B] transition-colors duration-200 text-sm font-medium"
+            className="cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed inline-flex items-center gap-2 px-6 py-3 rounded-2xl text-white bg-[#1F51FF] border border-white/10 hover:bg-[#1E293B] transition-colors duration-200 text-sm font-medium shrink-0"
           >
             <svg
               width="16"
@@ -196,7 +196,7 @@ export default function Waitlist() {
             </svg>
             Upvote
           </button>
-          <p className="text-sm text-gray-600 text-left leading-snug">
+          <p className="text-sm text-gray-600 text-center sm:text-left leading-snug max-w-xs sm:max-w-md">
             {upvotes} {" "} businesses want this. &quot;Upvote if you&apos;re tired of wasting hours chasing outstanding invoices.&quot;
           </p>
         </div>
