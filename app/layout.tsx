@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import { Toaster } from 'sonner'
+import { Analytics } from "@vercel/analytics/next"
 
 export const metadata: Metadata = {
   title: 'UdhaarClear — Automated Payment Recovery for Indian Businesses',
@@ -15,6 +16,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-screen antialiased" suppressHydrationWarning>
         {children}
         <Toaster position="top-right" richColors />
+        <Analytics />
       </body>
     </html>
   )
