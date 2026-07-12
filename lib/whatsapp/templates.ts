@@ -1,17 +1,15 @@
 // Names below are the ACTUAL names registered in Meta WhatsApp Manager
-// (confirmed 2026-07-05) — several got a _v2/_v3 suffix because Meta
-// enforces a ~4-week cooldown on reusing a name+language combo after a
-// prior version of that template was deleted. Do not rename these without
-// also resubmitting to Meta — see docs/waba-template-submission.md.
+// (confirmed 2026-07-12) — all templates are UTILITY category, approved.
+// Do not rename these without also resubmitting to Meta.
 export const TEMPLATE_NAMES = {
-  GENTLE:                   'invoice_update_alert_v3',
-  FIRM:                     'payment_reminder_firm_v2',
-  LEGAL_WARNING:            'payment_reminder_legal_warning_v2', // Day 22-27 — MSMED Act warning, still automated
-  LEGAL_28:                 'payment_reminder_legal_28_v2',      // Day 28 — owner-approved formal demand, 7-day window
-  LEGAL_35:                 'payment_reminder_legal_35_v2',      // 48-hour ultimatum
-  LEGAL_42:                 'payment_reminder_legal_42_v2',      // proceedings initiated
-  PAYMENT_CONFIRMED:        'payment_confirmed',
-  PAYMENT_PENDING_APPROVAL: 'payment_pending_approval',          // UTILITY — owner Approve/Reject quick-reply; PENDING META APPROVAL
+  GENTLE:                   'invoice_update_alert_v4',
+  FIRM:                     'payment_reminder_firm_v3',
+  LEGAL_WARNING:            'payment_reminder_legal_warning_v3', // Day 22-27 — MSMED Act warning, still automated
+  LEGAL_28:                 'payment_reminder_legal_28_v3',      // Day 28 — owner-approved formal demand, 7-day window
+  LEGAL_35:                 'payment_reminder_legal_35_v3',      // 48-hour ultimatum
+  LEGAL_42:                 'payment_reminder_legal_42_v3',      // proceedings initiated
+  PAYMENT_CONFIRMED:        'payment_confirmed_v3',
+  PAYMENT_PENDING_APPROVAL: 'payment_pending_approval_v3',       // UTILITY — owner Approve/Reject quick-reply
   CA_OTP:                   'ca_partner_otp',                    // AUTHENTICATION category — pending, confirm with user once submitted
 } as const
 
@@ -128,7 +126,7 @@ export function buildFirmComponents(params: {
   businessName: string
   invoiceId: string
 }): TemplateComponent[] {
-  // Registered payment_reminder_firm_v2:
+  // Registered payment_reminder_firm_v3:
   //   HEADER "Payment Reminder — {{1}}"        → businessName
   //   BODY   {{1}}name {{2}}invoice {{3}}amount {{4}}daysOverdue {{5}}deadline
   //   BUTTON URL https://udhaarclear.in/pay/{{1}} → invoiceId
@@ -167,7 +165,7 @@ export function buildLegalWarningComponents(params: {
   businessName: string
   invoiceId: string
 }): TemplateComponent[] {
-  // Registered payment_reminder_legal_warning_v2:
+  // Registered payment_reminder_legal_warning_v3:
   //   HEADER "Important: Payment Notice — {{1}}" → businessName
   //   BODY   {{1}}name {{2}}invoice {{3}}amount {{4}}daysOverdue
   //   BUTTON URL → invoiceId
@@ -207,7 +205,7 @@ export function buildLegal28Components(params: {
   businessName: string
   invoiceId: string
 }): TemplateComponent[] {
-  // Registered payment_reminder_legal_28_v2:
+  // Registered payment_reminder_legal_28_v3:
   //   HEADER "Formal Notice — {{1}}" → businessName
   //   BODY   {{1}}name {{2}}invoice {{3}}amount {{4}}legalRef
   //   BUTTON URL → invoiceId
@@ -245,7 +243,7 @@ export function buildLegal35Components(params: {
   businessName: string
   invoiceId: string
 }): TemplateComponent[] {
-  // Registered payment_reminder_legal_35_v2:
+  // Registered payment_reminder_legal_35_v3:
   //   HEADER "Formal Notice — {{1}}" → businessName
   //   BODY   {{1}}name {{2}}invoice {{3}}amount
   //   BUTTON URL → invoiceId
@@ -283,7 +281,7 @@ export function buildLegal42Components(params: {
   businessName: string
   invoiceId: string
 }): TemplateComponent[] {
-  // Registered payment_reminder_legal_42_v2:
+  // Registered payment_reminder_legal_42_v3:
   //   HEADER "Formal Notice — {{1}}" → businessName
   //   BODY   {{1}}name {{2}}amount {{3}}invoice {{4}}businessPhone {{5}}legalRef
   //   BUTTON URL → invoiceId
