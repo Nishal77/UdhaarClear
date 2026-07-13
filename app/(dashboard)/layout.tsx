@@ -4,8 +4,20 @@ import { TopBar } from '@/components/layout/TopBar'
 import { DashboardClientShell } from '@/components/layout/DashboardClientShell'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { prisma } from '@/lib/prisma/client'
+import { unstable_cache } from 'next/cache'
 import fs from 'fs'
 import path from 'path'
+
+const getDbUser = unstable_cache(
+  async (supabaseId: string) => {
+    return prisma.user.findUnique({
+      where: { supabaseId },
+      select: { name: true, ownedBusiness: { select: { name: true } } },
+    })
+  },
+  ['dashboard-user'],
+  { revalidate: 300 } // 5 min — name/business name rarely changes
+)
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
@@ -49,10 +61,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
       }
     }
 
-    const dbUser = await prisma.user.findUnique({
-      where: { supabaseId: user.id },
-      include: { ownedBusiness: true },
-    })
+    const dbUser = await getDbUser(user.id)
     if (dbUser) {
       userName = dbUser.name
       if (dbUser.ownedBusiness) {
