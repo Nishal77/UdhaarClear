@@ -6,6 +6,7 @@ import Footer from "@/components/landing/Footer";
 export const metadata = {
   title: "Pricing Plans - UdhaarClear",
   description: "Flexible pricing plans for automated debt recovery, ledger reconciliation, and legal Notice sequences. Start free and get paid faster.",
+  alternates: { canonical: "/pricing" },
 };
 
 export default function PricingPage() {
