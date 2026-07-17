@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Check, UploadCloud, MessageSquare, CreditCard, Mail, Gavel, Zap } from "lucide-react";
+import { Check, UploadCloud, MessageSquare, CreditCard } from "lucide-react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Mail01Icon, WhatsappIcon, Invoice03Icon, Legal01Icon, Comment01Icon, UserGroup02Icon } from "@hugeicons/core-free-icons";
 
@@ -71,13 +71,18 @@ export default function HowItWorks() {
                 </p>
               </div>
 
-              {/* Image mockup */}
-              <div className="w-full h-[240px] rounded-3xl overflow-hidden select-none">
-                <img 
-                  src="https://i.pinimg.com/736x/80/6d/e4/806de48c7808cebfa530f65980ebec1a.jpg"
-                  alt="Invoice Upload Interface Mockup"
-                  className="w-full h-full object-cover block"
-                />
+              {/* UI mockup: invoice entry form */}
+              <div className="w-full h-[240px] rounded-3xl bg-white border border-black/[0.04] p-5 flex flex-col gap-3 select-none">
+                <div className="flex items-center gap-2 text-zinc-500">
+                  <UploadCloud className="w-4 h-4" />
+                  <span className="text-xs font-medium">New invoice</span>
+                </div>
+                {["Customer name", "Phone number", "Invoice amount", "Due date"].map((field) => (
+                  <div key={field} className="flex items-center justify-between rounded-xl bg-[#FAF9F6] px-3 py-2.5">
+                    <span className="text-[13px] text-gray-500">{field}</span>
+                    <Check className="w-4 h-4 text-emerald-500" />
+                  </div>
+                ))}
               </div>
             </div>
 
@@ -95,13 +100,18 @@ export default function HowItWorks() {
                 </p>
               </div>
 
-              {/* Image mockup */}
-              <div className="w-full h-[240px] rounded-3xl overflow-hidden select-none">
-                <img 
-                  src="https://i.pinimg.com/736x/80/6d/e4/806de48c7808cebfa530f65980ebec1a.jpg"
-                  alt="UdhaarClear Automated Reminders Mockup"
-                  className="w-full h-full object-cover block"
-                />
+              {/* UI mockup: WhatsApp reminder thread */}
+              <div className="w-full h-[240px] rounded-3xl bg-white border border-black/[0.04] p-5 flex flex-col justify-end gap-2 select-none">
+                <div className="self-start max-w-[85%] rounded-2xl rounded-bl-sm bg-[#FAF9F6] px-3.5 py-2.5 text-[12.5px] text-gray-600">
+                  Hi Rahul, gentle reminder — invoice #1042 is due tomorrow.
+                </div>
+                <div className="self-start max-w-[85%] rounded-2xl rounded-bl-sm bg-[#FAF9F6] px-3.5 py-2.5 text-[12.5px] text-gray-600">
+                  Invoice #1042 is now 3 days overdue. Pay via the link below.
+                </div>
+                <div className="self-start flex items-center gap-2 max-w-[85%] rounded-2xl rounded-bl-sm bg-[#25D366]/10 px-3.5 py-2.5 text-[12.5px] text-emerald-700 font-medium">
+                  <MessageSquare className="w-3.5 h-3.5 shrink-0" />
+                  Final notice sent — legal escalation in 3 days.
+                </div>
               </div>
             </div>
 
@@ -119,13 +129,16 @@ export default function HowItWorks() {
                 </p>
               </div>
 
-              {/* Image mockup */}
-              <div className="w-full h-[240px] rounded-3xl overflow-hidden select-none">
-                <img 
-                  src="https://i.pinimg.com/736x/80/6d/e4/806de48c7808cebfa530f65980ebec1a.jpg"
-                  alt="Settled Invoice Payment Mockup"
-                  className="w-full h-full object-cover block"
-                />
+              {/* UI mockup: settled payment confirmation */}
+              <div className="w-full h-[240px] rounded-3xl bg-white border border-black/[0.04] p-5 flex flex-col items-center justify-center gap-3 select-none">
+                <div className="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center">
+                  <CreditCard className="w-6 h-6 text-emerald-600" />
+                </div>
+                <span className="text-2xl font-semibold text-gray-900 font-outfit">₹42,500</span>
+                <div className="flex items-center gap-1.5 text-emerald-600 text-[13px] font-medium">
+                  <Check className="w-3.5 h-3.5" />
+                  Invoice #1042 settled via UPI
+                </div>
               </div>
             </div>
 
@@ -139,13 +152,13 @@ export default function HowItWorks() {
           {/* Centered Unpaid Invoice Card and Label */}
           <div className="relative w-full flex flex-col items-center justify-center select-none z-10">
             
-            {/* Centered Unpaid Invoice Card */}
-            <div className="w-full max-w-[280px] shrink-0 rounded-2xl overflow-hidden">
-              <img 
-                src="https://i.pinimg.com/736x/7a/f3/1f/7af31fad90bee16c78500049d49707e9.jpg"
-                alt="Unpaid Invoice Status"
-                className="w-full h-auto block"
-              />
+            {/* Unpaid Invoice status badge */}
+            <div className="w-full max-w-[280px] shrink-0 rounded-2xl bg-[#FAF9F6] border border-gray-100 px-5 py-4 flex items-center gap-3">
+              <HugeiconsIcon icon={Invoice03Icon} className="w-7 h-7 text-amber-500 shrink-0" />
+              <div className="flex flex-col text-left">
+                <span className="text-sm font-medium text-gray-900 font-outfit">Invoice #1042</span>
+                <span className="text-xs text-amber-600 font-medium">Unpaid — due tomorrow</span>
+              </div>
             </div>
 
             {/* Desktop layout: absolutely positioned to the right of the center card */}
@@ -436,14 +449,12 @@ export default function HowItWorks() {
           {/* Centered Money In Bank and No-Commission Callout */}
           <div className="relative w-full flex flex-col items-center justify-center select-none z-10">
             
-            {/* Centered Money In Bank Card (Image + Text Below) */}
-            <div className="flex flex-col items-center gap-3 w-full max-w-[280px] shrink-0">
-              <div className="w-full rounded-2xl overflow-hidden select-none">
-                <img 
-                  src="https://i.pinimg.com/736x/56/77/45/56774530c8af4ed2b2bd5812977dddb4.jpg"
-                  alt="Money in Bank Status"
-                  className="w-full h-auto block"
-                />
+            {/* Money in Bank status badge */}
+            <div className="w-full max-w-[280px] shrink-0 rounded-2xl bg-[#FAF9F6] border border-gray-100 px-5 py-4 flex items-center gap-3">
+              <HugeiconsIcon icon={Invoice03Icon} className="w-7 h-7 text-emerald-500 shrink-0" />
+              <div className="flex flex-col text-left">
+                <span className="text-sm font-medium text-gray-900 font-outfit">Invoice #1042</span>
+                <span className="text-xs text-emerald-600 font-medium">Paid — ₹42,500 received</span>
               </div>
             </div>
 
