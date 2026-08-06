@@ -58,13 +58,38 @@ export default function Hero() {
           <div className="flex flex-col items-start text-left space-y-8 max-w-5xl pt-8">
             {/* Main Heading */}
             <h1 className="text-4xl md:text-5xl lg:text-[3.55rem] font-normal text-gray-950 tracking-tight leading-[1.12] md:leading-[1.08] max-w-5xl">
-              Stop chasing payments. We handle everything after the invoice.
+  Recover Pending Payments Faster with AI + Human Experts
 
-            </h1>
+  <span className="inline-flex items-center ml-3 align-middle">
+    <img
+      src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&h=120&fit=crop&crop=faces"
+      className="w-12 h-12 rounded-xl object-cover border-2 border-white"
+      alt=""
+    />
+
+    <img
+      src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&h=120&fit=crop&crop=faces"
+      className="w-12 h-12 rounded-xl object-cover border-2 border-white -ml-3"
+      alt=""
+    />
+
+    <img
+      src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=120&h=120&fit=crop&crop=faces"
+      className="w-12 h-12 rounded-xl object-cover border-2 border-white -ml-3"
+      alt=""
+    />
+
+    <img
+      src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=120&h=120&fit=crop&crop=faces"
+      className="w-12 h-12 rounded-xl object-cover border-2 border-white -ml-3"
+      alt=""
+    />
+  </span>
+</h1>
 
             {/* Paragraph Description */}
-            <p className="text-gray-500 text-base md:text-lg leading-relaxed max-w-3xl font-normal font-sans">
-              The moment a payment is overdue, UdhaarClear takes over, automated WhatsApp reminders, escalating follow-ups, and legal notices until every rupee lands. You just run your business.
+            <p className="text-gray-500 text-base md:text-lg leading-relaxed max-w-5xl font-normal font-sans">
+             Automate reminders, follow-ups, invoice tracking, payment collection, and customer communication while experienced recovery specialists help resolve complex cases and protect your business relationships.
             </p>
 
             {/* Action Buttons */}

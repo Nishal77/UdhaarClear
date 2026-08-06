@@ -2,6 +2,8 @@ import { prisma } from '@/lib/prisma/client'
 import { sendTextMessage } from '@/lib/whatsapp/client'
 import { notifyOwnerPaymentPendingApproval } from '@/lib/services/owner-notifications'
 import { formatINR } from '@/lib/utils/currency'
+import { addDays } from '@/lib/utils/date'
+import { classifyReply } from '@/lib/whatsapp/reply-classifier'
 import type { WhatsAppMessage } from '@/types/whatsapp'
 
 /**
@@ -115,5 +117,79 @@ export async function tryHandleBuyerUtrReply(message: WhatsAppMessage): Promise<
     invoiceId: invoice.id,
   })
 
+  return true
+}
+
+/**
+ * Handles a buyer's free-text reply that isn't a UTR (product.md §6.3, §7
+ * item 12 "reply classification"). Requires `context.id` — same reasoning
+ * as tryHandleBuyerUtrReply: only route replies-to-a-reminder, never cold
+ * texts, so we never guess which invoice a stranger's message is about.
+ *
+ * - "promise" → snoozes reminders 7 days (mirrors the owner's WhatsApp
+ *   "Pause" command) and tells the owner. Auto follow-up is free: the
+ *   existing autoExpireSnoozedInvoices() cron resumes the ladder once the
+ *   window passes — a broken promise re-escalates on its own.
+ * - "dispute" → marks the invoice DISPUTED and pauses the ladder pending
+ *   owner review.
+ * - "ignore" → no reply sent (a buyer texting "ok" shouldn't get bounced
+ *   with an unauthorized-number warning).
+ *
+ * Returns true if handled (including "ignore" — nothing more to do).
+ */
+export async function tryHandleBuyerReplyClassification(message: WhatsAppMessage): Promise<boolean> {
+  const contextId = message.context?.id
+  if (!contextId) return false
+
+  const body = message.text?.body?.trim()
+  if (!body) return false
+
+  const reminder = await prisma.reminder.findFirst({
+    where: { waMessageId: contextId },
+    include: { invoice: { include: { business: true, customer: true } } },
+  })
+  if (!reminder?.invoice) return false
+
+  const invoice = reminder.invoice
+  if (invoice.status === 'PAID' || invoice.status === 'WRITTEN_OFF' || invoice.status === 'DISPUTED') {
+    return true
+  }
+
+  const intent = classifyReply(body)
+  if (intent === 'ignore') return true
+
+  const ownerPhone = invoice.business.phone
+  const customerName = invoice.customer.contactName ?? invoice.customer.name
+
+  if (intent === 'dispute') {
+    await prisma.invoice.update({
+      where: { id: invoice.id },
+      data: { status: 'DISPUTED', remindersPaused: true, autoReminder: false },
+    })
+    if (ownerPhone) {
+      await sendTextMessage({
+        to: ownerPhone,
+        body: `🚩 ${customerName} disputed invoice ${invoice.invoiceNumber}:\n"${body}"\n\nReminders paused. Review and resolve from the dashboard.`,
+      }).catch(() => {})
+    }
+    return true
+  }
+
+  // promise
+  const promisedUntil = addDays(new Date(), 7)
+  await prisma.invoice.update({
+    where: { id: invoice.id },
+    data: { remindersPaused: true, remindersPausedUntil: promisedUntil },
+  })
+  await sendTextMessage({
+    to: message.from,
+    body: `👍 Thanks, we've noted your payment promise for invoice ${invoice.invoiceNumber}. Reminders are paused for 7 days.`,
+  }).catch(() => {})
+  if (ownerPhone) {
+    await sendTextMessage({
+      to: ownerPhone,
+      body: `🤝 ${customerName} promised to pay invoice ${invoice.invoiceNumber}:\n"${body}"\n\nReminders auto-paused 7 days, will resume automatically if unpaid.`,
+    }).catch(() => {})
+  }
   return true
 }

@@ -11,7 +11,7 @@ import { generateAuditorReportPDF } from '@/lib/pdf/auditor-report'
 import { uploadReportPDF } from '@/lib/storage/report-upload'
 import { isButtonReply, handleNegotiationButton } from '@/lib/whatsapp/negotiation'
 import { confirmInvoicePayment, sendBuyerPaymentReceipt } from '@/lib/services/payment-confirmation'
-import { tryHandleBuyerUtrReply } from '@/lib/whatsapp/buyer-payment'
+import { tryHandleBuyerUtrReply, tryHandleBuyerReplyClassification } from '@/lib/whatsapp/buyer-payment'
 
 /** Parses the trailing due-date text in a "New invoice" command, defaulting to 30 days credit. */
 function parseDueDate(dateStr?: string): Date {
@@ -89,6 +89,13 @@ export async function handleInboundMessage(message: WhatsAppMessage): Promise<vo
   // can submit payment references by replying to a reminder.
   {
     const handled = await tryHandleBuyerUtrReply(message)
+    if (handled) return
+  }
+
+  // Buyer free-text reply to a reminder (promise/dispute/ignore) — before
+  // seller-auth check for the same reason as the UTR handler above.
+  {
+    const handled = await tryHandleBuyerReplyClassification(message)
     if (handled) return
   }
 
@@ -364,18 +371,21 @@ export async function handleInboundMessage(message: WhatsAppMessage): Promise<vo
       return
     }
 
-    // Command 5: "Pause [Name]" or "Pause [Name] [N] days"
+    // Command 5: "Pause [Name]" or "Pause [Name] [N] days [amount]"
     // Pause recovery sequences for a customer — either indefinitely (no
     // duration given, resumed only by the owner), or for a fixed window
-    // (e.g. "Pause Ramesh 7 days" when the buyer promises to pay soon).
+    // (e.g. "Pause Ramesh 7 days" or "Pause Ramesh 7 days 5000" when the
+    // buyer promises to pay a specific amount by then — the amount is
+    // product.md §6.1's promise-to-pay capture).
     // A time-boxed pause auto-resumes via autoExpireSnoozedInvoices() in
     // lib/cron/reminder-engine.ts once the window passes.
-    const pauseRegex = /^pause\s+(.+?)(?:\s+(\d+)\s*days?)?$/i
+    const pauseRegex = /^pause\s+(.+?)(?:\s+(\d+)\s*days?(?:\s+(\d+(?:\.\d+)?))?)?$/i
     const pauseMatch = body.match(pauseRegex)
 
     if (pauseMatch) {
-      const [_, customerName, daysStr] = pauseMatch
+      const [_, customerName, daysStr, promisedAmountStr] = pauseMatch
       const snoozeDays = daysStr ? parseInt(daysStr, 10) : null
+      const promisedAmount = promisedAmountStr ? parseFloat(promisedAmountStr) : null
 
       const customer = await prisma.customer.findFirst({
         where: {
@@ -403,11 +413,12 @@ export async function handleInboundMessage(message: WhatsAppMessage): Promise<vo
         data: {
           remindersPaused: true,
           remindersPausedUntil,
+          ...(promisedAmount !== null ? { promisedAmount } : {}),
         },
       })
 
       const confirmation = remindersPausedUntil
-        ? `⏸️ Paused automated reminders for ${customer.name} for ${snoozeDays} day${snoozeDays === 1 ? '' : 's'}. They'll resume automatically on ${formatDate(remindersPausedUntil)} unless you resume sooner from the dashboard.`
+        ? `⏸️ Paused automated reminders for ${customer.name} for ${snoozeDays} day${snoozeDays === 1 ? '' : 's'}${promisedAmount !== null ? ` (promised ${formatINR(promisedAmount)})` : ''}. They'll resume automatically on ${formatDate(remindersPausedUntil)} unless you resume sooner from the dashboard.`
         : `⏸️ Paused automated reminders for ${customer.name}. You can resume them anytime from the web dashboard.`
 
       await sendTextMessage({

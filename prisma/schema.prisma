@@ -116,10 +116,10 @@ model CAProfile {
 }
 
 enum CAVerificationStatus {
-  PENDING        // registered, OTP not yet sent
-  OTP_SENT       // waiting on the CA to enter the code
-  VERIFIED       // phone confirmed — can see the dashboard
-  MANUAL_REVIEW  // ICAI directory check was inconclusive, needs a human look
+  PENDING // registered, OTP not yet sent
+  OTP_SENT // waiting on the CA to enter the code
+  VERIFIED // phone confirmed — can see the dashboard
+  MANUAL_REVIEW // ICAI directory check was inconclusive, needs a human look
   REJECTED
 }
 
@@ -204,6 +204,12 @@ model Customer {
   notes     String?
   isBlocked Boolean @default(false)
 
+  // Strategic-account hard automation gate (product.md §6.1 ★ closes deals).
+  // When true, the reminder engine never auto-sends for this customer's
+  // invoices — the owner must send manually. Answers the "I can't send
+  // automated escalating reminders to my biggest buyer" objection.
+  isStrategic Boolean @default(false)
+
   invoices Invoice[]
 
   createdAt DateTime @default(now())
@@ -248,6 +254,13 @@ model Invoice {
   // autoExpireSnoozedInvoices() in lib/cron/reminder-engine.ts. Null means
   // either "not paused" or "paused indefinitely" (no auto-resume).
   remindersPausedUntil DateTime?
+
+  // Promise-to-pay capture — set alongside remindersPausedUntil when a
+  // buyer commits to an amount, not just a date (WhatsApp "Pause" command
+  // or a classified buyer reply). Null means no amount was promised, only
+  // a date. Auto follow-up is the existing autoExpireSnoozedInvoices() —
+  // reminders resume on their own once remindersPausedUntil passes.
+  promisedAmount Decimal? @db.Decimal(12, 2)
 
   razorpayLinkId  String?
   razorpayLinkUrl String?
@@ -466,8 +479,3 @@ model WishlistFeedback {
 
   @@map("wishlist_feedbacks")
 }
-
-
-
-
-

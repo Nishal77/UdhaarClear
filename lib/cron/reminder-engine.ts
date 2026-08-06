@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/prisma/client'
 import { isReminderDay, shouldAutoPause } from '@/lib/whatsapp/tone-engine'
-import { daysOverdue, isSunday } from '@/lib/utils/date'
+import { daysOverdue, isSunday, isWithinBusinessHours, isIndianHoliday } from '@/lib/utils/date'
 import { InvoiceStatus } from '@prisma/client'
 import { ReminderService } from '@/lib/services/reminder-service'
 import { sendTextMessage } from '@/lib/whatsapp/client'
@@ -35,8 +35,16 @@ export async function runReminderEngine(): Promise<ReminderEngineResult> {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
 
+  // RBI recovery-conduct framework (product.md §6.4): automated contact only
+  // 8 AM-7 PM, never on Sundays or Indian national holidays/festivals.
   if (isSunday(today)) {
     return { sent: 0, skipped: 0, failed: 0, errors: ['Skipped: Sunday'] }
+  }
+  if (isIndianHoliday(today)) {
+    return { sent: 0, skipped: 0, failed: 0, errors: ['Skipped: Indian holiday/festival'] }
+  }
+  if (!isWithinBusinessHours(new Date())) {
+    return { sent: 0, skipped: 0, failed: 0, errors: ['Skipped: outside 8 AM-7 PM contact window'] }
   }
 
   await autoExpireSnoozedInvoices(today)
@@ -50,7 +58,8 @@ export async function runReminderEngine(): Promise<ReminderEngineResult> {
       status: { in: ['PENDING', 'DUE', 'OVERDUE', 'PARTIALLY_PAID'] },
       autoReminder: true,
       remindersPaused: false,
-      customer: { isBlocked: false },
+      // Strategic-account hard gate: never auto-send, owner must send manually.
+      customer: { isBlocked: false, isStrategic: false },
       ...(isGlobalWhatsAppEnabled ? {} : { business: { waConnected: true } }),
     },
     include: {

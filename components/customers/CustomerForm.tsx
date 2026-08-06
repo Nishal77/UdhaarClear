@@ -170,6 +170,14 @@ export function CustomerForm({ defaultValues, customerId }: CustomerFormProps) {
         />
       </div>
 
+      <label className="flex items-start gap-3 rounded-xl border border-[#EBEAE6] bg-[#F8F8F7] px-4 py-3 cursor-pointer">
+        <input type="checkbox" {...register('isStrategic')} className="mt-0.5 h-4 w-4 rounded border-gray-300 text-[#FF6A39] focus:ring-[#FF6A39]" />
+        <span>
+          <span className="block text-[13px] font-semibold text-gray-800">Strategic account</span>
+          <span className="block text-[12px] text-gray-500 mt-0.5">Never auto-escalates. Reminders must be sent manually — use for your biggest accounts you won&apos;t risk automating.</span>
+        </span>
+      </label>
+
       <div className="flex justify-end gap-3 pt-4">
         <button
           type="button"

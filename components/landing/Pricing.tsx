@@ -16,8 +16,8 @@ export default function Pricing() {
 
   const plans = [
     {
-      name: "Shuruat - Free",
-      description: "Try it free. 3 customers. No card ever.",
+      name: "Free",
+      description: "Free until first ₹1 lakh recovered",
       monthlyPrice: 0,
       yearlyPrice: 0,
       priceSubtext: "Free forever · 3 customers",
@@ -25,164 +25,124 @@ export default function Pricing() {
       isHighlighted: false,
       buttonText: "Get started",
       features: [
-        { text: "3 customers", included: true },
-        { text: "10 invoices/month", included: true },
-        { text: "Day 1 + Day 7 reminders", included: true },
-        { text: "Basic dashboard", included: true },
-        { text: "Buyer payment page", included: false },
-        { text: "Legal notices", included: false },
+        { text: "200 debtors, 2 users", included: true },
+        { text: "Full escalation ladder", included: true },
+        { text: "WhatsApp · SMS · email", included: true },
+        { text: "UPI payment links", included: true },
+        { text: "Promise-to-pay tracking", included: true },
+        { text: "Contact-window compliance", included: true },
         { text: "Hindi templates", included: false },
       ],
     },
     {
-      name: "Chota Vyaapar - Starter",
-      description: "For small shops. Up to 15 customers. Affordable first step.",
+      name: "Starter",
+      description: "+ 3% of what we recover",
       monthlyPrice: PLAN_PRICING.STARTER.monthly,
       yearlyPrice: PLAN_PRICING.STARTER.annualPerMonth,
       priceSubtext: "/month · 15 customers",
       badge: null,
       isHighlighted: false,
-      buttonText: "Try 14 days free",
+      buttonText: "Choose Starter",
       features: [
-        { text: "15 customers", included: true },
-        { text: "Unlimited invoices", included: true },
-        { text: "3-phase reminders", included: true },
-        { text: "Hindi templates", included: true },
-        { text: "Buyer payment page (UPI)", included: true },
-        { text: "Legal notices", included: false },
-        { text: "SMS fallback", included: false },
+        { text: "200 debtors, 2 users", included: true },
+        { text: "Full escalation ladder", included: true },
+        { text: "WhatsApp · SMS · email", included: true },
+        { text: "UPI payment links", included: true },
+        { text: "Promise-to-pay tracking", included: true },
+        { text: "Contact-window compliance", included: true },
+        { text: "Hindi templates", included: false },
       ],
     },
     {
-      name: "Vyaapaar - Pro",
-      description: "Full recovery engine. Unlimited customers. Legal notices included.",
+      name: "Growth",
+      description: "+ 2% of what we recover",
       monthlyPrice: PLAN_PRICING.GROWTH.monthly,
       yearlyPrice: PLAN_PRICING.GROWTH.annualPerMonth,
       priceSubtext: "/month · Unlimited",
       badge: "★ Most popular",
       isHighlighted: true,
-      buttonText: "Try 14 days free",
+      buttonText: "Choose Growth",
       features: [
-        { text: "Unlimited customers", included: true },
-        { text: "All 5 reminder phases", included: true },
-        { text: "SMS fallback", included: true },
-        { text: "Buyer page + partial pay", included: true },
+        { text: "1,000 debtors, 10 users", included: true },
+        { text: "Everything in Starter, plus", included: true },
+        { text: "Tally two-way sync", included: true },
+        { text: "MSMED interest notices", included: true },
         { text: "Legal notice + human gate", included: true },
-        { text: "Hindi + 1 regional language", included: true },
-        { text: "WhatsApp bot", included: true },
+        { text: "All 8 languages Support", included: true },
+        { text: "CA-ready reports", included: true },
       ],
     },
     {
-      name: "Udyog - Enterprise",
-      description: "Teams. API. UdhaarClear Score. For distributors handling crores.",
+      name: "Scale",
+      description: "+ 1% of what we recover",
       monthlyPrice: PLAN_PRICING.CA_PRO.monthly,
       yearlyPrice: PLAN_PRICING.CA_PRO.annualPerMonth,
       priceSubtext: "/month · Teams + API",
       badge: null,
       isHighlighted: false,
-      buttonText: "Talk to us",
+      buttonText: "Choose Scale",
       features: [
-        { text: "Everything in Pro", included: true },
-        { text: "Unlimited team members", included: true },
-        { text: "All 6 regional languages", included: true },
-        { text: "UdhaarClear Score", included: true },
-        { text: "REST API + white-label", included: true },
-        { text: "NBFC BNPL for buyers", included: true },
-        { text: "Dedicated account manager", included: true },
+        { text: "Unlimited debtors + users", included: true },
+        { text: "Everything in Growth, plus", included: true },
+        { text: "Recovery scoring", included: true },
+        { text: "Cash-flow forecasting", included: true },
+        { text: "Credit limits + alerts", included: true },
+        { text: "Debtor + CA portals", included: true },
+        { text: "API and approvals", included: true },
       ],
     },
   ];
 
   const comparisonCategories = [
     {
-      name: "Invoices & Customers",
+      name: "Know what you're owed",
       features: [
-        { name: "Active customers", free: "3", starter: "15", growth: "✓ Unlimited", capro: "✓ Unlimited", enterprise: "Per client" },
-        { name: "Invoices per month", free: "10", starter: "✓ Unlimited", growth: "✓ Unlimited", capro: "✓ Unlimited", enterprise: "Per client" },
-        { name: "Tally / Zoho CSV import", free: "✕", starter: "✓", growth: "✓", capro: "✓", enterprise: "✓" },
-        { name: "Bulk Excel upload", free: "✕", starter: "✕", growth: "✕", capro: "✓", enterprise: "✓" },
-        { name: "GST number auto-verify", free: "✕", starter: "✕", growth: "✓", capro: "✓", enterprise: "✓" },
-        { name: "Invoice QR code (scan to pay)", free: "✕", starter: "✓", growth: "✓", capro: "✓", enterprise: "✓" },
-        { name: "Audit trail (all messages)", free: "✕", starter: "✕", growth: "✓", capro: "✓", enterprise: "✓" },
+        { name: "CSV and Excel import", free: "✓", starter: "✓", growth: "✓", scale: "✓" },
+        { name: "Ageing dashboard and DSO", free: "✓", starter: "✓", growth: "✓", scale: "✓" },
+        { name: "Debtor timeline", free: "—", starter: "✓", growth: "✓", scale: "✓" },
       ]
     },
     {
-      name: "Reminders",
+      name: "Collect it",
       features: [
-        { name: "Reminder phases", free: "2 phases", starter: "3 phases", growth: "✓ All 5", capro: "✓ All 5", enterprise: "✓ All 5" },
-        { name: "WhatsApp reminders", free: "✓", starter: "✓", growth: "✓", capro: "✓", enterprise: "✓" },
-        { name: "SMS fallback", free: "✕", starter: "✕", growth: "✓", capro: "✓", enterprise: "✓" },
-        { name: "Email reminders", free: "✕", starter: "✓", growth: "✓", capro: "✓", enterprise: "✓" },
-        { name: "Hindi templates", free: "✕", starter: "✓", growth: "✓", capro: "✓", enterprise: "✓" },
-        { name: "Regional languages (6 total)", free: "✕", starter: "✕", growth: "1 extra", capro: "✓ All 6", enterprise: "✓ All 6" },
-        { name: "Send from own WABA number", free: "✕", starter: "✕", growth: "✓", capro: "✓", enterprise: "✓" },
-        { name: "Pause / snooze per customer", free: "✕", starter: "✓", growth: "✓", capro: "✓", enterprise: "✓" },
-        { name: "Custom reminder schedule", free: "✕", starter: "✕", growth: "✕", capro: "✓", enterprise: "✓" },
+        { name: "Escalation ladder", free: "—", starter: "✓", growth: "✓", scale: "✓" },
+        { name: "WhatsApp, SMS, email", free: "—", starter: "✓", growth: "✓", scale: "✓" },
+        { name: "UPI and payment links", free: "—", starter: "✓", growth: "✓", scale: "✓" },
+        { name: "Promise-to-pay tracking", free: "—", starter: "✓", growth: "✓", scale: "✓" },
+        { name: "Strategic-account gate", free: "—", starter: "✓", growth: "✓", scale: "✓" },
+        { name: "Contact window and festival rules", free: "—", starter: "✓", growth: "✓", scale: "✓" },
+        { name: "AI reply classification", free: "—", starter: "✓", growth: "✓", scale: "✓" },
       ]
     },
     {
-      name: "Buyer Experience",
+      name: "Escalate properly",
       features: [
-        { name: "Buyer payment page (UPI/NEFT)", free: "✕", starter: "✓", growth: "✓", capro: "✓", enterprise: "✓" },
-        { name: "Pay partial amount", free: "✕", starter: "✕", growth: "✓", capro: "✓", enterprise: "✓" },
-        { name: "Request extension with reason", free: "✕", starter: "✕", growth: "✓", capro: "✓", enterprise: "✓" },
-        { name: "Dispute invoice (with evidence)", free: "✕", starter: "✕", growth: "✓", capro: "✓", enterprise: "✓" },
-        { name: "EMI / BNPL via NBFC", free: "✕", starter: "✕", growth: "✕", capro: "✓", enterprise: "✕" },
-        { name: "Viral \"collect from your customers\" prompt", free: "✕", starter: "✓", growth: "✓", capro: "✓", enterprise: "✓" },
+        { name: "Tally two-way sync", free: "—", starter: "—", growth: "✓", scale: "✓" },
+        { name: "MSMED interest notices", free: "—", starter: "—", growth: "✓", scale: "✓" },
+        { name: "Legal notice templates", free: "—", starter: "—", growth: "✓", scale: "✓" },
+        { name: "Section 43B(h) exposure report", free: "—", starter: "—", growth: "✓", scale: "✓" },
+        { name: "Disputes module", free: "—", starter: "—", growth: "✓", scale: "✓" },
+        { name: "Eight Indian languages", free: "—", starter: "—", growth: "✓", scale: "✓" },
+        { name: "CA-ready client reports", free: "—", starter: "—", growth: "✓", scale: "✓" },
       ]
     },
     {
-      name: "Legal & Safety",
+      name: "See it coming",
       features: [
-        { name: "Human gate at Day 28", free: "✕", starter: "✕", growth: "✓", capro: "✓", enterprise: "✓" },
-        { name: "Legal notice PDF (lawyer-reviewed)", free: "✕", starter: "✕", growth: "✓", capro: "✓", enterprise: "✓" },
-        { name: "MSME Samadhaan guidance", free: "✕", starter: "✕", growth: "✓", capro: "✓", enterprise: "✓" },
-        { name: "Fraud signal alerts", free: "✕", starter: "✕", growth: "✕", capro: "✓", enterprise: "✓" },
+        { name: "Recovery likelihood scoring", free: "—", starter: "—", growth: "—", scale: "✓" },
+        { name: "Cash-flow forecasting", free: "—", starter: "—", growth: "—", scale: "✓" },
+        { name: "Credit limits and breach alerts", free: "—", starter: "—", growth: "—", scale: "✓" },
+        { name: "Anomaly detection", free: "—", starter: "—", growth: "—", scale: "✓" },
+        { name: "Debtor and CA portals", free: "—", starter: "—", growth: "—", scale: "✓" },
+        { name: "Samadhaan filing pack", free: "—", starter: "—", growth: "—", scale: "✓" },
+        { name: "API, approvals, audit log", free: "—", starter: "—", growth: "—", scale: "✓" },
       ]
     },
     {
-      name: "WhatsApp Bot",
+      name: "Limits",
       features: [
-        { name: "Create invoice via WhatsApp", free: "✕", starter: "✕", growth: "✓", capro: "✓", enterprise: "✓" },
-        { name: "Mark paid / pause via WhatsApp", free: "✕", starter: "✕", growth: "✓", capro: "✓", enterprise: "✓" },
-        { name: "Voice note input (Hindi)", free: "✕", starter: "✕", growth: "✕", capro: "✓", enterprise: "✕" },
-      ]
-    },
-    {
-      name: "Analytics",
-      features: [
-        { name: "Basic collection dashboard", free: "✓", starter: "✓", growth: "✓", capro: "✓", enterprise: "✓ All clients" },
-        { name: "Recovery rate + best/worst payers", free: "✕", starter: "✕", growth: "✓", capro: "✓", enterprise: "✓" },
-        { name: "Shareable recovery stat card", free: "✕", starter: "✕", growth: "✓", capro: "✓", enterprise: "✓" },
-        { name: "Cash flow forecast (30/60 days)", free: "✕", starter: "✕", growth: "✕", capro: "✓", enterprise: "✕" },
-        { name: "UdhaarClear Score (check any buyer)", free: "✕", starter: "✕", growth: "✕", capro: "✓", enterprise: "✓" },
-      ]
-    },
-    {
-      name: "CA Partner Only",
-      features: [
-        { name: "Manage all clients in one dashboard", free: "✕", starter: "✕", growth: "✕", capro: "✕", enterprise: "✓" },
-        { name: "Earn ₹300/client/month", free: "✕", starter: "✕", growth: "✕", capro: "✕", enterprise: "✓" },
-        { name: "White-label with CA firm name", free: "✕", starter: "✕", growth: "✕", capro: "✓ own brand", enterprise: "✓ firm name" },
-        { name: "Monthly payout to bank account", free: "✕", starter: "✕", growth: "✕", capro: "✕", enterprise: "✓" },
-        { name: "Client recovery report (for CA records)", free: "✕", starter: "✕", growth: "✕", capro: "✕", enterprise: "✓" },
-      ]
-    },
-    {
-      name: "Team & API",
-      features: [
-        { name: "Team members", free: "1", starter: "1", growth: "1", capro: "✓ Unlimited", enterprise: "Per client" },
-        { name: "REST API access", free: "✕", starter: "✕", growth: "✕", capro: "✓", enterprise: "✕" },
-        { name: "Field agent mode (cash tracking)", free: "✕", starter: "✕", growth: "✕", capro: "✓", enterprise: "✕" },
-      ]
-    },
-    {
-      name: "Support",
-      features: [
-        { name: "Email support", free: "✓", starter: "✓", growth: "✓", capro: "✓", enterprise: "✓" },
-        { name: "WhatsApp support", free: "✕", starter: "✕", growth: "✓", capro: "✓", enterprise: "✓" },
-        { name: "Priority support", free: "✕", starter: "✕", growth: "✕", capro: "✓", enterprise: "✓" },
-        { name: "Dedicated account manager", free: "✕", starter: "✕", growth: "✕", capro: "✓", enterprise: "✕" },
+        { name: "Users", free: "1", starter: "2", growth: "10", scale: "Unlimited" },
+        { name: "Debtors", free: "25", starter: "200", growth: "1,000", scale: "Unlimited" },
       ]
     }
   ];
@@ -318,7 +278,7 @@ export default function Pricing() {
             >
               <span>Yearly</span>
               <span className="bg-[#DFF7C7] text-gray-950 font-semibold px-2.5 py-0.5 rounded-full text-[10px] md:text-xs tracking-tight">
-                Save 20%
+                2 months free
               </span>
             </button>
           </div>
@@ -379,7 +339,7 @@ export default function Pricing() {
                     </div>
 
                     {/* Description */}
-                    <p className="text-[13.5px] text-gray-600 font-normal leading-relaxed h-[72px] overflow-hidden">
+                    <p className="text-[13.5px] bg-blue-200 rounded-md text-gray-600 font-normal leading-relaxed h-[72px] overflow-hidden">
                       {plan.description}
                     </p>
 
@@ -419,84 +379,34 @@ export default function Pricing() {
             );
           })}
         </div>
+<div className="mt-1 max-w-[1280px] mx-auto bg-gray-100/80 border border-gray-100 rounded-3xl p-8 md:p-10">
+  <div className="max-w-4xl">
+    <h3 className="text-2xl md:text-3xl font-semibold text-black tracking-tight leading-tight">
+      If we don't recover ₹1 lakh in your first 60 days, you don't pay.
+    </h3>
 
-        <div className="mt-1 max-w-[1280px] mx-auto bg-gray-100/80 border border-gray-100 rounded-3xl p-8 md:p-10 flex flex-col lg:flex-row justify-between items-center gap-8 text-left">
-          <div className="flex flex-col max-w-xl">
-            <span className="text-[13.5px] bg-gray-200 px-2 rounded-xl border border-gray-200 py-1 font-medium text-black font-outfit mb-2 flex items-center gap-1.5 select-none w-fit">
-              For CAs & Accountants
-            </span>
-            <h3 className="text-2xl md:text-3xl font-semibold text-black font-outfit tracking-tight leading-tight">
-              Refer clients. Earn every month.
-            </h3>
-            <p className="mt-2 text-sm text-gray-600 font-normal leading-relaxed">
-              Join free. Each client you bring earns you ₹300/month — forever.
-            </p>
-          </div>
+    <p className="mt-4 text-base text-gray-600 leading-relaxed">
+      No contracts. Cancel in one click. Export everything on the way out.
+      We automatically move you to the cheaper plan when your outstanding
+      drops.
+    </p>
 
-          <div className="flex flex-col items-center lg:items-start text-center lg:text-left select-none md:mx-6">
-            <span className="text-3xl md:text-4xl font-extrabold text-[#FFC700] font-outfit tracking-tight">
-              ₹6,000
-            </span>
-            <span className="text-xs text-zinc-500 font-medium mt-1">
-              per month · just 20 clients
-            </span>
-          </div>
-
-          <div className="shrink-0 w-full lg:w-auto flex justify-center lg:justify-start">
-            <Link
-              href="/signup?ref=ca_partner"
-              className="pl-2 pr-6 py-2 bg-[#FFC700] hover:bg-[#E6B200] text-black font-medium rounded-full text-center text-sm whitespace-nowrap cursor-pointer flex items-center gap-3"
-            >
-              <div className="flex-shrink-0 w-9 h-9 bg-black rounded-full flex items-center justify-center">
-                <div className="grid grid-cols-5 gap-[2px]">
-                  {/* Row 0 */}
-                  <span className="w-[3px] h-[3px] rounded-full bg-white/15" />
-                  <span className="w-[3px] h-[3px] rounded-full bg-white/15" />
-                  <span className="w-[3px] h-[3px] rounded-full bg-white" />
-                  <span className="w-[3px] h-[3px] rounded-full bg-white/15" />
-                  <span className="w-[3px] h-[3px] rounded-full bg-white/15" />
-
-                  {/* Row 1 */}
-                  <span className="w-[3px] h-[3px] rounded-full bg-white/15" />
-                  <span className="w-[3px] h-[3px] rounded-full bg-white/15" />
-                  <span className="w-[3px] h-[3px] rounded-full bg-white/15" />
-                  <span className="w-[3px] h-[3px] rounded-full bg-white" />
-                  <span className="w-[3px] h-[3px] rounded-full bg-white/15" />
-
-                  {/* Row 2 */}
-                  <span className="w-[3px] h-[3px] rounded-full bg-white" />
-                  <span className="w-[3px] h-[3px] rounded-full bg-white" />
-                  <span className="w-[3px] h-[3px] rounded-full bg-white" />
-                  <span className="w-[3px] h-[3px] rounded-full bg-white" />
-                  <span className="w-[3px] h-[3px] rounded-full bg-white" />
-
-                  {/* Row 3 */}
-                  <span className="w-[3px] h-[3px] rounded-full bg-white/15" />
-                  <span className="w-[3px] h-[3px] rounded-full bg-white/15" />
-                  <span className="w-[3px] h-[3px] rounded-full bg-white/15" />
-                  <span className="w-[3px] h-[3px] rounded-full bg-white" />
-                  <span className="w-[3px] h-[3px] rounded-full bg-white/15" />
-
-                  {/* Row 4 */}
-                  <span className="w-[3px] h-[3px] rounded-full bg-white/15" />
-                  <span className="w-[3px] h-[3px] rounded-full bg-white/15" />
-                  <span className="w-[3px] h-[3px] rounded-full bg-white" />
-                  <span className="w-[3px] h-[3px] rounded-full bg-white/15" />
-                  <span className="w-[3px] h-[3px] rounded-full bg-white/15" />
-                </div>
-              </div>
-              Join as CA Partner
-            </Link>
-          </div>
-        </div>
+    <p className="mt-6 text-base font-medium text-black">
+      Over ₹10 crore outstanding, or prefer to pay only on what we recover?
+      <span className="underline underline-offset-4 cursor-pointer ml-1">
+        Talk to us.
+      </span>
+    </p>
+  </div>
+</div>
 
         <div id="compare-table" className="max-w-[1280px] mx-auto text-left mt-28">
           <div className="flex flex-col mb-10 select-none">
             <h3 className="text-2xl md:text-3xl font-semibold text-gray-900 font-outfit tracking-tight">
-              Full Comparison
+              What's in each plan
             </h3>
             <p className="text-sm text-gray-500 font-normal mt-1">
-              Deep dive into limits, automation modules, legal frameworks, and ERP sync support.
+             Plans are sized by your total outstanding receivables, not by how many people log in.
             </p>
           </div>
           <div className="w-full overflow-x-auto lg:overflow-visible bg-transparent">
@@ -558,11 +468,11 @@ export default function Pricing() {
                     </div>
                   </th>
 
-                  {/* Pro Column */}
+                  {/* Growth Column */}
                   <th className="py-6 px-4 bg-white shadow-[0_1px_0_0_#E2E8F0] align-middle w-[15%] text-center border-r border-gray-100">
                     <div className="flex flex-col items-center justify-center">
                       <span className="text-sm md:text-base font-bold text-black block font-outfit leading-tight select-none">
-                        Pro
+                        Growth
                       </span>
                       <span className="text-[11px] md:text-[12px] text-zinc-400 font-medium mt-1 block leading-tight select-none whitespace-nowrap">
                         {billingPeriod === "yearly" ? `₹${PLAN_PRICING.GROWTH.annualPerMonth}/mo` : `₹${PLAN_PRICING.GROWTH.monthly}/mo`}
@@ -570,26 +480,14 @@ export default function Pricing() {
                     </div>
                   </th>
 
-                  {/* Enterprise Column */}
-                  <th className="py-6 px-4 bg-white shadow-[0_1px_0_0_#E2E8F0] align-middle w-[15%] text-center border-r border-gray-100">
-                    <div className="flex flex-col items-center justify-center">
-                      <span className="text-sm md:text-base font-bold text-black block font-outfit leading-tight select-none">
-                        Enterprise
-                      </span>
-                      <span className="text-[11px] md:text-[12px] text-zinc-400 font-medium mt-1 block leading-tight select-none whitespace-nowrap">
-                        {billingPeriod === "yearly" ? `₹${PLAN_PRICING.CA_PRO.annualPerMonth.toLocaleString("en-IN")}/mo` : `₹${PLAN_PRICING.CA_PRO.monthly.toLocaleString("en-IN")}/mo`}
-                      </span>
-                    </div>
-                  </th>
-
-                  {/* CA Partner Column */}
+                  {/* Scale Column */}
                   <th className="py-6 px-4 bg-white shadow-[0_1px_0_0_#E2E8F0] align-middle w-[15%] text-center">
                     <div className="flex flex-col items-center justify-center">
                       <span className="text-sm md:text-base font-bold text-black block font-outfit leading-tight select-none">
-                        CA Partner
+                        Scale
                       </span>
                       <span className="text-[11px] md:text-[12px] text-zinc-400 font-medium mt-1 block leading-tight select-none whitespace-nowrap">
-                        Free · earn ₹300/client
+                        {billingPeriod === "yearly" ? `₹${PLAN_PRICING.CA_PRO.annualPerMonth.toLocaleString("en-IN")}/mo` : `₹${PLAN_PRICING.CA_PRO.monthly.toLocaleString("en-IN")}/mo`}
                       </span>
                     </div>
                   </th>
@@ -601,13 +499,13 @@ export default function Pricing() {
                     {/* Spacer Row between categories (not first) */}
                     {catIdx > 0 && (
                       <tr>
-                        <td colSpan={6} className="h-14 bg-transparent border-none"></td>
+                        <td colSpan={5} className="h-14 bg-transparent border-none"></td>
                       </tr>
                     )}
 
                     {/* Category Header Row */}
                     <tr className="bg-gray-50/50">
-                      <td colSpan={6} className="py-4 px-4 text-sm md:text-base font-semibold tracking-tight text-black font-outfit border-t border-b border-gray-200">
+                      <td colSpan={5} className="py-4 px-4 text-sm md:text-base font-semibold tracking-tight text-black font-outfit border-t border-b border-gray-200">
                         {category.name}
                       </td>
                     </tr>
@@ -630,11 +528,8 @@ export default function Pricing() {
                         <td className="py-4 px-2 text-center w-[15%] border-r border-b border-gray-200">
                           {renderTableValue(feature.growth)}
                         </td>
-                        <td className="py-4 px-2 text-center w-[15%] border-r border-b border-gray-200">
-                          {renderTableValue(feature.capro)}
-                        </td>
                         <td className="py-4 px-2 text-center w-[15%] border-b border-gray-200">
-                          {renderTableValue(feature.enterprise)}
+                          {renderTableValue(feature.scale)}
                         </td>
                       </tr>
                     ))}
@@ -643,7 +538,7 @@ export default function Pricing() {
 
                 {/* Bottom Spacer before actions */}
                 <tr>
-                  <td colSpan={6} className="h-14 bg-transparent border-none"></td>
+                  <td colSpan={5} className="h-14 bg-transparent border-none"></td>
                 </tr>
 
                 {/* Bottom Action Row (Visual CTA Buttons) */}
@@ -675,20 +570,12 @@ export default function Pricing() {
                       14-day trial
                     </Link>
                   </td>
-                  <td className="py-4 px-2 text-center w-[15%] border-r border-t border-b border-gray-200">
+                  <td className="py-4 px-2 text-center w-[15%] border-t border-b border-gray-200">
                     <Link
                       href="/signup?plan=udyog"
                       className="w-full max-w-[140px] py-2.5 bg-black hover:bg-zinc-900 text-white rounded-xl text-xs font-semibold block mx-auto transition-all active:scale-95 whitespace-nowrap font-sans"
                     >
                       Talk to us
-                    </Link>
-                  </td>
-                  <td className="py-4 px-2 text-center w-[15%] border-t border-b border-gray-200">
-                    <Link
-                      href="/signup?ref=ca_partner"
-                      className="w-full max-w-[140px] py-2.5 bg-[#FFC700] hover:bg-[#E6B200] text-black rounded-xl text-xs font-semibold block mx-auto transition-all active:scale-95 whitespace-nowrap flex items-center gap-1 font-sans justify-center"
-                    >
-                      Join free →
                     </Link>
                   </td>
                 </tr>

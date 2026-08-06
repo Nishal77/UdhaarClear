@@ -11,6 +11,7 @@ export const customerSchema = z.object({
   city: z.string().max(100).optional(),
   defaultTone: z.enum(['GENTLE', 'FIRM', 'LEGAL']).default('GENTLE'),
   notes: z.string().max(500).optional(),
+  isStrategic: z.boolean().default(false),
 })
 
 export type CustomerInput = z.infer<typeof customerSchema>

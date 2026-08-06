@@ -33,8 +33,8 @@ export interface PlanPricing {
 
 /** The one place prices live. Change here → landing, settings, and Razorpay all update. */
 export const PLAN_PRICING: Record<PaidPlanTier, PlanPricing> = {
-  STARTER: { monthly: 399, annualPerMonth: 319 },
-  GROWTH: { monthly: 999, annualPerMonth: 799 },
+  STARTER: { monthly: 999, annualPerMonth: 319 },
+  GROWTH: { monthly: 3499, annualPerMonth: 799 },
   CA_PRO: { monthly: 9999, annualPerMonth: 7999 },
 }
 
